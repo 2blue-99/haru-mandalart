@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.hm.android.library.compose)
 }
 android {
-    namespace = "com.coldblue.history"
+    namespace = "com.coldblue.feature.history"
 }
 
 dependencies {
