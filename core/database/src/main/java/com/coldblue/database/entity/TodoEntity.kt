@@ -1,3 +1,5 @@
 package com.coldblue.database.entity
 
-data class TodoEntity()
+data class TodoEntity(
+    val id: Int
+)

@@ -1,4 +1,5 @@
 package com.coldblue.network.model
 
-data class MandaModel {
-}
+data class MandaModel(
+    val id: Int
+)
