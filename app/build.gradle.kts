@@ -36,7 +36,7 @@ android {
 
 dependencies {
     implementation(project(":feature:todo"))
-    implementation(project(":feature:mandalart"))
+    implementation(project(":feature:manda"))
     implementation(project(":feature:tutorial"))
     implementation(project(":feature:setting"))
     implementation(project(":feature:history"))
