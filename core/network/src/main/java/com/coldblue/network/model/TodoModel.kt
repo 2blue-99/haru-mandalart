@@ -1,6 +1,5 @@
 package com.coldblue.network.model
 
-import androidx.room.ColumnInfo
 import kotlinx.serialization.Serializable
 
 @Serializable
