@@ -1,3 +1,5 @@
 package com.coldblue.network.model
 
-data class TodoModel()
+data class TodoModel(
+    val id: Int
+)
