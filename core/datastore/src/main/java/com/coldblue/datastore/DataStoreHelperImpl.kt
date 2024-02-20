@@ -2,6 +2,7 @@ package com.coldblue.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
@@ -16,15 +17,20 @@ class DataStoreHelperImpl @Inject constructor(
     private val authKey = stringPreferencesKey("auth")
     private val todoKey = stringPreferencesKey("todo")
     private val mandaKey = stringPreferencesKey("manda")
+    private val tutorialKey = booleanPreferencesKey("tutorial")
+    private val alarmKey = booleanPreferencesKey("alarm")
 
-    override val userToken: Flow<String> =
-        dataStore.data.map { preferences -> preferences[authKey] ?: "" }
+    val userToken: Flow<String> = dataStore.data.map { preferences -> preferences[authKey] ?: "" }
 
-    override val todoUpdateTime: Flow<String> =
-        dataStore.data.map { preferences -> preferences[todoKey] ?: "" }
+    val todoUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[todoKey] ?: "" }
 
-    override val mandaUpdateTime: Flow<String> =
-        dataStore.data.map { preferences -> preferences[mandaKey] ?: "" }
+    val mandaUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[mandaKey] ?: "" }
+
+    val isTutorial: Flow<Boolean> = dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
+
+    val isAlarm: Flow<Boolean> = dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
+
+
     override suspend fun updateToken(token: String) {
         dataStore.edit { preferences ->
             preferences[authKey] = token
@@ -38,6 +44,18 @@ class DataStoreHelperImpl @Inject constructor(
     override suspend fun updateMandaTime(time: String) {
         dataStore.edit { preferences ->
             preferences[mandaKey] = time
+        }
+    }
+
+    override suspend fun updateTutorial(state: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[tutorialKey] = state
+        }
+    }
+
+    override suspend fun updateAlarm(state: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[alarmKey] = state
         }
     }
 }
