@@ -1,4 +1,4 @@
-package com.coldblue.haru_mandalart.ui.theme
+package com.coldblue.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

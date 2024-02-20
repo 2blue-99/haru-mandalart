@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.coldblue.haru_mandalart.ui.HMApp
-import com.coldblue.haru_mandalart.ui.theme.HarumandalartTheme
+import com.coldblue.designsystem.theme.HarumandalartTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

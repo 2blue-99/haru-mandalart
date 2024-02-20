@@ -5,11 +5,9 @@ plugins {
 
 android {
     namespace = "com.coldblue.designsystem"
-
 }
 
 dependencies {
     debugApi(libs.androidx.compose.ui.tooling)
-
     implementation(libs.androidx.core.ktx)
 }

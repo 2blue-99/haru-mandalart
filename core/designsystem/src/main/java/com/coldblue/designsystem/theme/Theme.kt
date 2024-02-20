@@ -1,4 +1,4 @@
-package com.coldblue.haru_mandalart.ui.theme
+package com.coldblue.designsystem.theme
 
 import android.app.Activity
 import android.os.Build
