@@ -1,6 +1,5 @@
 package com.coldblue.haru_mandalart.ui
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -22,34 +21,50 @@ import com.coldblue.tutorial.navigation.navigateToTutorial
 fun rememberHMState(
     navController: NavHostController = rememberNavController()
 ): HMAppState =
-    remember(navController){
+    remember(navController) {
         HMAppState(navController)
     }
 
 @Stable
 class HMAppState(
     val navController: NavHostController
-){
-    val destination: List<HMDestination> = HMDestination.entries
+) {
+
+    val bottomNavDestination: List<HMDestination> =
+        listOf(HMDestination.MANDA, HMDestination.TODO, HMDestination.HISTORY)
 
     val currentLocation: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
-    fun navigationToDestination(name: String){
+    @Composable
+    fun checkBottomNav(): Boolean {
+        currentLocation.let {
+            return when(it?.route){
+                HMDestination.MANDA.titleTextId -> true
+                HMDestination.TODO.titleTextId -> true
+                HMDestination.HISTORY.titleTextId -> true
+                else -> false
+            }
+        }
+    }
+
+
+
+    fun navigationToDestination(name: String) {
         val navOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id){
+            popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
             launchSingleTop = true
             restoreState = true
         }
-        when(name){
+        when (name) {
             HMDestination.HISTORY.titleTextId -> navController.navigateToHistory(navOptions)
-            "Login" -> navController.navigateToLogin(navOptions)
+            HMDestination.LOGIN.titleTextId -> navController.navigateToLogin(navOptions)
             HMDestination.MANDA.titleTextId -> navController.navigateToManda(navOptions)
-            "Setting" -> navController.navigateToSetting(navOptions)
+            HMDestination.SETTING.titleTextId -> navController.navigateToSetting(navOptions)
             HMDestination.TODO.titleTextId -> navController.navigateToTodo(navOptions)
-            "Tutorial" -> navController.navigateToTutorial(navOptions)
+            HMDestination.TUTORIAL.titleTextId -> navController.navigateToTutorial(navOptions)
         }
     }
 }

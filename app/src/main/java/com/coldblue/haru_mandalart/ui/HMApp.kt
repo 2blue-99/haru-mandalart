@@ -1,11 +1,19 @@
 package com.coldblue.haru_mandalart.ui
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination
 import com.coldblue.designsystem.component.HMNavigationBarItem
 import com.coldblue.haru_mandalart.navigation.HMDestination
@@ -15,14 +23,18 @@ import com.coldblue.haru_mandalart.navigation.HMNavHost
 fun HMApp(
     navController: HMAppState = rememberHMState()
 ){
+    BackOnPressed()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            HMBottomBar(
-                destination = navController.destination,
-                navigate = navController::navigationToDestination,
-                checkCurrentLocation = navController.currentLocation
-            )
+            if(navController.checkBottomNav()){
+                HMBottomBar(
+                    destination = navController.bottomNavDestination,
+                    navigate = navController::navigationToDestination,
+                    checkCurrentLocation = navController.currentLocation
+                )
+            }
         }
     ) {
         padding ->
@@ -50,4 +62,23 @@ fun HMBottomBar(
             )
         }
     }
+}
+
+@Composable
+fun BackOnPressed(){
+    val context = LocalContext.current
+    var backPressedState by remember { mutableStateOf(true) }
+    var backPressedTime = 0L
+
+    BackHandler(enabled = backPressedState) {
+        if(System.currentTimeMillis() - backPressedTime <= 400L){
+
+            (context as Activity).finish()
+        }else{
+            backPressedState = true
+            Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+            backPressedTime = System.currentTimeMillis()
+        }
+    }
+
 }

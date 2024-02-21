@@ -13,7 +13,6 @@ fun NavController.navigateToManda(navOptions: NavOptions){
 
 fun NavGraphBuilder.mandaScreen(){
     composable(route = mandaRoute){
-//        val gap = it.arguments?.getString("key")
         MandaScreen()
     }
 }
