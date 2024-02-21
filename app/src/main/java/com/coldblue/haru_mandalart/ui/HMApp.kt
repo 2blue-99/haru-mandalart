@@ -23,10 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination
 import com.coldblue.designsystem.component.HMNavigationBarItem
+import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.haru_mandalart.navigation.HMDestination
 import com.coldblue.haru_mandalart.navigation.HMNavHost
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HMApp(
     navController: HMAppState = rememberHMState()
@@ -36,24 +36,17 @@ fun HMApp(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            if (navController.checkTopBar()) {
-                TopAppBar(
-                    title = { Text(text = "설정") },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
-                    navigationIcon = {
-                        Button(onClick = { navController.navController.popBackStack() }) { Text(text = "Back") }
-                    },
-                )
-            }
+            if (navController.checkTopBar())
+                HMTopBar { navController.popBackStack() }
         },
         bottomBar = {
-            if (navController.checkBottomNavBar()) {
+            if (navController.checkBottomNavBar())
                 HMBottomBar(
                     destination = navController.bottomNavDestination,
                     navigate = navController::navigationToDestination,
                     checkCurrentLocation = navController.currentLocation
                 )
-            }
+
         }
     ) { padding ->
         HMNavHost(
@@ -81,7 +74,6 @@ fun HMBottomBar(
         }
     }
 }
-
 @Composable
 fun BackOnPressed() {
     val context = LocalContext.current
@@ -98,5 +90,5 @@ fun BackOnPressed() {
             backPressedTime = System.currentTimeMillis()
         }
     }
-
 }
+

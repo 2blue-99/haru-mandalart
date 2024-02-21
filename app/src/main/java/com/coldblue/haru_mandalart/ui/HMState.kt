@@ -58,6 +58,8 @@ class HMAppState(
         }
     }
 
+    fun popBackStack(){ navController.popBackStack() }
+
     fun navigationToDestination(name: String) {
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
