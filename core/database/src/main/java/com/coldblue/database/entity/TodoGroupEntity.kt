@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "todo")
-data class TodoEntity(
+@Entity(tableName = "todo_group")
+data class TodoGroupEntity(
     @PrimaryKey
     val id: Int,
     @ColumnInfo(name = "origin_id")
@@ -17,8 +17,6 @@ data class TodoEntity(
     @ColumnInfo(name = "is_del")
     val isDel: Boolean,
     @ColumnInfo(name = "update_time")
-    val updateTime: Boolean,
-    val title: String,
-    val content: String,
-    val time: String
+    val updateTime: String,
+    val name: String
 )

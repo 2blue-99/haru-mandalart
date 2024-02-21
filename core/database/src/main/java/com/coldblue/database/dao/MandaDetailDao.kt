@@ -8,9 +8,9 @@ import com.coldblue.database.entity.MandaEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface MandaDao {
+interface MandaDetailDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertMandaEntities(mandaEntities: List<MandaEntity>)
+    suspend fun upsertMandaEntities(mandaEntity: List<MandaEntity>)
     @Query("Select * From manda")
     fun getMandaEntities():  Flow<List<MandaEntity>>
     @Query("Delete From manda")
