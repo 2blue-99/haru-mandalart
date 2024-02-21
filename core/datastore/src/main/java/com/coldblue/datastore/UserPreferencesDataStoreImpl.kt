@@ -6,31 +6,28 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DataStoreHelperImpl @Inject constructor(
+class UserPreferencesDataStoreImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
-) : DataStoreHelper {
+) : UserPreferencesDataStore {
     private val authKey = stringPreferencesKey("auth") // Todo 데이터 명칭으로
     private val todoKey = stringPreferencesKey("todo")
     private val mandaKey = stringPreferencesKey("manda")
     private val tutorialKey = booleanPreferencesKey("tutorial")
     private val alarmKey = booleanPreferencesKey("alarm")
 
-    val token: Flow<String> = dataStore.data.map { preferences -> preferences[authKey] ?: "" }
+    override val token: Flow<String> = dataStore.data.map { preferences -> preferences[authKey] ?: "" }
+    override val todoUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[todoKey] ?: "0" }
+    override val mandaUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[mandaKey] ?: "0" }
+    override val isTutorial: Flow<Boolean> = dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
+    override val isAlarm: Flow<Boolean> = dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
 
-    val todoUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[todoKey] ?: "0" }
-
-    val mandaUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[mandaKey] ?: "0" }
-
-    val isTutorial: Flow<Boolean> = dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
-
-    val isAlarm: Flow<Boolean> = dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
-
-
+    override suspend fun isUserLogin(): Boolean = token.first() != ""
     override suspend fun updateToken(token: String) { // TODO Delete Token
         dataStore.edit { preferences ->
             preferences[authKey] = token

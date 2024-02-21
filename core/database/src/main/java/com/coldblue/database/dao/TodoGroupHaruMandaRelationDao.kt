@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoGroupHaruMandaRelationDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertTodoGroupHaruMandaEntities(relationEntities: List<TodoGroupHaruMandaRelationEntity>)
     @Query("Select * From todo_group_haru_manda_relation")
     fun getMandaTodoGroupHaruMandaEntities():  Flow<List<TodoGroupHaruMandaRelationEntity>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertTodoGroupHaruMandaEntities(relationEntities: List<TodoGroupHaruMandaRelationEntity>)
     @Query("Delete From todo_group_haru_manda_relation")
-    fun deleteTodoGroupHaruMandaEntities()
+    suspend fun deleteTodoGroupHaruMandaEntities()
 }
