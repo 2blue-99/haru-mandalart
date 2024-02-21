@@ -18,11 +18,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 interface RepoModule {
-//    @Binds
-//    fun bindLoginHelper(
-//        loginHelper: LoginHelperImpl
-//    ): LoginHelperImpl
-
     @Binds
     fun bindMandaRepo(
         mandaRepo: MandaRepoImpl
