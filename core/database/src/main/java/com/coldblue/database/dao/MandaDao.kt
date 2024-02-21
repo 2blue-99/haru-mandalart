@@ -14,5 +14,5 @@ interface MandaDao {
     @Query("Select * From manda")
     fun getMandaEntities():  Flow<List<MandaEntity>>
     @Query("Delete From manda")
-    fun deleteMandaEntities():  Flow<List<MandaEntity>>
+    fun deleteMandaEntities()
 }

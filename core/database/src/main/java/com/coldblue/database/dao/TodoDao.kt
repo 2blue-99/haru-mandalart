@@ -14,5 +14,5 @@ interface TodoDao {
     @Query("Select * From manda")
     fun getTodoEntities(): Flow<List<MandaEntity>>
     @Query("Delete From manda")
-    fun deleteTodoEntities(): Flow<List<MandaEntity>>
+    fun deleteTodoEntities()
 }
