@@ -1,4 +1,13 @@
 package com.coldblue.domain.database.manda
 
-class GetMandaUseCase {
+import com.coldblue.data.repo.MandaRepo
+import com.coldblue.model.Manda
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class GetMandaUseCase @Inject constructor(
+    private val mandaRepo: MandaRepo
+){
+    suspend operator fun invoke(): Flow<List<Manda>> =
+        mandaRepo.getMandaRepo()
 }

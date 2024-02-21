@@ -14,5 +14,5 @@ interface MandaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMandaEntities(mandaEntities: List<MandaEntity>)
     @Query("Delete From manda")
-    suspend fun deleteMandaEntities()
+    suspend fun deleteAllManda()
 }
