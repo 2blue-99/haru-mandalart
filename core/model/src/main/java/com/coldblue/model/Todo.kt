@@ -6,7 +6,7 @@ data class Todo(
     val harumandaId: Int,
     val isSync: Boolean,
     val isDel: Boolean,
-    val updateTime: Boolean,
+    val updateTime: String,
     val title: String,
     val content: String,
     val time: String

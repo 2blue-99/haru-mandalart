@@ -17,7 +17,7 @@ data class TodoEntity(
     @ColumnInfo(name = "is_del")
     val isDel: Boolean,
     @ColumnInfo(name = "update_time")
-    val updateTime: Boolean,
+    val updateTime: String,
     val title: String,
     val content: String,
     val time: String

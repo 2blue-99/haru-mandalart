@@ -14,15 +14,22 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel()
 ){
 
-    val test by loginViewModel.test.collectAsStateWithLifecycle()
-
+    val testManda by loginViewModel.testManda.collectAsStateWithLifecycle()
+    val testTodo by loginViewModel.testTodo.collectAsStateWithLifecycle()
+    val testToken by loginViewModel.testToken.collectAsStateWithLifecycle()
     Column {
         Text(text = "LoginScreen")
         Button(onClick = { navigateToTodo() }) {
             Text(text = "Navigate To Todo")
         }
         Button(onClick = { loginViewModel.insertManda() }) {
+            Text(text = "Insert manda")
+        }
+        Button(onClick = { loginViewModel.insertTodo() }) {
             Text(text = "Insert Todo")
+        }
+        Button(onClick = { loginViewModel.updateToken() }) {
+            Text(text = "Update Todo")
         }
     }
 }
