@@ -20,7 +20,7 @@ fun HMNavHost(
     NavHost(
         navController = navController,
         startDestination = HMDestination.TODO.titleTextId,
-        modifier = modifier
+        modifier = modifier,
     ){
         mandaScreen()
         loginScreen()
