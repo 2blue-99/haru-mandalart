@@ -13,6 +13,7 @@ enum class HMDestination(
         unSelectedIcon = HMIcon.unSelected
     ),
 //    LOGIN(
+
 //        titleTextId = "Login",
 //        selectedIcon = HMIcon.selected,
 //        unSelectedIcon = HMIcon.unSelected
