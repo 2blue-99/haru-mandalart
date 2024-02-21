@@ -37,7 +37,7 @@ class HMAppState(
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
     @Composable
-    fun checkBottomNav(): Boolean {
+    fun checkBottomNavBar(): Boolean {
         currentLocation.let {
             return when(it?.route){
                 HMDestination.MANDA.titleTextId -> true
@@ -48,7 +48,15 @@ class HMAppState(
         }
     }
 
-
+    @Composable
+    fun checkTopBar(): Boolean {
+        currentLocation.let {
+            return when(it?.route){
+                HMDestination.SETTING.titleTextId -> true
+                else -> false
+            }
+        }
+    }
 
     fun navigationToDestination(name: String) {
         val navOptions = navOptions {
