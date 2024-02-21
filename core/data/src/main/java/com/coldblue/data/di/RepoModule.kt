@@ -8,21 +8,21 @@ import com.coldblue.data.repo.UserPreferencesRepo
 import com.coldblue.data.repo.UserPreferencesRepoImpl
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginHelperImpl
-import com.coldblue.datastore.UserPreferencesDataStore
-import com.coldblue.datastore.UserPreferencesDataStoreImpl
+import com.coldblue.datastore.UserPreferencesDataSource
+import com.coldblue.datastore.UserPreferencesDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface RepoModule {
-    @Binds
-    fun bindUserPreferencesRepo(
-        userPreferencesDataStore: UserPreferencesDataStoreImpl
-    ): UserPreferencesDataStore
+//    @Binds
+//    fun bindLoginHelper(
+//        loginHelper: LoginHelperImpl
+//    ): LoginHelperImpl
+
     @Binds
     fun bindMandaRepo(
         mandaRepo: MandaRepoImpl
@@ -32,7 +32,12 @@ interface RepoModule {
         todoRepo: TodoRepoImpl
     ): TodoRepo
     @Binds
-    fun bindLoginHelper(
+    fun bindUserPreferencesRepo(
+        userPreferencesRepo: UserPreferencesRepoImpl
+    ): UserPreferencesRepo
+    @Binds
+    fun bindLoginHelperRepo(
         loginHelper: LoginHelperImpl
-    ): LoginHelperImpl
+    ): LoginHelper
+
 }

@@ -12,9 +12,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserPreferencesDataStoreImpl @Inject constructor(
+class UserPreferencesDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
-) : UserPreferencesDataStore {
+) : UserPreferencesDataSource {
     private val authKey = stringPreferencesKey("auth") // Todo 데이터 명칭으로
     private val todoKey = stringPreferencesKey("todo")
     private val mandaKey = stringPreferencesKey("manda")

@@ -1,41 +1,41 @@
 package com.coldblue.data.repo
 
-import com.coldblue.datastore.UserPreferencesDataStore
+import com.coldblue.datastore.UserPreferencesDataSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class UserPreferencesRepoImpl @Inject constructor(
-    private val userPreferencesDataStore: UserPreferencesDataStore
+    private val userPreferencesDataSource: UserPreferencesDataSource
 ): UserPreferencesRepo {
     override val token: Flow<String>
-        get() = userPreferencesDataStore.token
+        get() = userPreferencesDataSource.token
     override val todoUpdateTime: Flow<String>
-        get() = userPreferencesDataStore.todoUpdateTime
+        get() = userPreferencesDataSource.todoUpdateTime
     override val mandaUpdateTime: Flow<String>
-        get() = userPreferencesDataStore.mandaUpdateTime
+        get() = userPreferencesDataSource.mandaUpdateTime
     override val isTutorial: Flow<Boolean>
-        get() = userPreferencesDataStore.isTutorial
+        get() = userPreferencesDataSource.isTutorial
     override val isAlarm: Flow<Boolean>
-        get() = userPreferencesDataStore.isAlarm
+        get() = userPreferencesDataSource.isAlarm
 
     override suspend fun updateToken(token: String) {
-        userPreferencesDataStore.updateToken(token)
+        userPreferencesDataSource.updateToken(token)
     }
 
     override suspend fun updateTodoTime(time: String) {
-        userPreferencesDataStore.updateTodoTime(time)
+        userPreferencesDataSource.updateTodoTime(time)
     }
 
     override suspend fun updateMandaTime(time: String) {
-        userPreferencesDataStore.updateMandaTime(time)
+        userPreferencesDataSource.updateMandaTime(time)
     }
 
     override suspend fun updateTutorial(state: Boolean) {
-        userPreferencesDataStore.updateTutorial(state)
+        userPreferencesDataSource.updateTutorial(state)
     }
 
     override suspend fun updateAlarm(state: Boolean) {
-        userPreferencesDataStore.updateAlarm(state)
+        userPreferencesDataSource.updateAlarm(state)
     }
 
 }

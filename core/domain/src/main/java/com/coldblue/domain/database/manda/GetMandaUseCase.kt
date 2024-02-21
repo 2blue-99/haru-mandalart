@@ -8,6 +8,6 @@ import javax.inject.Inject
 class GetMandaUseCase @Inject constructor(
     private val mandaRepo: MandaRepo
 ){
-    suspend operator fun invoke(): Flow<List<Manda>> =
+    operator fun invoke(): Flow<List<Manda>> =
         mandaRepo.getMandaRepo()
 }

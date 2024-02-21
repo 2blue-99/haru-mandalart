@@ -2,7 +2,7 @@ package com.coldblue.datastore
 
 import kotlinx.coroutines.flow.Flow
 
-interface UserPreferencesDataStore {
+interface UserPreferencesDataSource {
     val token: Flow<String>
     val todoUpdateTime: Flow<String>
     val mandaUpdateTime: Flow<String>
