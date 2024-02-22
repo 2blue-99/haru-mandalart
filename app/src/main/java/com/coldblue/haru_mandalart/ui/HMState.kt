@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.coldblue.haru_mandalart.navigation.HMDestination
+import com.coldblue.haru_mandalart.navigation.TopLevelDestination
 import com.coldblue.history.navigation.navigateToHistory
 import com.coldblue.login.navigation.navigateToLogin
 import com.coldblue.mandalart.navigation.navigateToManda
@@ -30,8 +30,8 @@ class HMAppState(
     val navController: NavHostController
 ) {
 
-    val bottomNavDestination: List<HMDestination> =
-        listOf(HMDestination.MANDA, HMDestination.TODO, HMDestination.HISTORY)
+    val bottomNavDestination: List<TopLevelDestination> =
+        listOf(TopLevelDestination.MANDA, TopLevelDestination.TODO, TopLevelDestination.HISTORY)
 
     val currentLocation: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
@@ -40,9 +40,9 @@ class HMAppState(
     fun checkBottomNavBar(): Boolean {
         currentLocation.let {
             return when(it?.route){
-                HMDestination.MANDA.titleTextId -> true
-                HMDestination.TODO.titleTextId -> true
-                HMDestination.HISTORY.titleTextId -> true
+                TopLevelDestination.MANDA.titleTextId -> true
+                TopLevelDestination.TODO.titleTextId -> true
+                TopLevelDestination.HISTORY.titleTextId -> true
                 else -> false
             }
         }
@@ -52,7 +52,7 @@ class HMAppState(
     fun checkTopBar(): Boolean {
         currentLocation.let {
             return when(it?.route){
-                HMDestination.SETTING.titleTextId -> true
+                TopLevelDestination.SETTING.titleTextId -> true
                 else -> false
             }
         }
@@ -69,12 +69,12 @@ class HMAppState(
             restoreState = true
         }
         when (name) {
-            HMDestination.HISTORY.titleTextId -> navController.navigateToHistory(navOptions)
-            HMDestination.LOGIN.titleTextId -> navController.navigateToLogin(navOptions)
-            HMDestination.MANDA.titleTextId -> navController.navigateToManda(navOptions)
-            HMDestination.SETTING.titleTextId -> navController.navigateToSetting(navOptions)
-            HMDestination.TODO.titleTextId -> navController.navigateToTodo(navOptions)
-            HMDestination.TUTORIAL.titleTextId -> navController.navigateToTutorial(navOptions)
+            TopLevelDestination.HISTORY.titleTextId -> navController.navigateToHistory(navOptions)
+            TopLevelDestination.LOGIN.titleTextId -> navController.navigateToLogin(navOptions)
+            TopLevelDestination.MANDA.titleTextId -> navController.navigateToManda(navOptions)
+            TopLevelDestination.SETTING.titleTextId -> navController.navigateToSetting(navOptions)
+            TopLevelDestination.TODO.titleTextId -> navController.navigateToTodo(navOptions)
+            TopLevelDestination.TUTORIAL.titleTextId -> navController.navigateToTutorial(navOptions)
         }
     }
 }
