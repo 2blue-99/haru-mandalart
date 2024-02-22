@@ -12,11 +12,8 @@ import androidx.navigation.navOptions
 import com.coldblue.data.navi.Route
 import com.coldblue.haru_mandalart.navigation.TopLevelDestination
 import com.coldblue.history.navigation.navigateToHistory
-import com.coldblue.login.navigation.navigateToLogin
 import com.coldblue.mandalart.navigation.navigateToManda
-import com.coldblue.setting.navigation.navigateToSetting
 import com.coldblue.todo.navigation.navigateToTodo
-import com.coldblue.tutorial.navigation.navigateToTutorial
 
 @Composable
 fun rememberHMState(
@@ -59,7 +56,7 @@ class HMAppState(
 
     fun popBackStack(){ navController.popBackStack() }
 
-    fun navigationToDestination(route: String) {
+    fun navigateToTopLevelDestination(route: String) {
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
@@ -69,11 +66,8 @@ class HMAppState(
         }
         when (route) {
             Route.history -> navController.navigateToHistory(navOptions)
-            Route.login -> navController.navigateToLogin(navOptions)
             Route.manda -> navController.navigateToManda(navOptions)
-            Route.setting -> navController.navigateToSetting(navOptions)
             Route.todo -> navController.navigateToTodo(navOptions)
-            Route.tutorial -> navController.navigateToTutorial(navOptions)
         }
     }
 }

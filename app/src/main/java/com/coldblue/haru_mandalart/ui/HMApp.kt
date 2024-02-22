@@ -36,7 +36,7 @@ fun HMApp(
             if (navController.checkBottomNavBar())
                 HMBottomBar(
                     destination = navController.bottomNavDestination,
-                    navigate = navController::navigationToDestination,
+                    navigate = navController::navigateToTopLevelDestination,
                     checkCurrentLocation = navController.currentLocation
                 )
 
