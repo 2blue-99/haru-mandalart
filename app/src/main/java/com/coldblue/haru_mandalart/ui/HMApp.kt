@@ -31,7 +31,6 @@ import com.coldblue.haru_mandalart.navigation.HMNavHost
 fun HMApp(
     navController: HMAppState = rememberHMState()
 ) {
-    BackOnPressed()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -74,21 +73,3 @@ fun HMBottomBar(
         }
     }
 }
-@Composable
-fun BackOnPressed() {
-    val context = LocalContext.current
-    var backPressedState by remember { mutableStateOf(true) }
-    var backPressedTime = 0L
-
-    BackHandler(enabled = backPressedState) {
-        if (System.currentTimeMillis() - backPressedTime <= 400L) {
-
-            (context as Activity).finish()
-        } else {
-            backPressedState = true
-            Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
-            backPressedTime = System.currentTimeMillis()
-        }
-    }
-}
-

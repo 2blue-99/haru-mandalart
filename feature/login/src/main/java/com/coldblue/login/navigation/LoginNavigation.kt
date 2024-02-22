@@ -13,6 +13,6 @@ fun NavController.navigateToLogin(navOptions: NavOptions) {
 
 fun NavGraphBuilder.loginScreen(navigateToTodo: () -> Unit) {
     composable(route = loginRoute) {
-        LoginScreen(navigateToTodo = { navigateToTodo() } )
+        LoginScreen()
     }
 }

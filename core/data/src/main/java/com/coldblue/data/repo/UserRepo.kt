@@ -9,7 +9,7 @@ interface UserRepo {
     val isTutorial: Flow<Boolean>
     val isAlarm: Flow<Boolean>
 
-    suspend fun updateToken(token: String)
+    suspend fun updateToken()
     suspend fun updateTodoTime(time: String)
     suspend fun updateMandaTime(time: String)
     suspend fun updateTutorial(state: Boolean)

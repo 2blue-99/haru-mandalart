@@ -1,6 +1,8 @@
 package com.coldblue.network.di
 
 import com.coldblue.network.BuildConfig
+import com.coldblue.network.SupabaseDataSource
+import com.coldblue.network.SupabaseDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +26,7 @@ object SupabaseModule {
         supabaseKey = BuildConfig.SupaKey
     ){
         install(Auth)
-        install(ComposeAuth){ googleNativeLogin(serverClientId = BuildConfig.SupaId) }
+        install(ComposeAuth){ googleNativeLogin(serverClientId = BuildConfig.ClientId) }
         install(Postgrest)
     }
 
@@ -32,7 +34,8 @@ object SupabaseModule {
     @Provides
     fun provideComposeAuth(client: SupabaseClient): ComposeAuth = client.composeAuth
 
-//    @Singleton
-//    @Provides
-//    fun provideSupabaseRepo()
+    @Singleton
+    @Provides
+    fun provideSupaRepository(client: SupabaseClient): SupabaseDataSource =
+        SupabaseDataSourceImpl(client)
 }
