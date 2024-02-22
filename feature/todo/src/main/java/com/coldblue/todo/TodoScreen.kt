@@ -7,12 +7,10 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun TodoScreen(
-    onClick: (String) -> Unit
-){
+    navigateToTutorial: () -> Unit,
+    navigateToHistory: () -> Unit
+) {
     Column {
         Text(text = "TodoScreen")
-        Button(onClick = { onClick("Login") }) { Text("login") }
-        Button(onClick = { onClick("Setting") }) { Text("setting") }
-        Button(onClick = { onClick("Tutorial") }) { Text("tutorial") }
     }
 }

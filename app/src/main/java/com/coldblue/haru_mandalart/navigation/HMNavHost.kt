@@ -19,14 +19,16 @@ fun HMNavHost(
     val navController = appState.navController
     NavHost(
         navController = navController,
-        startDestination = HMDestination.TODO.titleTextId,
+        startDestination = HMDestination.LOGIN.titleTextId,
         modifier = modifier,
-    ){
+    ) {
+        loginScreen(navigateToTodo = { navController.navigate(route = HMDestination.TODO.titleTextId) })
+        todoScreen(
+            navigateToTutorial = { navController.navigate(route = HMDestination.TUTORIAL.titleTextId) },
+            navigateToHistory = { navController.navigate(route = HMDestination.HISTORY.titleTextId) })
+        tutorialScreen(navigateToManda = { navController.navigate(route = HMDestination.MANDA.titleTextId) })
         mandaScreen()
-        loginScreen()
+        historyScreen(navigateToSetting = { navController.navigate(route = HMDestination.SETTING.titleTextId) })
         settingScreen()
-        todoScreen(onClick = appState::navigationToDestination)
-        tutorialScreen()
-        historyScreen()
     }
 }

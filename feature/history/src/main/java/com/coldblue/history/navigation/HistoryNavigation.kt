@@ -11,8 +11,8 @@ fun NavController.navigateToHistory(navOptions: NavOptions){
     this.navigate(historyRoute, navOptions)
 }
 
-fun NavGraphBuilder.historyScreen(){
+fun NavGraphBuilder.historyScreen(navigateToSetting: () -> Unit){
     composable(route = historyRoute){
-        HistoryScreen()
+        HistoryScreen{navigateToSetting()}
     }
 }

@@ -5,14 +5,15 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.coldblue.database.entity.MandaEntity
+import com.coldblue.database.entity.TodoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoDao {
+    @Query("Select * From todo")
+    fun getTodoEntities(): Flow<List<TodoEntity>>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertTodoEntities(mandaEntity: List<MandaEntity>)
-    @Query("Select * From manda")
-    fun getTodoEntities(): Flow<List<MandaEntity>>
-    @Query("Delete From manda")
-    fun deleteTodoEntities()
+    suspend fun upsertTodoEntities(todoEntities: List<TodoEntity>)
+    @Query("Delete From todo")
+    suspend fun deleteTodoEntities()
 }

@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MandaDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertMandaEntities(mandaEntity: List<MandaEntity>)
     @Query("Select * From manda")
     fun getMandaEntities():  Flow<List<MandaEntity>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertMandaEntities(mandaEntities: List<MandaEntity>)
     @Query("Delete From manda")
-    fun deleteMandaEntities()
+    suspend fun deleteAllManda()
 }

@@ -7,10 +7,14 @@ import androidx.navigation.compose.composable
 import com.coldblue.todo.TodoScreen
 
 const val todoRoute = "Todo"
-fun NavController.navigateToTodo(navOptions: NavOptions){
+fun NavController.navigateToTodo(navOptions: NavOptions) {
     this.navigate(todoRoute, navOptions)
 }
 
-fun NavGraphBuilder.todoScreen(onClick: (String) -> Unit){
-    composable(route = todoRoute){ TodoScreen(onClick) }
+fun NavGraphBuilder.todoScreen(navigateToTutorial: () -> Unit, navigateToHistory: () -> Unit) {
+    composable(route = todoRoute) {
+        TodoScreen(
+            navigateToTutorial = { navigateToTutorial() },
+            navigateToHistory = { navigateToHistory() })
+    }
 }
