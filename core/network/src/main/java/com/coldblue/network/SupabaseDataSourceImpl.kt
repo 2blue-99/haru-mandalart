@@ -1,5 +1,6 @@
 package com.coldblue.network
 
+import android.util.Log
 import com.coldblue.network.model.MandaModel
 import com.coldblue.network.model.TodoModel
 import io.github.jan.supabase.SupabaseClient
@@ -13,7 +14,8 @@ import javax.inject.Inject
 class SupabaseDataSourceImpl @Inject constructor(
     private val client: SupabaseClient
 ) : SupabaseDataSource {
-    override val clientToken: String? = client.auth.currentAccessTokenOrNull()
+
+    override val clientToken: String? get() = client.auth.currentAccessTokenOrNull()
     override val composeAuth: ComposeAuth = client.composeAuth
 
     override suspend fun upsertTodoData(data: List<TodoModel>): List<Int> =

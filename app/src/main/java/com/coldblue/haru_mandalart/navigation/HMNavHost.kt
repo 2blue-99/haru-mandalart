@@ -19,7 +19,7 @@ fun HMNavHost(
     val navController = appState.navController
     NavHost(
         navController = navController,
-        startDestination = HMDestination.LOGIN.titleTextId,
+        startDestination = HMDestination.TODO.titleTextId,
         modifier = modifier,
     ) {
         loginScreen(navigateToTodo = { navController.navigate(route = HMDestination.TODO.titleTextId) })

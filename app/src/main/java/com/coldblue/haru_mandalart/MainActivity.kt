@@ -41,12 +41,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     BackOnPressed()
+
                     loginHelper.isLogin.collectAsStateWithLifecycle(true).value.let {
-                        Log.e("TAG", "token: $it", )
-                        if(it)
-                            HMApp()
-                        else
-                            LoginScreen()
+                        if(it) HMApp()
+                        else LoginScreen()
                     }
                 }
             }

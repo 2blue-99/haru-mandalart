@@ -21,7 +21,6 @@ class LoginViewModel @Inject constructor(
 //    val isLogin: StateFlow<Boolean> get() = _isLogin
 
     fun checkLoginState(result: NativeSignInResult){
-        Log.e("TAG", "checkLoginState: $result", )
         when(result){
             NativeSignInResult.Success -> updateToken()
             else -> {  }

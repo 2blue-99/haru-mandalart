@@ -1,5 +1,6 @@
 package com.coldblue.data.util
 
+import android.util.Log
 import com.coldblue.datastore.UserDataSource
 import com.coldblue.network.SupabaseDataSource
 import io.github.jan.supabase.SupabaseClient
@@ -14,7 +15,9 @@ class LoginHelperImpl @Inject constructor(
     private val supabaseDataSource: SupabaseDataSource
 ) : LoginHelper {
     override val isLogin: Flow<Boolean> =
-        userDataSource.token.map { it != "" }
+        userDataSource.token.map {
+            it != ""
+        }
 
     override val composeAuth: ComposeAuth =
         supabaseDataSource.composeAuth
