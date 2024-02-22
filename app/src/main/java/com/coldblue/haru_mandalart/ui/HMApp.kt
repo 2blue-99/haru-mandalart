@@ -57,12 +57,12 @@ fun HMBottomBar(
 ) {
     NavigationBar {
         destination.forEach { destination ->
-            val isSelected = checkCurrentLocation?.route == destination.titleTextId
+            val isSelected = checkCurrentLocation?.route == destination.titleText
             HMNavigationBarItem(
                 selected = isSelected,
-                onClick = { navigate(destination.titleTextId) },
+                onClick = { navigate(destination.titleText) },
                 icon = if (isSelected) destination.selectedIcon else destination.unSelectedIcon,
-                label = destination.titleTextId
+                label = destination.titleText
             )
         }
     }

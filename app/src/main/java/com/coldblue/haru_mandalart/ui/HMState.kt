@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.coldblue.data.navi.Route
 import com.coldblue.haru_mandalart.navigation.TopLevelDestination
 import com.coldblue.history.navigation.navigateToHistory
 import com.coldblue.login.navigation.navigateToLogin
@@ -40,9 +41,7 @@ class HMAppState(
     fun checkBottomNavBar(): Boolean {
         currentLocation.let {
             return when(it?.route){
-                TopLevelDestination.MANDA.titleTextId -> true
-                TopLevelDestination.TODO.titleTextId -> true
-                TopLevelDestination.HISTORY.titleTextId -> true
+                Route.todo, Route.manda, Route.history-> true
                 else -> false
             }
         }
@@ -52,7 +51,7 @@ class HMAppState(
     fun checkTopBar(): Boolean {
         currentLocation.let {
             return when(it?.route){
-                TopLevelDestination.SETTING.titleTextId -> true
+                Route.setting -> true
                 else -> false
             }
         }
@@ -60,7 +59,7 @@ class HMAppState(
 
     fun popBackStack(){ navController.popBackStack() }
 
-    fun navigationToDestination(name: String) {
+    fun navigationToDestination(route: String) {
         val navOptions = navOptions {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
@@ -68,13 +67,13 @@ class HMAppState(
             launchSingleTop = true
             restoreState = true
         }
-        when (name) {
-            TopLevelDestination.HISTORY.titleTextId -> navController.navigateToHistory(navOptions)
-            TopLevelDestination.LOGIN.titleTextId -> navController.navigateToLogin(navOptions)
-            TopLevelDestination.MANDA.titleTextId -> navController.navigateToManda(navOptions)
-            TopLevelDestination.SETTING.titleTextId -> navController.navigateToSetting(navOptions)
-            TopLevelDestination.TODO.titleTextId -> navController.navigateToTodo(navOptions)
-            TopLevelDestination.TUTORIAL.titleTextId -> navController.navigateToTutorial(navOptions)
+        when (route) {
+            Route.history -> navController.navigateToHistory(navOptions)
+            Route.login -> navController.navigateToLogin(navOptions)
+            Route.manda -> navController.navigateToManda(navOptions)
+            Route.setting -> navController.navigateToSetting(navOptions)
+            Route.todo -> navController.navigateToTodo(navOptions)
+            Route.tutorial -> navController.navigateToTutorial(navOptions)
         }
     }
 }

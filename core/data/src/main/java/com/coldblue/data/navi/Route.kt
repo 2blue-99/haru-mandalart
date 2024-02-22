@@ -1,8 +1,11 @@
-package com.coldblue.data.navires
+package com.coldblue.data.navi
 
-const val historyRoute = "History"
-const val loginRoute = "Login"
-const val mandaRoute = "Manda"
-const val settingRoute = "Setting"
-const val todoRoute = "Todo"
-const val tutorialRoute = "Tutorial"
+object Route {
+    const val history = "History"
+    const val login = "Login"
+    const val manda = "Manda"
+    const val setting = "Setting"
+    const val todo = "Todo"
+    const val tutorial = "Tutorial"
+}
+

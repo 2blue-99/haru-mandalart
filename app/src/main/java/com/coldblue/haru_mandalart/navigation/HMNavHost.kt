@@ -3,32 +3,40 @@ package com.coldblue.haru_mandalart.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.coldblue.data.navi.Route
 import com.coldblue.haru_mandalart.ui.HMAppState
 import com.coldblue.history.navigation.historyScreen
+import com.coldblue.history.navigation.navigateToHistory
 import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaScreen
+import com.coldblue.mandalart.navigation.navigateToManda
+import com.coldblue.setting.navigation.navigateToSetting
 import com.coldblue.setting.navigation.settingScreen
+import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.todoScreen
+import com.coldblue.tutorial.navigation.navigateToTutorial
 import com.coldblue.tutorial.navigation.tutorialScreen
 
 @Composable
 fun HMNavHost(
     modifier: Modifier,
-    appState: HMAppState
+    appState: HMAppState,
+    startDestination: String = Route.login
 ) {
     val navController = appState.navController
     NavHost(
         navController = navController,
-        startDestination = TopLevelDestination.LOGIN.titleTextId,
+        startDestination = startDestination,
         modifier = modifier,
     ) {
-        loginScreen(navigateToTodo = { navController.navigate(route = TopLevelDestination.TODO.titleTextId) })
+        loginScreen(navigateToTodo = navController::navigateToTodo)
         todoScreen(
-            navigateToTutorial = { navController.navigate(route = TopLevelDestination.TUTORIAL.titleTextId) },
-            navigateToHistory = { navController.navigate(route = TopLevelDestination.HISTORY.titleTextId) })
-        tutorialScreen(navigateToManda = { navController.navigate(route = TopLevelDestination.MANDA.titleTextId) })
+            navigateToTutorial = navController::navigateToTutorial,
+            navigateToHistory = navController::navigateToHistory
+        )
+        tutorialScreen(navigateToManda = navController::navigateToManda)
         mandaScreen()
-        historyScreen(navigateToSetting = { navController.navigate(route = TopLevelDestination.SETTING.titleTextId) })
+        historyScreen(navigateToSetting = navController::navigateToSetting)
         settingScreen()
     }
 }
