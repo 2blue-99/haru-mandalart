@@ -1,4 +1,4 @@
-package com.coldblue.domain.database.todo
+package com.coldblue.domain.todo
 
 import com.coldblue.data.repo.TodoRepo
 import com.coldblue.model.Manda

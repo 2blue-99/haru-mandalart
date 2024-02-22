@@ -2,7 +2,7 @@ package com.coldblue.data.repo
 
 import kotlinx.coroutines.flow.Flow
 
-interface UserPreferencesRepo {
+interface UserRepo {
     val token: Flow<String>
     val todoUpdateTime: Flow<String>
     val mandaUpdateTime: Flow<String>

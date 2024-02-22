@@ -12,25 +12,24 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserPreferencesDataSourceImpl @Inject constructor(
+class UserDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
-) : UserPreferencesDataSource {
-    private val authKey = stringPreferencesKey("auth") // Todo 데이터 명칭으로
+) : UserDataSource {
+    private val tokenKey = stringPreferencesKey("token")
     private val todoKey = stringPreferencesKey("todo")
     private val mandaKey = stringPreferencesKey("manda")
     private val tutorialKey = booleanPreferencesKey("tutorial")
     private val alarmKey = booleanPreferencesKey("alarm")
 
-    override val token: Flow<String> = dataStore.data.map { preferences -> preferences[authKey] ?: "" }
+    override val token: Flow<String> = dataStore.data.map { preferences -> preferences[tokenKey] ?: "" }
     override val todoUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[todoKey] ?: "0" }
     override val mandaUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[mandaKey] ?: "0" }
     override val isTutorial: Flow<Boolean> = dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
     override val isAlarm: Flow<Boolean> = dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
 
-    override suspend fun isUserLogin(): Boolean = token.first() != ""
-    override suspend fun updateToken(token: String) { // TODO Delete Token
+    override suspend fun updateToken(token: String) {
         dataStore.edit { preferences ->
-            preferences[authKey] = token
+            preferences[tokenKey] = token
         }
     }
     override suspend fun updateTodoTime(time: String) {

@@ -1,17 +1,16 @@
 package com.coldblue.login
 
 import android.util.Log
-import android.util.LogPrinter
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.domain.database.manda.DeleteAllMandaUseCase
-import com.coldblue.domain.database.manda.GetMandaUseCase
-import com.coldblue.domain.database.manda.InsertMandaUseCase
-import com.coldblue.domain.database.todo.DeleteTodoUseCase
-import com.coldblue.domain.database.todo.GetTodoUseCase
-import com.coldblue.domain.database.todo.InsertTodoUseCase
-import com.coldblue.domain.datastore.GetUserTokenUseCase
-import com.coldblue.domain.datastore.UpdateUserTokenUseCase
+import com.coldblue.domain.manda.DeleteAllMandaUseCase
+import com.coldblue.domain.manda.GetMandaUseCase
+import com.coldblue.domain.manda.InsertMandaUseCase
+import com.coldblue.domain.todo.DeleteTodoUseCase
+import com.coldblue.domain.todo.GetTodoUseCase
+import com.coldblue.domain.todo.InsertTodoUseCase
+import com.coldblue.domain.user.GetUserTokenUseCase
+import com.coldblue.domain.user.UpdateUserTokenUseCase
 import com.coldblue.model.Manda
 import com.coldblue.model.Todo
 import dagger.hilt.android.lifecycle.HiltViewModel

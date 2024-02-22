@@ -10,8 +10,8 @@ data class TodoGroupEntity(
     val id: Int,
     @ColumnInfo(name = "origin_id")
     val originId: Int,
-    @ColumnInfo(name = "harumanda_id")
-    val harumandaId: Int,
+    @ColumnInfo(name = "haru_manda_id")
+    val haruMandaId: Int,
     @ColumnInfo(name = "is_sync")
     val isSync: Boolean,
     @ColumnInfo(name = "is_del")

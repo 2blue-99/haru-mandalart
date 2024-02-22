@@ -1,5 +1,7 @@
 package com.coldblue.data.util
 
+import kotlinx.coroutines.flow.Flow
+
 interface LoginHelper {
-    suspend fun getUserLoginState(): Boolean
+    val isLogin: Flow<Boolean>
 }

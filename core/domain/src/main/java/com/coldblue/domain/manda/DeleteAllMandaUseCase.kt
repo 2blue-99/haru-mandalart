@@ -1,4 +1,4 @@
-package com.coldblue.domain.database.manda
+package com.coldblue.domain.manda
 
 import com.coldblue.data.repo.MandaRepo
 import com.coldblue.model.Manda

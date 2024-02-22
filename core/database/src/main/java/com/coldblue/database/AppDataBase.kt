@@ -2,6 +2,9 @@ package com.coldblue.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+import com.coldblue.database.convert.LocalDateConvert
 import com.coldblue.database.dao.CurrentGroupDao
 import com.coldblue.database.dao.HaruMandaDao
 import com.coldblue.database.dao.MandaDao
@@ -30,6 +33,8 @@ import com.coldblue.database.entity.TodoGroupHaruMandaRelationEntity
     version = 1,
     exportSchema = false
 )
+
+@TypeConverters(LocalDateConvert::class)
 abstract class AppDataBase: RoomDatabase() {
     abstract fun currentGroupDao(): CurrentGroupDao
     abstract fun haruMandaDao(): HaruMandaDao

@@ -1,7 +1,7 @@
 package com.coldblue.datastore.di
 
-import com.coldblue.datastore.UserPreferencesDataSource
-import com.coldblue.datastore.UserPreferencesDataSourceImpl
+import com.coldblue.datastore.UserDataSource
+import com.coldblue.datastore.UserDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,6 +12,6 @@ import dagger.hilt.components.SingletonComponent
 interface DataSourceModule {
     @Binds
     fun bindUserPreferencesRepo(
-        userPreferencesDataStore: UserPreferencesDataSourceImpl
-    ): UserPreferencesDataSource
+        userPreferencesDataStore: UserDataSourceImpl
+    ): UserDataSource
 }
