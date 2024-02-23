@@ -21,7 +21,7 @@ import com.coldblue.tutorial.navigation.tutorialScreen
 fun HMNavHost(
     modifier: Modifier,
     appState: HMAppState,
-    startDestination: String = Route.login
+    startDestination: String = Route.todo
 ) {
     val navController = appState.navController
     NavHost(

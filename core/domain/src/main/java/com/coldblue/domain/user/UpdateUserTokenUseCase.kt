@@ -6,7 +6,7 @@ import javax.inject.Inject
 class UpdateUserTokenUseCase @Inject constructor(
     private val userRepo: UserRepo
 ) {
-    suspend operator fun invoke(){
-        userRepo.updateToken()
+    suspend operator fun invoke(token: String){
+        userRepo.updateToken(token)
     }
 }
