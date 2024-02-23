@@ -4,15 +4,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.coldblue.data.navi.Route
 import com.coldblue.history.HistoryScreen
 
-const val historyRoute = "History"
-fun NavController.navigateToHistory(navOptions: NavOptions){
-    this.navigate(historyRoute, navOptions)
+fun NavController.navigateToHistory(navOptions: NavOptions? = null){
+    this.navigate(Route.history, navOptions)
 }
 
 fun NavGraphBuilder.historyScreen(navigateToSetting: () -> Unit){
-    composable(route = historyRoute){
+    composable(route = Route.history){
         HistoryScreen{navigateToSetting()}
     }
 }

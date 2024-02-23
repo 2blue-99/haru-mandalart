@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
@@ -16,7 +17,7 @@ import androidx.compose.ui.unit.dp
 fun RowScope.HMNavigationBarItem(
     selected: Boolean,
     onClick: () -> Unit,
-    icon: Int,
+    icon: ImageVector,
     label: String
 ){
     NavigationBarItem(
@@ -25,7 +26,7 @@ fun RowScope.HMNavigationBarItem(
         icon = {
             Icon(
                 modifier = Modifier.size(30.dp),
-                painter = painterResource(id = icon),
+                imageVector = icon,
                 contentDescription = null
             )
         },
