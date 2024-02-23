@@ -27,7 +27,7 @@ fun HMNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier,
+        modifier = modifier
     ) {
         loginScreen(navigateToTodo = navController::navigateToTodo)
         todoScreen(

@@ -14,11 +14,13 @@ android {
 
 dependencies {
 
-    implementation(libs.supabase.gotrue)
     implementation(libs.ktor.client.cio)
+
+    implementation(libs.supabase.gotrue)
     implementation(libs.supabase.compose.auth)
     implementation(libs.supabase.postgrest)
     implementation(libs.supabase.compose.auth.ui)
+
     implementation(libs.kotlinx.serialization.json)
 
     implementation(project(":core:model"))

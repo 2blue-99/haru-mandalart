@@ -1,11 +1,16 @@
 package com.coldblue.data.repo
 
+import android.util.Log
 import com.coldblue.datastore.UserDataSource
+import com.coldblue.network.SupabaseDataSource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class UserRepoImpl @Inject constructor(
-    private val userDataSource: UserDataSource
+    private val userDataSource: UserDataSource,
+    private val supabaseDataSource: SupabaseDataSource
 ): UserRepo {
     override val token: Flow<String>
         get() = userDataSource.token
@@ -18,8 +23,9 @@ class UserRepoImpl @Inject constructor(
     override val isAlarm: Flow<Boolean>
         get() = userDataSource.isAlarm
 
-    override suspend fun updateToken(token: String) {
-        userDataSource.updateToken(token)
+    override suspend fun updateToken() {
+        val clientToken = supabaseDataSource.clientToken ?: ""
+        userDataSource.updateToken(clientToken)
     }
 
     override suspend fun updateTodoTime(time: String) {

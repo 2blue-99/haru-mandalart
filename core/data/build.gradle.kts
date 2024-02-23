@@ -21,4 +21,5 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.hilt.ext.work)
     implementation(libs.androidx.work.ktx)
+    implementation(libs.supabase.compose.auth)
 }
