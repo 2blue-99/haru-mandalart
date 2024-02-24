@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.util.LoginHelper
+import com.coldblue.data.util.LoginState
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.login.LoginScreen
@@ -42,9 +43,12 @@ class MainActivity : ComponentActivity() {
                 ) {
                     BackOnPressed()
 
-                    loginHelper.isLogin.collectAsStateWithLifecycle(true).value.let {
-                        if(it) HMApp()
-                        else LoginScreen()
+                    loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
+                        when(it){
+                            LoginState.Logout -> LoginScreen()
+                            LoginState.Login -> HMApp()
+                            else -> {}
+                        }
                     }
                 }
             }
@@ -58,7 +62,7 @@ class MainActivity : ComponentActivity() {
         var backPressedTime = 0L
 
         BackHandler(enabled = backPressedState) {
-            if (System.currentTimeMillis() - backPressedTime <= 400L) {
+            if (System.currentTimeMillis() - backPressedTime <= 1000L) {
 
                 (context as Activity).finish()
             } else {
