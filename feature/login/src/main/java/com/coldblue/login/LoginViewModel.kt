@@ -3,9 +3,10 @@ package com.coldblue.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.data.util.LoginHelper
-import com.coldblue.data.util.LoginState
 import com.coldblue.domain.user.UpdateUserTokenUseCase
-import com.coldblue.login.state.UiState
+import com.coldblue.login.exception.exceptionHandler
+import com.coldblue.login.state.LoginExceptionState
+import com.coldblue.login.state.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
@@ -20,17 +21,24 @@ class LoginViewModel @Inject constructor(
     private val loginHelper: LoginHelper
 ): ViewModel() {
 
-    private val _loginState = MutableStateFlow(UiState.None)
-    val loginState: StateFlow<UiState> get() = _loginState
+    private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.None)
+    val loginState: StateFlow<LoginUiState> get() = _loginState
 
     fun getComposeAuth(): ComposeAuth = loginHelper.getComposeAuth()
     fun checkLoginState(result: NativeSignInResult){
         when(result){
-            NativeSignInResult.Success -> {
+            is NativeSignInResult.Success -> {
+                _loginState.value = LoginUiState.Success
                 updateToken()
-                _loginState.value = UiState.Success
             }
-            else -> _loginState.value = UiState.Fail
+            is NativeSignInResult.Error -> {
+                when(result.message.exceptionHandler()){
+                    is LoginExceptionState.Waiting -> _loginState.value = LoginUiState.Fail(LoginExceptionState.Waiting())
+                    is LoginExceptionState.Unknown -> _loginState.value = LoginUiState.Fail(LoginExceptionState.Unknown(result.message))
+                    else -> {}
+                }
+            }
+            else -> {}
         }
     }
     private fun updateToken(){
