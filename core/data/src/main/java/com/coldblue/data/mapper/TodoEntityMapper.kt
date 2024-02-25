@@ -7,11 +7,16 @@ object TodoEntityMapper : EntityMapper<Todo, TodoEntity> {
 
     override fun asEntity(domain: Todo): TodoEntity {
         return TodoEntity(
-            time = domain.time,
-            todoGroupId = domain.todoGroupId,
-            date = domain.date,
-            content = domain.content,
             title = domain.title,
+            content = domain.content,
+            isDone = domain.isDone,
+            time = domain.time,
+            date = domain.date,
+            todoGroupId = domain.todoGroupId,
+            originId = domain.originId,
+            isSync = domain.isSync,
+            isDel = domain.isDel,
+            updateTime = domain.updateTime,
             id = domain.id,
         )
     }
@@ -24,11 +29,16 @@ object TodoEntityMapper : EntityMapper<Todo, TodoEntity> {
 
     override fun asDomain(entity: TodoEntity): Todo {
         return Todo(
-            time = entity.time,
-            todoGroupId = entity.todoGroupId,
-            date = entity.date,
-            content = entity.content,
             title = entity.title,
+            content = entity.content,
+            isDone = entity.isDone,
+            time = entity.time,
+            date = entity.date,
+            todoGroupId = entity.todoGroupId,
+            originId = entity.originId,
+            isSync = entity.isSync,
+            isDel = entity.isDel,
+            updateTime = entity.updateTime,
             id = entity.id,
         )
     }
