@@ -6,15 +6,15 @@ import androidx.room.TypeConverters
 import com.coldblue.database.convert.LocalDateConvert
 import com.coldblue.database.dao.CurrentGroupDao
 import com.coldblue.database.dao.HaruMandaDao
-import com.coldblue.database.dao.MandaDao
+import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.database.dao.TodoGroupDao
 import com.coldblue.database.dao.TodoGroupHaruMandaRelationDao
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.HaruMandaEntity
-import com.coldblue.database.entity.DetailMandaEntity
-import com.coldblue.database.entity.KeyMandaEntity
+import com.coldblue.database.entity.MandaDetailEntity
+import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.database.entity.TodoGroupHaruMandaRelationEntity
@@ -23,8 +23,8 @@ import com.coldblue.database.entity.TodoGroupHaruMandaRelationEntity
     entities = [
         CurrentGroupEntity::class,
         HaruMandaEntity::class,
-        KeyMandaEntity::class,
-        DetailMandaEntity::class,
+        MandaKeyEntity::class,
+        MandaDetailEntity::class,
         TodoEntity::class,
         TodoGroupEntity::class,
         TodoGroupHaruMandaRelationEntity::class
@@ -37,7 +37,7 @@ import com.coldblue.database.entity.TodoGroupHaruMandaRelationEntity
 abstract class AppDataBase: RoomDatabase() {
     abstract fun currentGroupDao(): CurrentGroupDao
     abstract fun haruMandaDao(): HaruMandaDao
-    abstract fun mandaDao(): MandaDao
+    abstract fun mandaDao(): MandaKeyDao
     abstract fun mandaDetailDao(): MandaDetailDao
     abstract fun todoDao(): TodoDao
     abstract fun todoGroupDao(): TodoGroupDao

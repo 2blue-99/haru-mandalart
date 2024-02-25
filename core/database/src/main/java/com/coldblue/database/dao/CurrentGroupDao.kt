@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.coldblue.database.entity.CurrentGroupEntity
-import com.coldblue.database.entity.MandaEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

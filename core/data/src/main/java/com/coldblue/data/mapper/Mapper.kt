@@ -1,14 +1,14 @@
 package com.coldblue.data.mapper
 
-import com.coldblue.database.entity.MandaEntity
+import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.database.entity.TodoEntity
-import com.coldblue.model.Manda
+import com.coldblue.model.KeyManda
 import com.coldblue.model.Todo
 
 object Mapper {
-    fun MandaEntity.asManda(): Manda = Manda(id, isSync, isDel, updateTime, name, color)
+    fun MandaKeyEntity.asManda(): KeyManda = KeyManda(id, isSync, isDel, updateTime, name, colorIndex)
 
-    fun Manda.asMandaEntity(): MandaEntity = MandaEntity(id, isSync, isDel, updateTime, name, color)
+    fun KeyManda.asMandaEntity(): MandaKeyEntity = MandaKeyEntity(id, isSync, isDel, updateTime, name, color)
 
     fun TodoEntity.asTodo(): Todo = Todo(id, originId, haruMandaId, isSync, isDel, updateTime, title, content, time)
 
