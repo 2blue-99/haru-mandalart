@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import com.coldblue.data.navi.Route
 import com.coldblue.haru_mandalart.ui.HMAppState
 import com.coldblue.history.navigation.historyScreen
-import com.coldblue.history.navigation.navigateToHistory
 import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaScreen
 import com.coldblue.mandalart.navigation.navigateToManda
@@ -14,7 +13,6 @@ import com.coldblue.setting.navigation.navigateToSetting
 import com.coldblue.setting.navigation.settingScreen
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.todoScreen
-import com.coldblue.tutorial.navigation.navigateToTutorial
 import com.coldblue.tutorial.navigation.tutorialScreen
 
 @Composable
@@ -30,10 +28,7 @@ fun HMNavHost(
         modifier = modifier
     ) {
         loginScreen(navigateToTodo = navController::navigateToTodo)
-        todoScreen(
-            navigateToTutorial = navController::navigateToTutorial,
-            navigateToHistory = navController::navigateToHistory
-        )
+        todoScreen()
         tutorialScreen(navigateToManda = navController::navigateToManda)
         mandaScreen()
         historyScreen(navigateToSetting = navController::navigateToSetting)

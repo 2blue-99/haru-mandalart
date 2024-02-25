@@ -11,10 +11,7 @@ fun NavController.navigateToTodo(navOptions: NavOptions? = null) {
     this.navigate(Route.todo, navOptions)
 }
 
-fun NavGraphBuilder.todoScreen(navigateToTutorial: () -> Unit, navigateToHistory: () -> Unit) {
+fun NavGraphBuilder.todoScreen() {
     composable(route = Route.todo) {
-        TodoScreen(
-            navigateToTutorial = { navigateToTutorial() },
-            navigateToHistory = { navigateToHistory() })
-    }
+        TodoScreen( )}
 }
