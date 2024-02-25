@@ -2,8 +2,8 @@ package com.coldblue.mandalart
 
 import androidx.lifecycle.ViewModel
 import com.coldblue.mandalart.state.MandaUIState
-import com.coldblue.model.DetailManda
-import com.coldblue.model.KeyManda
+import com.coldblue.model.MandaDetail
+import com.coldblue.model.MandaKey
 import kotlinx.coroutines.flow.StateFlow
 
 class MandaViewModel: ViewModel() {
@@ -13,32 +13,32 @@ class MandaViewModel: ViewModel() {
         // TODO 2. MandaUIState 만든 후 방출
 
 
-    fun insertFinalManda(manda: KeyManda){
+    fun insertFinalManda(manda: MandaKey){
 
     }
-    fun updateFinalManda(manda: KeyManda){
-
-    }
-
-
-    fun insertKeyManda(manda: KeyManda){
-
-    }
-    fun updateKeyManda(manda: KeyManda){
-
-    }
-    fun deleteKeyManda(manda: KeyManda){
+    fun updateFinalManda(manda: MandaKey){
 
     }
 
 
-    fun insertDetailManda(manda: DetailManda){
+    fun insertKeyManda(manda: MandaKey){
 
     }
-    fun updateDetailManda(manda: DetailManda){
+    fun updateKeyManda(manda: MandaKey){
 
     }
-    fun deleteDetailManda(manda: DetailManda){
+    fun deleteKeyManda(manda: MandaKey){
+
+    }
+
+
+    fun insertDetailManda(manda: MandaDetail){
+
+    }
+    fun updateDetailManda(manda: MandaDetail){
+
+    }
+    fun deleteDetailManda(manda: MandaDetail){
 
     }
 }

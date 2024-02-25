@@ -1,8 +1,8 @@
 package com.coldblue.model
 
-data class BottomSheetManda (
+data class MandaDetail (
+    val mandaId: Int,
     val name: String,
-    val colorIndex: Int,
     val isDone: Boolean,
     val id: Int = 0
 )

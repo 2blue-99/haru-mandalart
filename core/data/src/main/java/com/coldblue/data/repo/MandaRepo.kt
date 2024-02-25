@@ -1,10 +1,11 @@
 package com.coldblue.data.repo
 
-import com.coldblue.model.KeyManda
+import com.coldblue.model.MandaDetail
+import com.coldblue.model.MandaKey
 import kotlinx.coroutines.flow.Flow
 
 interface MandaRepo {
-    fun getMandaRepo(): Flow<List<KeyManda>>
-    suspend fun upsertMandaRepo(keyMandaEntities: List<KeyManda>)
-    suspend fun deleteAllMandaRepo(keyMandaEntity: KeyManda)
+    suspend fun getAllMandaRepository(): Flow<MandaDetail>
+    suspend fun upsertKeyMandaRepository(mandaKeys: List<MandaKey>)
+    suspend fun upsertDetailMandaRepository(mandaDetails: List<MandaDetail>)
 }

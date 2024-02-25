@@ -1,8 +1,8 @@
 package com.coldblue.mandalart.state
 
-import com.coldblue.model.DetailManda
-import com.coldblue.model.KeyManda
-import com.coldblue.model.Tag
+import com.coldblue.model.MandaDetail
+import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTag
 
 sealed interface MandaUIState {
     data object Loading : MandaUIState
@@ -11,12 +11,12 @@ sealed interface MandaUIState {
 }
 
 sealed interface SuccessType {
-    data class FinalMandaSuccess(val tags: Tag) : SuccessType
+    data class FinalMandaSuccess(val tags: MandaTag) : SuccessType
     data class MandaSuccess(
         val keyMandaCnt: Int,
         val detailMandaCnt: Int,
         val donePercentage: Int,
-        val keys: List<KeyManda>,
-        val details: List<DetailManda>
+        val keys: List<MandaKey>,
+        val details: List<MandaDetail>
     ) : SuccessType
 }

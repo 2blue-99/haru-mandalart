@@ -1,9 +1,6 @@
 package com.coldblue.mandalart.state
 
-import com.coldblue.model.BottomSheetManda
-import com.coldblue.model.DetailManda
-import com.coldblue.model.KeyManda
-import com.coldblue.model.Tag
+import com.coldblue.model.MandaBottomSheet
 
 sealed interface BottomSheetUIState {
     data object Down : BottomSheetUIState
@@ -11,7 +8,7 @@ sealed interface BottomSheetUIState {
 }
 
 sealed interface BottomSheetMandaUiState {
-    val bottomSheetManda: BottomSheetManda
-    data class Default(override val bottomSheetManda: BottomSheetManda = BottomSheetManda("",0,false)) : BottomSheetMandaUiState
-    data class Exist(override val bottomSheetManda: BottomSheetManda) : BottomSheetMandaUiState
+    val mandaBottomSheet: MandaBottomSheet
+    data class Default(override val mandaBottomSheet: MandaBottomSheet = MandaBottomSheet("",0,false)) : BottomSheetMandaUiState
+    data class Exist(override val mandaBottomSheet: MandaBottomSheet) : BottomSheetMandaUiState
 }

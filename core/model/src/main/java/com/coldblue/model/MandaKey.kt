@@ -1,8 +1,8 @@
 package com.coldblue.model
 
-data class DetailManda (
-    val mandaId: Int,
+data class MandaKey (
     val name: String,
-    val isDone: Int,
+    val colorIndex: Int,
     val id: Int = 0
 )
+
