@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MandaKeyDao {
     @Query("Select * From manda_key")
-    fun getMandaKeyEntities(): Flow<List<MandaKeyEntity>>
+    fun getMandaKeys(): Flow<List<MandaKeyEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertMandaKeyEntities(mandaEntities: List<MandaKeyEntity>)
+    suspend fun upsertMandaKeys(mandaEntities: List<MandaKeyEntity>)
 }
