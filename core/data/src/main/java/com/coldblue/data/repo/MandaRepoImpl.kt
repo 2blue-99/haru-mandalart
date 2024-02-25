@@ -21,8 +21,8 @@ class MandaRepoImpl @Inject constructor(
         mandaKeyDao.getMandaKeys()
             .combine(mandaDetailDao.getMandaDetails()) { mandaKeys, mandaDetails ->
                 MandaCombine(
-                    mandaKeys = mandaKeys.map { it.asMandaKeyModel() },
-                    mandaDetails = mandaDetails.map { it.asMandaDetailModel() })
+                    mandaKeys = mandaKeys.filter { !it.isDel }.map { it.asMandaKeyModel() },
+                    mandaDetails = mandaDetails.filter { !it.isDel }.map { it.asMandaDetailModel() })
             }
 
     override suspend fun upsertMandaKeysRepository(mandaKeys: List<MandaKey>) {
