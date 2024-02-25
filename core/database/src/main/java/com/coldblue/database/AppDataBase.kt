@@ -2,7 +2,6 @@ package com.coldblue.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.coldblue.database.convert.LocalDateConvert
 import com.coldblue.database.dao.CurrentGroupDao
@@ -14,8 +13,8 @@ import com.coldblue.database.dao.TodoGroupDao
 import com.coldblue.database.dao.TodoGroupHaruMandaRelationDao
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.HaruMandaEntity
-import com.coldblue.database.entity.MandaDetailEntity
-import com.coldblue.database.entity.MandaEntity
+import com.coldblue.database.entity.DetailMandaEntity
+import com.coldblue.database.entity.KeyMandaEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.database.entity.TodoGroupHaruMandaRelationEntity
@@ -24,8 +23,8 @@ import com.coldblue.database.entity.TodoGroupHaruMandaRelationEntity
     entities = [
         CurrentGroupEntity::class,
         HaruMandaEntity::class,
-        MandaEntity::class,
-        MandaDetailEntity::class,
+        KeyMandaEntity::class,
+        DetailMandaEntity::class,
         TodoEntity::class,
         TodoGroupEntity::class,
         TodoGroupHaruMandaRelationEntity::class
