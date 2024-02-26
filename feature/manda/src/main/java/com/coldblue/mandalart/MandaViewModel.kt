@@ -7,6 +7,7 @@ import com.coldblue.domain.manda.GetKeyMandaUseCase
 import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
+import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
@@ -25,13 +26,14 @@ import kotlin.math.roundToInt
 @HiltViewModel
 class MandaViewModel @Inject constructor(
     private val getMandaInitStateUseCase: GetMandaInitStateUseCase,
+    private val updateMandaInitStateUseCase: UpdateMandaInitStateUseCase,
+
     private val getKeyMandaUseCase: GetKeyMandaUseCase,
     private val upsertMandaKeyUseCase: UpsertMandaKeyUseCase,
+
     private val getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
 ) : ViewModel() {
-
-
 
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
@@ -73,6 +75,12 @@ class MandaViewModel @Inject constructor(
     fun upsertMandaDetail(data: MandaDetail) {
         viewModelScope.launch {
             upsertMandaDetailUseCase(data)
+        }
+    }
+
+    fun updateMandaInitState(state: Boolean){
+        viewModelScope.launch {
+            updateMandaInitStateUseCase(state)
         }
     }
 }

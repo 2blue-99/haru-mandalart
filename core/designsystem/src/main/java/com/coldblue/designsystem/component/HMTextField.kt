@@ -2,7 +2,6 @@ package com.coldblue.designsystem.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -17,24 +16,23 @@ import com.coldblue.designsystem.theme.HMColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HMEditText(
-    text: String = ""
+fun HMTextField(
+    text: String = "",
+    onChangeText: (String) -> Unit
 ) {
-    var inputText by remember { mutableStateOf(text) }
     TextField(
         modifier = Modifier.fillMaxWidth(),
-        value = inputText,
-        onValueChange = { inputText = it },
+        value = text,
+        onValueChange = { onChangeText(it) },
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = HMColor.Primary,
             containerColor = Color.Transparent
         ),
     )
-
 }
 
 @Preview
 @Composable
 fun Preview() {
-    HMEditText()
+    HMTextField{}
 }
