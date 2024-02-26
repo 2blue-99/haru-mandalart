@@ -7,7 +7,7 @@ import com.coldblue.model.MandaTag
 sealed interface MandaUIState {
     data object Loading : MandaUIState
     data class Error(val msg: String) : MandaUIState
-    data class UnInitializedSuccess(val tags: MandaTag) : MandaUIState
+    data class UnInitializedSuccess(val tags: List<MandaTag>) : MandaUIState
     data class InitializedSuccess(
         val keyMandaCnt: Int,
         val detailMandaCnt: Int,

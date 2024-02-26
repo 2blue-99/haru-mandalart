@@ -1,12 +1,12 @@
 package com.coldblue.domain.user
 
-import com.coldblue.data.repo.UserRepo
+import com.coldblue.data.repo.UserRepository
 import javax.inject.Inject
 
 class UpdateMandaInitStateUseCase @Inject constructor(
-    private val userRepo: UserRepo
+    private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(token: Boolean){
-        userRepo.updateInit(token)
+        userRepository.updateInit(token)
     }
 }
