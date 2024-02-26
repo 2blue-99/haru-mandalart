@@ -1,19 +1,21 @@
 package com.coldblue.todo
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,9 +23,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -33,8 +34,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -164,6 +168,9 @@ fun HaruManda(
     ) {
         items(currentGroupList) { group ->
             OutlinedButton(
+                contentPadding = PaddingValues(
+                    12.dp
+                ),
                 enabled = group !is CurrentGroupState.Center,
                 modifier = Modifier
                     .fillMaxSize()
@@ -187,26 +194,75 @@ fun HaruManda(
                             tint = HMColor.Primary
                         )
                     }
+
                     is CurrentGroupState.Center -> {
-                        Column {
-                            Text(text = group.doneTodo)
-                            Text(text = group.totTodo)
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Column(modifier = Modifier.fillMaxSize(), Arrangement.SpaceBetween) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = group.doneTodo,
+                                    style = HmStyle.headline,
+                                    color = HMColor.Background
+                                )
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End,
+                                    text = group.totTodo,
+                                    style = HmStyle.headline,
+                                    color = HMColor.Background
+                                )
+                            }
+                            Canvas(modifier = Modifier.fillMaxSize()) {
+                                val startX = size.width * 0.1f
+                                val startY = size.height * 0.95f
+                                val endX = size.width * 0.9f
+                                val endY = size.height * 0.05f
+                                drawLine(
+                                    color = HMColor.Background,
+                                    start = Offset(startX, startY),
+                                    end = Offset(endX, endY),
+                                    strokeWidth = 3f,
+                                )
+                            }
+
                         }
                     }
+
                     is CurrentGroupState.Doing -> {
-                        Column {
-                            Text(text = group.name)
-                            Text(text = group.leftTodo)
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Column(modifier = Modifier.fillMaxSize(), Arrangement.SpaceBetween) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = group.name,
+                                    style = HmStyle.content,
+                                    color = HMColor.Primary
+                                )
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End,
+                                    text = group.leftTodo,
+                                    style = HmStyle.content,
+                                    color = HMColor.Primary
+                                )
+                            }
                         }
+
                     }
+
                     is CurrentGroupState.Done -> {
-                        Column {
-                            Text(text = group.name)
-                            Icon(
-                                imageVector = IconPack.Check,
-                                contentDescription = null,
-                                tint = HMColor.Background
-                            )
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Column(modifier = Modifier.fillMaxSize(), Arrangement.SpaceBetween) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = group.name,
+                                    style = HmStyle.content,
+                                    color = HMColor.Background
+                                )
+                                Icon(
+                                    modifier = Modifier.fillMaxWidth().wrapContentWidth(align = Alignment.End),
+                                    imageVector = IconPack.Check,
+                                    contentDescription = null,
+                                    tint = HMColor.Background
+                                )
+                            }
                         }
                     }
                 }
@@ -258,7 +314,9 @@ fun TodoContentPreView() {
         {},
         {},
         {},
-        List<CurrentGroupState>(9) { CurrentGroupState.Empty() },
+        List<CurrentGroupState>(9) { CurrentGroupState.Done("안드로이드", CurrentGroup(1)) },
+//        List<CurrentGroupState>(9) { CurrentGroupState.Doing("안드로이드이", "4", CurrentGroup(1)) },
+//        List<CurrentGroupState>(9) { CurrentGroupState.Center("4", "11", ) },
         listOf(
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드"),
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", time = "오전 11:35"),
