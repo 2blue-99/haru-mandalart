@@ -13,5 +13,6 @@ data class Todo(
     val updateTime: String = LocalDate.now().toString(),
     val originId: Int = 0,
     val todoGroupId: Int? = null,
+    val groupName: String = "",
     val id: Int = 0,
 )

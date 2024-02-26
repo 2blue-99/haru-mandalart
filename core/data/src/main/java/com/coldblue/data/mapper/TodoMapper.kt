@@ -1,11 +1,15 @@
 package com.coldblue.data.mapper
 
+import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.TodoEntity
+import com.coldblue.database.entity.TodoGroupEntity
+import com.coldblue.database.entity.TodoWithGroupName
+import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 
-object TodoEntityMapper : EntityMapper<Todo, TodoEntity> {
+object TodoEntityMapper {
 
-    override fun asEntity(domain: Todo): TodoEntity {
+    fun asEntity(domain: Todo): TodoEntity {
         return TodoEntity(
             title = domain.title,
             content = domain.content,
@@ -27,23 +31,24 @@ object TodoEntityMapper : EntityMapper<Todo, TodoEntity> {
         }
     }
 
-    override fun asDomain(entity: TodoEntity): Todo {
+    fun asDomain(entity: TodoWithGroupName): Todo {
         return Todo(
-            title = entity.title,
-            content = entity.content,
-            isDone = entity.isDone,
-            time = entity.time,
-            date = entity.date,
-            todoGroupId = entity.todoGroupId,
-            originId = entity.originId,
-            isSync = entity.isSync,
-            isDel = entity.isDel,
-            updateTime = entity.updateTime,
-            id = entity.id,
-        )
+            title = entity.todo.title,
+            content = entity.todo.content,
+            isDone = entity.todo.isDone,
+            time = entity.todo.time,
+            date = entity.todo.date,
+            todoGroupId = entity.todo.todoGroupId,
+            originId = entity.todo.originId,
+            isSync = entity.todo.isSync,
+            isDel = entity.todo.isDel,
+            updateTime = entity.todo.updateTime,
+            groupName = entity.groupName,
+            id = entity.todo.id,
+            )
     }
 
-    fun asDomain(entity: List<TodoEntity>): List<Todo> {
+    fun asDomain(entity: List<TodoWithGroupName>): List<Todo> {
         return entity.map { todoEntity ->
             todoEntity.asDomain()
         }
@@ -58,10 +63,10 @@ fun Todo.asEntity(): TodoEntity {
     return TodoEntityMapper.asEntity(this)
 }
 
-fun List<TodoEntity>.asDomain(): List<Todo> {
+fun List<TodoWithGroupName>.asDomain(): List<Todo> {
     return TodoEntityMapper.asDomain(this)
 }
 
-fun TodoEntity.asDomain(): Todo {
+fun TodoWithGroupName.asDomain(): Todo {
     return TodoEntityMapper.asDomain(this)
 }

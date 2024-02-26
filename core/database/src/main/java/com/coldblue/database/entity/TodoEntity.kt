@@ -1,6 +1,7 @@
 package com.coldblue.database.entity
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -21,3 +22,8 @@ data class TodoEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
     )
+
+data class TodoWithGroupName(
+    @Embedded val todo: TodoEntity,
+    @ColumnInfo(name = "groupName") val groupName: String
+)
