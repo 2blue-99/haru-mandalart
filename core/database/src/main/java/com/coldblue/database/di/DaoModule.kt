@@ -2,12 +2,10 @@ package com.coldblue.database.di
 
 import com.coldblue.database.AppDataBase
 import com.coldblue.database.dao.CurrentGroupDao
-import com.coldblue.database.dao.HaruMandaDao
-import com.coldblue.database.dao.MandaKeyDao
+import com.coldblue.database.dao.MandaDao
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.database.dao.TodoGroupDao
-import com.coldblue.database.dao.TodoGroupHaruMandaRelationDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,13 +19,10 @@ object DaoModule {
     @Provides
     fun provideCurrentGroupDao(dataBase: AppDataBase): CurrentGroupDao =
         dataBase.currentGroupDao()
+
     @Singleton
     @Provides
-    fun provideHaruMandaDao(dataBase: AppDataBase): HaruMandaDao =
-        dataBase.haruMandaDao()
-    @Singleton
-    @Provides
-    fun provideMandaDao(dataBase: AppDataBase): MandaKeyDao =
+    fun provideMandaDao(dataBase: AppDataBase): MandaDao =
         dataBase.mandaDao()
     @Singleton
     @Provides
@@ -41,8 +36,5 @@ object DaoModule {
     @Provides
     fun provideTodoGroupDao(dataBase: AppDataBase): TodoGroupDao =
         dataBase.todoGroupDao()
-    @Singleton
-    @Provides
-    fun provideTodoGroupHaruMandaRelationDao(dataBase: AppDataBase): TodoGroupHaruMandaRelationDao =
-        dataBase.todoGroupHaruMandaRelationDao()
+
 }
