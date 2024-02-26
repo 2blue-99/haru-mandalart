@@ -10,17 +10,13 @@ import javax.inject.Inject
 
 class UserRepoImpl @Inject constructor(
     private val userDataSource: UserDataSource,
-): UserRepo {
-    override val token: Flow<String>
-        get() = userDataSource.token
-    override val todoUpdateTime: Flow<String>
-        get() = userDataSource.todoUpdateTime
-    override val mandaUpdateTime: Flow<String>
-        get() = userDataSource.mandaUpdateTime
-    override val isTutorial: Flow<Boolean>
-        get() = userDataSource.isTutorial
-    override val isAlarm: Flow<Boolean>
-        get() = userDataSource.isAlarm
+) : UserRepo {
+    override val token: Flow<String> = userDataSource.token
+    override val todoUpdateTime: Flow<String> = userDataSource.todoUpdateTime
+    override val mandaUpdateTime: Flow<String> = userDataSource.mandaUpdateTime
+    override val isTutorial: Flow<Boolean> = userDataSource.isTutorial
+    override val isAlarm: Flow<Boolean> = userDataSource.isAlarm
+    override val isInit: Flow<Boolean> = userDataSource.isInit
 
     override suspend fun updateToken(token: String) {
         userDataSource.updateToken(token)
@@ -40,6 +36,10 @@ class UserRepoImpl @Inject constructor(
 
     override suspend fun updateAlarm(state: Boolean) {
         userDataSource.updateAlarm(state)
+    }
+
+    override suspend fun updateInit(state: Boolean) {
+        userDataSource.updateInit(state)
     }
 
 }

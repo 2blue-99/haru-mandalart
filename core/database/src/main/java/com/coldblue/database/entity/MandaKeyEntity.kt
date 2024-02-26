@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "manda")
-data class MandaEntity(
+@Entity(tableName = "manda_key")
+data class MandaKeyEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo(name = "is_Sync")
@@ -15,5 +15,6 @@ data class MandaEntity(
     @ColumnInfo(name = "update_time")
     val updateTime: String,
     val name: String,
-    val color: Long
+    @ColumnInfo(name = "color_index")
+    val colorIndex: Int
 )
