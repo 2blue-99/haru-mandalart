@@ -26,6 +26,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -124,7 +126,13 @@ private fun TodoContent(
         item {
             TitleText("오늘 할 일")
         }
-        items(todoList) { todo ->
+        items(todoList.filter { !it.isDone }) { todo ->
+            TodoItem(todo, onTodoToggle)
+        }
+        item {
+            Text(text = "완료됨")
+        }
+        items(todoList.filter { it.isDone }) { todo ->
             TodoItem(todo, onTodoToggle)
         }
     }
@@ -151,7 +159,11 @@ fun TodoItem(
         ) {
             Checkbox(checked = todo.isDone, onCheckedChange = { onTodoToggle(todo) })
             Column {
-                Text(text = todo.title)
+                if (todo.isDone) {
+                    Text(text = todo.title, textDecoration = TextDecoration.LineThrough)
+                } else {
+                    Text(text = todo.title)
+                }
                 Row {
                     Text(text = todo.groupName, style = HmStyle.content, color = HMColor.Primary)
                     Text(text = todo.time, style = HmStyle.content)
@@ -159,8 +171,6 @@ fun TodoItem(
             }
         }
     }
-
-
 }
 
 @Preview
