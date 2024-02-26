@@ -22,17 +22,19 @@ object DaoModule {
 
     @Singleton
     @Provides
-    fun provideMandaDao(dataBase: AppDataBase): MandaKeyDao=
+    fun provideMandaKeyDao(dataBase: AppDataBase): MandaKeyDao =
         dataBase.mandaKeyDao()
 
     @Singleton
     @Provides
     fun provideMandaDetailDao(dataBase: AppDataBase): MandaDetailDao =
         dataBase.mandaDetailDao()
+
     @Singleton
     @Provides
     fun provideTodoDao(dataBase: AppDataBase): TodoDao =
         dataBase.todoDao()
+
     @Singleton
     @Provides
     fun provideTodoGroupDao(dataBase: AppDataBase): TodoGroupDao =

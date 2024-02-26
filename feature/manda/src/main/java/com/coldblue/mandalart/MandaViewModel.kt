@@ -10,7 +10,6 @@ import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.coldblue.model.MandaTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +31,8 @@ class MandaViewModel @Inject constructor(
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
 ) : ViewModel() {
 
+
+
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
@@ -47,7 +48,7 @@ class MandaViewModel @Inject constructor(
                     MandaUIState.Error(it.message ?: "Error")
                 }
             } else {
-                flowOf(MandaUIState.UnInitializedSuccess(listOf (MandaTag("테그"))))
+                flowOf(MandaUIState.UnInitializedSuccess)
             }
         }.catch {
             MandaUIState.Error(it.message ?: "Error")

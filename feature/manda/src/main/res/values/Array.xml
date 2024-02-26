@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tags">
+        <item>1</item>
+        <item>22</item>
+        <item>333</item>
+        <item>4444</item>
+        <item>5</item>
+        <item>666666</item>
+        <item>777</item>
+        <item>8888888888</item>
+        <item>9999</item>
+        <item>10</item>
+    </string-array>
+</resources>

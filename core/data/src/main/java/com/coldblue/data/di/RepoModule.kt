@@ -1,5 +1,7 @@
 package com.coldblue.data.di
 
+import com.coldblue.data.repo.MandaDetailRepository
+import com.coldblue.data.repo.MandaDetailRepositoryImpl
 import com.coldblue.data.repo.MandaKeyRepository
 import com.coldblue.data.repo.MandaKeyRepositoryImpl
 import com.coldblue.data.repo.TodoRepository
@@ -17,17 +19,25 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface RepoModule {
     @Binds
-    fun bindMandaRepo(
+    fun bindMandaKeyRepo(
         mandaRepo: MandaKeyRepositoryImpl
     ): MandaKeyRepository
+
+    @Binds
+    fun bindMandaDetailRepo(
+        mandaRepo: MandaDetailRepositoryImpl
+    ): MandaDetailRepository
+
     @Binds
     fun bindTodoRepo(
         todoRepo: TodoRepositoryImpl
     ): TodoRepository
+
     @Binds
     fun bindUserPreferencesRepo(
         userPreferencesRepo: UserRepositoryImpl
     ): UserRepository
+
     @Binds
     fun bindLoginHelperRepo(
         loginHelper: LoginHelperImpl
