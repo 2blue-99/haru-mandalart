@@ -1,5 +1,6 @@
 package com.coldblue.mandalart
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.manda.GetDetailMandaUseCase
@@ -39,10 +40,12 @@ class MandaViewModel @Inject constructor(
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
                 getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
+                    Log.e("TAG", "mandaKeys : $mandaKeys", )
+                    Log.e("TAG", "mandaDetails : $mandaDetails", )
                     MandaUIState.InitializedSuccess(
-                            keyMandaCnt = mandaKeys.size,
+                            keyMandaCnt = mandaKeys.size-1,
                             detailMandaCnt = mandaDetails.size,
-                            donePercentage = (mandaDetails.count { it.isDone } / 64.0 * 100).roundToInt(),
+                            donePercentage = mandaDetails.count { it.isDone } / 64.0f,
                             keys = mandaKeys,
                             details = mandaDetails
                     )
@@ -66,9 +69,9 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun upsertMandaKey(data: MandaKey) {
+    fun upsertMandaKey(text: String) {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(data)
+            upsertMandaKeyUseCase(MandaKey(text))
         }
     }
 

@@ -10,7 +10,7 @@ sealed interface MandaUIState {
     data class InitializedSuccess(
         val keyMandaCnt: Int,
         val detailMandaCnt: Int,
-        val donePercentage: Int,
+        val donePercentage: Float,
         val keys: List<MandaKey>,
         val details: List<MandaDetail>
     ) : MandaUIState

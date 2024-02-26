@@ -30,7 +30,7 @@ fun HMNavHost(
         loginScreen(navigateToTodo = navController::navigateToTodo)
         todoScreen()
         tutorialScreen(navigateToManda = navController::navigateToManda)
-        mandaScreen(navigateToManda = navController::navigateToManda)
+        mandaScreen()
         historyScreen(navigateToSetting = navController::navigateToSetting)
         settingScreen()
     }

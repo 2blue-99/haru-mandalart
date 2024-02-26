@@ -4,6 +4,7 @@ import com.coldblue.database.entity.MandaDetailEntity
 import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import java.time.LocalDateTime
 
 object Mapper {
     fun MandaKeyEntity.asDomain(): MandaKey = MandaKey(
@@ -16,7 +17,7 @@ object Mapper {
         id = id,
         isSync = false,
         isDel = false,
-        updateTime = "updateTime",
+        updateTime = LocalDateTime.now().toString(),
         name = name,
         colorIndex = colorIndex
     )
