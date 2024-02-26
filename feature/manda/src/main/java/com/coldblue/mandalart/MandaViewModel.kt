@@ -4,6 +4,10 @@ import android.nfc.Tag
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.manda.GetAllMandaUseCase
+import com.coldblue.domain.manda.InsertMandaDetailUseCase
+import com.coldblue.domain.manda.InsertMandaKeyUseCase
+import com.coldblue.domain.manda.UpdateMandaDetailUseCase
+import com.coldblue.domain.manda.UpdateMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.state.SuccessType
@@ -23,13 +27,19 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.PrintFormat
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
 @HiltViewModel
 class MandaViewModel @Inject constructor(
     private val getMandaInitStateUseCase: GetMandaInitStateUseCase,
-    private val getAllMandaUseCase: GetAllMandaUseCase
+    private val getAllMandaUseCase: GetAllMandaUseCase,
+    private val insertMandaKeyUseCase: InsertMandaKeyUseCase,
+    private val insertMandaDetailUseCase: InsertMandaDetailUseCase,
+    private val updateMandaKeyUseCase: UpdateMandaKeyUseCase,
+    private val updateMandaDetailUseCase: UpdateMandaDetailUseCase
 ) : ViewModel() {
 
     val mandaUiState: StateFlow<MandaUIState> =
@@ -60,37 +70,53 @@ class MandaViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = MandaUIState.Loading
         )
-    fun insertFinalManda(manda: MandaKey) {
-
+    fun insertFinalManda(data: MandaKey) {
+        viewModelScope.launch {
+            insertMandaKeyUseCase(data)
+        }
     }
 
-    fun updateFinalManda(manda: MandaKey) {
-
-    }
-
-
-    fun insertKeyManda(manda: MandaKey) {
-
-    }
-
-    fun updateKeyManda(manda: MandaKey) {
-
-    }
-
-    fun deleteKeyManda(manda: MandaKey) {
-
+    fun updateFinalManda(data: MandaKey) {
+        viewModelScope.launch {
+            updateMandaKeyUseCase(data)
+        }
     }
 
 
-    fun insertDetailManda(manda: MandaDetail) {
-
+    fun insertKeyManda(data: MandaKey) {
+        viewModelScope.launch {
+            updateMandaKeyUseCase(data)
+        }
     }
 
-    fun updateDetailManda(manda: MandaDetail) {
-
+    fun updateKeyManda(data: MandaKey) {
+        viewModelScope.launch {
+            updateMandaKeyUseCase(data)
+        }
     }
 
-    fun deleteDetailManda(manda: MandaDetail) {
+    fun deleteKeyManda(data: MandaKey) {
+        viewModelScope.launch {
+            updateMandaKeyUseCase(data)
+        }
+    }
 
+
+    fun insertDetailManda(data: MandaDetail) {
+        viewModelScope.launch {
+            updateMandaDetailUseCase(data)
+        }
+    }
+
+    fun updateDetailManda(data: MandaDetail) {
+        viewModelScope.launch {
+            updateMandaDetailUseCase(data)
+        }
+    }
+
+    fun deleteDetailManda(data: MandaDetail) {
+        viewModelScope.launch {
+            updateMandaDetailUseCase(data)
+        }
     }
 }

@@ -4,10 +4,10 @@ import com.coldblue.data.repo.MandaRepo
 import com.coldblue.model.MandaKey
 import javax.inject.Inject
 
-class UpsertMandaKeyUseCase @Inject constructor(
+class InsertMandaKeyUseCase @Inject constructor(
     private val mandaRepo: MandaRepo
 ) {
-    suspend operator fun invoke(list: MandaKey){
-        mandaRepo.upsertMandaKeysRepository(listOf(list))
+    suspend operator fun invoke(data: MandaKey){
+        mandaRepo.upsertMandaKeysRepository(listOf(data))
     }
 }
