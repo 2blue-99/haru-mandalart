@@ -1,5 +1,6 @@
 package com.coldblue.todo
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,17 +8,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
@@ -32,8 +40,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.CenterTitleText
 import com.coldblue.designsystem.component.TitleText
+import com.coldblue.designsystem.iconpack.Check
+import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
@@ -85,6 +96,7 @@ private fun TodoContentWithState(
                 insertTodo,
                 insertTodoGroup,
                 insertCurrentGroup,
+                uiState.currentGroupList,
                 uiState.todoList,
                 onTodoToggle
             )
@@ -96,6 +108,7 @@ private fun TodoContent(
     insertTodo: (Todo) -> Unit,
     insertTodoGroup: (TodoGroup) -> Unit,
     insertCurrentGroup: (CurrentGroup) -> Unit,
+    currentGroupList: List<CurrentGroupState>,
     todoList: List<Todo>,
     onTodoToggle: (Todo) -> Unit
 
@@ -119,13 +132,7 @@ private fun TodoContent(
             CenterTitleText("하루,만다라트")
         }
         item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-                    .padding(vertical = 16.dp)
-                    .background(HMColor.SubText)
-            )
+            HaruManda(currentGroupList)
         }
         item {
             TitleText("오늘 할 일")
@@ -138,6 +145,73 @@ private fun TodoContent(
         }
         items(todoList.filter { it.isDone }) { todo ->
             TodoItem(todo, onTodoToggle)
+        }
+    }
+}
+
+@Composable
+fun HaruManda(
+    currentGroupList: List<CurrentGroupState>,
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .aspectRatio(1F),
+        verticalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        items(currentGroupList) { group ->
+            OutlinedButton(
+                enabled = group !is CurrentGroupState.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .aspectRatio(1f)
+                    .padding(8.dp)
+                    .border(
+                        width = 1.5.dp,
+                        color = group.border,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(group.backGround),
+                onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                when (group) {
+                    is CurrentGroupState.Empty -> {
+                        Icon(
+                            imageVector = IconPack.Plus,
+                            contentDescription = null,
+                            tint = HMColor.Primary
+                        )
+                    }
+                    is CurrentGroupState.Center -> {
+                        Column {
+                            Text(text = group.doneTodo)
+                            Text(text = group.totTodo)
+                        }
+                    }
+                    is CurrentGroupState.Doing -> {
+                        Column {
+                            Text(text = group.name)
+                            Text(text = group.leftTodo)
+                        }
+                    }
+                    is CurrentGroupState.Done -> {
+                        Column {
+                            Text(text = group.name)
+                            Icon(
+                                imageVector = IconPack.Check,
+                                contentDescription = null,
+                                tint = HMColor.Background
+                            )
+                        }
+                    }
+                }
+            }
+
         }
     }
 }
@@ -184,6 +258,7 @@ fun TodoContentPreView() {
         {},
         {},
         {},
+        List<CurrentGroupState>(9) { CurrentGroupState.Empty() },
         listOf(
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드"),
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", time = "오전 11:35"),

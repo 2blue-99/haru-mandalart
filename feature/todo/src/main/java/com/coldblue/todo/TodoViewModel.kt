@@ -12,7 +12,6 @@ import com.coldblue.domain.todogroup.UpsertTodoGroupUseCase
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
-import com.coldblue.model.withCnt
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,24 +33,48 @@ class TodoViewModel @Inject constructor(
 ) : ViewModel() {
     init {
         viewModelScope.launch {
-//            upsertTodoUseCase(Todo("1번이요","내용입니다"))
-//            upsertTodoUseCase(Todo("2번이요","내용입니다"))
-//            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 1))
 //            upsertTodoGroup(TodoGroup("안드로이드"))
 //            upsertTodoGroup(TodoGroup("블로그"))
+//            upsertTodoUseCase(Todo("1번이요","내용입니다"))
+//            upsertTodoUseCase(Todo("2번이요","내용입니다"))
+//            upsertTodoUseCase(Todo("3번이요","내용입니다", todoGroupId = 1))
+
+//            upsertCurrentGroup(CurrentGroup(1))
+//            upsertCurrentGroup(CurrentGroup(2))
+
         }
     }
 
     val todoUiState: StateFlow<TodoUiState> =
         getCurrentGroupUseCase().combine(getTodoUseCase(LocalDate.now())) { currentGroupList, todoList ->
+            val todoByGroup = todoList.groupBy { it.todoGroupId }
             TodoUiState.Success(
                 today = LocalDate.now(),
                 todoList = todoList,
-                todoCnt = todoList.size,
-                doneTodoCnt = todoList.filter { it.isDone }.size,
-                currentGroupList = currentGroupList.map { group ->
-                    val doneTodoCnt = todoList.filter { it.todoGroupId == group.id }.size
-                    group.withCnt(doneTodoCnt)
+                currentGroupList = List(9) {
+                    val index = it+1
+                    when (index) {
+                        5 -> CurrentGroupState.Center(
+                            totTodo = todoList.size.toString(),
+                            doneTodo = todoList.filter { it.isDone }.size.toString()
+                        )
+                        else -> {
+                            if (todoByGroup[index] == null) {
+                                CurrentGroupState.Empty()
+                            } else if (todoByGroup[index]?.all { it.isDone } == true) {
+                                CurrentGroupState.Done(
+                                    currentGroup = currentGroupList[index]!!,
+                                    name = currentGroupList[index]!!.name
+                                )
+                            } else {
+                                CurrentGroupState.Doing(
+                                    name = currentGroupList[index]!!.name,
+                                    currentGroup = currentGroupList[index]!!,
+                                    leftTodo = todoByGroup[index]!!.filter { !it.isDone }.size.toString()
+                                )
+                            }
+                        }
+                    }
                 }
             )
         }.catch {

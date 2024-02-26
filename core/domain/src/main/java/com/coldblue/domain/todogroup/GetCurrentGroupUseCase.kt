@@ -8,5 +8,5 @@ import javax.inject.Inject
 class GetCurrentGroupUseCase @Inject constructor(
     private val currentGroupRepository: CurrentGroupRepository
 ) {
-    operator fun invoke(): Flow<List<CurrentGroup>> = currentGroupRepository.getCurrentGroup()
+    operator fun invoke(): Flow<Map<Int,CurrentGroup>> = currentGroupRepository.getCurrentGroup()
 }
