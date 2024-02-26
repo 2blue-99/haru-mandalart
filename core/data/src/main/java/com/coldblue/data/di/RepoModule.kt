@@ -2,8 +2,8 @@ package com.coldblue.data.di
 
 import com.coldblue.data.repo.MandaRepo
 import com.coldblue.data.repo.MandaRepoImpl
-import com.coldblue.data.repo.TodoRepo
-import com.coldblue.data.repo.TodoRepoImpl
+import com.coldblue.data.repo.TodoRepository
+import com.coldblue.data.repo.TodoRepositoryImpl
 import com.coldblue.data.repo.UserRepo
 import com.coldblue.data.repo.UserRepoImpl
 import com.coldblue.data.util.LoginHelper
@@ -22,8 +22,8 @@ interface RepoModule {
     ): MandaRepo
     @Binds
     fun bindTodoRepo(
-        todoRepo: TodoRepoImpl
-    ): TodoRepo
+        todoRepo: TodoRepositoryImpl
+    ): TodoRepository
     @Binds
     fun bindUserPreferencesRepo(
         userPreferencesRepo: UserRepoImpl

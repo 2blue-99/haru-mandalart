@@ -10,7 +10,7 @@ object Mapper {
 
     fun Manda.asMandaEntity(): MandaEntity = MandaEntity(id, isSync, isDel, updateTime, name, color)
 
-    fun TodoEntity.asTodo(): Todo = Todo(id, originId, haruMandaId, isSync, isDel, updateTime, title, content, time)
+//    fun TodoEntity.asTodo(): Todo = Todo(id, originId, haruMandaId, isSync, isDel, updateTime, title, content, time)
 
-    fun Todo.asTodoEntity(): TodoEntity = TodoEntity(id, originId, harumandaId, isSync, isDel, updateTime, title, content, time)
+//    fun Todo.asTodoEntity(): TodoEntity = TodoEntity(id, originId, harumandaId, isSync, isDel, updateTime, title, content, time)
 }

@@ -2,23 +2,22 @@ package com.coldblue.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 @Entity(tableName = "todo")
 data class TodoEntity(
-    @PrimaryKey
-    val id: Int,
-    @ColumnInfo(name = "origin_id")
-    val originId: Int,
-    @ColumnInfo(name = "haru_manda_id")
-    val haruMandaId: Int,
-    @ColumnInfo(name = "is_sync")
-    val isSync: Boolean,
-    @ColumnInfo(name = "is_del")
-    val isDel: Boolean,
-    @ColumnInfo(name = "update_time")
-    val updateTime: String,
-    val title: String,
-    val content: String,
-    val time: String
-)
+    @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "content") val content: String,
+    @ColumnInfo(name = "is_done") val isDone: Boolean,
+    @ColumnInfo(name = "time") val time: String,
+    @ColumnInfo(name = "date") val date: LocalDate,
+    @ColumnInfo(name = "todo_group_id") val todoGroupId: Int? = null,
+    @ColumnInfo(name = "origin_id") val originId: Int,
+    @ColumnInfo(name = "is_sync") val isSync: Boolean,
+    @ColumnInfo(name = "is_del") val isDel: Boolean,
+    @ColumnInfo(name = "update_time") val updateTime: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+
+    )

@@ -1,13 +1,17 @@
 package com.coldblue.model
 
+import java.time.LocalDate
+
 data class Todo(
-    val id: Int,
+    val title: String,
+    val content: String,
+    val isDone: Boolean,
+    val time: String,
+    val date: LocalDate,
+    val todoGroupId: Int? = null,
     val originId: Int,
-    val harumandaId: Int,
     val isSync: Boolean,
     val isDel: Boolean,
     val updateTime: String,
-    val title: String,
-    val content: String,
-    val time: String
+    val id: Int = 0,
 )

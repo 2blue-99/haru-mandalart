@@ -42,14 +42,14 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     BackOnPressed()
-
-                    loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
-                        when(it){
-                            LoginState.Logout -> LoginScreen()
-                            LoginState.Login -> HMApp()
-                            else -> {}
-                        }
-                    }
+                    HMApp()
+//                    loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
+//                        when(it){
+//                            LoginState.Logout -> LoginScreen()
+//                            LoginState.Login -> HMApp()
+//                            else -> {}
+//                        }
+//                    }
                 }
             }
         }
