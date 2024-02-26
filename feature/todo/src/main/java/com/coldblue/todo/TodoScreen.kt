@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.component.CenterTitleText
 import com.coldblue.designsystem.component.TitleText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -113,6 +114,9 @@ private fun TodoContent(
                     .padding(vertical = 8.dp)
                     .background(HMColor.SubText)
             )
+        }
+        item {
+            CenterTitleText("하루,만다라트")
         }
         item {
             Box(

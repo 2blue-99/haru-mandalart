@@ -23,7 +23,29 @@ fun TitleText(text: String) {
             color = HMColor.Primary
         )
         HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(top=2.dp),
+            color = HMColor.Primary,
+            thickness = 2.dp
+        )
+    }
+}
+
+@Composable
+fun CenterTitleText(text: String) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(0.32F).padding(top=2.dp),
+            color = HMColor.Primary,
+            thickness = 2.dp
+        )
+        Text(
+            modifier = Modifier.padding(horizontal = 10.dp),
+            text = text,
+            style = HmStyle.headline,
+            color = HMColor.Primary
+        )
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth().padding(top=2.dp),
             color = HMColor.Primary,
             thickness = 2.dp
         )
@@ -32,7 +54,14 @@ fun TitleText(text: String) {
 
 @Preview
 @Composable
-fun TitleTextPreView(){
+fun TitleTextPreView() {
     TitleText("오늘 할 일")
 }
+
+@Preview
+@Composable
+fun CenterTitleTextPreView() {
+    CenterTitleText("하루,만다라트")
+}
+
 
