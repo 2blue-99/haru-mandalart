@@ -1,12 +1,12 @@
 package com.coldblue.domain.user
 
-import com.coldblue.data.repo.UserRepo
+import com.coldblue.data.repo.UserRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetMandaInitStateUseCase @Inject constructor(
-    private val userRepo: UserRepo
+    private val userRepository: UserRepository
 ){
     operator fun invoke(): Flow<Boolean> =
-        userRepo.isInit
+        userRepository.isInit
 }

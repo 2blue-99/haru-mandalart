@@ -2,36 +2,35 @@ package com.coldblue.data.mapper
 
 import com.coldblue.database.entity.MandaDetailEntity
 import com.coldblue.database.entity.MandaKeyEntity
-import com.coldblue.database.entity.TodoEntity
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.coldblue.model.Todo
+import java.time.LocalDateTime
 
 object Mapper {
-    fun MandaKeyEntity.asMandaKeyModel(): MandaKey = MandaKey(
+    fun MandaKeyEntity.asDomain(): MandaKey = MandaKey(
         id = id,
         name = name,
         colorIndex = colorIndex
     )
 
-    fun MandaKey.asMandaKeyEntity(): MandaKeyEntity = MandaKeyEntity(
+    fun MandaKey.asEntity(): MandaKeyEntity = MandaKeyEntity(
         id = id,
         isSync = false,
         isDel = false,
-        updateTime = "updateTime",
+        updateTime = LocalDateTime.now().toString(),
         name = name,
         colorIndex = colorIndex
     )
 
 
-    fun MandaDetailEntity.asMandaDetailModel(): MandaDetail = MandaDetail(
+    fun MandaDetailEntity.asDomain(): MandaDetail = MandaDetail(
         id = id,
         mandaId = mandaId,
         name = name,
         isDone = isDone
     )
 
-    fun MandaDetail.asMandaDetailEntity(): MandaDetailEntity = MandaDetailEntity(
+    fun MandaDetail.asEntity(): MandaDetailEntity = MandaDetailEntity(
         id = id,
         isSync = false,
         isDel = false,

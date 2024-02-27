@@ -1,16 +1,12 @@
 package com.coldblue.data.repo
 
-import android.util.Log
 import com.coldblue.datastore.UserDataSource
-import com.coldblue.network.SupabaseDataSource
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class UserRepoImpl @Inject constructor(
+class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
-) : UserRepo {
+) : UserRepository {
     override val token: Flow<String> = userDataSource.token
     override val todoUpdateTime: Flow<String> = userDataSource.todoUpdateTime
     override val mandaUpdateTime: Flow<String> = userDataSource.mandaUpdateTime

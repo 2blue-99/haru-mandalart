@@ -1,27 +1,24 @@
 package com.coldblue.mandalart
 
-import android.nfc.Tag
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.domain.manda.DeleteMandaDetailUseCase
-import com.coldblue.domain.manda.DeleteMandaKeyUseCase
-import com.coldblue.domain.manda.GetAllMandaUseCase
-import com.coldblue.domain.manda.InsertMandaDetailUseCase
-import com.coldblue.domain.manda.InsertMandaKeyUseCase
-import com.coldblue.domain.manda.UpdateMandaDetailUseCase
-import com.coldblue.domain.manda.UpdateMandaKeyUseCase
+import com.coldblue.domain.manda.GetDetailMandaUseCase
+import com.coldblue.domain.manda.GetKeyMandaUseCase
+import com.coldblue.domain.manda.UpsertMandaDetailUseCase
+import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
+import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.coldblue.model.MandaTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,32 +27,33 @@ import kotlin.math.roundToInt
 @HiltViewModel
 class MandaViewModel @Inject constructor(
     private val getMandaInitStateUseCase: GetMandaInitStateUseCase,
-    private val getAllMandaUseCase: GetAllMandaUseCase,
-    private val insertMandaKeyUseCase: InsertMandaKeyUseCase,
-    private val insertMandaDetailUseCase: InsertMandaDetailUseCase,
-    private val updateMandaKeyUseCase: UpdateMandaKeyUseCase,
-    private val updateMandaDetailUseCase: UpdateMandaDetailUseCase,
-    private val deleteMandaKeyUseCase: DeleteMandaKeyUseCase,
-    private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase
+    private val updateMandaInitStateUseCase: UpdateMandaInitStateUseCase,
+
+    private val getKeyMandaUseCase: GetKeyMandaUseCase,
+    private val upsertMandaKeyUseCase: UpsertMandaKeyUseCase,
+
+    private val getDetailMandaUseCase: GetDetailMandaUseCase,
+    private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
 ) : ViewModel() {
+
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
-                getAllMandaUseCase().map { data ->
-                    //TODO 핵심 달성 여부 제외한 Manda / 64 * 100 의 반올림
-                    val donePercentage = (data.mandaDetails.count { it.isDone } / 64.0 * 100).roundToInt()
+                getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
+                    Log.e("TAG", "mandaKeys : $mandaKeys", )
+                    Log.e("TAG", "mandaDetails : $mandaDetails", )
                     MandaUIState.InitializedSuccess(
-                            keyMandaCnt = data.mandaKeys.size,
-                            detailMandaCnt = data.mandaDetails.size,
-                            donePercentage = donePercentage,
-                            keys = data.mandaKeys,
-                            details = data.mandaDetails
+                            keyMandaCnt = mandaKeys.size-1,
+                            detailMandaCnt = mandaDetails.size,
+                            donePercentage = mandaDetails.count { it.isDone } / 64.0f,
+                            keys = mandaKeys,
+                            details = mandaDetails
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")
                 }
             } else {
-                flowOf(MandaUIState.UnInitializedSuccess(MandaTag("")))
+                flowOf(MandaUIState.UnInitializedSuccess)
             }
         }.catch {
             MandaUIState.Error(it.message ?: "Error")
@@ -64,55 +62,28 @@ class MandaViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = MandaUIState.Loading
         )
-    fun insertFinalManda(data: MandaKey) {
+
+    fun upsertMandaFinal(data: MandaKey) {
         viewModelScope.launch {
-            insertMandaKeyUseCase(data)
+            upsertMandaKeyUseCase(data)
         }
     }
 
-    fun updateFinalManda(data: MandaKey) {
+    fun upsertMandaKey(text: String) {
         viewModelScope.launch {
-            updateMandaKeyUseCase(data)
+            upsertMandaKeyUseCase(MandaKey(text))
         }
     }
 
-
-
-    fun insertKeyManda(data: MandaKey) {
+    fun upsertMandaDetail(data: MandaDetail) {
         viewModelScope.launch {
-            updateMandaKeyUseCase(data)
+            upsertMandaDetailUseCase(data)
         }
     }
 
-    fun updateKeyManda(data: MandaKey) {
+    fun updateMandaInitState(state: Boolean){
         viewModelScope.launch {
-            updateMandaKeyUseCase(data)
-        }
-    }
-
-    fun deleteKeyManda(data: MandaKey) {
-        viewModelScope.launch {
-            deleteMandaKeyUseCase(data)
-        }
-    }
-
-
-
-    fun insertDetailManda(data: MandaDetail) {
-        viewModelScope.launch {
-            insertMandaDetailUseCase(data)
-        }
-    }
-
-    fun updateDetailManda(data: MandaDetail) {
-        viewModelScope.launch {
-            updateMandaDetailUseCase(data)
-        }
-    }
-
-    fun deleteDetailManda(data: MandaDetail) {
-        viewModelScope.launch {
-            deleteMandaDetailUseCase(data)
+            updateMandaInitStateUseCase(state)
         }
     }
 }
