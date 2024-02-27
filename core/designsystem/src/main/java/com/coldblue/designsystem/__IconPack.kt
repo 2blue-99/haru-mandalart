@@ -1,9 +1,11 @@
 package com.coldblue.designsystem
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.coldblue.designsystem.iconpack.Check
 import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Home
 import com.coldblue.designsystem.iconpack.Manda
+import com.coldblue.designsystem.iconpack.Plus
 import kotlin.collections.List as ____KtList
 
 public object IconPack
@@ -15,6 +17,6 @@ public val IconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(History, Home, Manda)
+    __AllIcons= listOf(History, Home, Manda,Check,Plus)
     return __AllIcons!!
   }
