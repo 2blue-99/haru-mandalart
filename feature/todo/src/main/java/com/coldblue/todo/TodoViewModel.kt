@@ -13,6 +13,7 @@ import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -31,6 +32,9 @@ class TodoViewModel @Inject constructor(
     private val upsertTodoUseCase: UpsertTodoUseCase,
     private val toggleTodoUseCase: ToggleTodoUseCase
 ) : ViewModel() {
+    private val _bottomSheetUiSate = MutableStateFlow<BottomSheetUiState>(BottomSheetUiState.Down)
+    val bottomSheetUiSate: StateFlow<BottomSheetUiState> = _bottomSheetUiSate
+
     init {
         viewModelScope.launch {
 //            upsertTodoGroup(TodoGroup("안드로이드"))
@@ -45,6 +49,21 @@ class TodoViewModel @Inject constructor(
         }
     }
 
+    fun showSheet(content: ContentState) {
+        Log.e("", "showSheet: 보여지기", )
+        viewModelScope.launch {
+            _bottomSheetUiSate.value = BottomSheetUiState.Up(content)
+        }
+    }
+
+    fun hideSheet() {
+        Log.e("", "showSheet: 다운", )
+
+        viewModelScope.launch {
+            _bottomSheetUiSate.value = BottomSheetUiState.Down
+        }
+    }
+
     val todoUiState: StateFlow<TodoUiState> =
         getCurrentGroupUseCase().combine(getTodoUseCase(LocalDate.now())) { currentGroupList, todoList ->
             val todoByGroup = todoList.groupBy { it.todoGroupId }
@@ -52,12 +71,13 @@ class TodoViewModel @Inject constructor(
                 today = LocalDate.now(),
                 todoList = todoList,
                 currentGroupList = List(9) {
-                    val index = it+1
+                    val index = it + 1
                     when (index) {
                         5 -> CurrentGroupState.Center(
                             totTodo = todoList.size.toString(),
                             doneTodo = todoList.filter { it.isDone }.size.toString()
                         )
+
                         else -> {
                             if (todoByGroup[index] == null) {
                                 CurrentGroupState.Empty()
