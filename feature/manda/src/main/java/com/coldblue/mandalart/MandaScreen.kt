@@ -1,6 +1,5 @@
 package com.coldblue.mandalart
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -41,11 +40,12 @@ import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.component.HMTitleComponent
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.getTagList
+import com.coldblue.model.Manda
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import kotlinx.coroutines.delay
 
 @Composable
 fun MandaScreen(
@@ -63,16 +63,16 @@ fun MandaScreen(
                 })
             }
     ) {
-        MandaContentWithStatus(
+        MandaContentWithState(
             mandaUiState,
             mandaViewModel::updateMandaInitState,
-            mandaViewModel::upsertMandaKey
+            mandaViewModel::upsertMandaFinal
         )
     }
 }
 
 @Composable
-fun MandaContentWithStatus(
+fun MandaContentWithState(
     mandaUIState: MandaUIState,
     updateInitState: (Boolean) -> Unit,
     insertFinalManda: (String) -> Unit
@@ -89,7 +89,7 @@ fun MandaContentWithStatus(
 
         is MandaUIState.InitializedSuccess -> {
             InitializedMandaContent(
-                uiData = mandaUIState
+                uiState = mandaUIState
             )
 
         }
@@ -157,13 +157,11 @@ fun UnInitializedMandaContent(
 //        ) {
 //            HMButton(text = "목표 구체화 하기",clickState) { onNextClick() }
 //        }
-
-
 }
 
 @Composable
 fun InitializedMandaContent(
-    uiData: MandaUIState.InitializedSuccess
+    uiState: MandaUIState.InitializedSuccess
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
 
@@ -173,7 +171,7 @@ fun InitializedMandaContent(
     )
 
     LaunchedEffect(Unit) {
-        percentage = uiData.donePercentage
+        percentage = uiState.donePercentage
     }
 
     LazyColumn(
@@ -189,7 +187,7 @@ fun InitializedMandaContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "\" 내가 한다 취업 \"",
+                    text = "\" ${uiState.finalName} \"",
                     style = HmStyle.headline,
                 )
             }
@@ -201,11 +199,11 @@ fun InitializedMandaContent(
             ) {
                 Row {
                     Text(text = "핵심 목표 : ", style = HmStyle.title)
-                    Text(text = "${uiData.keyMandaCnt} / 8", style = HmStyle.title)
+                    Text(text = "${uiState.keyMandaCnt} / 8", style = HmStyle.title)
                 }
                 Row {
                     Text(text = "핵심 목표 : ", style = HmStyle.title)
-                    Text(text = "${uiData.detailMandaCnt} / 64", style = HmStyle.title)
+                    Text(text = "${uiState.detailMandaCnt} / 64", style = HmStyle.title)
                 }
             }
         }
@@ -227,6 +225,30 @@ fun InitializedMandaContent(
                 trackColor = HMColor.Gray
             )
         }
+
+        item {
+
+        }
+    }
+}
+
+@Composable
+fun MandaContent(
+    mandaKeys: List<MandaType>,
+    mandaDetails: List<MandaType>
+){
+    for(manda in mandaKeys){
+        when(manda){
+            is MandaType.Fill -> {
+                when(manda.data){
+                    is Manda.MandaDetail -> {
+                        manda.data.
+                    }
+                    else -> {}
+                }
+            }
+            else -> {}
+        }
     }
 }
 
@@ -234,12 +256,13 @@ fun InitializedMandaContent(
 @Composable
 fun MandaContentPreview() {
     InitializedMandaContent(
-        uiData = MandaUIState.InitializedSuccess(
+        uiState = MandaUIState.InitializedSuccess(
             keyMandaCnt = 10,
             detailMandaCnt = 50,
             donePercentage = 0.2f,
-            keys = listOf(MandaKey("", 1, 0)),
-            details = listOf(MandaDetail(1, "1", true, 0))
+            finalName = "TEST",
+            keys = listOf(),
+            details = listOf()
         )
     )
 }
