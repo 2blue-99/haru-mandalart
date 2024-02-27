@@ -7,6 +7,7 @@ import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.ToggleTodoUseCase
 import com.coldblue.domain.todo.UpsertTodoUseCase
 import com.coldblue.domain.todogroup.GetCurrentGroupUseCase
+import com.coldblue.domain.todogroup.GetTodoGroupUseCase
 import com.coldblue.domain.todogroup.UpsertCurrentGroupUseCase
 import com.coldblue.domain.todogroup.UpsertTodoGroupUseCase
 import com.coldblue.model.CurrentGroup
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -27,6 +29,7 @@ import javax.inject.Inject
 class TodoViewModel @Inject constructor(
     getCurrentGroupUseCase: GetCurrentGroupUseCase,
     getTodoUseCase: GetTodoUseCase,
+    getTodoGroupUseCase: GetTodoGroupUseCase,
     private val upsertTodoGroupUseCase: UpsertTodoGroupUseCase,
     private val upsertCurrentGroupUseCase: UpsertCurrentGroupUseCase,
     private val upsertTodoUseCase: UpsertTodoUseCase,
@@ -39,9 +42,12 @@ class TodoViewModel @Inject constructor(
         viewModelScope.launch {
 //            upsertTodoGroup(TodoGroup("안드로이드"))
 //            upsertTodoGroup(TodoGroup("블로그"))
+//            upsertTodoGroup(TodoGroup("취업"))
+//            upsertTodoGroup(TodoGroup("운동"))
 //            upsertTodoUseCase(Todo("1번이요","내용입니다"))
 //            upsertTodoUseCase(Todo("2번이요","내용입니다"))
 //            upsertTodoUseCase(Todo("3번이요","내용입니다", todoGroupId = 1))
+//            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 2))
 
 //            upsertCurrentGroup(CurrentGroup(1))
 //            upsertCurrentGroup(CurrentGroup(2))
@@ -50,15 +56,12 @@ class TodoViewModel @Inject constructor(
     }
 
     fun showSheet(content: ContentState) {
-        Log.e("", "showSheet: 보여지기", )
         viewModelScope.launch {
             _bottomSheetUiSate.value = BottomSheetUiState.Up(content)
         }
     }
 
     fun hideSheet() {
-        Log.e("", "showSheet: 다운", )
-
         viewModelScope.launch {
             _bottomSheetUiSate.value = BottomSheetUiState.Down
         }
@@ -75,22 +78,27 @@ class TodoViewModel @Inject constructor(
                     when (index) {
                         5 -> CurrentGroupState.Center(
                             totTodo = todoList.size.toString(),
-                            doneTodo = todoList.filter { it.isDone }.size.toString()
+                            doneTodo = todoList.filter { it.isDone }.size.toString(),
+                            index = index
                         )
 
                         else -> {
                             if (todoByGroup[index] == null) {
-                                CurrentGroupState.Empty()
+                                CurrentGroupState.Empty(
+                                    index = index
+                                )
                             } else if (todoByGroup[index]?.all { it.isDone } == true) {
                                 CurrentGroupState.Done(
                                     currentGroup = currentGroupList[index]!!,
-                                    name = currentGroupList[index]!!.name
+                                    name = currentGroupList[index]!!.name,
+                                    index = index
                                 )
                             } else {
                                 CurrentGroupState.Doing(
                                     name = currentGroupList[index]!!.name,
                                     currentGroup = currentGroupList[index]!!,
-                                    leftTodo = todoByGroup[index]!!.filter { !it.isDone }.size.toString()
+                                    leftTodo = todoByGroup[index]!!.filter { !it.isDone }.size.toString(),
+                                    index = index
                                 )
                             }
                         }
@@ -104,6 +112,15 @@ class TodoViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TodoUiState.Loading
         )
+
+
+    val todoGroupList: StateFlow<List<TodoGroup>> = getTodoGroupUseCase().map { it }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+
 
     fun upsertTodo(todo: Todo) {
         viewModelScope.launch {
