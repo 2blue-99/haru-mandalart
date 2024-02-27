@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface CurrentGroupRepository {
     suspend fun upsertCurrentGroup(currentGroup: CurrentGroup)
 
-    fun getCurrentGroup(): Flow<List<CurrentGroup>>
+    fun getCurrentGroup(): Flow<Map<Int,CurrentGroup>>
 
     suspend fun delCurrentGroup(currentGroupId: Int)
 }

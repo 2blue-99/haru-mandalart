@@ -15,7 +15,7 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         currentGroupDao.upsertCurrentGroup(currentGroup.asEntity())
     }
 
-    override fun getCurrentGroup(): Flow<List<CurrentGroup>> {
+    override fun getCurrentGroup(): Flow<Map<Int,CurrentGroup>> {
         return currentGroupDao.getCurrentGroup().map { it.asDomain() }
     }
 

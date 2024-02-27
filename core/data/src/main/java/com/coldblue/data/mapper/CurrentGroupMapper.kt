@@ -4,9 +4,10 @@ import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.CurrentGroup
+import kotlinx.coroutines.flow.Flow
 
 
-object CurrentGroupMapper  {
+object CurrentGroupMapper {
 
     fun asEntity(domain: CurrentGroup): CurrentGroupEntity {
         return CurrentGroupEntity(
@@ -24,8 +25,8 @@ object CurrentGroupMapper  {
         }
     }
 
-    fun asDomain(entity: Map<TodoGroupEntity, CurrentGroupEntity>): List<CurrentGroup> {
-        return entity.map {
+    fun asDomain(entity: Map<TodoGroupEntity, CurrentGroupEntity>): Map<Int, CurrentGroup> {
+        return entity.mapValues {
             CurrentGroup(
                 isSync = it.value.isSync,
                 isDel = it.value.isDel,
@@ -34,6 +35,8 @@ object CurrentGroupMapper  {
                 todoGroupId = it.value.todoGroupId,
                 id = it.value.id,
             )
+        }.mapKeys {
+            it.value.id
         }
     }
 }
@@ -46,7 +49,7 @@ fun CurrentGroup.asEntity(): CurrentGroupEntity {
     return CurrentGroupMapper.asEntity(this)
 }
 
-fun Map<TodoGroupEntity, CurrentGroupEntity>.asDomain(): List<CurrentGroup> {
+fun Map<TodoGroupEntity, CurrentGroupEntity>.asDomain(): Map<Int, CurrentGroup> {
     return CurrentGroupMapper.asDomain(this)
 }
 
