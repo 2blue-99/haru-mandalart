@@ -34,6 +34,10 @@ object HmStyle{
         fontFamily = orbit,
         fontSize = 30.sp,
     )
+    val mainTitle = TextStyle(
+        fontFamily = orbit,
+        fontSize = 24.sp,
+    )
     val headline = TextStyle(
         fontFamily = orbit,
         fontSize = 20.sp,

@@ -43,9 +43,6 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.getTagList
-import com.coldblue.model.Manda
-import com.coldblue.model.MandaDetail
-import com.coldblue.model.MandaKey
 
 @Composable
 fun MandaScreen(
@@ -103,20 +100,20 @@ fun UnInitializedMandaContent(
     insertFinalManda: (String) -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
-    var clickState by remember { mutableStateOf(false) }
+    var buttonClickableState by remember { mutableStateOf(false) }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 25.dp, top = 25.dp, end = 25.dp)
+            .padding(16.dp)
     ) {
         item {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = "당신의 최종 목표는 \n무엇인가요?",
-                style = HmStyle.logo,
+                style = HmStyle.mainTitle,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left
             )
@@ -124,7 +121,7 @@ fun UnInitializedMandaContent(
         item {
             HMTextField(inputText) {
                 inputText = it
-                clickState = it.isNotBlank()
+                buttonClickableState = it.isNotBlank()
             }
         }
         item {
@@ -135,7 +132,7 @@ fun UnInitializedMandaContent(
                 getTagList().forEach {
                     HMChip(it) {
                         inputText = it
-                        clickState = true
+                        buttonClickableState = true
                     }
                 }
             }
@@ -143,7 +140,7 @@ fun UnInitializedMandaContent(
         item { Spacer(modifier = Modifier.height(10.dp)) }
 
         item {
-            HMButton(text = "목표 구체화 하기", clickState) {
+            HMButton(text = "목표 구체화 하기", buttonClickableState) {
                 updateInitState(true)
                 insertFinalManda(inputText)
             }
@@ -178,7 +175,7 @@ fun InitializedMandaContent(
         verticalArrangement = Arrangement.spacedBy(30.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 25.dp, end = 25.dp, top = 25.dp),
+            .padding(16.dp)
     ) {
         item { HMTitleComponent() }
         item {
@@ -202,7 +199,7 @@ fun InitializedMandaContent(
                     Text(text = "${uiState.keyMandaCnt} / 8", style = HmStyle.title)
                 }
                 Row {
-                    Text(text = "핵심 목표 : ", style = HmStyle.title)
+                    Text(text = "세부 목표 : ", style = HmStyle.title)
                     Text(text = "${uiState.detailMandaCnt} / 64", style = HmStyle.title)
                 }
             }
@@ -212,7 +209,7 @@ fun InitializedMandaContent(
                 Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.End
             ) {
-                Text(text = "달성률 $0", style = HmStyle.content)
+                Text(text = "달성률 ${uiState.donePercentage}", style = HmStyle.content)
             }
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -227,7 +224,10 @@ fun InitializedMandaContent(
         }
 
         item {
-
+            MandaContent(
+                mandaKeys = uiState.keys,
+                mandaDetails = uiState.details
+            )
         }
     }
 }
@@ -239,15 +239,21 @@ fun MandaContent(
 ){
     for(manda in mandaKeys){
         when(manda){
-            is MandaType.Fill -> {
-                when(manda.data){
-                    is Manda.MandaDetail -> {
-                        manda.data.
-                    }
-                    else -> {}
-                }
+            is MandaType.Empty -> {
+                manda.manda
             }
-            else -> {}
+            is MandaType.Fill -> {}
+            is MandaType.Done -> {}
+        }
+    }
+
+    for(manda in mandaDetails){
+        when(manda){
+            is MandaType.Empty -> {
+                manda.manda
+            }
+            is MandaType.Fill -> {}
+            is MandaType.Done -> {}
         }
     }
 }

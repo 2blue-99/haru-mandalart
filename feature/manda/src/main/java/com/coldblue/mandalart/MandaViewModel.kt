@@ -78,9 +78,9 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun upsertMandaDetail(data: MandaDetail) {
+    fun upsertMandaDetail(manda: MandaDetail) {
         viewModelScope.launch {
-            upsertMandaDetailUseCase(data)
+            upsertMandaDetailUseCase(manda)
         }
     }
 

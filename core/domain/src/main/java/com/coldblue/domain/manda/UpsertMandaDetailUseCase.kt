@@ -7,7 +7,7 @@ import javax.inject.Inject
 class UpsertMandaDetailUseCase @Inject constructor(
     private val mandaDetailRepository: MandaDetailRepository
 ) {
-    suspend operator fun invoke(data:MandaDetail){
-        mandaDetailRepository.upsertMandaDetails(listOf(data))
+    suspend operator fun invoke(mandaDetail:MandaDetail){
+        mandaDetailRepository.upsertMandaDetails(listOf(mandaDetail))
     }
 }

@@ -1,6 +1,6 @@
 package com.coldblue.mandalart.state
 
-import com.coldblue.model.Manda
+import com.coldblue.model.MandaUI
 
 sealed interface MandaUIState {
     data object Loading : MandaUIState
@@ -17,15 +17,11 @@ sealed interface MandaUIState {
 }
 
 sealed interface MandaType {
-    data object Empty : MandaType
+    val manda: MandaUI
 
-    data class Fill(
-        val name: String,
-        val mandaId: Int,
-        val isDone: Boolean,
-        val colorIndex: Int,
-        val id: Int
-    ) : MandaType
+    data class Empty(override val manda: MandaUI) : MandaType
 
-    data class Done(override val data: Manda) : MandaType
+    data class Fill(override val manda: MandaUI) : MandaType
+
+    data class Done(override val manda: MandaUI) : MandaType
 }

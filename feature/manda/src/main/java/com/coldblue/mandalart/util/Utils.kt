@@ -5,6 +5,8 @@ import androidx.compose.ui.res.stringArrayResource
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaUI
+import com.coldblue.model.asMandaUI
 import com.colddelight.mandalart.R
 
 
@@ -29,13 +31,13 @@ fun transformToMap(
     repeat(64) {
         if (detailIdList.contains(it))
             if (detailDoneList[it])
-                detailMapList.add(MandaType.Done(details[it]))
+                detailMapList.add(MandaType.Done(details[it].asMandaUI()))
             else {
-                detailMapList.add(MandaType.Fill(details[it]))
+                detailMapList.add(MandaType.Fill(details[it].asMandaUI()))
                 isDone = false
             }
         else {
-            detailMapList.add(MandaType.Empty(details[it]))
+            detailMapList.add(MandaType.Empty(MandaUI(id = it)))
             isDone = false
         }
 
@@ -49,33 +51,12 @@ fun transformToMap(
     repeat(8){
         if(keyIdList.contains(it))
             if(doneArr[it])
-                keyMapList.add(MandaType.Done(keys[it]))
+                keyMapList.add(MandaType.Done(keys[it].asMandaUI()))
             else
-            keyMapList.add(MandaType.Fill(keys[it]))
+            keyMapList.add(MandaType.Fill(keys[it].asMandaUI()))
         else
-            keyMapList.add(MandaType.Empty(keys[it]))
+            keyMapList.add(MandaType.Empty(MandaUI(id = it)))
     }
 
     return Pair(keyMapList, detailMapList)
 }
-//fun List<MandaKey>.transformToMap(): List<Map<Int, MandaKey>> {
-//    val result = mutableListOf<Map<Int, MandaKey>>()
-//
-//
-//}
-//
-//fun List<MandaDetail>.transformToMap(): List<Map<Int, MandaDetail>> {
-//    val result = mutableListOf<Map<Int, MandaDetail>>()
-//    val doneList = this.map { it.isDone }
-//    val idList = this.map { it.id }
-//    repeat(64) {
-//        if (idList.contains(it))
-//            if (doneList[it])
-//                result.add(mapOf(2 to this[it]))
-//            else
-//                result.add(mapOf(1 to this[it]))
-//        else
-//            result.add(mapOf(0 to this[it]))
-//    }
-//    return result
-//}
