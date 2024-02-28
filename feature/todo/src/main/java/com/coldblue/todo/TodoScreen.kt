@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,22 +21,22 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +59,10 @@ fun TodoScreen(
     todoViewModel: TodoViewModel = hiltViewModel(),
 ) {
     val todoUiState by todoViewModel.todoUiState.collectAsStateWithLifecycle()
+    val todoGroupList by todoViewModel.todoGroupList.collectAsStateWithLifecycle()
+    val bottomSheetUiSate by todoViewModel.bottomSheetUiSate.collectAsStateWithLifecycle()
+
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = HMColor.Background
@@ -71,11 +74,17 @@ fun TodoScreen(
         ) {
             TodoContentWithState(
                 uiState = todoUiState,
+                bottomSheetUiSate = bottomSheetUiSate,
+                showSheet = { content -> todoViewModel.showSheet(content) },
+                hideSheet = { todoViewModel.hideSheet() },
                 insertTodo = { todo -> todoViewModel.upsertTodo(todo) },
-                insertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
+                upsertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
                 insertCurrentGroup = { currentGroup -> todoViewModel.upsertCurrentGroup(currentGroup) },
-                onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) }
-            )
+                onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
+                todoGroupList = todoGroupList,
+                upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
+
+                )
         }
     }
 }
@@ -83,10 +92,15 @@ fun TodoScreen(
 @Composable
 private fun TodoContentWithState(
     uiState: TodoUiState,
+    bottomSheetUiSate: BottomSheetUiState,
+    showSheet: (ContentState) -> Unit,
+    hideSheet: () -> Unit,
     insertTodo: (Todo) -> Unit,
-    insertTodoGroup: (TodoGroup) -> Unit,
+    upsertTodoGroup: (TodoGroup) -> Unit,
     insertCurrentGroup: (CurrentGroup) -> Unit,
-    onTodoToggle: (Todo) -> Unit
+    todoGroupList: List<TodoGroup>,
+    onTodoToggle: (Todo) -> Unit,
+    upsertCurrentGroup: (CurrentGroup) -> Unit
 
 ) {
     when (uiState) {
@@ -97,26 +111,50 @@ private fun TodoContentWithState(
         is TodoUiState.Error -> Text(text = uiState.msg)
         is TodoUiState.Success ->
             TodoContent(
+                bottomSheetUiSate,
+                showSheet,
+                hideSheet,
                 insertTodo,
-                insertTodoGroup,
+                upsertTodoGroup,
                 insertCurrentGroup,
                 uiState.currentGroupList,
                 uiState.todoList,
-                onTodoToggle
+                todoGroupList,
+                onTodoToggle,
+                upsertCurrentGroup
             )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TodoContent(
+    bottomSheetUiSate: BottomSheetUiState,
+    showSheet: (ContentState) -> Unit,
+    hideSheet: () -> Unit,
     insertTodo: (Todo) -> Unit,
-    insertTodoGroup: (TodoGroup) -> Unit,
+    upsertTodoGroup: (TodoGroup) -> Unit,
     insertCurrentGroup: (CurrentGroup) -> Unit,
     currentGroupList: List<CurrentGroupState>,
     todoList: List<Todo>,
-    onTodoToggle: (Todo) -> Unit
+    todoGroupList: List<TodoGroup>,
+    onTodoToggle: (Todo) -> Unit,
+    upsertCurrentGroup: (CurrentGroup) -> Unit,
+
 
 ) {
+    val sheetState = rememberModalBottomSheetState()
+    if (bottomSheetUiSate is BottomSheetUiState.Up) {
+        GroupBottomSheet(
+            content = bottomSheetUiSate.content,
+            sheetState = sheetState,
+            onDismissRequest = { hideSheet() },
+            todoGroupList = todoGroupList,
+            currentGroupList = currentGroupList,
+            upsertCurrentGroup = upsertCurrentGroup,
+            upsertTodoGroup = upsertTodoGroup
+        )
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -136,7 +174,7 @@ private fun TodoContent(
             CenterTitleText("하루,만다라트")
         }
         item {
-            HaruManda(currentGroupList)
+            HaruManda(currentGroupList, showSheet)
         }
         item {
             TitleText("오늘 할 일")
@@ -153,9 +191,57 @@ private fun TodoContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GroupBottomSheet(
+    content: ContentState,
+    sheetState: SheetState,
+    todoGroupList: List<TodoGroup>,
+    currentGroupList: List<CurrentGroupState>,
+    onDismissRequest: () -> Unit,
+    upsertCurrentGroup: (CurrentGroup) -> Unit,
+    upsertTodoGroup: (TodoGroup) -> Unit,
+
+) {
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = { onDismissRequest() },
+        containerColor = HMColor.Background
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+        ) {
+            Text(
+                text = content.title, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 28.dp),
+                textAlign = TextAlign.Center, style = HmStyle.title, fontWeight = FontWeight.Bold
+            )
+            when (content) {
+                is ContentState.Group -> {
+                    TodoGroupBottomSheetWithState(
+                        content.currentGroup,
+                        todoGroupList,
+                        currentGroupList,
+                        upsertCurrentGroup,
+                        upsertTodoGroup
+                    )
+                }
+
+                is ContentState.Todo -> {
+//                    content.content(content)
+
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun HaruManda(
     currentGroupList: List<CurrentGroupState>,
+    showSheet: (ContentState) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -183,7 +269,9 @@ fun HaruManda(
                     )
                     .clip(RoundedCornerShape(10.dp))
                     .background(group.backGround),
-                onClick = { /*TODO*/ },
+                onClick = {
+                    showSheet(ContentState.Group(currentGroup = group))
+                },
                 shape = RoundedCornerShape(10.dp)
             ) {
                 when (group) {
@@ -257,7 +345,9 @@ fun HaruManda(
                                     color = HMColor.Background
                                 )
                                 Icon(
-                                    modifier = Modifier.fillMaxWidth().wrapContentWidth(align = Alignment.End),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentWidth(align = Alignment.End),
                                     imageVector = IconPack.Check,
                                     contentDescription = null,
                                     tint = HMColor.Background
@@ -311,10 +401,13 @@ fun TodoItem(
 @Composable
 fun TodoContentPreView() {
     TodoContent(
+        BottomSheetUiState.Down,
         {},
         {},
         {},
-        List<CurrentGroupState>(9) { CurrentGroupState.Done("안드로이드", CurrentGroup(1)) },
+        {},
+        {},
+        List<CurrentGroupState>(9) { CurrentGroupState.Done("안드로이드", 1, CurrentGroup(1)) },
 //        List<CurrentGroupState>(9) { CurrentGroupState.Doing("안드로이드이", "4", CurrentGroup(1)) },
 //        List<CurrentGroupState>(9) { CurrentGroupState.Center("4", "11", ) },
         listOf(
@@ -323,6 +416,8 @@ fun TodoContentPreView() {
             Todo("DB설계", ""),
             Todo("디자인 3페이지", "", groupName = "", time = "오전 08:00")
         ),
+        emptyList(),
         {},
+        {}
     )
 }
