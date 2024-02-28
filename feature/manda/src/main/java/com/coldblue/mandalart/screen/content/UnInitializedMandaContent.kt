@@ -23,7 +23,7 @@ import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMChip
 import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.mandalart.util.getTagList
+import com.coldblue.mandalart.util.MandaUtils.getTagList
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
