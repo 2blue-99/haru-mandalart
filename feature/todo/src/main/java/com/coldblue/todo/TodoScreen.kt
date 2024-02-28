@@ -289,13 +289,13 @@ fun HaruManda(
                                 Text(
                                     modifier = Modifier.fillMaxWidth(),
                                     text = group.doneTodo,
-                                    style = HmStyle.headline,
+                                    style = HmStyle.text20,
                                     color = HMColor.Background
                                 )
                                 Text(
                                     modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End,
                                     text = group.totTodo,
-                                    style = HmStyle.headline,
+                                    style = HmStyle.text20,
                                     color = HMColor.Background
                                 )
                             }
@@ -321,13 +321,13 @@ fun HaruManda(
                                 Text(
                                     modifier = Modifier.fillMaxWidth(),
                                     text = group.name,
-                                    style = HmStyle.content,
+                                    style = HmStyle.text12,
                                     color = HMColor.Primary
                                 )
                                 Text(
                                     modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.End,
                                     text = group.leftTodo,
-                                    style = HmStyle.content,
+                                    style = HmStyle.text12,
                                     color = HMColor.Primary
                                 )
                             }
@@ -341,7 +341,7 @@ fun HaruManda(
                                 Text(
                                     modifier = Modifier.fillMaxWidth(),
                                     text = group.name,
-                                    style = HmStyle.content,
+                                    style = HmStyle.text12,
                                     color = HMColor.Background
                                 )
                                 Icon(
@@ -389,8 +389,8 @@ fun TodoItem(
                     Text(text = todo.title)
                 }
                 Row {
-                    Text(text = todo.groupName, style = HmStyle.content, color = HMColor.Primary)
-                    Text(text = todo.time, style = HmStyle.content)
+                    Text(text = todo.groupName, style = HmStyle.text12, color = HMColor.Primary)
+                    Text(text = todo.time, style = HmStyle.text12)
                 }
             }
         }

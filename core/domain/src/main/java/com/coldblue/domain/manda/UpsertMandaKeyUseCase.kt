@@ -7,7 +7,7 @@ import javax.inject.Inject
 class UpsertMandaKeyUseCase @Inject constructor(
     private val mandaKeyRepository: MandaKeyRepository
 ) {
-    suspend operator fun invoke(data: MandaKey){
-        mandaKeyRepository.upsertMandaKeys(listOf(data))
+    suspend operator fun invoke(mandaKey: MandaKey){
+        mandaKeyRepository.upsertMandaKeys(listOf(mandaKey))
     }
 }

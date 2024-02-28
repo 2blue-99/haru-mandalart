@@ -1,6 +1,5 @@
 package com.coldblue.mandalart
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -41,11 +40,9 @@ import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.component.HMTitleComponent
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.getTagList
-import com.coldblue.model.MandaDetail
-import com.coldblue.model.MandaKey
-import kotlinx.coroutines.delay
 
 @Composable
 fun MandaScreen(
@@ -63,16 +60,16 @@ fun MandaScreen(
                 })
             }
     ) {
-        MandaContentWithStatus(
+        MandaContentWithState(
             mandaUiState,
             mandaViewModel::updateMandaInitState,
-            mandaViewModel::upsertMandaKey
+            mandaViewModel::upsertMandaFinal
         )
     }
 }
 
 @Composable
-fun MandaContentWithStatus(
+fun MandaContentWithState(
     mandaUIState: MandaUIState,
     updateInitState: (Boolean) -> Unit,
     insertFinalManda: (String) -> Unit
@@ -89,7 +86,7 @@ fun MandaContentWithStatus(
 
         is MandaUIState.InitializedSuccess -> {
             InitializedMandaContent(
-                uiData = mandaUIState
+                uiState = mandaUIState
             )
 
         }
@@ -103,20 +100,20 @@ fun UnInitializedMandaContent(
     insertFinalManda: (String) -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
-    var clickState by remember { mutableStateOf(false) }
+    var buttonClickableState by remember { mutableStateOf(false) }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 25.dp, top = 25.dp, end = 25.dp)
+            .padding(16.dp)
     ) {
         item {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = "당신의 최종 목표는 \n무엇인가요?",
-                style = HmStyle.logo,
+                style = HmStyle.text24,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left
             )
@@ -124,7 +121,7 @@ fun UnInitializedMandaContent(
         item {
             HMTextField(inputText) {
                 inputText = it
-                clickState = it.isNotBlank()
+                buttonClickableState = it.isNotBlank()
             }
         }
         item {
@@ -135,7 +132,7 @@ fun UnInitializedMandaContent(
                 getTagList().forEach {
                     HMChip(it) {
                         inputText = it
-                        clickState = true
+                        buttonClickableState = true
                     }
                 }
             }
@@ -143,7 +140,7 @@ fun UnInitializedMandaContent(
         item { Spacer(modifier = Modifier.height(10.dp)) }
 
         item {
-            HMButton(text = "목표 구체화 하기", clickState) {
+            HMButton(text = "목표 구체화 하기", buttonClickableState) {
                 updateInitState(true)
                 insertFinalManda(inputText)
             }
@@ -157,13 +154,11 @@ fun UnInitializedMandaContent(
 //        ) {
 //            HMButton(text = "목표 구체화 하기",clickState) { onNextClick() }
 //        }
-
-
 }
 
 @Composable
 fun InitializedMandaContent(
-    uiData: MandaUIState.InitializedSuccess
+    uiState: MandaUIState.InitializedSuccess
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
 
@@ -173,14 +168,14 @@ fun InitializedMandaContent(
     )
 
     LaunchedEffect(Unit) {
-        percentage = uiData.donePercentage
+        percentage = uiState.donePercentage
     }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(30.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 25.dp, end = 25.dp, top = 25.dp),
+            .padding(16.dp)
     ) {
         item { HMTitleComponent() }
         item {
@@ -189,8 +184,9 @@ fun InitializedMandaContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "\" 내가 한다 취업 \"",
-                    style = HmStyle.headline,
+                    text = "\" ${uiState.finalName} \"",
+                    style = HmStyle.text24,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -200,12 +196,12 @@ fun InitializedMandaContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row {
-                    Text(text = "핵심 목표 : ", style = HmStyle.title)
-                    Text(text = "${uiData.keyMandaCnt} / 8", style = HmStyle.title)
+                    Text(text = "핵심 목표 : ", style = HmStyle.text16)
+                    Text(text = "${uiState.keyMandaCnt} / 8", style = HmStyle.text16)
                 }
                 Row {
-                    Text(text = "핵심 목표 : ", style = HmStyle.title)
-                    Text(text = "${uiData.detailMandaCnt} / 64", style = HmStyle.title)
+                    Text(text = "세부 목표 : ", style = HmStyle.text16)
+                    Text(text = "${uiState.detailMandaCnt} / 64", style = HmStyle.text16)
                 }
             }
         }
@@ -214,7 +210,7 @@ fun InitializedMandaContent(
                 Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.End
             ) {
-                Text(text = "달성률 $0", style = HmStyle.content)
+                Text(text = "달성률 ${uiState.donePercentage}", style = HmStyle.text12)
             }
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -227,6 +223,39 @@ fun InitializedMandaContent(
                 trackColor = HMColor.Gray
             )
         }
+
+        item {
+            MandaContent(
+                mandaKeys = uiState.keys,
+                mandaDetails = uiState.details
+            )
+        }
+    }
+}
+
+@Composable
+fun MandaContent(
+    mandaKeys: List<MandaType>,
+    mandaDetails: List<MandaType>
+){
+    for(manda in mandaKeys){
+        when(manda){
+            is MandaType.Empty -> {
+                manda.manda
+            }
+            is MandaType.Fill -> {}
+            is MandaType.Done -> {}
+        }
+    }
+
+    for(manda in mandaDetails){
+        when(manda){
+            is MandaType.Empty -> {
+                manda.manda
+            }
+            is MandaType.Fill -> {}
+            is MandaType.Done -> {}
+        }
     }
 }
 
@@ -234,12 +263,13 @@ fun InitializedMandaContent(
 @Composable
 fun MandaContentPreview() {
     InitializedMandaContent(
-        uiData = MandaUIState.InitializedSuccess(
+        uiState = MandaUIState.InitializedSuccess(
             keyMandaCnt = 10,
             detailMandaCnt = 50,
             donePercentage = 0.2f,
-            keys = listOf(MandaKey("", 1, 0)),
-            details = listOf(MandaDetail(1, "1", true, 0))
+            finalName = "TEST",
+            keys = listOf(),
+            details = listOf()
         )
     )
 }

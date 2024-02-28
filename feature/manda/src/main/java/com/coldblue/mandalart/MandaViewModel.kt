@@ -10,6 +10,7 @@ import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.util.transformToMap
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @HiltViewModel
 class MandaViewModel @Inject constructor(
@@ -35,19 +35,22 @@ class MandaViewModel @Inject constructor(
     private val getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
 ) : ViewModel() {
-
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
                 getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
-                    Log.e("TAG", "mandaKeys : $mandaKeys", )
-                    Log.e("TAG", "mandaDetails : $mandaDetails", )
+                    Log.e("TAG", "mandaKeys : $mandaKeys")
+                    Log.e("TAG", "mandaDetails : $mandaDetails")
+                    val (keyMaps, detailMaps) = transformToMap(mandaKeys, mandaDetails)
+                    Log.e("TAG", "keyMaps : $mandaKeys")
+                    Log.e("TAG", "detailMaps : $mandaDetails")
                     MandaUIState.InitializedSuccess(
-                            keyMandaCnt = mandaKeys.size-1,
-                            detailMandaCnt = mandaDetails.size,
-                            donePercentage = mandaDetails.count { it.isDone } / 64.0f,
-                            keys = mandaKeys,
-                            details = mandaDetails
+                        keyMandaCnt = mandaKeys.size - 1,
+                        detailMandaCnt = mandaDetails.size,
+                        donePercentage = mandaDetails.count { it.isDone } / 64.0f,
+                        finalName = mandaKeys.last().name,
+                        keys = keyMaps,
+                        details = detailMaps
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")
@@ -63,9 +66,9 @@ class MandaViewModel @Inject constructor(
             initialValue = MandaUIState.Loading
         )
 
-    fun upsertMandaFinal(data: MandaKey) {
+    fun upsertMandaFinal(text: String) {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(data)
+            upsertMandaKeyUseCase(MandaKey(id = 9, name = text))
         }
     }
 
@@ -75,13 +78,13 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun upsertMandaDetail(data: MandaDetail) {
+    fun upsertMandaDetail(mandaDetail: MandaDetail) {
         viewModelScope.launch {
-            upsertMandaDetailUseCase(data)
+            upsertMandaDetailUseCase(mandaDetail)
         }
     }
 
-    fun updateMandaInitState(state: Boolean){
+    fun updateMandaInitState(state: Boolean) {
         viewModelScope.launch {
             updateMandaInitStateUseCase(state)
         }

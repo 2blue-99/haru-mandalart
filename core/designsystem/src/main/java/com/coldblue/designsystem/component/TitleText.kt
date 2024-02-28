@@ -19,7 +19,7 @@ fun TitleText(text: String) {
         Text(
             modifier = Modifier.padding(end = 10.dp),
             text = text,
-            style = HmStyle.headline,
+            style = HmStyle.text20,
             color = HMColor.Primary
         )
         HorizontalDivider(
@@ -41,7 +41,7 @@ fun CenterTitleText(text: String) {
         Text(
             modifier = Modifier.padding(horizontal = 10.dp),
             text = text,
-            style = HmStyle.headline,
+            style = HmStyle.text20,
             color = HMColor.Primary
         )
         HorizontalDivider(
