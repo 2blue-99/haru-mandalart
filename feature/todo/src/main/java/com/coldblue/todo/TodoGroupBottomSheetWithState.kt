@@ -143,7 +143,7 @@ fun TodoGroupBottomSheet(
     ) {
         Text(
             text = "그룹", modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start, style = HmStyle.title, fontWeight = FontWeight.Bold
+            textAlign = TextAlign.Start, style = HmStyle.text16, fontWeight = FontWeight.Bold
         )
         FlowRow(
             modifier = Modifier

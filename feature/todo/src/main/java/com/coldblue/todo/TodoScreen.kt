@@ -216,7 +216,7 @@ fun GroupBottomSheet(
                 text = content.title, modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 28.dp),
-                textAlign = TextAlign.Center, style = HmStyle.title, fontWeight = FontWeight.Bold
+                textAlign = TextAlign.Center, style = HmStyle.text16, fontWeight = FontWeight.Bold
             )
             when (content) {
                 is ContentState.Group -> {
