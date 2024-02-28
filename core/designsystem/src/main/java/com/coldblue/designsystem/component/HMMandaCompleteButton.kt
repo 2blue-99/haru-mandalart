@@ -30,7 +30,6 @@ fun HMMandaCompleteButton(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1F)
-            .padding(vertical = 5.dp, horizontal = 5.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
             .clickable { onClick() }

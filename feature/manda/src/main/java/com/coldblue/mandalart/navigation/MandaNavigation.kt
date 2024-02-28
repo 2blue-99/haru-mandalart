@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.coldblue.data.navi.Route
-import com.coldblue.mandalart.MandaScreen
+import com.coldblue.mandalart.screen.MandaScreen
 
 fun NavController.navigateToManda(navOptions: NavOptions? = null){
     this.navigate(Route.manda, navOptions)

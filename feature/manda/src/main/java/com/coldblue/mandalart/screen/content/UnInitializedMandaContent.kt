@@ -1,4 +1,4 @@
-package com.coldblue.mandalart.content
+package com.coldblue.mandalart.screen.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi

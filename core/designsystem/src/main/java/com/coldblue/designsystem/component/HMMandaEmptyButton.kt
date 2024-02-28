@@ -33,7 +33,6 @@ fun HMMandaEmptyButton() {
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1F)
-            .padding(vertical = 5.dp, horizontal = 5.dp)
             .clip(RoundedCornerShape(8.dp))
             .drawBehind {
                 drawRoundRect(
@@ -44,30 +43,12 @@ fun HMMandaEmptyButton() {
             }
     ){
         Icon(
-            modifier = Modifier.padding(100.dp).fillMaxSize(),
+            modifier = Modifier.padding(50.dp).fillMaxSize(),
             imageVector = IconPack.Plus,
-            tint = HMColor.Gray,
+            tint = Color.Gray,
             contentDescription = ""
         )
     }
-//    Button(
-//        shape = RectangleShape,
-//        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.LightGray),
-//        onClick = { /*TODO*/ },
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .aspectRatio(1F)
-//            .clip(RoundedCornerShape(8.dp))
-//            .drawBehind {
-//                drawRoundRect(
-//                    color = Color.LightGray,
-//                    style = stroke,
-//                    cornerRadius = CornerRadius(30.dp.toPx())
-//                )
-//            },
-//    ) {
-//
-//    }
 }
 
 @Preview

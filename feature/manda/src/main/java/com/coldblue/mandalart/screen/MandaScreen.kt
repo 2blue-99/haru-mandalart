@@ -1,4 +1,4 @@
-package com.coldblue.mandalart
+package com.coldblue.mandalart.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -11,8 +11,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.coldblue.mandalart.content.InitializedMandaContent
-import com.coldblue.mandalart.content.UnInitializedMandaContent
+import com.coldblue.mandalart.MandaViewModel
+import com.coldblue.mandalart.screen.content.InitializedMandaContent
+import com.coldblue.mandalart.screen.content.UnInitializedMandaContent
 import com.coldblue.mandalart.state.MandaUIState
 
 @Composable

@@ -1,4 +1,4 @@
-package com.coldblue.mandalart.content
+package com.coldblue.mandalart.screen.content
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.HMMandaEmptyButton
 import com.coldblue.designsystem.component.HMTitleComponent
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -163,14 +164,13 @@ fun MandaContent(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 repeat(3) {
-                    OutlinedButton(
-                        shape = RectangleShape,
-                        colors = ButtonDefaults.outlinedButtonColors(containerColor = Color.LightGray),
-                        onClick = { /*TODO*/ },
+                    Box(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1F)
+                            .padding(2.dp)
                     ) {
+                        HMMandaEmptyButton()
                     }
                 }
             }
