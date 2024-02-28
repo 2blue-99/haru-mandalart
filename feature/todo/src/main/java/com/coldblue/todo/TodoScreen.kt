@@ -20,9 +20,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -64,7 +69,22 @@ fun TodoScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = HMColor.Background
+        containerColor = HMColor.Background,
+        floatingActionButton = {
+            FloatingActionButton(
+                containerColor = HMColor.Primary,
+                contentColor = HMColor.Background,
+                shape = CircleShape,
+                onClick = { todoViewModel.showSheet(ContentState.Todo()) },
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.Create,
+                        contentDescription = "Todo",
+                        tint = HMColor.Background
+                    )
+                }
+            )
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -184,13 +204,13 @@ private fun TodoContent(
             TitleText("오늘 할 일")
         }
         items(todoList.filter { !it.isDone }) { todo ->
-            TodoItem(todo, onTodoToggle)
+            TodoItem(todo, onTodoToggle,showSheet)
         }
         item {
             Text(text = "완료됨")
         }
         items(todoList.filter { it.isDone }) { todo ->
-            TodoItem(todo, onTodoToggle)
+            TodoItem(todo, onTodoToggle,showSheet)
         }
     }
 }
@@ -239,7 +259,7 @@ fun GroupBottomSheet(
                 }
 
                 is ContentState.Todo -> {
-//                    content.content(content)
+                    TodoBottomSheet()
 
                 }
             }
@@ -374,15 +394,19 @@ fun HaruManda(
 @Composable
 fun TodoItem(
     todo: Todo,
-    onTodoToggle: (Todo) -> Unit
+    onTodoToggle: (Todo) -> Unit,
+    showSheet: (ContentState) -> Unit,
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
         .padding(vertical = 8.dp)
         .border(width = 1.5.dp, color = HMColor.Primary, shape = RoundedCornerShape(10.dp))
+        .background(HMColor.Box)
         .clickable {
+            showSheet(ContentState.Todo())
         }
-        .background(HMColor.Box)) {
+    )
+    {
 
         Row(
             modifier = Modifier
@@ -427,6 +451,6 @@ fun TodoContentPreView() {
         ),
         emptyList(),
         {},
-        {}, {a,b->}
+        {}, { a, b -> }
     )
 }
