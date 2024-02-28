@@ -17,22 +17,23 @@ sealed interface DiaLogState {
     val confirmColor: Color
 
     data class InsertGroup(
-        override val confirmText: String="생성",
-        override val confirmColor: Color=HMColor.Primary,
-        val onInsertGroup: (TodoGroup)->Unit
+        override val confirmText: String = "생성",
+        override val confirmColor: Color = HMColor.Primary,
+        val onInsertGroup: (TodoGroup) -> Unit
     ) : DiaLogState
 
     data class UpdateGroup(
-        override val confirmText: String="수정",
-        override val confirmColor: Color=HMColor.Primary,
-        val onUpsertGroup: (TodoGroup)->Unit
+        override val confirmText: String = "수정",
+        override val confirmColor: Color = HMColor.Primary,
+        val onUpsertGroup: (TodoGroup) -> Unit
 
     ) : DiaLogState
 
     data class DeleteGroup(
-        override val confirmText: String="삭제",
-        override val confirmColor: Color=HMColor.Dark.Red,
-        val onDeleteGroup: (TodoGroup)->Unit
+        override val confirmText: String = "삭제",
+        override val confirmColor: Color = HMColor.Dark.Red,
+        val currentGroup: CurrentGroup,
+        val onDeleteGroup: (Int,Int) -> Unit
     ) : DiaLogState
 
 }

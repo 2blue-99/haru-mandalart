@@ -81,8 +81,13 @@ fun TodoScreen(
                 insertCurrentGroup = { currentGroup -> todoViewModel.upsertCurrentGroup(currentGroup) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
-
-                )
+                deleteCurrentGroup = { current, group ->
+                    todoViewModel.deleteCurrentGroup(
+                        current,
+                        group
+                    )
+                }
+            )
         }
     }
 }
@@ -97,9 +102,10 @@ private fun TodoContentWithState(
     upsertTodoGroup: (TodoGroup) -> Unit,
     insertCurrentGroup: (CurrentGroup) -> Unit,
     onTodoToggle: (Todo) -> Unit,
-    upsertCurrentGroup: (CurrentGroup) -> Unit
+    upsertCurrentGroup: (CurrentGroup) -> Unit,
+    deleteCurrentGroup: (Int, Int) -> Unit,
 
-) {
+    ) {
     when (uiState) {
         is TodoUiState.Loading -> {
             Text(text = "로딩")
@@ -118,7 +124,8 @@ private fun TodoContentWithState(
                 uiState.todoList,
                 uiState.todoGroupList,
                 onTodoToggle,
-                upsertCurrentGroup
+                upsertCurrentGroup,
+                deleteCurrentGroup
             )
     }
 }
@@ -137,9 +144,8 @@ private fun TodoContent(
     todoGroupList: List<TodoGroup>,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-
-
-    ) {
+    deleteCurrentGroup: (Int, Int) -> Unit,
+) {
     val sheetState = rememberModalBottomSheetState()
     if (bottomSheetUiSate is BottomSheetUiState.Up) {
         GroupBottomSheet(
@@ -149,7 +155,8 @@ private fun TodoContent(
             todoGroupList = todoGroupList,
             currentGroupList = currentGroupList,
             upsertCurrentGroup = upsertCurrentGroup,
-            upsertTodoGroup = upsertTodoGroup
+            upsertTodoGroup = upsertTodoGroup,
+            deleteCurrentGroup = deleteCurrentGroup
         )
     }
     LazyColumn(
@@ -198,6 +205,8 @@ fun GroupBottomSheet(
     onDismissRequest: () -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
+    deleteCurrentGroup: (Int, Int) -> Unit,
+
 
     ) {
     ModalBottomSheet(
@@ -224,7 +233,8 @@ fun GroupBottomSheet(
                         currentGroupList,
                         upsertCurrentGroup,
                         upsertTodoGroup,
-                        onDismissRequest
+                        onDismissRequest,
+                        deleteCurrentGroup
                     )
                 }
 
@@ -417,6 +427,6 @@ fun TodoContentPreView() {
         ),
         emptyList(),
         {},
-        {}
+        {}, {a,b->}
     )
 }

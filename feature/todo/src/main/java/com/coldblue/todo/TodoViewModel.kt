@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.ToggleTodoUseCase
 import com.coldblue.domain.todo.UpsertTodoUseCase
+import com.coldblue.domain.todogroup.DeleteCurrentGroupUseCase
 import com.coldblue.domain.todogroup.GetCurrentGroupUseCase
 import com.coldblue.domain.todogroup.GetGroupWithCurrentUseCase
 import com.coldblue.domain.todogroup.GetTodoGroupUseCase
@@ -35,7 +36,8 @@ class TodoViewModel @Inject constructor(
     private val upsertTodoGroupUseCase: UpsertTodoGroupUseCase,
     private val upsertCurrentGroupUseCase: UpsertCurrentGroupUseCase,
     private val upsertTodoUseCase: UpsertTodoUseCase,
-    private val toggleTodoUseCase: ToggleTodoUseCase
+    private val toggleTodoUseCase: ToggleTodoUseCase,
+    private val deleteCurrentGroupUseCase: DeleteCurrentGroupUseCase
 ) : ViewModel() {
     private val _bottomSheetUiSate = MutableStateFlow<BottomSheetUiState>(BottomSheetUiState.Down)
     val bottomSheetUiSate: StateFlow<BottomSheetUiState> = _bottomSheetUiSate
@@ -54,7 +56,6 @@ class TodoViewModel @Inject constructor(
 //
 //            upsertCurrentGroup(CurrentGroup(1, id = 1))
 //            upsertCurrentGroup(CurrentGroup(2, id = 6))
-
         }
     }
 
@@ -81,15 +82,11 @@ class TodoViewModel @Inject constructor(
                 todoGroupList = todoGroupList,
                 currentGroupList = List(9) { index ->
                     val id = index + 1
-                    Log.e("TAG", "${currentGroupList.keys.contains(id)}: ")
-
                     if (currentGroupList.keys.contains(id)) {
-
                         val currentGroup = currentGroupList[id]!!.first()
                         val name = todoGroupList.first { it.id == currentGroup.todoGroupId }.name
                         val currentTodos =
                             todoList.filter { it.todoGroupId == currentGroup.todoGroupId }
-
                         val isDoing = currentTodos.all { it.isDone }
                         val hasTodo = currentTodos.isNotEmpty()
                         if (isDoing && hasTodo) {
@@ -116,7 +113,6 @@ class TodoViewModel @Inject constructor(
                         )
                     }
                 }.sortedBy { it.currentGroup.id }
-                    .apply { Log.e("TAG", "${this.map { it.currentGroup.id }}: ") }
             )
         }.catch {
             TodoUiState.Error(it.message ?: "Error")
@@ -125,15 +121,6 @@ class TodoViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TodoUiState.Loading
         )
-
-//
-//    val todoGroupList: StateFlow<List<TodoGroup>> = getTodoGroupUseCase().map { it }
-//        .stateIn(
-//            scope = viewModelScope,
-//            started = SharingStarted.WhileSubscribed(5_000),
-//            initialValue = emptyList()
-//        )
-
 
     fun upsertTodo(todo: Todo) {
         viewModelScope.launch {
@@ -156,6 +143,12 @@ class TodoViewModel @Inject constructor(
     fun upsertCurrentGroup(currentGroup: CurrentGroup) {
         viewModelScope.launch {
             upsertCurrentGroupUseCase(currentGroup)
+        }
+    }
+
+    fun deleteCurrentGroup(currentGroupId: Int, todoGroupId: Int) {
+        viewModelScope.launch {
+            deleteCurrentGroupUseCase(currentGroupId, todoGroupId)
         }
     }
 }

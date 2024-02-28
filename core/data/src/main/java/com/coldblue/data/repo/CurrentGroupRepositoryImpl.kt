@@ -19,8 +19,8 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         return currentGroupDao.getCurrentGroup().map { it.asDomain() }
     }
 
-    override suspend fun delCurrentGroup(currentGroupId: Int) {
-        currentGroupDao.deleteCurrentGroup(currentGroupId)
+    override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int) {
+        currentGroupDao.deleteCurrentGroupWithTodo(currentGroupId,todoGroupId)
     }
 
 

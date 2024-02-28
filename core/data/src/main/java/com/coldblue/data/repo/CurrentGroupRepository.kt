@@ -8,5 +8,5 @@ interface CurrentGroupRepository {
 
     fun getCurrentGroup(): Flow<List<CurrentGroup>>
 
-    suspend fun delCurrentGroup(currentGroupId: Int)
+    suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int)
 }
