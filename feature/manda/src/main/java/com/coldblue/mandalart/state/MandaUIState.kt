@@ -1,6 +1,6 @@
 package com.coldblue.mandalart.state
 
-import com.coldblue.model.MandaUI
+import com.coldblue.mandalart.model.MandaUI
 
 sealed interface MandaUIState {
     data object Loading : MandaUIState

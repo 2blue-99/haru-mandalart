@@ -4,6 +4,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.coldblue.designsystem.R
 
@@ -30,36 +31,39 @@ val typography = Typography(
 )
 
 object HmStyle{
-    val logo = TextStyle(
+    val text30 = TextStyle(
         fontFamily = orbit,
         fontSize = 30.sp,
+        fontWeight = FontWeight.Bold
     )
-    val mainTitle = TextStyle(
+    val text24 = TextStyle(
         fontFamily = orbit,
         fontSize = 24.sp,
+        fontWeight = FontWeight.Bold
     )
-    val headline = TextStyle(
+    val text20 = TextStyle(
         fontFamily = orbit,
         fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
     )
-    val title = TextStyle(
+    val text16 = TextStyle(
         fontFamily = orbit,
         fontSize = 16.sp,
     )
-    val content = TextStyle(
+    val text12 = TextStyle(
         fontFamily = orbit,
         fontSize = 12.sp,
     )
-    val detail = TextStyle(
+    val text8 = TextStyle(
         fontFamily = orbit,
         fontSize = 8.sp,
     )
-    val small = TextStyle(
+    val text6 = TextStyle(
         fontFamily = orbit,
         fontSize = 6.sp,
     )
 
-    val tiny = TextStyle(
+    val text4 = TextStyle(
         fontFamily = orbit,
         fontSize = 4.sp,
     )

@@ -24,7 +24,7 @@ fun HMTitleComponent() {
         HorizontalDivider(color = HMColor.Primary, modifier = Modifier.weight(1f))
         Text(
             text = "만다라트",
-            style = HmStyle.headline,
+            style = HmStyle.text20,
             modifier = Modifier.padding(horizontal = 15.dp),
             color = HMColor.Primary
         )

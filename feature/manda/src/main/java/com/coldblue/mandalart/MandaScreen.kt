@@ -113,7 +113,7 @@ fun UnInitializedMandaContent(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = "당신의 최종 목표는 \n무엇인가요?",
-                style = HmStyle.mainTitle,
+                style = HmStyle.text24,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Left
             )
@@ -185,7 +185,8 @@ fun InitializedMandaContent(
             ) {
                 Text(
                     text = "\" ${uiState.finalName} \"",
-                    style = HmStyle.headline,
+                    style = HmStyle.text24,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -195,12 +196,12 @@ fun InitializedMandaContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row {
-                    Text(text = "핵심 목표 : ", style = HmStyle.title)
-                    Text(text = "${uiState.keyMandaCnt} / 8", style = HmStyle.title)
+                    Text(text = "핵심 목표 : ", style = HmStyle.text16)
+                    Text(text = "${uiState.keyMandaCnt} / 8", style = HmStyle.text16)
                 }
                 Row {
-                    Text(text = "세부 목표 : ", style = HmStyle.title)
-                    Text(text = "${uiState.detailMandaCnt} / 64", style = HmStyle.title)
+                    Text(text = "세부 목표 : ", style = HmStyle.text16)
+                    Text(text = "${uiState.detailMandaCnt} / 64", style = HmStyle.text16)
                 }
             }
         }
@@ -209,7 +210,7 @@ fun InitializedMandaContent(
                 Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.End
             ) {
-                Text(text = "달성률 ${uiState.donePercentage}", style = HmStyle.content)
+                Text(text = "달성률 ${uiState.donePercentage}", style = HmStyle.text12)
             }
             Spacer(modifier = Modifier.height(5.dp))
 
