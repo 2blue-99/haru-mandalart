@@ -2,11 +2,11 @@ package com.coldblue.mandalart.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringArrayResource
+import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.mandalart.model.asMandaUI
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.coldblue.model.MandaUI
-import com.coldblue.model.asMandaUI
 import com.colddelight.mandalart.R
 
 
