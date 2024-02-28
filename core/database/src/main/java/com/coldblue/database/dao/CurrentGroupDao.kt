@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CurrentGroupDao {
-    @Query("Select * From todo_group JOIN current_group ON todo_group.id = current_group.todo_group_id")
-    fun getCurrentGroup(): Flow<Map<TodoGroupEntity, CurrentGroupEntity>>
+    @Query("Select * From current_group")
+    fun getCurrentGroup(): Flow<List<CurrentGroupEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCurrentGroup(currentGroup: CurrentGroupEntity)

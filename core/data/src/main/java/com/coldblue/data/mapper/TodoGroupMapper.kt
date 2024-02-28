@@ -2,15 +2,16 @@ package com.coldblue.data.mapper
 
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.TodoGroup
+import java.time.LocalDate
 
 object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
 
     override fun asEntity(domain: TodoGroup): TodoGroupEntity {
         return TodoGroupEntity(
-            originId = domain.originId,
-            isSync = domain.isSync,
+            originId = 0,
+            isSync = false,
             isDel = domain.isDel,
-            updateTime = domain.updateTime,
+            updateTime = LocalDate.now().toString(),
             name = domain.name,
             id = domain.id,
         )
@@ -24,10 +25,8 @@ object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
 
     override fun asDomain(entity: TodoGroupEntity): TodoGroup {
         return TodoGroup(
-            originId = entity.originId,
-            isSync = entity.isSync,
             isDel = entity.isDel,
-            updateTime = entity.updateTime,
+            originId = entity.originId,
             name = entity.name,
             id = entity.id,
         )

@@ -2,7 +2,6 @@ package com.coldblue.todo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,9 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +18,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -37,11 +33,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.component.HMChip
-import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -56,74 +49,43 @@ fun TodoGroupBottomSheetWithState(
     currentGroupList: List<CurrentGroupState>,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
     val usingGroupId =
-        currentGroupList.map { it.currentGroup?.todoGroupId ?: -1 }.filter { it != -1 }
-
-    when (currentGroup) {
-        is CurrentGroupState.Empty -> {
-            val todoGroups = todoGroupList.filter { !usingGroupId.contains(it.id) }
-            TodoGroupBottomSheet(
-                todoGroups,
-                upsertCurrentGroup,
-                currentGroup.index,
-                -1,
-                upsertTodoGroup
-            )
-        }
-
-        is CurrentGroupState.Doing -> {
-            val id = currentGroup.currentGroup.todoGroupId
-            val todoGroups =
-                todoGroupList.filter { !usingGroupId.subtract(listOf(id).toSet()).contains(it.id) }
-
-            TodoGroupBottomSheet(
-                todoGroups,
-                upsertCurrentGroup,
-                currentGroup.index,
-                currentGroup.currentGroup.todoGroupId,
-                upsertTodoGroup
-            )
-        }
-
-        is CurrentGroupState.Done -> {
-            val id = currentGroup.currentGroup.todoGroupId
-            val todoGroups =
-                todoGroupList.filter { !usingGroupId.subtract(listOf(id).toSet()).contains(it.id) }
-            TodoGroupBottomSheet(
-                todoGroups,
-                upsertCurrentGroup,
-                currentGroup.index,
-                currentGroup.currentGroup.todoGroupId,
-                upsertTodoGroup
-            )
-        }
-
-        else -> {}
-    }
-
+        currentGroupList.map { it.currentGroup.todoGroupId }.filter { it != -1 }
+    val id = currentGroup.currentGroup.todoGroupId
+    val todoGroups = if (currentGroup is CurrentGroupState.Empty) todoGroupList.filter {
+        !usingGroupId.contains(
+            it.id
+        )
+    } else todoGroupList.filter { !usingGroupId.subtract(listOf(id).toSet()).contains(it.id) }
+    TodoGroupBottomSheet(
+        currentGroup = currentGroup.currentGroup,
+        upsertCurrentGroup = upsertCurrentGroup,
+        upsertTodoGroup = upsertTodoGroup,
+        todoGroupList = todoGroups,
+        onDismissRequest = onDismissRequest
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TodoGroupBottomSheet(
+    currentGroup: CurrentGroup,
     todoGroupList: List<TodoGroup>,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    currentId: Int,
-    id: Int,
     upsertTodoGroup: (TodoGroup) -> Unit,
+    onDismissRequest: () -> Unit,
 
-    ) {
+) {
     var openDialog by remember { mutableStateOf(false) }
     var dialogState by remember { mutableStateOf<DiaLogState>(DiaLogState.InsertGroup(onInsertGroup = upsertTodoGroup)) }
-
     val radioButtons = remember {
         mutableStateListOf<ToggleInfo>().apply {
             addAll(todoGroupList.mapIndexed { index, todoGroup ->
                 ToggleInfo(
-                    isChecked = if (currentId == -1) index == 0 else (todoGroup.id == currentId),
+                    isChecked = if (currentGroup.todoGroupId == -1) index == 0 else (todoGroup.id == currentGroup.todoGroupId),
                     text = todoGroup.name,
-                    id = id,
                     todoGroupId = todoGroup.id
                 )
             })
@@ -172,7 +134,7 @@ fun TodoGroupBottomSheet(
                     onClick = {
                         upsertCurrentGroup(
                             CurrentGroup(
-                                id = id,
+                                id = currentGroup.id,
                                 name = toggleInfo.text,
                                 todoGroupId = toggleInfo.todoGroupId
                             )
@@ -180,6 +142,7 @@ fun TodoGroupBottomSheet(
                         radioButtons.replaceAll {
                             it.copy(isChecked = it.text == toggleInfo.text)
                         }
+                        onDismissRequest()
                     }) {
                     Text(
                         text = toggleInfo.text,
@@ -273,10 +236,12 @@ fun SimpleDialog(
             onDismissRequest(false)
         }, confirmButton = {
             TextButton(onClick = {
-                when(dialogState){
-                    is DiaLogState.InsertGroup->{
+                when (dialogState) {
+                    is DiaLogState.InsertGroup -> {
                         dialogState.onInsertGroup(TodoGroup(inputText))
-                    }else->{
+                    }
+
+                    else -> {
 
                     }
                 }

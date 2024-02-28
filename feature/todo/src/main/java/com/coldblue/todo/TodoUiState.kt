@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
+import com.coldblue.model.TodoGroup
 import java.time.LocalDate
 
 sealed interface TodoUiState {
@@ -15,7 +16,7 @@ sealed interface TodoUiState {
         val today: LocalDate,
         val todoList: List<Todo>,
         val currentGroupList: List<CurrentGroupState>,
-//        val todoGroupList: List<TodoGroup>
+        val todoGroupList: List<TodoGroup>
     ) : TodoUiState
 
 }
@@ -24,20 +25,17 @@ sealed interface CurrentGroupState {
     val border: Color
         get() = HMColor.Primary
     val backGround: Color
-    val currentGroup: CurrentGroup?
-    val index: Int
+    val currentGroup: CurrentGroup
 
     data class Empty(
         override val backGround: Color = HMColor.Background,
-        override val currentGroup: CurrentGroup? = null,
-        override val index: Int
+        override val currentGroup: CurrentGroup,
     ) : CurrentGroupState
 
     data class Doing(
         val name: String,
         val leftTodo: String,
         override val currentGroup: CurrentGroup,
-        override val index: Int,
 
         override val backGround: Color = HMColor.Box
     ) : CurrentGroupState
@@ -45,15 +43,12 @@ sealed interface CurrentGroupState {
     data class Center(
         val totTodo: String,
         val doneTodo: String,
-        override val index: Int,
-
-        override val currentGroup: CurrentGroup? = null,
+        override val currentGroup: CurrentGroup=CurrentGroup(-1,id=5),
         override val backGround: Color = HMColor.Primary
     ) : CurrentGroupState
 
     data class Done(
         val name: String,
-        override val index: Int,
         override val currentGroup: CurrentGroup,
         override val backGround: Color = HMColor.Primary
     ) : CurrentGroupState

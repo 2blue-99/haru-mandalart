@@ -59,7 +59,6 @@ fun TodoScreen(
     todoViewModel: TodoViewModel = hiltViewModel(),
 ) {
     val todoUiState by todoViewModel.todoUiState.collectAsStateWithLifecycle()
-    val todoGroupList by todoViewModel.todoGroupList.collectAsStateWithLifecycle()
     val bottomSheetUiSate by todoViewModel.bottomSheetUiSate.collectAsStateWithLifecycle()
 
 
@@ -81,7 +80,6 @@ fun TodoScreen(
                 upsertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
                 insertCurrentGroup = { currentGroup -> todoViewModel.upsertCurrentGroup(currentGroup) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
-                todoGroupList = todoGroupList,
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
 
                 )
@@ -98,7 +96,6 @@ private fun TodoContentWithState(
     insertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     insertCurrentGroup: (CurrentGroup) -> Unit,
-    todoGroupList: List<TodoGroup>,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit
 
@@ -119,7 +116,7 @@ private fun TodoContentWithState(
                 insertCurrentGroup,
                 uiState.currentGroupList,
                 uiState.todoList,
-                todoGroupList,
+                uiState.todoGroupList,
                 onTodoToggle,
                 upsertCurrentGroup
             )
@@ -142,7 +139,7 @@ private fun TodoContent(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
 
 
-) {
+    ) {
     val sheetState = rememberModalBottomSheetState()
     if (bottomSheetUiSate is BottomSheetUiState.Up) {
         GroupBottomSheet(
@@ -202,7 +199,7 @@ fun GroupBottomSheet(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
 
-) {
+    ) {
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = { onDismissRequest() },
@@ -211,6 +208,7 @@ fun GroupBottomSheet(
         Column(
             modifier = Modifier
                 .padding(16.dp)
+                .padding(bottom = 48.dp)
         ) {
             Text(
                 text = content.title, modifier = Modifier
@@ -225,7 +223,8 @@ fun GroupBottomSheet(
                         todoGroupList,
                         currentGroupList,
                         upsertCurrentGroup,
-                        upsertTodoGroup
+                        upsertTodoGroup,
+                        onDismissRequest
                     )
                 }
 
@@ -407,14 +406,14 @@ fun TodoContentPreView() {
         {},
         {},
         {},
-        List<CurrentGroupState>(9) { CurrentGroupState.Done("안드로이드", 1, CurrentGroup(1)) },
+        List<CurrentGroupState>(9) { CurrentGroupState.Done("안드로이드", CurrentGroup(1, id = 1)) },
 //        List<CurrentGroupState>(9) { CurrentGroupState.Doing("안드로이드이", "4", CurrentGroup(1)) },
 //        List<CurrentGroupState>(9) { CurrentGroupState.Center("4", "11", ) },
         listOf(
-            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드"),
-            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", time = "오전 11:35"),
-            Todo("DB설계", ""),
-            Todo("디자인 3페이지", "", groupName = "", time = "오전 08:00")
+            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
+            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", time = "오전 11:35", todoGroupId = -1),
+            Todo("DB설계", "", todoGroupId = -1),
+            Todo("디자인 3페이지", "", groupName = "", time = "오전 08:00", todoGroupId = -1)
         ),
         emptyList(),
         {},
