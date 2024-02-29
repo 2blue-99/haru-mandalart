@@ -1,6 +1,7 @@
 package com.coldblue.designsystem.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -66,8 +67,8 @@ object HmStyle{
     val text4 = TextStyle(
         fontFamily = orbit,
         fontSize = 4.sp,
+        color = Color.Black
     )
-
 }
 
 

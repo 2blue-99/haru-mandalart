@@ -78,12 +78,4 @@ fun UnInitializedMandaContent(
             }
         }
     }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(bottom = 50.dp),
-//            contentAlignment = Alignment.BottomCenter,
-//        ) {
-//            HMButton(text = "목표 구체화 하기",clickState) { onNextClick() }
-//        }
 }

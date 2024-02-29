@@ -35,6 +35,13 @@ class MandaViewModel @Inject constructor(
     private val getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            upsertMandaKeyUseCase(MandaKey(id = 1, name = "TEST"))
+        }
+    }
+
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
@@ -49,6 +56,7 @@ class MandaViewModel @Inject constructor(
                         mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
                     )
                 }.catch {
+                    Log.e("TAG", "${it}: ", )
                     MandaUIState.Error(it.message ?: "Error")
                 }
             } else {
@@ -64,7 +72,7 @@ class MandaViewModel @Inject constructor(
 
     fun upsertMandaFinal(text: String) {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(MandaKey(id = 9, name = text))
+            upsertMandaKeyUseCase(MandaKey(id = 5, name = text))
         }
     }
 

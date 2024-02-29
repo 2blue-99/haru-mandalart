@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.screen.content
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.HMMandaEmptyButton
+import com.coldblue.designsystem.component.HMMandaFillButton
+import com.coldblue.designsystem.component.HMMandaOutlineButton
 import com.coldblue.designsystem.component.HMTitleComponent
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -145,57 +148,157 @@ fun InitializedMandaContent(
 fun MandaContent(
     mandaStateList: List<MandaState>,
 ) {
-    Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top,
-        modifier = Modifier
-            .background(Color.Companion.White)
-            .fillMaxWidth()
-            .aspectRatio(1F),
-    ) {
-        repeat(3) {
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                repeat(3) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1F)
-                            .padding(2.dp)
-                    ) {
-                        HMMandaEmptyButton()
-                    }
-                }
-            }
-        }
-    }
+//    Log.e("TAG", "MandaContent: $mandaStateList")
+//    Column(
+//        horizontalAlignment = Alignment.Start,
+//        verticalArrangement = Arrangement.Top,
+//        modifier = Modifier
+//            .background(Color.Companion.White)
+//            .fillMaxWidth()
+//            .aspectRatio(1F),
+//    ) {
+//        repeat(3) { keyRow ->
+//            Row(modifier = Modifier.fillMaxWidth()) {
+//                repeat(3) { keyColumn ->
+//                    when (val state = mandaStateList[(keyColumn) + ((keyRow) * 3)]) {
+//                        is MandaState.Empty -> {
+//                            Box(
+//                                modifier = Modifier
+//                                    .weight(1f)
+//                                    .aspectRatio(1F)
+//                                    .padding(2.dp)
+//                            ) {
+//                                HMMandaEmptyButton()
+//                            }
+//                        }
+//
+//                        is MandaState.Exist -> {
+//                            Column(
+//                                horizontalAlignment = Alignment.Start,
+//                                verticalArrangement = Arrangement.Top,
+//                                modifier = Modifier
+//                                    .weight(1f)
+//                                    .background(Color.Companion.White)
+//                                    .fillMaxWidth()
+//                                    .aspectRatio(1F),
+//                            ) {
+//                                repeat(3) { detailRow ->
+//                                    Row(modifier = Modifier.fillMaxWidth()) {
+//                                        repeat(3) { detailColumn ->
+//                                            when (val type = state.mandaUIList[(detailColumn) + ((detailRow) * 3)]) {
+//                                                is MandaType.None ->
+//                                                    Box(
+//                                                        modifier = Modifier
+//                                                            .weight(1f)
+//                                                            .aspectRatio(1F)
+//                                                            .padding(2.dp)
+//                                                    ) {
+//                                                        HMMandaEmptyButton()
+//                                                    }
+//
+//                                                is MandaType.KeyStart ->
+//                                                    Box(
+//                                                        modifier = Modifier
+//                                                            .weight(1f)
+//                                                            .aspectRatio(1F)
+//                                                            .padding(2.dp)
+//                                                    ) {
+//                                                        HMMandaOutlineButton(
+//                                                            name = type.name,
+//                                                            outlineColor = state.darkColor
+//                                                        ) {}
+//                                                    }
+//
+//
+//                                                is MandaType.DetailStart ->
+//                                                    Box(
+//                                                        modifier = Modifier
+//                                                            .weight(1f)
+//                                                            .aspectRatio(1F)
+//                                                            .padding(2.dp)
+//                                                    ) {
+//                                                        HMMandaFillButton(
+//                                                            name = type.name,
+//                                                            backgroundColor = state.lightColor
+//                                                        ) {}
+//                                                    }
+//
+//
+//                                                is MandaType.Done ->
+//                                                    Box(
+//                                                        modifier = Modifier
+//                                                            .weight(1f)
+//                                                            .aspectRatio(1F)
+//                                                            .padding(2.dp)
+//                                                    ) {
+//                                                        HMMandaFillButton(
+//                                                            name = type.name,
+//                                                            backgroundColor = state.darkColor
+//                                                        ) {}
+//                                                    }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
 }
 
 @Preview
 @Composable
 fun MandaContentPreview() {
-//    InitializedMandaContent(
-//        uiState = MandaUIState.InitializedSuccess(
-//            keyMandaCnt = 10,
-//            detailMandaCnt = 50,
-//            donePercentage = 0.2f,
-//            finalName = "TEST",
-//            keys = listOf(),
-//            details = listOf()
+//    val stateList = mutableListOf<MandaState>()
+//    val typeList = mutableListOf<MandaType>()
+//    repeat(9) { cnt ->
+//        if(cnt == 8){
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//            typeList.add(MandaType.DetailStart(name = "TEST", id = 0))
+//        }else {
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//            typeList.add(MandaType.None(id = 0))
+//        }
+//        stateList.add(
+//            MandaState.Exist(
+//                darkColor = HMColor.Dark.Pink,
+//                lightColor = HMColor.Light.Pink,
+//                mandaUIList = typeList.toList()
+//            )
 //        )
-//    )
-//    MandaContent(
-//        mandaKeys = listOf(
-//            MandaType.Empty(MandaUI(id = 1)),
-//            MandaType.Empty(MandaUI(id = 2)),
-//            MandaType.Empty(MandaUI(id = 3)),
-//            MandaType.Empty(MandaUI(id = 4)),
-//            MandaType.Empty(MandaUI(id = 5)),
-//            MandaType.Empty(MandaUI(id = 6)),
-//            MandaType.Empty(MandaUI(id = 7)),
-//            MandaType.Empty(MandaUI(id = 8)),
-//        ),
-//        mandaDetails = listOf()
-//    )
+//        typeList.clear()
+//    }
+//    MandaContent(mandaStateList = stateList)
 }
+
+//@Preview
+//@Composable
+//fun MandaContentPreview() {
+//    val stateList = mutableListOf<MandaState>()
+//    val typeList = mutableListOf<MandaType>()
+//    repeat(9) { cnt ->
+////        repeat(9){it ->
+////            typeList.add(MandaType.Empty(id = 0 ))
+////        }
+//        stateList.add(MandaState.Empty(id = 0))
+//    }
+//    MandaContent(mandaStateList = stateList)
+//}

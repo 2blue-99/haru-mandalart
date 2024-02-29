@@ -47,7 +47,7 @@ fun HMMandaFillButton(
 @Composable
 fun HMMandaFillButtonPreview() {
     HMMandaFillButton(
-        name = "탈모약 먹기@@@@@@@@@@@@@ @@@@@@@@@@@@@@ @@@@@@@@@@@@@@ @@",
+        name = "TEST",
         backgroundColor = HMColor.Gray
     ){}
 }
