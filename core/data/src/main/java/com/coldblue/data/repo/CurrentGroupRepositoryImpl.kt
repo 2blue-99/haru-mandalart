@@ -15,12 +15,12 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         currentGroupDao.upsertCurrentGroup(currentGroup.asEntity())
     }
 
-    override fun getCurrentGroup(): Flow<Map<Int,CurrentGroup>> {
+    override fun getCurrentGroup(): Flow<List<CurrentGroup>> {
         return currentGroupDao.getCurrentGroup().map { it.asDomain() }
     }
 
-    override suspend fun delCurrentGroup(currentGroupId: Int) {
-        currentGroupDao.deleteCurrentGroup(currentGroupId)
+    override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int) {
+        currentGroupDao.deleteCurrentGroupWithTodo(currentGroupId,todoGroupId)
     }
 
 

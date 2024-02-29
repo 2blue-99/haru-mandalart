@@ -1,8 +1,10 @@
 package com.coldblue.todo
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -11,9 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +21,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -37,11 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.component.HMChip
-import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -56,74 +53,46 @@ fun TodoGroupBottomSheetWithState(
     currentGroupList: List<CurrentGroupState>,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
+    onDismissRequest: () -> Unit,
+    deleteCurrentGroup: (Int,Int) -> Unit,
 ) {
     val usingGroupId =
-        currentGroupList.map { it.currentGroup?.todoGroupId ?: -1 }.filter { it != -1 }
-
-    when (currentGroup) {
-        is CurrentGroupState.Empty -> {
-            val todoGroups = todoGroupList.filter { !usingGroupId.contains(it.id) }
-            TodoGroupBottomSheet(
-                todoGroups,
-                upsertCurrentGroup,
-                currentGroup.index,
-                -1,
-                upsertTodoGroup
-            )
-        }
-
-        is CurrentGroupState.Doing -> {
-            val id = currentGroup.currentGroup.todoGroupId
-            val todoGroups =
-                todoGroupList.filter { !usingGroupId.subtract(listOf(id).toSet()).contains(it.id) }
-
-            TodoGroupBottomSheet(
-                todoGroups,
-                upsertCurrentGroup,
-                currentGroup.index,
-                currentGroup.currentGroup.todoGroupId,
-                upsertTodoGroup
-            )
-        }
-
-        is CurrentGroupState.Done -> {
-            val id = currentGroup.currentGroup.todoGroupId
-            val todoGroups =
-                todoGroupList.filter { !usingGroupId.subtract(listOf(id).toSet()).contains(it.id) }
-            TodoGroupBottomSheet(
-                todoGroups,
-                upsertCurrentGroup,
-                currentGroup.index,
-                currentGroup.currentGroup.todoGroupId,
-                upsertTodoGroup
-            )
-        }
-
-        else -> {}
-    }
-
+        currentGroupList.map { it.currentGroup.todoGroupId }.filter { it != -1 }
+    val id = currentGroup.currentGroup.todoGroupId
+    val todoGroups = if (currentGroup is CurrentGroupState.Empty) todoGroupList.filter {
+        !usingGroupId.contains(
+            it.id
+        )
+    } else todoGroupList.filter { !usingGroupId.subtract(listOf(id).toSet()).contains(it.id) }
+    TodoGroupBottomSheet(
+        currentGroup = currentGroup.currentGroup,
+        upsertCurrentGroup = upsertCurrentGroup,
+        upsertTodoGroup = upsertTodoGroup,
+        deleteCurrentGroup = deleteCurrentGroup,
+        todoGroupList = todoGroups,
+        onDismissRequest = onDismissRequest
+    )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun TodoGroupBottomSheet(
+    currentGroup: CurrentGroup,
     todoGroupList: List<TodoGroup>,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    currentId: Int,
-    id: Int,
+    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
+    onDismissRequest: () -> Unit,
 
     ) {
     var openDialog by remember { mutableStateOf(false) }
     var dialogState by remember { mutableStateOf<DiaLogState>(DiaLogState.InsertGroup(onInsertGroup = upsertTodoGroup)) }
-
     val radioButtons = remember {
         mutableStateListOf<ToggleInfo>().apply {
             addAll(todoGroupList.mapIndexed { index, todoGroup ->
                 ToggleInfo(
-                    isChecked = if (currentId == -1) index == 0 else (todoGroup.id == currentId),
+                    isChecked = if (currentGroup.todoGroupId == -1) index == 0 else (todoGroup.id == currentGroup.todoGroupId),
                     text = todoGroup.name,
-                    id = id,
                     todoGroupId = todoGroup.id
                 )
             })
@@ -133,9 +102,11 @@ fun TodoGroupBottomSheet(
         SimpleDialog(
             dialogState,
             onDismissRequest = {
-                openDialog = it
+                openDialog = false
             },
-            onConfirmation = {},
+            onConfirmation = {
+                onDismissRequest()
+            },
         )
     }
 
@@ -153,39 +124,94 @@ fun TodoGroupBottomSheet(
 //            horizontalArrangement = Arrangement.spacedBy(.dp),
         ) {
 
-            radioButtons.forEachIndexed { index, toggleInfo ->
-                OutlinedButton(
-                    contentPadding = PaddingValues(
-                        4.dp
-                    ),
+            radioButtons.forEach { toggleInfo ->
+                Surface(
+                    color = if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background,
+                    contentColor = HMColor.Primary,
+                    shape = RoundedCornerShape(5.dp),
+                    border = BorderStroke(1.dp, HMColor.Primary),
                     modifier = Modifier
                         .fillMaxHeight(0.7f)
                         .padding(8.dp)
-                        .border(
-                            width = 1.dp,
-                            color = HMColor.Primary,
-                            shape = RoundedCornerShape(5.dp)
+                        .combinedClickable(
+                            enabled = true,
+                            onClick = {
+                                upsertCurrentGroup(
+                                    CurrentGroup(
+                                        id = currentGroup.id,
+                                        name = toggleInfo.text,
+                                        todoGroupId = toggleInfo.todoGroupId
+                                    )
+                                )
+                                radioButtons.replaceAll {
+                                    it.copy(isChecked = it.text == toggleInfo.text)
+                                }
+                                onDismissRequest()
+                            },
+                            onLongClick = {
+                                dialogState =
+                                    DiaLogState.DeleteGroup(
+                                        currentGroup = currentGroup,
+                                        onDeleteGroup = deleteCurrentGroup
+                                    )
+                                openDialog = true
+                            }
                         )
-                        .background(if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background)
-                        .clip(RoundedCornerShape(5.dp)),
-                    shape = RoundedCornerShape(5.dp),
-                    onClick = {
-                        upsertCurrentGroup(
-                            CurrentGroup(
-                                id = id,
-                                name = toggleInfo.text,
-                                todoGroupId = toggleInfo.todoGroupId
-                            )
-                        )
-                        radioButtons.replaceAll {
-                            it.copy(isChecked = it.text == toggleInfo.text)
-                        }
-                    }) {
+                ) {
                     Text(
+                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
                         text = toggleInfo.text,
                         color = if (toggleInfo.isChecked) HMColor.Background else HMColor.Primary
                     )
                 }
+//                OutlinedButton(
+//                    contentPadding = PaddingValues(
+//                        4.dp
+//                    ),
+//                    onClick = {
+//                        upsertCurrentGroup(
+//                            CurrentGroup(
+//                                id = currentGroup.id,
+//                                name = toggleInfo.text,
+//                                todoGroupId = toggleInfo.todoGroupId
+//                            )
+//                        )
+//                        radioButtons.replaceAll {
+//                            it.copy(isChecked = it.text == toggleInfo.text)
+//                        }
+//                        onDismissRequest()
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxHeight(0.7f)
+//
+//                        .padding(8.dp)
+//                        .border(
+//                            width = 1.dp,
+//                            color = HMColor.Primary,
+//                            shape = RoundedCornerShape(5.dp)
+//                        )
+//                        .background(if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background)
+//                        .clip(RoundedCornerShape(5.dp))
+//                        .pointerInput(Unit) {
+//                            //todo 버튼 클릭에 막혀서 롱클릭 탐지 불가
+//                            detectTapGestures(
+//                                onTap = {},
+//                                onLongPress = {
+//                                    dialogState =
+//                                        DiaLogState.DeleteGroup(onDeleteGroup = { current ->
+//                                            upsertCurrentGroup(current.copy(isDel = true))
+//                                        })
+//                                    openDialog = true
+//                                }
+//                            )
+//                        },
+//                    shape = RoundedCornerShape(5.dp),
+//                    ) {
+//                    Text(
+//                        text = toggleInfo.text,
+//                        color = if (toggleInfo.isChecked) HMColor.Background else HMColor.Primary
+//                    )
+//                }
             }
 
             OutlinedButton(
@@ -225,8 +251,8 @@ fun TodoGroupBottomSheet(
 @Composable
 fun SimpleDialog(
     dialogState: DiaLogState,
-    onDismissRequest: (Boolean) -> Unit,
-    onConfirmation: (Boolean) -> Unit,
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
 ) {
     var inputText by remember { mutableStateOf("") }
 
@@ -265,23 +291,36 @@ fun SimpleDialog(
                     }
 
                     is DiaLogState.DeleteGroup -> {
-
+                        Text(
+                            text = "삭제 할 그룹에 할 일은 그룹없음 상태가 됩니다",
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
         }, onDismissRequest = {
-            onDismissRequest(false)
+            onDismissRequest()
         }, confirmButton = {
             TextButton(onClick = {
-                when(dialogState){
-                    is DiaLogState.InsertGroup->{
+                when (dialogState) {
+                    is DiaLogState.InsertGroup -> {
                         dialogState.onInsertGroup(TodoGroup(inputText))
-                    }else->{
+                    }
+
+                    is DiaLogState.DeleteGroup -> {
+                        dialogState.onDeleteGroup(
+                            dialogState.currentGroup.id,
+                            dialogState.currentGroup.todoGroupId
+                        )
+                        onConfirmation()
+                    }
+
+                    else -> {
 
                     }
                 }
-                onConfirmation(true)
-                onDismissRequest(false)
+                onConfirmation()
+                onDismissRequest()
             }) {
                 Text(
                     text = dialogState.confirmText,
@@ -291,7 +330,7 @@ fun SimpleDialog(
             }
         }, dismissButton = {
             TextButton(onClick = {
-                onDismissRequest(false)
+                onDismissRequest()
             }) {
                 Text("취소", fontWeight = FontWeight.Bold, color = HMColor.Text)
             }

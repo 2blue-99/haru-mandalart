@@ -6,6 +6,7 @@ import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.database.entity.TodoWithGroupName
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
+import java.time.LocalDate
 
 object TodoEntityMapper {
 
@@ -16,11 +17,11 @@ object TodoEntityMapper {
             isDone = domain.isDone,
             time = domain.time,
             date = domain.date,
-            todoGroupId = domain.todoGroupId,
-            originId = domain.originId,
-            isSync = domain.isSync,
+            todoGroupId = if (domain.todoGroupId == -1) null else domain.todoGroupId,
+            originId = 0,
+            isSync = false,
             isDel = domain.isDel,
-            updateTime = domain.updateTime,
+            updateTime = LocalDate.now().toString(),
             id = domain.id,
         )
     }
@@ -38,14 +39,12 @@ object TodoEntityMapper {
             isDone = entity.todo.isDone,
             time = entity.todo.time,
             date = entity.todo.date,
-            todoGroupId = entity.todo.todoGroupId,
-            originId = entity.todo.originId,
-            isSync = entity.todo.isSync,
+            todoGroupId = entity.todo.todoGroupId ?: -1,
             isDel = entity.todo.isDel,
-            updateTime = entity.todo.updateTime,
+            originId = entity.todo.originId,
             groupName = entity.groupName,
             id = entity.todo.id,
-            )
+        )
     }
 
     fun asDomain(entity: List<TodoWithGroupName>): List<Todo> {

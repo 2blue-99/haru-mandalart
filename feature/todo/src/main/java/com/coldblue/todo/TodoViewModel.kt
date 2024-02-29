@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.ToggleTodoUseCase
 import com.coldblue.domain.todo.UpsertTodoUseCase
+import com.coldblue.domain.todogroup.DeleteCurrentGroupUseCase
 import com.coldblue.domain.todogroup.GetCurrentGroupUseCase
+import com.coldblue.domain.todogroup.GetGroupWithCurrentUseCase
 import com.coldblue.domain.todogroup.GetTodoGroupUseCase
 import com.coldblue.domain.todogroup.UpsertCurrentGroupUseCase
 import com.coldblue.domain.todogroup.UpsertTodoGroupUseCase
@@ -23,17 +25,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.util.Collections
 import javax.inject.Inject
 
 @HiltViewModel
 class TodoViewModel @Inject constructor(
-    getCurrentGroupUseCase: GetCurrentGroupUseCase,
+    getGroupWithCurrentUseCase: GetGroupWithCurrentUseCase,
     getTodoUseCase: GetTodoUseCase,
-    getTodoGroupUseCase: GetTodoGroupUseCase,
+//    getTodoGroupUseCase: GetTodoGroupUseCase,
     private val upsertTodoGroupUseCase: UpsertTodoGroupUseCase,
     private val upsertCurrentGroupUseCase: UpsertCurrentGroupUseCase,
     private val upsertTodoUseCase: UpsertTodoUseCase,
-    private val toggleTodoUseCase: ToggleTodoUseCase
+    private val toggleTodoUseCase: ToggleTodoUseCase,
+    private val deleteCurrentGroupUseCase: DeleteCurrentGroupUseCase
 ) : ViewModel() {
     private val _bottomSheetUiSate = MutableStateFlow<BottomSheetUiState>(BottomSheetUiState.Down)
     val bottomSheetUiSate: StateFlow<BottomSheetUiState> = _bottomSheetUiSate
@@ -46,12 +50,12 @@ class TodoViewModel @Inject constructor(
 //            upsertTodoGroup(TodoGroup("운동"))
 //            upsertTodoUseCase(Todo("1번이요","내용입니다"))
 //            upsertTodoUseCase(Todo("2번이요","내용입니다"))
-//            upsertTodoUseCase(Todo("3번이요","내용입니다", todoGroupId = 1))
+//            upsertTodoUseCase(Todo("3번이요", "내용입니다", todoGroupId = 1))
 //            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 2))
-
-//            upsertCurrentGroup(CurrentGroup(1))
-//            upsertCurrentGroup(CurrentGroup(2))
-
+//            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 3))
+//
+//            upsertCurrentGroup(CurrentGroup(1, id = 1))
+//            upsertCurrentGroup(CurrentGroup(2, id = 6))
         }
     }
 
@@ -67,43 +71,48 @@ class TodoViewModel @Inject constructor(
         }
     }
 
+
     val todoUiState: StateFlow<TodoUiState> =
-        getCurrentGroupUseCase().combine(getTodoUseCase(LocalDate.now())) { currentGroupList, todoList ->
-            val todoByGroup = todoList.groupBy { it.todoGroupId }
+        getGroupWithCurrentUseCase().combine(getTodoUseCase(LocalDate.now())) { group, todoList ->
+            val todoGroupList = group.todoGroupList
+            val currentGroupList = group.currentGroupList.groupBy { it.id }
             TodoUiState.Success(
                 today = LocalDate.now(),
                 todoList = todoList,
-                currentGroupList = List(9) {
-                    val index = it + 1
-                    when (index) {
-                        5 -> CurrentGroupState.Center(
+                todoGroupList = todoGroupList,
+                currentGroupList = List(9) { index ->
+                    val id = index + 1
+                    if (currentGroupList.keys.contains(id)) {
+                        val currentGroup = currentGroupList[id]!!.first()
+                        val name = todoGroupList.first { it.id == currentGroup.todoGroupId }.name
+                        val currentTodos =
+                            todoList.filter { it.todoGroupId == currentGroup.todoGroupId }
+                        val isDoing = currentTodos.all { it.isDone }
+                        val hasTodo = currentTodos.isNotEmpty()
+                        if (isDoing && hasTodo) {
+                            CurrentGroupState.Done(
+                                currentGroup = currentGroup,
+                                name = name
+                            )
+                        } else {
+                            CurrentGroupState.Doing(
+                                name = name,
+                                currentGroup = currentGroup,
+                                leftTodo = currentTodos.filter { !it.isDone }.size.toString(),
+                            )
+
+                        }
+                    } else if (id == 5) {
+                        CurrentGroupState.Center(
                             totTodo = todoList.size.toString(),
                             doneTodo = todoList.filter { it.isDone }.size.toString(),
-                            index = index
                         )
-
-                        else -> {
-                            if (todoByGroup[index] == null) {
-                                CurrentGroupState.Empty(
-                                    index = index
-                                )
-                            } else if (todoByGroup[index]?.all { it.isDone } == true) {
-                                CurrentGroupState.Done(
-                                    currentGroup = currentGroupList[index]!!,
-                                    name = currentGroupList[index]!!.name,
-                                    index = index
-                                )
-                            } else {
-                                CurrentGroupState.Doing(
-                                    name = currentGroupList[index]!!.name,
-                                    currentGroup = currentGroupList[index]!!,
-                                    leftTodo = todoByGroup[index]!!.filter { !it.isDone }.size.toString(),
-                                    index = index
-                                )
-                            }
-                        }
+                    } else {
+                        CurrentGroupState.Empty(
+                            currentGroup = CurrentGroup(todoGroupId = -1, id = id)
+                        )
                     }
-                }
+                }.sortedBy { it.currentGroup.id }
             )
         }.catch {
             TodoUiState.Error(it.message ?: "Error")
@@ -112,15 +121,6 @@ class TodoViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TodoUiState.Loading
         )
-
-
-    val todoGroupList: StateFlow<List<TodoGroup>> = getTodoGroupUseCase().map { it }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList()
-        )
-
 
     fun upsertTodo(todo: Todo) {
         viewModelScope.launch {
@@ -143,6 +143,12 @@ class TodoViewModel @Inject constructor(
     fun upsertCurrentGroup(currentGroup: CurrentGroup) {
         viewModelScope.launch {
             upsertCurrentGroupUseCase(currentGroup)
+        }
+    }
+
+    fun deleteCurrentGroup(currentGroupId: Int, todoGroupId: Int) {
+        viewModelScope.launch {
+            deleteCurrentGroupUseCase(currentGroupId, todoGroupId)
         }
     }
 }

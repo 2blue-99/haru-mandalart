@@ -1,19 +1,18 @@
 package com.coldblue.data.mapper
 
 import com.coldblue.database.entity.CurrentGroupEntity
-import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.CurrentGroup
-import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 
 object CurrentGroupMapper {
 
     fun asEntity(domain: CurrentGroup): CurrentGroupEntity {
         return CurrentGroupEntity(
-            isSync = domain.isSync,
+            isSync = false,
             isDel = domain.isDel,
-            updateTime = domain.updateTime,
+            updateTime = LocalDate.now().toString(),
             todoGroupId = domain.todoGroupId,
             id = domain.id,
         )
@@ -25,19 +24,15 @@ object CurrentGroupMapper {
         }
     }
 
-    fun asDomain(entity: Map<TodoGroupEntity, CurrentGroupEntity>): Map<Int, CurrentGroup> {
-        return entity.mapValues {
-            CurrentGroup(
-                isSync = it.value.isSync,
-                isDel = it.value.isDel,
-                updateTime = it.value.updateTime,
-                name = it.key.name,
-                todoGroupId = it.value.todoGroupId,
-                id = it.value.id,
-            )
-        }.mapKeys {
-            it.value.id
-        }
+    fun asDomain(entity: List<CurrentGroupEntity>): List<CurrentGroup> {
+        return entity.map { it.asDomain() }
+    }
+
+    fun asDomain(entity: CurrentGroupEntity): CurrentGroup {
+        return CurrentGroup(
+            id = entity.id,
+            todoGroupId = entity.todoGroupId
+        )
     }
 }
 
@@ -49,7 +44,11 @@ fun CurrentGroup.asEntity(): CurrentGroupEntity {
     return CurrentGroupMapper.asEntity(this)
 }
 
-fun Map<TodoGroupEntity, CurrentGroupEntity>.asDomain(): Map<Int, CurrentGroup> {
+fun CurrentGroupEntity.asDomain(): CurrentGroup {
+    return CurrentGroupMapper.asDomain(this)
+}
+
+fun List<CurrentGroupEntity>.asDomain(): List<CurrentGroup> {
     return CurrentGroupMapper.asDomain(this)
 }
 
