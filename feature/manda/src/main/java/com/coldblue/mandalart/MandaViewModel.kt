@@ -10,7 +10,7 @@ import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaUIState
-import com.coldblue.mandalart.util.transformToMap
+import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,16 +41,12 @@ class MandaViewModel @Inject constructor(
                 getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
                     Log.e("TAG", "mandaKeys : $mandaKeys")
                     Log.e("TAG", "mandaDetails : $mandaDetails")
-                    val (keyMaps, detailMaps) = transformToMap(mandaKeys, mandaDetails)
-                    Log.e("TAG", "keyMaps : $mandaKeys")
-                    Log.e("TAG", "detailMaps : $mandaDetails")
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
                         donePercentage = mandaDetails.count { it.isDone } / 64.0f,
                         finalName = mandaKeys.last().name,
-                        keys = keyMaps,
-                        details = detailMaps
+                        mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")

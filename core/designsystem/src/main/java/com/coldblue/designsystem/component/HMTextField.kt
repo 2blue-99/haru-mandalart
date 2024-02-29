@@ -22,9 +22,9 @@ fun HMTextField(
         onValueChange = { onChangeText(it) },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = HMColor.Primary,
-            unfocusedPlaceholderColor = Color.Transparent,
-            focusedPlaceholderColor = Color.Transparent
-        ),
+            unfocusedContainerColor = Color.Transparent,
+            focusedContainerColor = Color.Transparent
+        )
     )
 }
 

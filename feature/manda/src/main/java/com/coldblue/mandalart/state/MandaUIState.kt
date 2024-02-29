@@ -1,6 +1,6 @@
 package com.coldblue.mandalart.state
 
-import com.coldblue.mandalart.model.MandaUI
+import androidx.compose.ui.graphics.Color
 
 sealed interface MandaUIState {
     data object Loading : MandaUIState
@@ -11,17 +11,35 @@ sealed interface MandaUIState {
         val detailMandaCnt: Int,
         val donePercentage: Float,
         val finalName: String,
-        val keys: List<MandaType>,
-        val details: List<MandaType>
+        val mandaStateList: List<MandaState>,
     ) : MandaUIState
 }
 
+sealed interface MandaState {
+
+    data class Empty(val id: Int) : MandaState
+
+    data class Exist(
+        val outlineColor: Color? = null,
+        val fillColor: Color? = null,
+        val mandaUIList: List<MandaType>
+    ) : MandaState
+}
+
 sealed interface MandaType {
-    val manda: MandaUI
+    val id: Int
 
-    data class Empty(override val manda: MandaUI) : MandaType
+    data class Empty(override val id: Int) : MandaType
 
-    data class Fill(override val manda: MandaUI) : MandaType
+    data class Fill(
+        val name: String = "",
+        val mandaId: Int? = null,
+        override val id: Int
+    ) : MandaType
 
-    data class Done(override val manda: MandaUI) : MandaType
+    data class Done(
+        val name: String = "",
+        val mandaId: Int? = null,
+        override val id: Int
+    ) : MandaType
 }
