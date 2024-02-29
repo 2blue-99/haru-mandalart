@@ -1,5 +1,6 @@
 package com.coldblue.designsystem.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.aspectRatio
@@ -37,6 +38,7 @@ fun HMMandaEmptyButton() {
             .fillMaxWidth()
             .aspectRatio(1F)
             .clip(RoundedCornerShape(8.dp))
+            .clickable {  }
             .drawBehind {
                 drawRoundRect(
                     color = Color.Gray,

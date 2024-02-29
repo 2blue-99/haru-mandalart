@@ -1,13 +1,14 @@
 package com.coldblue.mandalart.model
 
 import androidx.compose.ui.graphics.Color
+import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 
 data class MandaUI(
-    val name: String? = null,
-    val darkColor: Color? = null,
-    val lightColor: Color? = null,
+    val name: String = "",
+    var darkColor: Color = HMColor.Dark.Pink,
+    var lightColor: Color = HMColor.Light.Pink,
     val id: Int
 )
 

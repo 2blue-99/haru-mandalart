@@ -29,7 +29,7 @@ object MandaUtils {
         val detailIdList = details.map { it.id }.toMutableList()
         val keyIdList = keys.map { it.id }.toMutableList()
 
-        val doneArr = BooleanArray(9) { true }
+        val doneArr = BooleanArray(10) { true }
 
         val resultList = mutableListOf<MandaState>()
         val typeList = mutableListOf<MandaType>()
@@ -71,85 +71,21 @@ object MandaUtils {
                     resultList.add(MandaState.Exist(typeList.toList()))
                 }else{
                     resultList.add(MandaState.Empty(keyIndex))
+                    keyGroupList.add(MandaType.None(MandaUI(id=keyIndex)))
                 }
                 typeList.clear()
                 keyIndex++
             }
         }
 
+        // 최종 목표 만다 수정
+        keyGroupList[4].mandaUI.darkColor = HMColor.Primary
+        keyGroupList[4].mandaUI.lightColor = HMColor.Primary
+
         // 센터에 있는 키 만다 수정 로직
-        for(id in 1..9){
-            resultList[4] = MandaState.Exist(keyGroupList)
+        repeat(9){
+            resultList[4] = MandaState.Exist(keyGroupList.toList())
         }
-
-//        for (id in 1..81) {
-//            var color: Pair<Color, Color> = Pair(HMColor.Dark.Pink, HMColor.Light.Pink)
-//            //핵심
-//            if (id % 9 == 5) {
-//                if (keyIdList.contains(keyIndex)) {
-//                    val key = keyList.removeFirst()
-//                    if (doneArr[keyIndex-1])
-//                        typeList.add(MandaType.Done(MandaUI(name = key.name, id = , outlineColor = , fillColor = )))
-////                        typeList.add(MandaType.Done(name = keyList.first().name, id = keyIndex))
-//                    else
-//                        typeList.add(MandaType.Outline(MandaUI(name = , id = , outlineColor = , fillColor = )))
-////                        typeList.add(MandaType.Outline(name = keyList.first().name, id = keyIndex))
-//
-//                    color = indexToMandaColor(keyList.first().colorIndex)
-//                }
-//                else
-//                    typeList.add(MandaType.None(MandaUI(name = , id = , outlineColor = , fillColor = )))
-////                    typeList.add(MandaType.None(id = keyIndex))
-//            } else {
-//                if (detailIdList.contains(id)) {
-//                    if (details[id - 1].isDone) {
-//                        typeList.add(MandaType.Done(name = details.first().name, id = details.first().id))
-//                        doneArr[keyIndex-1] = false
-//                    }
-//                    else
-//                        typeList.add(MandaType.Fill(name = details.first().name, id = details.first().id))
-//
-//                    detailIdList.removeFirst()
-//                    detailList.removeFirst()
-//                } else {
-//                    typeList.add(MandaType.None(id = id - keyIndex + 1))
-//                    doneArr[keyIndex-1] = false
-//                }
-//            }
-//
-//            if (id % 9 == 0) {
-//                if (keyIdList.contains(keyIndex)) {
-//                    resultList.add(
-//                        MandaState.Exist(
-//                            darkColor = color.first,
-//                            lightColor = color.second,
-//                            mandaUIList = typeList.toList()
-//                        )
-//                    )
-//                    keyIdList.removeFirst()
-//                } else {
-//                    resultList.add(MandaState.Empty(id = keyIndex))
-//                }
-//                typeList.clear()
-//                keyIndex++
-//            }
-//        }
-
-        // 중앙에 있는 값 수정
-//            for (id in 44..53) {
-//                val keyResult = mutableListOf<MandaType>()
-//                repeat(9) {
-//                    if (keyIdList.contains(it)) {
-//                        if (it == 4 || doneArr[it])
-//                            keyResult.add(MandaType.DetailStart(id = it + 1, name = keys[it].name))
-//                        else
-//                            keyResult.add(MandaType.KeyStart(id = it + 1, name = keys[it].name))
-//                    } else {
-//                        keyResult.add(MandaType.None(id = it + 1))
-//                    }
-//                }
-//                resultList[5] = MandaState.Exist(keyResult.toList())
-//            }
 
         Log.e("TAG", "transformToMandaList: $resultList")
         return resultList

@@ -148,106 +148,108 @@ fun InitializedMandaContent(
 fun MandaContent(
     mandaStateList: List<MandaState>,
 ) {
-//    Log.e("TAG", "MandaContent: $mandaStateList")
-//    Column(
-//        horizontalAlignment = Alignment.Start,
-//        verticalArrangement = Arrangement.Top,
-//        modifier = Modifier
-//            .background(Color.Companion.White)
-//            .fillMaxWidth()
-//            .aspectRatio(1F),
-//    ) {
-//        repeat(3) { keyRow ->
-//            Row(modifier = Modifier.fillMaxWidth()) {
-//                repeat(3) { keyColumn ->
-//                    when (val state = mandaStateList[(keyColumn) + ((keyRow) * 3)]) {
-//                        is MandaState.Empty -> {
-//                            Box(
-//                                modifier = Modifier
-//                                    .weight(1f)
-//                                    .aspectRatio(1F)
-//                                    .padding(2.dp)
-//                            ) {
-//                                HMMandaEmptyButton()
-//                            }
-//                        }
-//
-//                        is MandaState.Exist -> {
-//                            Column(
-//                                horizontalAlignment = Alignment.Start,
-//                                verticalArrangement = Arrangement.Top,
-//                                modifier = Modifier
-//                                    .weight(1f)
-//                                    .background(Color.Companion.White)
-//                                    .fillMaxWidth()
-//                                    .aspectRatio(1F),
-//                            ) {
-//                                repeat(3) { detailRow ->
-//                                    Row(modifier = Modifier.fillMaxWidth()) {
-//                                        repeat(3) { detailColumn ->
-//                                            when (val type = state.mandaUIList[(detailColumn) + ((detailRow) * 3)]) {
-//                                                is MandaType.None ->
-//                                                    Box(
-//                                                        modifier = Modifier
-//                                                            .weight(1f)
-//                                                            .aspectRatio(1F)
-//                                                            .padding(2.dp)
-//                                                    ) {
-//                                                        HMMandaEmptyButton()
-//                                                    }
-//
-//                                                is MandaType.KeyStart ->
-//                                                    Box(
-//                                                        modifier = Modifier
-//                                                            .weight(1f)
-//                                                            .aspectRatio(1F)
-//                                                            .padding(2.dp)
-//                                                    ) {
-//                                                        HMMandaOutlineButton(
-//                                                            name = type.name,
-//                                                            outlineColor = state.darkColor
-//                                                        ) {}
-//                                                    }
-//
-//
-//                                                is MandaType.DetailStart ->
-//                                                    Box(
-//                                                        modifier = Modifier
-//                                                            .weight(1f)
-//                                                            .aspectRatio(1F)
-//                                                            .padding(2.dp)
-//                                                    ) {
-//                                                        HMMandaFillButton(
-//                                                            name = type.name,
-//                                                            backgroundColor = state.lightColor
-//                                                        ) {}
-//                                                    }
-//
-//
-//                                                is MandaType.Done ->
-//                                                    Box(
-//                                                        modifier = Modifier
-//                                                            .weight(1f)
-//                                                            .aspectRatio(1F)
-//                                                            .padding(2.dp)
-//                                                    ) {
-//                                                        HMMandaFillButton(
-//                                                            name = type.name,
-//                                                            backgroundColor = state.darkColor
-//                                                        ) {}
-//                                                    }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
+    Log.e("TAG", "MandaContent: $mandaStateList")
+    Column(
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .background(Color.Companion.White)
+            .fillMaxWidth()
+            .aspectRatio(1F),
+    ) {
+        repeat(3) { keyRow ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                repeat(3) { keyColumn ->
+                    when (val state = mandaStateList[(keyColumn) + ((keyRow) * 3)]) {
+                        is MandaState.Empty -> {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1F)
+                                    .padding(2.dp)
+                            ) {
+                                HMMandaEmptyButton()
+                            }
+                        }
+
+                        is MandaState.Exist -> {
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.Top,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .background(Color.Companion.White)
+                                    .fillMaxWidth()
+                                    .aspectRatio(1F),
+                            ) {
+                                repeat(3) { detailRow ->
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        repeat(3) { detailColumn ->
+                                            when (val type = state.mandaUIList[(detailColumn) + ((detailRow) * 3)]) {
+                                                is MandaType.None ->
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .weight(1f)
+                                                            .aspectRatio(1F)
+                                                            .padding(2.dp)
+                                                    ) {
+                                                        HMMandaEmptyButton()
+                                                    }
+
+                                                is MandaType.KeyStart ->
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .weight(1f)
+                                                            .aspectRatio(1F)
+                                                            .padding(2.dp)
+                                                    ) {
+                                                        HMMandaOutlineButton(
+                                                            name = type.mandaUI.name,
+                                                            outlineColor = type.mandaUI.darkColor
+                                                        ) {}
+                                                    }
+
+
+                                                is MandaType.DetailStart ->
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .weight(1f)
+                                                            .aspectRatio(1F)
+                                                            .padding(2.dp)
+                                                    ) {
+                                                        HMMandaFillButton(
+                                                            name = type.mandaUI.name,
+                                                            backgroundColor = type.mandaUI.lightColor,
+                                                            textColor = HMColor.Text
+                                                        ) {}
+                                                    }
+
+
+                                                is MandaType.Done ->
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .weight(1f)
+                                                            .aspectRatio(1F)
+                                                            .padding(2.dp)
+                                                    ) {
+                                                        HMMandaFillButton(
+                                                            name = type.mandaUI.name,
+                                                            backgroundColor = type.mandaUI.darkColor,
+                                                            textColor = HMColor.Background
+                                                        ) {}
+                                                    }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 @Preview

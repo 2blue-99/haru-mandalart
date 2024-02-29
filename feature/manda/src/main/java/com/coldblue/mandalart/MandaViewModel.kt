@@ -38,7 +38,11 @@ class MandaViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(MandaKey(id = 1, name = "TEST"))
+            upsertMandaKeyUseCase(MandaKey(id = 1, name = "TEST", colorIndex = 1))
+            upsertMandaKeyUseCase(MandaKey(id = 5, name = "TEST", colorIndex = 5))
+            upsertMandaKeyUseCase(MandaKey(id = 8, name = "TEST", colorIndex = 7))
+            upsertMandaKeyUseCase(MandaKey(id = 9, name = "TEST", colorIndex = 8))
+            upsertMandaDetailUseCase(MandaDetail(id = 8, name = "TEST", colorIndex = 8, isDone = false))
         }
     }
 

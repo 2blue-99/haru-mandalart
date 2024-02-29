@@ -42,6 +42,7 @@ fun HMMandaOutlineButton(
         Text(
             modifier = Modifier.padding(5.dp),
             textAlign = TextAlign.Center,
+            color = outlineColor,
             text = name,
             style = HmStyle.text6
         )
