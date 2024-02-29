@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +31,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -58,6 +57,7 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
+import java.time.LocalDate
 
 @Composable
 fun TodoScreen(
@@ -65,6 +65,7 @@ fun TodoScreen(
 ) {
     val todoUiState by todoViewModel.todoUiState.collectAsStateWithLifecycle()
     val bottomSheetUiSate by todoViewModel.bottomSheetUiSate.collectAsStateWithLifecycle()
+    val dateState by todoViewModel.dateSate.collectAsStateWithLifecycle()
 
 
     Scaffold(
@@ -98,7 +99,6 @@ fun TodoScreen(
                 hideSheet = { todoViewModel.hideSheet() },
                 insertTodo = { todo -> todoViewModel.upsertTodo(todo) },
                 upsertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
-                insertCurrentGroup = { currentGroup -> todoViewModel.upsertCurrentGroup(currentGroup) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
                 deleteCurrentGroup = { current, group ->
@@ -106,7 +106,8 @@ fun TodoScreen(
                         current,
                         group
                     )
-                }
+                },
+                date = dateState
             )
         }
     }
@@ -120,10 +121,10 @@ private fun TodoContentWithState(
     hideSheet: () -> Unit,
     insertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
-    insertCurrentGroup: (CurrentGroup) -> Unit,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
+    date: LocalDate,
 
     ) {
     when (uiState) {
@@ -139,13 +140,13 @@ private fun TodoContentWithState(
                 hideSheet,
                 insertTodo,
                 upsertTodoGroup,
-                insertCurrentGroup,
                 uiState.currentGroupList,
                 uiState.todoList,
                 uiState.todoGroupList,
                 onTodoToggle,
                 upsertCurrentGroup,
-                deleteCurrentGroup
+                deleteCurrentGroup,
+                date
             )
     }
 }
@@ -158,13 +159,13 @@ private fun TodoContent(
     hideSheet: () -> Unit,
     insertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
-    insertCurrentGroup: (CurrentGroup) -> Unit,
     currentGroupList: List<CurrentGroupState>,
     todoList: List<Todo>,
     todoGroupList: List<TodoGroup>,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
+    date: LocalDate,
 ) {
     val sheetState = rememberModalBottomSheetState()
     if (bottomSheetUiSate is BottomSheetUiState.Up) {
@@ -186,13 +187,8 @@ private fun TodoContent(
             .padding(16.dp),
     ) {
         item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .padding(vertical = 8.dp)
-                    .background(HMColor.SubText)
-            )
+            WeeklyDatePicker(date)
+
         }
         item {
             CenterTitleText("하루,만다라트")
@@ -204,15 +200,55 @@ private fun TodoContent(
             TitleText("오늘 할 일")
         }
         items(todoList.filter { !it.isDone }) { todo ->
-            TodoItem(todo, onTodoToggle,showSheet)
+            TodoItem(todo, onTodoToggle, showSheet)
         }
         item {
             Text(text = "완료됨")
         }
         items(todoList.filter { it.isDone }) { todo ->
-            TodoItem(todo, onTodoToggle,showSheet)
+            TodoItem(todo, onTodoToggle, showSheet)
         }
     }
+}
+
+@Composable
+fun WeeklyDatePicker(
+    date: LocalDate
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(text = "${date.year}년 ${date.month}월")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth().padding(vertical = 8.dp)
+                .background(HMColor.Box)
+        ) {
+            List(7) { 0 }.forEach {
+                Surface(
+                    color = HMColor.Box,
+                    contentColor = HMColor.Primary,
+                    modifier = Modifier
+                        .clickable {
+
+                        }
+                        .weight(1f).padding(vertical = 8.dp,horizontal = 8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .background(HMColor.Primary),
+                        Arrangement.Center,
+                        Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "금", color = HMColor.Background)
+                        Text(text = "${date.dayOfMonth}",color = HMColor.Background)
+                    }
+                }
+            }
+        }
+
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -439,10 +475,12 @@ fun TodoContentPreView() {
         {},
         {},
         {},
-        {},
-        List<CurrentGroupState>(9) { CurrentGroupState.Done("안드로이드", CurrentGroup(1, id = 1)) },
-//        List<CurrentGroupState>(9) { CurrentGroupState.Doing("안드로이드이", "4", CurrentGroup(1)) },
-//        List<CurrentGroupState>(9) { CurrentGroupState.Center("4", "11", ) },
+        List<CurrentGroupState>(9) {
+            CurrentGroupState.Done(
+                "안드로이드",
+                CurrentGroup(1, id = 2, date = LocalDate.now(), index = 2)
+            )
+        },
         listOf(
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", time = "오전 11:35", todoGroupId = -1),
@@ -451,6 +489,7 @@ fun TodoContentPreView() {
         ),
         emptyList(),
         {},
-        {}, { a, b -> }
+        {}, { a, b -> },
+        LocalDate.now()
     )
 }

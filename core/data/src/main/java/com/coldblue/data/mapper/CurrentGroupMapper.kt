@@ -14,6 +14,9 @@ object CurrentGroupMapper {
             isDel = domain.isDel,
             updateTime = LocalDate.now().toString(),
             todoGroupId = domain.todoGroupId,
+            date = domain.date,
+            index = domain.index,
+            originId = 0,
             id = domain.id,
         )
     }
@@ -31,6 +34,8 @@ object CurrentGroupMapper {
     fun asDomain(entity: CurrentGroupEntity): CurrentGroup {
         return CurrentGroup(
             id = entity.id,
+            index = entity.index,
+            date = entity.date,
             todoGroupId = entity.todoGroupId
         )
     }

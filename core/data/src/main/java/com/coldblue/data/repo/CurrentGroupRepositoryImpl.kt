@@ -6,6 +6,7 @@ import com.coldblue.database.dao.CurrentGroupDao
 import com.coldblue.model.CurrentGroup
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import javax.inject.Inject
 
 class CurrentGroupRepositoryImpl @Inject constructor(
@@ -15,8 +16,8 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         currentGroupDao.upsertCurrentGroup(currentGroup.asEntity())
     }
 
-    override fun getCurrentGroup(): Flow<List<CurrentGroup>> {
-        return currentGroupDao.getCurrentGroup().map { it.asDomain() }
+    override fun getCurrentGroup(date:LocalDate): Flow<List<CurrentGroup>> {
+        return currentGroupDao.getCurrentGroup(date).map { it.asDomain() }
     }
 
     override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int) {

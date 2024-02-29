@@ -43,7 +43,7 @@ sealed interface CurrentGroupState {
     data class Center(
         val totTodo: String,
         val doneTodo: String,
-        override val currentGroup: CurrentGroup=CurrentGroup(-1,id=5),
+        override val currentGroup: CurrentGroup,
         override val backGround: Color = HMColor.Primary
     ) : CurrentGroupState
 

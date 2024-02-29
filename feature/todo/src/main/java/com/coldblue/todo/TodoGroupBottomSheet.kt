@@ -121,9 +121,7 @@ fun TodoGroupBottomSheet(
                 .fillMaxWidth()
                 .fillMaxHeight(0.1f),
             verticalArrangement = Arrangement.Center,
-//            horizontalArrangement = Arrangement.spacedBy(.dp),
         ) {
-
             radioButtons.forEach { toggleInfo ->
                 Surface(
                     color = if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background,
@@ -139,7 +137,9 @@ fun TodoGroupBottomSheet(
                                 upsertCurrentGroup(
                                     CurrentGroup(
                                         id = currentGroup.id,
+                                        index = currentGroup.index,
                                         name = toggleInfo.text,
+                                        date = currentGroup.date,
                                         todoGroupId = toggleInfo.todoGroupId
                                     )
                                 )
@@ -164,54 +164,6 @@ fun TodoGroupBottomSheet(
                         color = if (toggleInfo.isChecked) HMColor.Background else HMColor.Primary
                     )
                 }
-//                OutlinedButton(
-//                    contentPadding = PaddingValues(
-//                        4.dp
-//                    ),
-//                    onClick = {
-//                        upsertCurrentGroup(
-//                            CurrentGroup(
-//                                id = currentGroup.id,
-//                                name = toggleInfo.text,
-//                                todoGroupId = toggleInfo.todoGroupId
-//                            )
-//                        )
-//                        radioButtons.replaceAll {
-//                            it.copy(isChecked = it.text == toggleInfo.text)
-//                        }
-//                        onDismissRequest()
-//                    },
-//                    modifier = Modifier
-//                        .fillMaxHeight(0.7f)
-//
-//                        .padding(8.dp)
-//                        .border(
-//                            width = 1.dp,
-//                            color = HMColor.Primary,
-//                            shape = RoundedCornerShape(5.dp)
-//                        )
-//                        .background(if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background)
-//                        .clip(RoundedCornerShape(5.dp))
-//                        .pointerInput(Unit) {
-//                            //todo 버튼 클릭에 막혀서 롱클릭 탐지 불가
-//                            detectTapGestures(
-//                                onTap = {},
-//                                onLongPress = {
-//                                    dialogState =
-//                                        DiaLogState.DeleteGroup(onDeleteGroup = { current ->
-//                                            upsertCurrentGroup(current.copy(isDel = true))
-//                                        })
-//                                    openDialog = true
-//                                }
-//                            )
-//                        },
-//                    shape = RoundedCornerShape(5.dp),
-//                    ) {
-//                    Text(
-//                        text = toggleInfo.text,
-//                        color = if (toggleInfo.isChecked) HMColor.Background else HMColor.Primary
-//                    )
-//                }
             }
 
             OutlinedButton(
@@ -312,7 +264,7 @@ fun SimpleDialog(
                             dialogState.currentGroup.id,
                             dialogState.currentGroup.todoGroupId
                         )
-                        onConfirmation()
+                        onDismissRequest()
                     }
 
                     else -> {
@@ -320,7 +272,6 @@ fun SimpleDialog(
                     }
                 }
                 onConfirmation()
-                onDismissRequest()
             }) {
                 Text(
                     text = dialogState.confirmText,

@@ -1,7 +1,5 @@
 package com.coldblue.todo
 
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.CurrentGroup
