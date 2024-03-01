@@ -9,11 +9,14 @@ import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 @Dao
 interface CurrentGroupDao {
-    @Query("Select * From current_group")
-    fun getCurrentGroup(): Flow<List<CurrentGroupEntity>>
+//    @Query("Select * From current_group")
+//    fun getCurrentGroup(date:LocalDate): Flow<List<CurrentGroupEntity>>
+    @Query("SELECT * FROM current_group WHERE date = :date OR date = (SELECT MAX(date) FROM current_group WHERE date < :date)")
+    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCurrentGroup(currentGroup: CurrentGroupEntity)
