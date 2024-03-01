@@ -24,19 +24,19 @@ object Mapper {
 
 
     fun MandaDetailEntity.asDomain(): MandaDetail = MandaDetail(
-        id = id,
-        mandaId = mandaId,
         name = name,
-        isDone = isDone
+        isDone = isDone,
+        colorIndex = colorIndex,
+        id = id
     )
 
     fun MandaDetail.asEntity(): MandaDetailEntity = MandaDetailEntity(
-        id = id,
         isSync = false,
         isDel = false,
         updateTime = "updateTime",
-        mandaId = mandaId,
         name = name,
-        isDone = isDone
+        isDone = isDone,
+        colorIndex = colorIndex,
+        id = id,
     )
 }

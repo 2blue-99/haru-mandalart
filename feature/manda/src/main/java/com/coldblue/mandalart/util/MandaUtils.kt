@@ -2,7 +2,11 @@ package com.coldblue.mandalart.util
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
+import com.coldblue.designsystem.theme.HMColor
+import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.mandalart.model.asMandaUI
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.model.MandaDetail
@@ -14,93 +18,89 @@ object MandaUtils {
     fun getTagList(): List<String> =
         stringArrayResource(id = R.array.tags).toList()
 
-
     fun transformToMandaList(
         keys: List<MandaKey>,
         details: List<MandaDetail>
     ): List<MandaState> {
 
+        val keyList = keys.toMutableList()
+        val detailList = details.toMutableList()
+
         val detailIdList = details.map { it.id }.toMutableList()
         val keyIdList = keys.map { it.id }.toMutableList()
-        val doneArr = BooleanArray(9) { true }
-        val colorArr = IntArray(9)
 
-        // 9개 들어갈 전체 만다 리스트
+        val doneArr = BooleanArray(10) { true }
+
         val resultList = mutableListOf<MandaState>()
-        // 9개 들어갈 세부 리스트
         val typeList = mutableListOf<MandaType>()
+        val keyGroupList = mutableListOf<MandaType>()
 
         var keyIndex = 1
 
-
         for (id in 1..81) {
-            //핵심
-            if (id % 9 == 5) {
-                // DB에 값이 있다면
-                if (keyIdList.contains(keyIndex)) {
-                    // Done
-                    if (doneArr[keyIndex])
-                        typeList.add(
-                            MandaType.Done(
-                                name = keys[keyIndex].name,
-                                id = keyIndex
-                            )
-                        )
-                    else
-                        typeList.add(
-                            MandaType.Fill(
-                                name = keys[keyIndex].name,
-                                id = keyIndex
-                            )
-                        )
-                    colorArr[keyIndex - 1] = keys[keyIndex].colorIndex
-                    keyIdList.remove(keyIndex)
-                } else {
-                    // Empty
-                    typeList.add(MandaType.Empty(id = keyIndex))
-                }
-                keyIndex++
+            if (detailIdList.contains(id)) {
+
+                val detail = detailList.removeFirst()
+                val colors = indexToDarkLightColor(detail.colorIndex)
+
+                doneArr[keyIndex] = false
+
+                if (detail.isDone)
+                    typeList.add(MandaType.Done(detail.asMandaUI(colors)))
+                else
+                    typeList.add(MandaType.DetailStart(detail.asMandaUI(colors)))
+
             } else {
-                if (detailIdList.contains(id)) {
-                    if (details[id - 1].isDone) {
-                        typeList.add(
-                            MandaType.Done(
-                                name = details[id - 1].name,
-                                mandaId = details[id - 1].mandaId,
-                                id = details[id - 1].id
-                            )
-                        )
-                        doneArr[id % 9 + keyIndex] = false
-                    } else
-                        typeList.add(
-                            MandaType.Fill(
-                                name = details[id - 1].name,
-                                mandaId = details[id - 1].mandaId,
-                                id = details[id - 1].id
-                            )
-                        )
-                    detailIdList.remove(id)
-                } else {
-                    typeList.add(MandaType.Empty(id - keyIndex + 1))
-                    doneArr[id % 9 + keyIndex] = false
-                }
+                typeList.add(MandaType.None(MandaUI(id = id)))
             }
 
-            if (id % 9 == 0) {
-                if (typeList.isEmpty())
-                    resultList.add(MandaState.Empty(id = keyIndex))
-                else
-                    // TODO colorArr에 색 인덱스가 들어있으니, 색 인덱스 만들어서 합쳐보자
-                    resultList.add(
-                        MandaState.Exist(
-                            outlineColor = null,
-                            fillColor = null,
-                            mandaUIList = typeList
-                        )
-                    )
+            // 9개 채우면 그룹으로 만들어서 ResultList에 삽입
+            if (typeList.size == 9) {
+                if (keyIdList.contains(keyIndex)) {
+                    val key = keyList.removeFirst()
+                    val colors = indexToDarkLightColor(key.colorIndex)
+                    if(doneArr[keyIndex]) {
+                        typeList[4] = MandaType.Done(key.asMandaUI(colors))
+                        keyGroupList.add(MandaType.Done(key.asMandaUI(colors)))
+                    }
+                    else {
+                        typeList[4] = MandaType.KeyStart(key.asMandaUI(colors))
+                        keyGroupList.add(MandaType.KeyStart(key.asMandaUI(colors)))
+                    }
+
+                    resultList.add(MandaState.Exist(typeList.toList()))
+                }else{
+                    resultList.add(MandaState.Empty(keyIndex))
+                    keyGroupList.add(MandaType.None(MandaUI(id=keyIndex)))
+                }
+                typeList.clear()
+                keyIndex++
             }
         }
-        Log.e("TAG", "transformToMandaList: $resultList", )
+
+        // 최종 목표 만다 수정
+        keyGroupList[4].mandaUI.darkColor = HMColor.Primary
+        keyGroupList[4].mandaUI.lightColor = HMColor.Primary
+
+        // 센터에 있는 키 만다 수정 로직
+        repeat(9){
+            resultList[4] = MandaState.Exist(keyGroupList.toList())
+        }
+
+        Log.e("TAG", "transformToMandaList: $resultList")
         return resultList
+    }
+
+    private fun indexToDarkLightColor(index: Int): Pair<Color, Color> {
+        return when (index) {
+            1 -> Pair(HMColor.Dark.Pink, HMColor.Light.Pink)
+            2 -> Pair(HMColor.Dark.Red, HMColor.Light.Red)
+            3 -> Pair(HMColor.Dark.Orange, HMColor.Light.Orange)
+            4 -> Pair(HMColor.Dark.Yellow, HMColor.Light.Yellow)
+            5 -> Pair(HMColor.Dark.Green, HMColor.Light.Green)
+            6 -> Pair(HMColor.Dark.Blue, HMColor.Light.Blue)
+            7 -> Pair(HMColor.Dark.Indigo, HMColor.Light.Indigo)
+            else -> Pair(HMColor.Dark.Purple, HMColor.Light.Purple)
+        }
     }
 }

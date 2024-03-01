@@ -23,6 +23,7 @@ import com.coldblue.designsystem.theme.HmStyle
 fun HMMandaFillButton(
     name: String,
     backgroundColor: Color,
+    textColor: Color,
     onClick: () -> Unit
 ) {
     Box(
@@ -37,8 +38,9 @@ fun HMMandaFillButton(
         Text(
             textAlign = TextAlign.Center,
             text = name,
+            color = textColor,
             modifier = Modifier.padding(5.dp),
-            style = HmStyle.text12
+            style = HmStyle.text8
         )
     }
 }
@@ -47,7 +49,8 @@ fun HMMandaFillButton(
 @Composable
 fun HMMandaFillButtonPreview() {
     HMMandaFillButton(
-        name = "탈모약 먹기@@@@@@@@@@@@@ @@@@@@@@@@@@@@ @@@@@@@@@@@@@@ @@",
-        backgroundColor = HMColor.Gray
+        name = "TEST",
+        backgroundColor = HMColor.Dark.Pink,
+        textColor = HMColor.Text
     ){}
 }
