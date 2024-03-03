@@ -3,6 +3,7 @@ package com.coldblue.mandalart.screen.content
 import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +16,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -27,11 +30,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,14 +61,49 @@ fun InitializedMandaContent(
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
 
+    var translationX by remember { mutableStateOf(1f) }
+    var translationY by remember { mutableStateOf(1f) }
+    var scaleX by remember { mutableStateOf(1f) }
+    var scaleY by remember { mutableStateOf(1f) }
+
+
+
     val animatedFloatColor = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
 
-    LaunchedEffect(Unit) {
-        percentage = uiState.donePercentage
-    }
+    LaunchedEffect(Unit) { percentage = uiState.donePercentage }
+
+
+    val animatedTranslationX by animateFloatAsState(
+        targetValue = translationX,
+        animationSpec = spring(
+            dampingRatio = 0.6f,
+            stiffness = 300f
+        ), label = ""
+    )
+    val animatedTranslationY by animateFloatAsState(
+        targetValue = translationY,
+        animationSpec = spring(
+            dampingRatio = 0.6f,
+            stiffness = 300f
+        ), label = ""
+    )
+    val animatedScaleX by animateFloatAsState(
+        targetValue = scaleX,
+        animationSpec = spring(
+            dampingRatio = 0.6f,
+            stiffness = 300f
+        ), label = ""
+    )
+    val animatedScaleY by animateFloatAsState(
+        targetValue = scaleY,
+        animationSpec = spring(
+            dampingRatio = 0.6f,
+            stiffness = 300f
+        ), label = ""
+    )
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -136,8 +176,46 @@ fun InitializedMandaContent(
 
         item {
             MandaContent(
-                mandaStateList = uiState.mandaStateList
+                mandaStateList = uiState.mandaStateList,
+                translationX = animatedTranslationX,
+                translationY = animatedTranslationY,
+                scaleX = animatedScaleX,
+                scaleY = animatedScaleY
             )
+        }
+
+        item {
+            Row {
+                Button(onClick = {
+                    scaleX += 0.5f
+                    scaleY += 0.5f
+                    translationX += 300f
+                    translationY += 300f
+
+                }) {
+                    Text(text = "줌인")
+                }
+                Button(onClick = {
+                    scaleX += 0.5f
+                    scaleY += 0.5f
+                    translationX += 150f
+                    translationY += 150f
+                }) {
+                    Text(text = "줌아웃")
+                }
+//                Button(onClick = {
+//                    scaleX += 0.5f
+//                    scaleY += 0.5f
+//                }) {
+//                    Text(text = "줌인")
+//                }
+//                Button(onClick = {
+//                    scaleX -= 0.5f
+//                    scaleY -= 0.5f
+//                }) {
+//                    Text(text = "줌아웃")
+//                }
+            }
         }
     }
 }
@@ -145,16 +223,29 @@ fun InitializedMandaContent(
 @Composable
 fun MandaContent(
     mandaStateList: List<MandaState>,
+    translationX: Float,
+    translationY: Float,
+    scaleX: Float,
+    scaleY: Float
 ) {
     Log.e("TAG", "MandaContent: $mandaStateList")
     Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .background(Color.Companion.White)
-            .fillMaxWidth()
+            .graphicsLayer(
+                translationX = translationX,
+                translationY = translationY,
+                scaleX = scaleX,
+                scaleY = scaleY
+            )
+            .aspectRatio(1F)
+
     ) {
         repeat(3){keyRow ->
-            Row(modifier = Modifier.padding(vertical = 5.dp).fillMaxWidth()) {
+            Row(modifier = Modifier
+                .padding(vertical = 5.dp)
+                .fillMaxWidth()) {
                 repeat(3) { keyColumn ->
                     when (val state = mandaStateList[(keyColumn) + ((keyRow) * 3)]) {
                         is MandaState.Empty -> {
