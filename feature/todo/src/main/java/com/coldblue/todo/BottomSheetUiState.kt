@@ -3,6 +3,7 @@ package com.coldblue.todo
 import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.CurrentGroup
+import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 
 sealed interface BottomSheetUiState {
@@ -42,6 +43,7 @@ sealed interface ContentState {
 
     data class Todo(
         override val title: String = "할 일",
+        val todo: com.coldblue.model.Todo,
     ) : ContentState
 
     data class Group(

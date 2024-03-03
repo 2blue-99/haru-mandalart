@@ -1,6 +1,5 @@
 package com.coldblue.todo
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,7 +35,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,7 +79,7 @@ fun TodoScreen(
                 containerColor = HMColor.Primary,
                 contentColor = HMColor.Background,
                 shape = CircleShape,
-                onClick = { todoViewModel.showSheet(ContentState.Todo()) },
+                onClick = { todoViewModel.showSheet(ContentState.Todo(todo = Todo(""))) },
                 content = {
                     Icon(
                         imageVector = Icons.Default.Create,
@@ -165,7 +163,7 @@ private fun TodoContent(
     bottomSheetUiSate: BottomSheetUiState,
     showSheet: (ContentState) -> Unit,
     hideSheet: () -> Unit,
-    insertTodo: (Todo) -> Unit,
+    upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     currentGroupList: List<CurrentGroupState>,
     todoList: List<Todo>,
@@ -187,7 +185,8 @@ private fun TodoContent(
             currentGroupList = currentGroupList,
             upsertCurrentGroup = upsertCurrentGroup,
             upsertTodoGroup = upsertTodoGroup,
-            deleteCurrentGroup = deleteCurrentGroup
+            deleteCurrentGroup = deleteCurrentGroup,
+            upsertTodo = upsertTodo
         )
     }
     LazyColumn(
@@ -307,6 +306,7 @@ fun GroupBottomSheet(
     upsertTodoGroup: (TodoGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
 
+    upsertTodo: (Todo) -> Unit,
 
     ) {
     ModalBottomSheet(
@@ -339,7 +339,7 @@ fun GroupBottomSheet(
                 }
 
                 is ContentState.Todo -> {
-                    TodoBottomSheet()
+                    TodoBottomSheet(content.todo, upsertTodo,onDismissRequest)
 
                 }
             }
@@ -483,7 +483,7 @@ fun TodoItem(
         .border(width = 1.5.dp, color = HMColor.Primary, shape = RoundedCornerShape(10.dp))
         .background(HMColor.Box)
         .clickable {
-            showSheet(ContentState.Todo())
+            showSheet(ContentState.Todo(todo = todo))
         }
     )
     {

@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -25,23 +28,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.model.Todo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoBottomSheet() {
+fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit,onDismissRequest: () -> Unit,) {
+
     var onSwitch by remember { mutableStateOf(false) }
     var onDetail by remember { mutableStateOf(false) }
-    var todoText by remember { mutableStateOf("") }
-    var contentText by remember { mutableStateOf("") }
+    var titleText by remember { mutableStateOf(todo.title) }
+    var contentText by remember { mutableStateOf(todo.content) }
+
 
     Column(
     ) {
         Text(text = "할 일", style = HmStyle.text16, fontWeight = FontWeight.Bold)
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = todoText,
+            value = titleText,
             onValueChange = {
-                todoText = it
+                titleText = it
             },
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = HMColor.Primary,
@@ -65,11 +71,14 @@ fun TodoBottomSheet() {
         }
         if (!onDetail) {
             ClickableText(
-                modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
                 text = AnnotatedString("세부설정"),
                 style = TextStyle(color = HMColor.Gray, textAlign = TextAlign.End),
                 onClick = { onDetail = true })
         }
+
 
 
         if (onDetail) {
@@ -107,6 +116,27 @@ fun TodoBottomSheet() {
 
         }
 
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonColors(
+                contentColor = HMColor.Background,
+                containerColor = HMColor.Primary,
+                disabledContentColor = HMColor.Box,
+                disabledContainerColor = HMColor.Primary,
+            ),
+            onClick = {
+                upsertTodo(todo.copy(title = titleText, content = contentText))
+                onDismissRequest()
+            }
+        ) {
+            Text(
+                text = "저장",
+                style = HmStyle.text16,
+                modifier = Modifier.padding(vertical = 4.dp),
+                fontWeight = FontWeight.Bold
+            )
+        }
 
     }
 }

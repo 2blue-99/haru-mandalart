@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 data class Todo(
     val title: String,
-    val content: String,
+    val content: String="",
     val isDone: Boolean=false,
     val time: String="",
     val date: LocalDate=LocalDate.now(),
