@@ -1,5 +1,7 @@
 package com.coldblue.todo
 
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,7 +59,10 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
 fun TodoScreen(
@@ -213,35 +218,55 @@ private fun TodoContent(
 
 @Composable
 fun WeeklyDatePicker(
-    date: LocalDate
+    today: LocalDate
 ) {
+    val weekDates = generateWeekDates(today)
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = "${date.year}년 ${date.month}월")
+        Text(
+            text = "${today.year}년 ${today.month.getDisplayName(TextStyle.FULL, Locale.KOREA)}",
+            style = HmStyle.text16
+        )
         Row(
             modifier = Modifier
-                .fillMaxWidth().padding(vertical = 8.dp)
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .clip(RoundedCornerShape(5.dp))
                 .background(HMColor.Box)
         ) {
-            List(7) { 0 }.forEach {
+            weekDates.forEach { date ->
+                val backGround = if (date == today) HMColor.Primary else HMColor.Box
+                val textColor = if (date == today) HMColor.Background else HMColor.SubText
+
                 Surface(
-                    color = HMColor.Box,
+                    shape = RoundedCornerShape(5.dp),
+                    color = backGround,
                     contentColor = HMColor.Primary,
                     modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 8.dp).clip(RoundedCornerShape(5.dp))
                         .clickable {
+                            Log.e("TAG", "WeeklyDatePicker: dd")
 
                         }
-                        .weight(1f).padding(vertical = 8.dp,horizontal = 8.dp)
+                        .weight(1f)
+
                 ) {
                     Column(
                         modifier = Modifier
-                            .background(HMColor.Primary),
+                            .background(backGround),
                         Arrangement.Center,
                         Alignment.CenterHorizontally
                     ) {
-                        Text(text = "금", color = HMColor.Background)
-                        Text(text = "${date.dayOfMonth}",color = HMColor.Background)
+                        Text(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREA),
+                            color = textColor
+                        )
+                        Text(
+                            modifier = Modifier.padding(bottom = 4.dp),
+                            text = "${date.dayOfMonth}", color = textColor
+                        )
                     }
                 }
             }
@@ -249,6 +274,19 @@ fun WeeklyDatePicker(
 
     }
 
+}
+
+fun generateWeekDates(startDate: LocalDate): List<LocalDate> {
+    val dates = mutableListOf<LocalDate>()
+    var currentDate = startDate
+    while (currentDate.dayOfWeek != DayOfWeek.SUNDAY) {
+        currentDate = currentDate.minusDays(1)
+    }
+    repeat(7) {
+        dates.add(currentDate)
+        currentDate = currentDate.plusDays(1)
+    }
+    return dates
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
