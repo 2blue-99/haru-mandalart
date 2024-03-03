@@ -1,7 +1,6 @@
 package com.coldblue.todo
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -112,7 +112,8 @@ fun TodoScreen(
                         group
                     )
                 },
-                date = dateState
+                date = dateState,
+                selectDate = { date -> todoViewModel.selectDate(date) }
             )
         }
     }
@@ -130,8 +131,9 @@ private fun TodoContentWithState(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
+    selectDate: (LocalDate) -> Unit
 
-    ) {
+) {
     when (uiState) {
         is TodoUiState.Loading -> {
             Text(text = "로딩")
@@ -151,7 +153,8 @@ private fun TodoContentWithState(
                 onTodoToggle,
                 upsertCurrentGroup,
                 deleteCurrentGroup,
-                date
+                date,
+                selectDate
             )
     }
 }
@@ -171,6 +174,8 @@ private fun TodoContent(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
+    selectDate: (LocalDate) -> Unit
+
 ) {
     val sheetState = rememberModalBottomSheetState()
     if (bottomSheetUiSate is BottomSheetUiState.Up) {
@@ -192,7 +197,7 @@ private fun TodoContent(
             .padding(16.dp),
     ) {
         item {
-            WeeklyDatePicker(date)
+            WeeklyDatePicker(date, selectDate)
 
         }
         item {
@@ -218,7 +223,8 @@ private fun TodoContent(
 
 @Composable
 fun WeeklyDatePicker(
-    today: LocalDate
+    today: LocalDate,
+    selectDate: (LocalDate) -> Unit
 ) {
     val weekDates = generateWeekDates(today)
     Column(
@@ -244,10 +250,10 @@ fun WeeklyDatePicker(
                     color = backGround,
                     contentColor = HMColor.Primary,
                     modifier = Modifier
-                        .padding(vertical = 8.dp, horizontal = 8.dp).clip(RoundedCornerShape(5.dp))
+                        .padding(vertical = 8.dp, horizontal = 8.dp)
+                        .clip(RoundedCornerShape(5.dp))
                         .clickable {
-                            Log.e("TAG", "WeeklyDatePicker: dd")
-
+                            selectDate(date)
                         }
                         .weight(1f)
 
@@ -528,6 +534,7 @@ fun TodoContentPreView() {
         emptyList(),
         {},
         {}, { a, b -> },
-        LocalDate.now()
+        LocalDate.now(),
+        {}
     )
 }

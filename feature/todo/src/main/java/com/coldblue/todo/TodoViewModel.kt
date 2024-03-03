@@ -1,5 +1,6 @@
 package com.coldblue.todo
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetTodoUseCase
@@ -13,11 +14,13 @@ import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -39,10 +42,14 @@ class TodoViewModel @Inject constructor(
     private val _dateSate = MutableStateFlow<LocalDate>(LocalDate.now())
     val dateSate: StateFlow<LocalDate> = _dateSate
 
+    private val groupFlow = dateSate.flatMapLatest { getGroupWithCurrentUseCase(it) }
+    private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }
+
+
     init {
         viewModelScope.launch {
 //            upsertTodoUseCase(Todo("1번이요","내용입니다"))
-//            upsertTodoUseCase(Todo("2번이요","내용입니다"))
+//            upsertTodoUseCase(Todo("2번이요","내용입니다", date = LocalDate.now().plusDays(2)))
 //            upsertTodoUseCase(Todo("3번이요", "내용입니다", todoGroupId = 1))
 //            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 2))
 //            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 3))
@@ -69,7 +76,7 @@ class TodoViewModel @Inject constructor(
 
 
     val todoUiState: StateFlow<TodoUiState> =
-        getGroupWithCurrentUseCase(dateSate.value).combine(getTodoUseCase(dateSate.value)) { group, todoList ->
+        groupFlow.combine(todoFlow) { group, todoList ->
             val todoGroupList = group.todoGroupList
             val currentGroupList = group.currentGroupList.groupBy { it.index }
             TodoUiState.Success(
