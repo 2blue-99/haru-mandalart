@@ -86,7 +86,6 @@ fun InitializedMandaContent(
             }
         }
         item {
-
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
@@ -94,7 +93,6 @@ fun InitializedMandaContent(
                 style = HmStyle.text24,
                 fontWeight = FontWeight.Bold
             )
-
         }
         item {
             Row(
@@ -119,17 +117,11 @@ fun InitializedMandaContent(
         }
         item {
             Text(
-                text = "달성률 ${(uiState.donePercentage * 100).roundToInt()}%",
+                text = "달성률 ${(uiState.donePercentage * 100).roundToInt()} %",
                 style = HmStyle.text12,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.End
             )
-//            Column(
-//                Modifier.fillMaxWidth(),
-//                horizontalAlignment = Alignment.End
-//            ) {
-//                Text(text = "달성률 ${uiState.donePercentage.roundToInt()}%", style = HmStyle.text12)
-//            }
             Spacer(modifier = Modifier.height(5.dp))
 
             LinearProgressIndicator(
@@ -157,27 +149,23 @@ fun MandaContent(
     Log.e("TAG", "MandaContent: $mandaStateList")
     Column(
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .background(Color.Companion.White)
             .fillMaxWidth()
-            .aspectRatio(1F),
     ) {
-        repeat(3) { keyRow ->
-            Row(modifier = Modifier.fillMaxWidth()) {
+        repeat(3){keyRow ->
+            Row(modifier = Modifier.padding(vertical = 5.dp).fillMaxWidth()) {
                 repeat(3) { keyColumn ->
                     when (val state = mandaStateList[(keyColumn) + ((keyRow) * 3)]) {
                         is MandaState.Empty -> {
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .aspectRatio(1F)
-                                    .padding(2.dp)
+                                    .padding(horizontal = 5.dp)
                             ) {
                                 HMMandaEmptyButton()
                             }
                         }
-
                         is MandaState.Exist -> {
                             Column(
                                 horizontalAlignment = Alignment.Start,
@@ -186,7 +174,7 @@ fun MandaContent(
                                     .weight(1f)
                                     .background(Color.Companion.White)
                                     .fillMaxWidth()
-                                    .aspectRatio(1F),
+                                    .padding(horizontal = 5.dp)
                             ) {
                                 repeat(3) { detailRow ->
                                     Row(modifier = Modifier.fillMaxWidth()) {
@@ -255,7 +243,6 @@ fun MandaContent(
                 }
             }
         }
-
     }
 }
 
