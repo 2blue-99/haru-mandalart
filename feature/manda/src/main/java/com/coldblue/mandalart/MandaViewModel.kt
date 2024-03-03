@@ -59,7 +59,7 @@ class MandaViewModel @Inject constructor(
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
-                        donePercentage = mandaDetails.count { it.isDone } / 64.0f,
+                        donePercentage = mandaDetails.count { it.isDone } / mandaDetails.size.toFloat(),
                         finalName = mandaKeys.last().name,
                         mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
                     )

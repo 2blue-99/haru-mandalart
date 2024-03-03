@@ -118,12 +118,18 @@ fun InitializedMandaContent(
             }
         }
         item {
-            Column(
-                Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
-            ) {
-                Text(text = "달성률 ${uiState.donePercentage.roundToInt()}", style = HmStyle.text12)
-            }
+            Text(
+                text = "달성률 ${(uiState.donePercentage * 100).roundToInt()}%",
+                style = HmStyle.text12,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End
+            )
+//            Column(
+//                Modifier.fillMaxWidth(),
+//                horizontalAlignment = Alignment.End
+//            ) {
+//                Text(text = "달성률 ${uiState.donePercentage.roundToInt()}%", style = HmStyle.text12)
+//            }
             Spacer(modifier = Modifier.height(5.dp))
 
             LinearProgressIndicator(
@@ -185,7 +191,8 @@ fun MandaContent(
                                 repeat(3) { detailRow ->
                                     Row(modifier = Modifier.fillMaxWidth()) {
                                         repeat(3) { detailColumn ->
-                                            when (val type = state.mandaUIList[(detailColumn) + ((detailRow) * 3)]) {
+                                            when (val type =
+                                                state.mandaUIList[(detailColumn) + ((detailRow) * 3)]) {
                                                 is MandaType.None ->
                                                     Box(
                                                         modifier = Modifier

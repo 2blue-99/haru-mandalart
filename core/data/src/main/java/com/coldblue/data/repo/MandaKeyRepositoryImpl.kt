@@ -12,7 +12,7 @@ class MandaKeyRepositoryImpl @Inject constructor(
     private val mandaKeyDao: MandaKeyDao,
 ) : MandaKeyRepository {
     override fun getMandaKeys(): Flow<List<MandaKey>> =
-        mandaKeyDao.getMandaKeys().map { it.map { it.asDomain() } }
+        mandaKeyDao.getMandaKeys().map { it.filter { !it.isDel }.map { it.asDomain() } }
 
     override suspend fun upsertMandaKeys(mandaKeys: List<MandaKey>) {
         mandaKeyDao.upsertMandaKeys(mandaKeys.map { it.asEntity() })
