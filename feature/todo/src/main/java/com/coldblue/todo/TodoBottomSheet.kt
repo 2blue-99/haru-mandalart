@@ -1,14 +1,17 @@
 package com.coldblue.todo
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +24,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,19 +53,43 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
+import com.coldblue.model.ToggleInfo
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit, onDismissRequest: () -> Unit) {
+fun TodoBottomSheet(
+    todo: Todo,
+    upsertTodo: (Todo) -> Unit,
+    onDismissRequest: () -> Unit,
+    today: LocalDate
+) {
 
-    var onSwitch by remember { mutableStateOf(true) }
-//    var onSwitch by remember { mutableStateOf(false) }
+//    var onSwitch by remember { mutableStateOf(true) }
+    var onSwitch by remember { mutableStateOf(false) }
     var onDetail by remember { mutableStateOf(false) }
 //    var onDetail by remember { mutableStateOf(true) }
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content) }
+
+    var time by remember { mutableStateOf(LocalTime.now()) }
+    var isAm by remember { mutableStateOf(time.hour < 12) }
+
+    val dateButtons = remember {
+        mutableStateListOf(
+            ToggleInfo(true, "오늘", plus = 0),
+            ToggleInfo(false, "내일", plus = 1),
+            ToggleInfo(false, "다음주", plus = 7),
+            ToggleInfo(false, "직접입력"),
+        )
+    }
+    var date by remember { mutableStateOf(today) }
+
 
 
     Column(
@@ -90,7 +119,10 @@ fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit, onDismissRequest: ()
                 .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "시간없음")
-            Switch(checked = onSwitch, onCheckedChange = { onSwitch = !onSwitch })
+            Switch(checked = onSwitch, onCheckedChange = {
+                time = LocalTime.now()
+                onSwitch = !onSwitch
+            })
         }
         if (onSwitch) {
             Row(
@@ -101,8 +133,8 @@ fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit, onDismissRequest: ()
                 CircularList(
                     itemHeight = 40.dp,
                     textStyle = HmStyle.text16,
-                    items = listOf("오전", "오후"), // 오전, 오후 항목 추가
-                    initialItem = "오후", // 초기 선택 항목 설정
+                    items = listOf("오전", "오후"),
+                    initialItem = if (isAm) "오전" else "오후",
                     textColor = HMColor.SubText,
                     selectedTextColor = HMColor.Text,
                     onItemSelected = { _, _ -> }
@@ -111,11 +143,12 @@ fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit, onDismissRequest: ()
                 InfiniteCircularList(
                     itemHeight = 40.dp,
                     textStyle = HmStyle.text16,
-                    items = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
-                    initialItem = 1,
+                    items = List(12) { it + 1 },
+                    initialItem = time.hour % 12,
                     textColor = HMColor.SubText,
                     selectedTextColor = HMColor.Text,
-                    onItemSelected = { a, b -> }
+                    onItemSelected = { index, item ->
+                    }
                 )
                 Text(
                     text = ":",
@@ -125,8 +158,8 @@ fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit, onDismissRequest: ()
                 InfiniteCircularList(
                     itemHeight = 40.dp,
                     textStyle = HmStyle.text16,
-                    items = List(60) { it + 1 },
-                    initialItem = 1,
+                    items = List(60) { it.toString().padStart(2, '0') },
+                    initialItem = time.minute.toString().padStart(2, '0'),
                     textColor = HMColor.SubText,
                     selectedTextColor = HMColor.Text,
                     onItemSelected = { a, b -> }
@@ -170,6 +203,57 @@ fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit, onDismissRequest: ()
                 style = HmStyle.text16,
                 fontWeight = FontWeight.Bold
             )
+            Text(text = date.toString())
+
+            Row {
+                dateButtons.forEach { button ->
+                    SelectButton(button) {
+                        date = today.plusDays(button.plus)
+                        dateButtons.replaceAll {
+                            it.copy(isChecked = it.text == button.text)
+                        }
+                    }
+                }
+            }
+            if (dateButtons.last().isChecked) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    InfiniteCircularList(
+                        itemHeight = 40.dp,
+                        textStyle = HmStyle.text16,
+                        items = List(101) { "${2000 + it}년" },
+                        initialItem = "${date.year}년",
+                        textColor = HMColor.SubText,
+                        selectedTextColor = HMColor.Text,
+                        onItemSelected = { a, b -> }
+                    )
+                    InfiniteCircularList(
+                        itemHeight = 40.dp,
+                        textStyle = HmStyle.text16,
+                        items = List(12) { "${it + 1}월" },
+                        initialItem = date.month.getDisplayName(
+                            java.time.format.TextStyle.FULL,
+                            Locale.KOREA
+                        ),
+                        textColor = HMColor.SubText,
+                        selectedTextColor = HMColor.Text,
+                        onItemSelected = { a, b -> }
+                    )
+                    InfiniteCircularList(
+                        itemHeight = 40.dp,
+                        textStyle = HmStyle.text16,
+                        items = List(date.lengthOfMonth()) { "${it + 1}일" },
+                        initialItem = "${date.dayOfMonth}일",
+                        textColor = HMColor.SubText,
+                        selectedTextColor = HMColor.Text,
+                        onItemSelected = { a, b -> }
+                    )
+                }
+
+
+            }
 
             Text(
                 modifier = Modifier.padding(top = 48.dp),
@@ -203,6 +287,29 @@ fun TodoBottomSheet(todo: Todo, upsertTodo: (Todo) -> Unit, onDismissRequest: ()
             )
         }
 
+    }
+}
+
+@Composable
+fun SelectButton(toggleInfo: ToggleInfo, onClick: () -> Unit) {
+    Surface(
+        color = if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background,
+        contentColor = HMColor.Primary,
+        shape = RoundedCornerShape(5.dp),
+        border = BorderStroke(1.dp, HMColor.Primary),
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable {
+                onClick()
+
+            }
+
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
+            text = toggleInfo.text,
+            color = if (toggleInfo.isChecked) HMColor.Background else HMColor.Primary
+        )
     }
 }
 
@@ -388,7 +495,7 @@ fun TodoBottomSheetPreview() {
             .padding(16.dp)
     ) {
 
-        TodoBottomSheet(todo = Todo(""), {}, {})
+        TodoBottomSheet(todo = Todo(""), {}, {}, LocalDate.now())
 
     }
 }

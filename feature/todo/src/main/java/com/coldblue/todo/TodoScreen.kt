@@ -186,7 +186,8 @@ private fun TodoContent(
             upsertCurrentGroup = upsertCurrentGroup,
             upsertTodoGroup = upsertTodoGroup,
             deleteCurrentGroup = deleteCurrentGroup,
-            upsertTodo = upsertTodo
+            upsertTodo = upsertTodo,
+            date = date
         )
     }
     LazyColumn(
@@ -307,8 +308,9 @@ fun GroupBottomSheet(
     deleteCurrentGroup: (Int, Int) -> Unit,
 
     upsertTodo: (Todo) -> Unit,
+    date: LocalDate
 
-    ) {
+) {
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = { onDismissRequest() },
@@ -339,7 +341,7 @@ fun GroupBottomSheet(
                 }
 
                 is ContentState.Todo -> {
-                    TodoBottomSheet(content.todo, upsertTodo,onDismissRequest)
+                    TodoBottomSheet(content.todo, upsertTodo, onDismissRequest, date)
 
                 }
             }
