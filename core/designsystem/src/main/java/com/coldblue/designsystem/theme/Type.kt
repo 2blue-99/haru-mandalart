@@ -67,7 +67,6 @@ object HmStyle{
     val text4 = TextStyle(
         fontFamily = orbit,
         fontSize = 4.sp,
-        color = Color.Black
     )
 }
 
