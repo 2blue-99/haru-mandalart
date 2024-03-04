@@ -62,6 +62,7 @@ import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -527,7 +528,7 @@ fun TodoItem(
                 }
                 Row {
                     Text(text = todo.groupName, style = HmStyle.text12, color = HMColor.Primary)
-                    Text(text = todo.time, style = HmStyle.text12)
+                    Text(text = todo.time?.toString()?:"", style = HmStyle.text12)
                 }
             }
         }
@@ -551,9 +552,9 @@ fun TodoContentPreView() {
         },
         listOf(
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
-            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", time = "오전 11:35", todoGroupId = -1),
+            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
             Todo("DB설계", "", todoGroupId = -1),
-            Todo("디자인 3페이지", "", groupName = "", time = "오전 08:00", todoGroupId = -1)
+            Todo("디자인 3페이지", "", groupName = "", todoGroupId = -1)
         ),
         emptyList(),
         {},
