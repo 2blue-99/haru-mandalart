@@ -41,7 +41,7 @@ fun HMMandaEmptyButton() {
             .clickable {  }
             .drawBehind {
                 drawRoundRect(
-                    color = Color.LightGray,
+                    color = HMColor.SubText,
                     style = stroke,
                     cornerRadius = CornerRadius(8.dp.toPx())
                 )
@@ -50,7 +50,7 @@ fun HMMandaEmptyButton() {
         Icon(
             modifier = Modifier.fillMaxSize().scale(0.35f),
             imageVector = IconPack.Plus,
-            tint = Color.LightGray,
+            tint = HMColor.SubText,
             contentDescription = ""
         )
     }
