@@ -21,12 +21,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchColors
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -40,20 +44,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
@@ -64,7 +75,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun TodoBottomSheet(
     todo: Todo,
@@ -93,15 +104,17 @@ fun TodoBottomSheet(
             ToggleInfo(false, "직접입력"),
         )
     }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     var date by remember { mutableStateOf(today) }
-    LaunchedEffect(onSwitch){
+    LaunchedEffect(onSwitch) {
         sheetState.expand()
     }
 
-    LaunchedEffect(onDetail){
+    LaunchedEffect(onDetail) {
         sheetState.expand()
     }
-    LaunchedEffect(dateButtons.last().isChecked){
+    LaunchedEffect(dateButtons.last().isChecked) {
         sheetState.expand()
     }
 
@@ -112,9 +125,20 @@ fun TodoBottomSheet(
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = titleText,
+            maxLines = 1,
             onValueChange = {
                 titleText = it
             },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+
+//                    focusManager.clearFocus(false)
+                }
+            ),
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = HMColor.Primary,
                 containerColor = Color.Transparent
@@ -133,10 +157,11 @@ fun TodoBottomSheet(
                 .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "시간없음")
-            Switch(checked = onSwitch, onCheckedChange = {
+            HMSwitch(onSwitch) {
                 time = LocalTime.now()
                 onSwitch = !onSwitch
-            })
+            }
+
         }
         if (onSwitch) {
             Row(
@@ -349,7 +374,7 @@ fun <T> InfiniteCircularList(
         var targetIndex = items.indexOf(initialItem) - 1
         targetIndex += ((Int.MAX_VALUE / 2) / items.size) * items.size
         lastSelectedIndex = targetIndex
-        scrollState.scrollToItem(lastSelectedIndex,0)
+        scrollState.scrollToItem(lastSelectedIndex, 0)
 
 //        scrollState.animateScrollToItem(lastSelectedIndex, 0)
     }
@@ -438,7 +463,7 @@ fun <T> CircularList(
     LaunchedEffect(items) {
         val targetIndex = items.indexOf(initialItem)
         lastSelectedIndex = targetIndex
-        scrollState.scrollToItem(lastSelectedIndex,0)
+        scrollState.scrollToItem(lastSelectedIndex, 0)
 //        scrollState.animateScrollToItem(lastSelectedIndex, 0)
 
     }
