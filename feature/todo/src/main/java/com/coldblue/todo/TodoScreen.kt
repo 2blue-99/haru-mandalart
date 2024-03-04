@@ -57,7 +57,10 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
 fun TodoScreen(
@@ -76,7 +79,7 @@ fun TodoScreen(
                 containerColor = HMColor.Primary,
                 contentColor = HMColor.Background,
                 shape = CircleShape,
-                onClick = { todoViewModel.showSheet(ContentState.Todo()) },
+                onClick = { todoViewModel.showSheet(ContentState.Todo(todo = Todo(""))) },
                 content = {
                     Icon(
                         imageVector = Icons.Default.Create,
@@ -107,7 +110,8 @@ fun TodoScreen(
                         group
                     )
                 },
-                date = dateState
+                date = dateState,
+                selectDate = { date -> todoViewModel.selectDate(date) }
             )
         }
     }
@@ -125,8 +129,9 @@ private fun TodoContentWithState(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
+    selectDate: (LocalDate) -> Unit
 
-    ) {
+) {
     when (uiState) {
         is TodoUiState.Loading -> {
             Text(text = "로딩")
@@ -146,7 +151,8 @@ private fun TodoContentWithState(
                 onTodoToggle,
                 upsertCurrentGroup,
                 deleteCurrentGroup,
-                date
+                date,
+                selectDate
             )
     }
 }
@@ -157,7 +163,7 @@ private fun TodoContent(
     bottomSheetUiSate: BottomSheetUiState,
     showSheet: (ContentState) -> Unit,
     hideSheet: () -> Unit,
-    insertTodo: (Todo) -> Unit,
+    upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     currentGroupList: List<CurrentGroupState>,
     todoList: List<Todo>,
@@ -166,6 +172,8 @@ private fun TodoContent(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
+    selectDate: (LocalDate) -> Unit
+
 ) {
     val sheetState = rememberModalBottomSheetState()
     if (bottomSheetUiSate is BottomSheetUiState.Up) {
@@ -177,7 +185,9 @@ private fun TodoContent(
             currentGroupList = currentGroupList,
             upsertCurrentGroup = upsertCurrentGroup,
             upsertTodoGroup = upsertTodoGroup,
-            deleteCurrentGroup = deleteCurrentGroup
+            deleteCurrentGroup = deleteCurrentGroup,
+            upsertTodo = upsertTodo,
+            date = date
         )
     }
     LazyColumn(
@@ -187,7 +197,7 @@ private fun TodoContent(
             .padding(16.dp),
     ) {
         item {
-            WeeklyDatePicker(date)
+            WeeklyDatePicker(date, selectDate)
 
         }
         item {
@@ -213,35 +223,56 @@ private fun TodoContent(
 
 @Composable
 fun WeeklyDatePicker(
-    date: LocalDate
+    today: LocalDate,
+    selectDate: (LocalDate) -> Unit
 ) {
+    val weekDates = generateWeekDates(today)
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(text = "${date.year}년 ${date.month}월")
+        Text(
+            text = "${today.year}년 ${today.month.getDisplayName(TextStyle.FULL, Locale.KOREA)}",
+            style = HmStyle.text16
+        )
         Row(
             modifier = Modifier
-                .fillMaxWidth().padding(vertical = 8.dp)
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .clip(RoundedCornerShape(5.dp))
                 .background(HMColor.Box)
         ) {
-            List(7) { 0 }.forEach {
+            weekDates.forEach { date ->
+                val backGround = if (date == today) HMColor.Primary else HMColor.Box
+                val textColor = if (date == today) HMColor.Background else HMColor.SubText
+
                 Surface(
-                    color = HMColor.Box,
+                    shape = RoundedCornerShape(5.dp),
+                    color = backGround,
                     contentColor = HMColor.Primary,
                     modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 8.dp)
+                        .clip(RoundedCornerShape(5.dp))
                         .clickable {
-
+                            selectDate(date)
                         }
-                        .weight(1f).padding(vertical = 8.dp,horizontal = 8.dp)
+                        .weight(1f)
+
                 ) {
                     Column(
                         modifier = Modifier
-                            .background(HMColor.Primary),
+                            .background(backGround),
                         Arrangement.Center,
                         Alignment.CenterHorizontally
                     ) {
-                        Text(text = "금", color = HMColor.Background)
-                        Text(text = "${date.dayOfMonth}",color = HMColor.Background)
+                        Text(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREA),
+                            color = textColor
+                        )
+                        Text(
+                            modifier = Modifier.padding(bottom = 4.dp),
+                            text = "${date.dayOfMonth}", color = textColor
+                        )
                     }
                 }
             }
@@ -249,6 +280,19 @@ fun WeeklyDatePicker(
 
     }
 
+}
+
+fun generateWeekDates(startDate: LocalDate): List<LocalDate> {
+    val dates = mutableListOf<LocalDate>()
+    var currentDate = startDate
+    while (currentDate.dayOfWeek != DayOfWeek.SUNDAY) {
+        currentDate = currentDate.minusDays(1)
+    }
+    repeat(7) {
+        dates.add(currentDate)
+        currentDate = currentDate.plusDays(1)
+    }
+    return dates
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -263,8 +307,10 @@ fun GroupBottomSheet(
     upsertTodoGroup: (TodoGroup) -> Unit,
     deleteCurrentGroup: (Int, Int) -> Unit,
 
+    upsertTodo: (Todo) -> Unit,
+    date: LocalDate
 
-    ) {
+) {
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = { onDismissRequest() },
@@ -295,7 +341,7 @@ fun GroupBottomSheet(
                 }
 
                 is ContentState.Todo -> {
-                    TodoBottomSheet()
+                    TodoBottomSheet(content.todo, upsertTodo, onDismissRequest, date)
 
                 }
             }
@@ -439,7 +485,7 @@ fun TodoItem(
         .border(width = 1.5.dp, color = HMColor.Primary, shape = RoundedCornerShape(10.dp))
         .background(HMColor.Box)
         .clickable {
-            showSheet(ContentState.Todo())
+            showSheet(ContentState.Todo(todo = todo))
         }
     )
     {
@@ -490,6 +536,7 @@ fun TodoContentPreView() {
         emptyList(),
         {},
         {}, { a, b -> },
-        LocalDate.now()
+        LocalDate.now(),
+        {}
     )
 }

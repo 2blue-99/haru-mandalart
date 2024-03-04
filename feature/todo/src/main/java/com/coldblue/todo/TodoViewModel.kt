@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -33,16 +34,21 @@ class TodoViewModel @Inject constructor(
     private val toggleTodoUseCase: ToggleTodoUseCase,
     private val deleteCurrentGroupUseCase: DeleteCurrentGroupUseCase
 ) : ViewModel() {
+
     private val _bottomSheetUiSate = MutableStateFlow<BottomSheetUiState>(BottomSheetUiState.Down)
     val bottomSheetUiSate: StateFlow<BottomSheetUiState> = _bottomSheetUiSate
 
     private val _dateSate = MutableStateFlow<LocalDate>(LocalDate.now())
     val dateSate: StateFlow<LocalDate> = _dateSate
 
+    private val groupFlow = dateSate.flatMapLatest { getGroupWithCurrentUseCase(it) }
+    private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }
+
+
     init {
         viewModelScope.launch {
 //            upsertTodoUseCase(Todo("1번이요","내용입니다"))
-//            upsertTodoUseCase(Todo("2번이요","내용입니다"))
+//            upsertTodoUseCase(Todo("2번이요","내용입니다", date = LocalDate.now().plusDays(2)))
 //            upsertTodoUseCase(Todo("3번이요", "내용입니다", todoGroupId = 1))
 //            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 2))
 //            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 3))
@@ -69,7 +75,7 @@ class TodoViewModel @Inject constructor(
 
 
     val todoUiState: StateFlow<TodoUiState> =
-        getGroupWithCurrentUseCase(dateSate.value).combine(getTodoUseCase(dateSate.value)) { group, todoList ->
+        groupFlow.combine(todoFlow) { group, todoList ->
             val todoGroupList = group.todoGroupList
             val currentGroupList = group.currentGroupList.groupBy { it.index }
             TodoUiState.Success(
@@ -125,7 +131,7 @@ class TodoViewModel @Inject constructor(
 
     fun upsertTodo(todo: Todo) {
         viewModelScope.launch {
-            upsertTodoUseCase(todo)
+            upsertTodoUseCase(todo.copy(date = dateSate.value))
         }
     }
 
