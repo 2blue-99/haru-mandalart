@@ -7,5 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:todo"))
+
 
 }

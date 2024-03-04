@@ -495,7 +495,6 @@ fun HaruManda(
         }
     }
 }
-
 @Composable
 fun TodoItem(
     todo: Todo,
@@ -534,6 +533,7 @@ fun TodoItem(
         }
     }
 }
+
 
 @Preview
 @Composable
