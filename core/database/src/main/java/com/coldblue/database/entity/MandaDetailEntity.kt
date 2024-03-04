@@ -10,7 +10,7 @@ data class MandaDetailEntity(
     @ColumnInfo(name = "is_sync") val isSync: Boolean,
     @ColumnInfo(name = "is_del") val isDel: Boolean,
     @ColumnInfo(name = "update_time") val updateTime: String,
-    @ColumnInfo(name = "color_Index") val colorIndex: Int,
+    @ColumnInfo(name = "color_index") val colorIndex: Int,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "is_done") val isDone: Boolean,
 )

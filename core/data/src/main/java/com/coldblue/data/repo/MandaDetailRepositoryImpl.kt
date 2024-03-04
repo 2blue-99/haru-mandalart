@@ -12,7 +12,7 @@ class MandaDetailRepositoryImpl @Inject constructor(
     private val mandaDetailDao: MandaDetailDao
 ) : MandaDetailRepository {
     override fun getMandaDetails(): Flow<List<MandaDetail>> =
-        mandaDetailDao.getMandaDetails().map { it.map { it.asDomain() } }
+        mandaDetailDao.getMandaDetails().map { it.filter { !it.isDel }.map { it.asDomain() } }
 
     override suspend fun upsertMandaDetails(mandaDetails: List<MandaDetail>) {
         mandaDetailDao.upsertMandaDetails(mandaDetails.map { it.asEntity() })

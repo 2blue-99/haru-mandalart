@@ -30,7 +30,7 @@ import com.coldblue.designsystem.theme.HMColor
 fun HMMandaEmptyButton() {
     val stroke = Stroke(
         width = 10f,
-        pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(5f, 10f), phase = 0f)
+        pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
     )
     Box(
         contentAlignment = Alignment.Center,
@@ -41,7 +41,7 @@ fun HMMandaEmptyButton() {
             .clickable {  }
             .drawBehind {
                 drawRoundRect(
-                    color = Color.Gray,
+                    color = HMColor.SubText,
                     style = stroke,
                     cornerRadius = CornerRadius(8.dp.toPx())
                 )
@@ -50,7 +50,7 @@ fun HMMandaEmptyButton() {
         Icon(
             modifier = Modifier.fillMaxSize().scale(0.35f),
             imageVector = IconPack.Plus,
-            tint = Color.Gray,
+            tint = HMColor.SubText,
             contentDescription = ""
         )
     }

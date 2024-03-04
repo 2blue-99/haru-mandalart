@@ -43,6 +43,10 @@ class MandaViewModel @Inject constructor(
             upsertMandaKeyUseCase(MandaKey(id = 8, name = "TEST", colorIndex = 7))
             upsertMandaKeyUseCase(MandaKey(id = 9, name = "TEST", colorIndex = 8))
             upsertMandaDetailUseCase(MandaDetail(id = 8, name = "TEST", colorIndex = 8, isDone = false))
+            upsertMandaDetailUseCase(MandaDetail(id = 2, name = "TEST", colorIndex = 5, isDone = true))
+            upsertMandaDetailUseCase(MandaDetail(id = 3, name = "TEST", colorIndex = 5, isDone = true))
+            upsertMandaDetailUseCase(MandaDetail(id = 4, name = "TEST", colorIndex = 5, isDone = true))
+            upsertMandaDetailUseCase(MandaDetail(id = 6, name = "TEST", colorIndex = 5, isDone = true))
         }
     }
 
@@ -55,7 +59,7 @@ class MandaViewModel @Inject constructor(
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
-                        donePercentage = mandaDetails.count { it.isDone } / 64.0f,
+                        donePercentage = mandaDetails.count { it.isDone } / mandaDetails.size.toFloat(),
                         finalName = mandaKeys.last().name,
                         mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
                     )
