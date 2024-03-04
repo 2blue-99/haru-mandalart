@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -41,6 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
@@ -67,8 +70,10 @@ fun TodoBottomSheet(
     todo: Todo,
     upsertTodo: (Todo) -> Unit,
     onDismissRequest: () -> Unit,
-    today: LocalDate
-) {
+    today: LocalDate,
+    sheetState: SheetState,
+
+    ) {
 
 //    var onSwitch by remember { mutableStateOf(true) }
     var onSwitch by remember { mutableStateOf(false) }
@@ -89,7 +94,16 @@ fun TodoBottomSheet(
         )
     }
     var date by remember { mutableStateOf(today) }
+    LaunchedEffect(onSwitch){
+        sheetState.expand()
+    }
 
+    LaunchedEffect(onDetail){
+        sheetState.expand()
+    }
+    LaunchedEffect(dateButtons.last().isChecked){
+        sheetState.expand()
+    }
 
 
     Column(
@@ -220,7 +234,7 @@ fun TodoBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    InfiniteCircularList(
+                    CircularList(
                         itemHeight = 40.dp,
                         textStyle = HmStyle.text16,
                         items = List(101) { "${2000 + it}년" },
@@ -335,7 +349,9 @@ fun <T> InfiniteCircularList(
         var targetIndex = items.indexOf(initialItem) - 1
         targetIndex += ((Int.MAX_VALUE / 2) / items.size) * items.size
         lastSelectedIndex = targetIndex
-        scrollState.scrollToItem(targetIndex)
+        scrollState.scrollToItem(lastSelectedIndex,0)
+
+//        scrollState.animateScrollToItem(lastSelectedIndex, 0)
     }
     LazyColumn(
         modifier = Modifier
@@ -416,13 +432,15 @@ fun <T> CircularList(
     val coroutineState = rememberCoroutineScope()
 
     var lastSelectedIndex by remember {
-        mutableIntStateOf(items.indexOf(initialItem))
+        mutableIntStateOf(0)
     }
 
     LaunchedEffect(items) {
         val targetIndex = items.indexOf(initialItem)
         lastSelectedIndex = targetIndex
-        scrollState.scrollToItem(lastSelectedIndex)
+        scrollState.scrollToItem(lastSelectedIndex,0)
+//        scrollState.animateScrollToItem(lastSelectedIndex, 0)
+
     }
     LazyColumn(
         modifier = Modifier
@@ -495,7 +513,7 @@ fun TodoBottomSheetPreview() {
             .padding(16.dp)
     ) {
 
-        TodoBottomSheet(todo = Todo(""), {}, {}, LocalDate.now())
+//        TodoBottomSheet(todo = Todo(""), {}, {}, LocalDate.now(), sheetState = SheetState(true))
 
     }
 }

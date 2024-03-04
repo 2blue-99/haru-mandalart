@@ -1,5 +1,6 @@
 package com.coldblue.todo
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,7 +36,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -176,6 +179,25 @@ private fun TodoContent(
 
 ) {
     val sheetState = rememberModalBottomSheetState()
+
+//    val coroutineState = rememberCoroutineScope()
+    LaunchedEffect(bottomSheetUiSate){
+        Log.e("TAG", "TodoContent: ", )
+        when(bottomSheetUiSate){
+            is BottomSheetUiState.Up->{
+//                sheetState.show()
+                sheetState.expand()
+
+            }
+            is BottomSheetUiState.Down->{
+                sheetState.hide()
+
+            }
+        }
+
+    }
+
+
     if (bottomSheetUiSate is BottomSheetUiState.Up) {
         GroupBottomSheet(
             content = bottomSheetUiSate.content,
@@ -341,7 +363,7 @@ fun GroupBottomSheet(
                 }
 
                 is ContentState.Todo -> {
-                    TodoBottomSheet(content.todo, upsertTodo, onDismissRequest, date)
+                    TodoBottomSheet(content.todo, upsertTodo, onDismissRequest, date,sheetState)
 
                 }
             }
