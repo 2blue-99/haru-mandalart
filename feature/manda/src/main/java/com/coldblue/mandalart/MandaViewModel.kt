@@ -9,6 +9,7 @@ import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
+import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
@@ -84,16 +85,18 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun upsertMandaKey(text: String) {
-        viewModelScope.launch {
-            upsertMandaKeyUseCase(MandaKey(text))
-        }
+    fun upsertMandaKey(mandaUI: MandaUI) {
+        Log.e("TAG", "upsertMandaKey: $mandaUI", )
+//        viewModelScope.launch {
+//            upsertMandaKeyUseCase(MandaKey(name = "", ))
+//        }
     }
 
-    fun upsertMandaDetail(mandaDetail: MandaDetail) {
-        viewModelScope.launch {
-            upsertMandaDetailUseCase(mandaDetail)
-        }
+    fun upsertMandaDetail(mandaUI: MandaUI) {
+        Log.e("TAG", "upsertMandaDetail: $mandaUI", )
+//        viewModelScope.launch {
+//            upsertMandaDetailUseCase(MandaDetail(name = "", isDone = false, colorIndex = 1))
+//        }
     }
 
     fun updateMandaInitState(state: Boolean) {

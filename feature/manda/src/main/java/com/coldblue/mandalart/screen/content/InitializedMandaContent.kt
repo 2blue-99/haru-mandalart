@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,15 +32,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +57,7 @@ import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 const val MAX_MANDA_KEY_SIZE = 8
@@ -61,7 +65,9 @@ const val MAX_MANDA_DETAIL_SIZE = 64
 
 @Composable
 fun InitializedMandaContent(
-    uiState: MandaUIState.InitializedSuccess
+    uiState: MandaUIState.InitializedSuccess,
+    upsertMandaKey: (MandaUI) -> Unit,
+    upsertMandaDetail: (MandaUI) -> Unit
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
 
@@ -72,30 +78,27 @@ fun InitializedMandaContent(
 
     LaunchedEffect(Unit) { percentage = uiState.donePercentage }
 
-    LazyColumn(
+    Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Red)
             .padding(16.dp)
     ) {
-        item { HMTitleComponent() }
+        HMTitleComponent()
 
-        item {
-            MandaStatus(
-                finalName = uiState.finalName,
-                keyMandaCnt = uiState.keyMandaCnt,
-                detailMandaCnt = uiState.detailMandaCnt,
-                donePercentage = uiState.donePercentage,
-                animateDonePercentage = animateDonePercentage.value
-            )
-        }
+        MandaStatus(
+            finalName = uiState.finalName,
+            keyMandaCnt = uiState.keyMandaCnt,
+            detailMandaCnt = uiState.detailMandaCnt,
+            donePercentage = uiState.donePercentage,
+            animateDonePercentage = animateDonePercentage.value
+        )
 
-        item {
-            Mandalart(
-                mandaStateList = uiState.mandaStateList,
-            )
-        }
+        Mandalart(
+            mandaStateList = uiState.mandaStateList,
+            upsertMandaKey = upsertMandaKey,
+            upsertMandaDetail = upsertMandaDetail
+        )
     }
 }
 
@@ -106,10 +109,10 @@ fun MandaStatus(
     detailMandaCnt: Int,
     donePercentage: Float,
     animateDonePercentage: Float
-){
+) {
     Column(
         modifier = Modifier.fillMaxWidth()
-    ){
+    ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd
@@ -170,34 +173,22 @@ fun MandaStatus(
 @Composable
 fun Mandalart(
     mandaStateList: List<MandaState>,
+    upsertMandaKey: (MandaUI) -> Unit,
+    upsertMandaDetail: (MandaUI) -> Unit
 ) {
-    var translationX by remember { mutableFloatStateOf(1f) }
-    var translationY by remember { mutableFloatStateOf(1f) }
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
-    var zoomState by remember { mutableStateOf(false) }
     var pivotX by remember { mutableFloatStateOf(0f) }
     var pivotY by remember { mutableFloatStateOf(0f) }
-
+    var zoomState by remember { mutableStateOf(false) }
+    var beforeDirection by remember { mutableIntStateOf(-1) }
+    var afterDirection by remember { mutableIntStateOf(-1) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
 
     val dampingRatio = 1f // 클수록 스프링 효과 작음
     val stiffness = 1000f // 클수록 빨리 확대, 축소 됨
 
-
-    val animatedTranslationX by animateFloatAsState(
-        targetValue = translationX,
-        animationSpec = spring(
-            dampingRatio = dampingRatio,
-            stiffness = stiffness
-        ), label = ""
-    )
-    val animatedTranslationY by animateFloatAsState(
-        targetValue = translationY,
-        animationSpec = spring(
-            dampingRatio = dampingRatio,
-            stiffness = stiffness
-        ), label = ""
-    )
     val animatedScaleX by animateFloatAsState(
         targetValue = scaleX,
         animationSpec = spring(
@@ -214,49 +205,141 @@ fun Mandalart(
     )
 
     fun zoomInAndOut(index: Int) {
-        Log.e("TAG", "zoomInAndOut: $index", )
+        Log.e("TAG", "zoomInAndOut: $index")
         when (index) {
             0, 1, 3, 4 -> {
                 pivotX = 0f
                 pivotY = 0f
-                scaleX += 0.5f
-                scaleY += 0.5f
+                scaleX = 1.5f
+                scaleY = 1.5f
                 zoomState = true
+                beforeDirection = 0
+
             }
 
             2, 5 -> {
                 pivotX = 1f
                 pivotY = 0f
-                scaleX += 0.5f
-                scaleY += 0.5f
+                scaleX = 1.5f
+                scaleY = 1.5f
                 zoomState = true
+                beforeDirection = 1
             }
 
             6, 7 -> {
                 pivotX = 0f
                 pivotY = 1f
-                scaleX += 0.5f
-                scaleY += 0.5f
+                scaleX = 1.5f
+                scaleY = 1.5f
                 zoomState = true
+                beforeDirection = 2
             }
 
             8 -> {
                 pivotX = 1f
                 pivotY = 1f
-                scaleX += 0.5f
-                scaleY += 0.5f
+                scaleX = 1.5f
+                scaleY = 1.5f
                 zoomState = true
+                beforeDirection = 3
             }
+
+            // 축소
             else -> {
-                scaleX -= 0.5f
-                scaleY -= 0.5f
+                scaleX = 1.0f
+                scaleY = 1.0f
                 zoomState = false
             }
         }
     }
 
+    fun dragStartDetector(dragAmount: Offset) {
+        val (x, y) = dragAmount
+        if (abs(x) > abs(y)) {
+            when {
+                x > 0 -> {  // left
+                    offsetX += x
+                    if(beforeDirection == 1)
+                        afterDirection = 0
+                    else if(beforeDirection == 3)
+                        afterDirection = 2
+                    Log.e("TAG", "left dragEndDetector: $beforeDirection // $afterDirection", )
+                }
 
-    Column {
+                x < 0 -> {  // right
+                    offsetX += x
+                    if(beforeDirection == 0)
+                        afterDirection = 1
+                    else if(beforeDirection == 2)
+                        afterDirection = 3
+                    Log.e("TAG", "right dragEndDetector: $beforeDirection // $afterDirection", )
+                }
+            }
+        } else {
+            when {
+                y > 0 -> {    // Top
+                    offsetY += y
+                    if(beforeDirection == 2)
+                        afterDirection = 0
+                    else if(beforeDirection == 3)
+                        afterDirection = 1
+                    Log.e("TAG", "Top dragEndDetector: $beforeDirection // $afterDirection", )
+                }
+
+                y < 0 -> {  // Bottom
+                    offsetY += y
+                    if(beforeDirection == 0)
+                        afterDirection = 2
+                    else if(beforeDirection == 1)
+                        afterDirection = 3
+                    Log.e("TAG", "Bottom dragEndDetector: $beforeDirection // $afterDirection", )
+                }
+            }
+        }
+    }
+
+    fun dragEndDetector() {
+        Log.e("TAG", "dragEndDetector: $beforeDirection // $afterDirection", )
+        when (afterDirection) {
+            0 -> {
+                    if(beforeDirection == 1)
+                        zoomInAndOut(0)
+                    else if(beforeDirection == 2)
+                        zoomInAndOut(0)
+                offsetX = 0f
+                offsetY = 0f
+            }
+            1 -> {
+                    if(beforeDirection == 0)
+                        zoomInAndOut(2)
+                    else if(beforeDirection == 3)
+                        zoomInAndOut(2)
+                offsetX = 0f
+                offsetY = 0f
+            }
+            2 -> {
+                    if(beforeDirection == 0)
+                        zoomInAndOut(6)
+                    else if(beforeDirection == 3)
+                        zoomInAndOut(6)
+
+                offsetX = 0f
+                offsetY = 0f
+            }
+            3 -> {
+                    if(beforeDirection == 1)
+                        zoomInAndOut(8)
+                    else if(beforeDirection == 2)
+                        zoomInAndOut(8)
+                offsetX = 0f
+                offsetY = 0f
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Row(
             Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
@@ -264,136 +347,155 @@ fun Mandalart(
             Button(
                 modifier = Modifier.size(30.dp),
                 onClick = {
-                    if (zoomState) {
+                    if (zoomState)
                         zoomInAndOut(-1)
-                    }
+                    else
+                        zoomInAndOut(1) // TODO 임의 값
                 }
-            ) {
-                Text(text = "C")
-            }
+            ) { Text(text = "C") }
         }
 
-        Column(
+        LazyColumn(
             horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .graphicsLayer(
-                    translationX = animatedTranslationX,
-                    translationY = animatedTranslationY,
-                    scaleX = animatedScaleX.coerceIn(0.5f, 1.5f),
-                    scaleY = animatedScaleY.coerceIn(0.5f, 1.5f),
-                    clip = true,
-                    transformOrigin = TransformOrigin(pivotX, pivotY)
-                )
                 .fillMaxWidth()
-                .aspectRatio(1f)
-                .background(HMColor.Background)
-                .onGloballyPositioned {
-//                    mandaWidth = it.size.width.toFloat()
-//                    mandaHeight = it.size.height.toFloat()
-                }
+                .aspectRatio(0.9f)
         ) {
-            repeat(3) { keyRow ->
-                Row(
+            item {
+                Column(
                     modifier = Modifier
-                        .padding(vertical = 5.dp)
+                        .graphicsLayer(
+                            scaleX = animatedScaleX.coerceIn(0.5f, 1.5f),
+                            scaleY = animatedScaleY.coerceIn(0.5f, 1.5f),
+                            transformOrigin = TransformOrigin(pivotX, pivotY)
+                        )
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDrag = { change, dragAmount ->
+                                    change.consume()
+                                    dragStartDetector(dragAmount)
+                                },
+                                onDragEnd = {
+                                    dragEndDetector()
+                                }
+                            )
+                        }
                 ) {
-                    repeat(3) { keyColumn ->
-                        when (val state = mandaStateList[keyColumn + ((keyRow) * 3)]) {
-                            is MandaState.Empty -> {
+                    repeat(3) { keyRow ->
+                        Row(
+                            modifier = Modifier
+                                .padding(vertical = 5.dp)
+                        ) {
+                            repeat(3) { keyColumn ->
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
                                         .padding(horizontal = 5.dp)
-                                        .clickable {
-                                            if (!zoomState) {
-                                                zoomInAndOut(keyColumn + (keyRow * 3))
-                                            }
-                                        }
                                 ) {
-                                    HMMandaEmptyButton()
-                                }
-                            }
-
-                            is MandaState.Exist -> {
-                                Column(
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement = Arrangement.Top,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 5.dp)
-                                        .clickable {
-                                            if (!zoomState) {
-                                                zoomInAndOut(keyColumn + (keyRow * 3))
-                                                zoomState = true
-                                            }
-                                        }
-                                ) {
-                                    repeat(3) { detailRow ->
-                                        Row(modifier = Modifier.fillMaxWidth()) {
-                                            repeat(3) { detailColumn ->
-                                                when (val type =
-                                                    state.mandaUIList[(detailColumn) + ((detailRow) * 3)]) {
-                                                    is MandaType.None ->
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .weight(1f)
-                                                                .aspectRatio(1F)
-                                                                .padding(2.dp)
-                                                        ) {
-                                                            HMMandaEmptyButton()
-                                                        }
-
-                                                    is MandaType.KeyStart ->
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .weight(1f)
-                                                                .aspectRatio(1F)
-                                                                .padding(2.dp)
-                                                        ) {
-                                                            HMMandaOutlineButton(
-                                                                name = type.mandaUI.name,
-                                                                outlineColor = type.mandaUI.darkColor
-                                                            ) {}
-                                                        }
-
-                                                    is MandaType.DetailStart ->
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .weight(1f)
-                                                                .aspectRatio(1F)
-                                                                .padding(2.dp)
-                                                        ) {
-                                                            HMMandaFillButton(
-                                                                name = type.mandaUI.name,
-                                                                backgroundColor = type.mandaUI.lightColor,
-                                                                textColor = HMColor.Text
-                                                            ) {}
-                                                        }
-
-                                                    is MandaType.Done ->
-                                                        Box(
-                                                            modifier = Modifier
-                                                                .weight(1f)
-                                                                .aspectRatio(1F)
-                                                                .padding(2.dp)
-                                                        ) {
-                                                            HMMandaFillButton(
-                                                                name = type.mandaUI.name,
-                                                                backgroundColor = type.mandaUI.darkColor,
-                                                                textColor = HMColor.Background
-                                                            ) {}
-                                                        }
+                                    when (val state = mandaStateList[keyColumn + keyRow * 3]) {
+                                        is MandaState.Empty -> {
+                                            Box(
+                                                modifier = Modifier.fillMaxSize()
+                                            ) {
+                                                HMMandaEmptyButton {
+                                                    upsertMandaKey(MandaUI(id = state.id))
                                                 }
                                             }
                                         }
+
+                                        is MandaState.Exist -> {
+                                            Column(
+                                                horizontalAlignment = Alignment.Start,
+                                                verticalArrangement = Arrangement.Top,
+                                                modifier = Modifier.fillMaxSize()
+                                            ) {
+                                                repeat(3) { detailRow ->
+                                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                                        repeat(3) { detailColumn ->
+                                                            when (val type =
+                                                                state.mandaUIList[detailColumn + detailRow * 3]) {
+                                                                is MandaType.None -> {
+                                                                    Box(
+                                                                        modifier = Modifier
+                                                                            .weight(1f)
+                                                                            .padding(2.dp)
+                                                                    ) {
+                                                                        HMMandaEmptyButton {
+                                                                            upsertMandaDetail(type.mandaUI)
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                is MandaType.KeyStart ->
+                                                                    Box(
+                                                                        modifier = Modifier
+                                                                            .weight(1f)
+                                                                            .padding(2.dp)
+                                                                    ) {
+                                                                        HMMandaOutlineButton(
+                                                                            name = type.mandaUI.name,
+                                                                            outlineColor = type.mandaUI.darkColor
+                                                                        ) {
+                                                                            upsertMandaKey(type.mandaUI)
+                                                                        }
+                                                                    }
+
+                                                                is MandaType.DetailStart ->
+                                                                    Box(
+                                                                        modifier = Modifier
+                                                                            .weight(1f)
+                                                                            .padding(2.dp)
+                                                                    ) {
+                                                                        HMMandaFillButton(
+                                                                            name = type.mandaUI.name,
+                                                                            backgroundColor = type.mandaUI.lightColor,
+                                                                            textColor = HMColor.Text
+                                                                        ) {
+                                                                            upsertMandaDetail(type.mandaUI)
+                                                                        }
+                                                                    }
+
+                                                                is MandaType.Done ->
+                                                                    Box(
+                                                                        modifier = Modifier
+                                                                            .weight(1f)
+                                                                            .padding(2.dp)
+                                                                    ) {
+                                                                        HMMandaFillButton(
+                                                                            name = type.mandaUI.name,
+                                                                            backgroundColor = type.mandaUI.darkColor,
+                                                                            textColor = HMColor.Background
+                                                                        ) {
+                                                                            upsertMandaDetail(type.mandaUI)
+                                                                        }
+                                                                    }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (!zoomState) {
+                                        Spacer(modifier = Modifier
+                                            .background(Color.Transparent)
+                                            .fillMaxWidth()
+                                            .aspectRatio(1F)
+                                            .clickable {
+                                                if (!zoomState)
+                                                    zoomInAndOut(keyColumn + keyRow * 3)
+                                            }
+                                        )
                                     }
                                 }
                             }
                         }
                     }
+
                 }
             }
+
         }
     }
 }
@@ -432,7 +534,7 @@ fun MandaContentPreview() {
         )
         typeList.clear()
     }
-    Mandalart(mandaStateList = stateList)
+    Mandalart(mandaStateList = stateList, upsertMandaKey = {}, upsertMandaDetail = {})
 }
 
 //@Preview

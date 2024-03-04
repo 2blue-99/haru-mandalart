@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.mandalart.MandaViewModel
+import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
 import com.coldblue.mandalart.screen.content.UnInitializedMandaContent
 import com.coldblue.mandalart.state.MandaUIState
@@ -35,7 +36,9 @@ fun MandaScreen(
         MandaContentWithState(
             mandaUiState,
             mandaViewModel::updateMandaInitState,
-            mandaViewModel::upsertMandaFinal
+            mandaViewModel::upsertMandaFinal,
+            mandaViewModel::upsertMandaKey,
+            mandaViewModel::upsertMandaDetail,
         )
     }
 }
@@ -44,7 +47,9 @@ fun MandaScreen(
 fun MandaContentWithState(
     mandaUIState: MandaUIState,
     updateInitState: (Boolean) -> Unit,
-    insertFinalManda: (String) -> Unit
+    upsertFinalManda: (String) -> Unit,
+    upsertMandaKey: (MandaUI) -> Unit,
+    upsertMandaDetail: (MandaUI) -> Unit
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {}
@@ -52,13 +57,15 @@ fun MandaContentWithState(
         is MandaUIState.UnInitializedSuccess -> {
             UnInitializedMandaContent(
                 updateInitState = updateInitState,
-                insertFinalManda = insertFinalManda
+                insertFinalManda = upsertFinalManda
             )
         }
 
         is MandaUIState.InitializedSuccess -> {
             InitializedMandaContent(
-                uiState = mandaUIState
+                uiState = mandaUIState,
+                upsertMandaKey = upsertMandaKey,
+                upsertMandaDetail = upsertMandaDetail
             )
 
         }
