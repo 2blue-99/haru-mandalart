@@ -38,7 +38,6 @@ fun HMMandaEmptyButton() {
             .fillMaxWidth()
             .aspectRatio(1F)
             .clip(RoundedCornerShape(8.dp))
-            .clickable {  }
             .drawBehind {
                 drawRoundRect(
                     color = HMColor.SubText,
