@@ -65,7 +65,7 @@ fun InitializedMandaContent(
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
 
-    val animatedFloatColor = animateFloatAsState(
+    val animateDonePercentage = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
@@ -80,65 +80,14 @@ fun InitializedMandaContent(
             .padding(16.dp)
     ) {
         item { HMTitleComponent() }
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                FilledIconButton(
-                    onClick = { /*TODO*/ },
-                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = HMColor.Primary)
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "")
-                }
-            }
-        }
-        item {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                text = "\" ${uiState.finalName} \"",
-                style = HmStyle.text24,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row {
-                    Text(text = "핵심 목표 : ", style = HmStyle.text16)
-                    Text(
-                        text = "${uiState.keyMandaCnt} / $MAX_MANDA_KEY_SIZE",
-                        style = HmStyle.text16
-                    )
-                }
-                Row {
-                    Text(text = "세부 목표 : ", style = HmStyle.text16)
-                    Text(
-                        text = "${uiState.detailMandaCnt} / $MAX_MANDA_DETAIL_SIZE",
-                        style = HmStyle.text16
-                    )
-                }
-            }
-        }
-        item {
-            Text(
-                text = "달성률 ${(uiState.donePercentage * 100).roundToInt()} %",
-                style = HmStyle.text12,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End
-            )
-            Spacer(modifier = Modifier.height(5.dp))
 
-            LinearProgressIndicator(
-                progress = { animatedFloatColor.value },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp),
-                color = HMColor.Primary,
-                trackColor = HMColor.Gray
+        item {
+            MandaStatus(
+                finalName = uiState.finalName,
+                keyMandaCnt = uiState.keyMandaCnt,
+                detailMandaCnt = uiState.detailMandaCnt,
+                donePercentage = uiState.donePercentage,
+                animateDonePercentage = animateDonePercentage.value
             )
         }
 
@@ -147,6 +96,74 @@ fun InitializedMandaContent(
                 mandaStateList = uiState.mandaStateList,
             )
         }
+    }
+}
+
+@Composable
+fun MandaStatus(
+    finalName: String,
+    keyMandaCnt: Int,
+    detailMandaCnt: Int,
+    donePercentage: Float,
+    animateDonePercentage: Float
+){
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ){
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            FilledIconButton(
+                modifier = Modifier.size(30.dp),
+                onClick = { /*TODO*/ },
+                colors = IconButtonDefaults.filledIconButtonColors(containerColor = HMColor.Primary)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "")
+            }
+        }
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            text = "\" $finalName \"",
+            style = HmStyle.text24,
+            fontWeight = FontWeight.Bold
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row {
+                Text(text = "핵심 목표 : ", style = HmStyle.text16)
+                Text(
+                    text = "$keyMandaCnt / $MAX_MANDA_KEY_SIZE",
+                    style = HmStyle.text16
+                )
+            }
+            Row {
+                Text(text = "세부 목표 : ", style = HmStyle.text16)
+                Text(
+                    text = "$detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
+                    style = HmStyle.text16
+                )
+            }
+        }
+        Text(
+            text = "달성률 ${(donePercentage * 100).roundToInt()} %",
+            style = HmStyle.text12,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.End
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+
+        LinearProgressIndicator(
+            progress = { animateDonePercentage },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp),
+            color = HMColor.Primary,
+            trackColor = HMColor.Gray
+        )
     }
 }
 
