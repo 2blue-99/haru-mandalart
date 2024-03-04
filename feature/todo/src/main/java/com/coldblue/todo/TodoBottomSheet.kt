@@ -1,6 +1,5 @@
 package com.coldblue.todo
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -40,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -74,16 +72,11 @@ fun TodoBottomSheet(
     onDismissRequest: () -> Unit,
     today: LocalDate,
     sheetState: SheetState,
+) {
 
-    ) {
-
-//    var onSwitch by remember { mutableStateOf(true) }
     var onSwitch by remember { mutableStateOf(false) }
     var time: LocalTime by remember { mutableStateOf(todo.time ?: LocalTime.now()) }
-
-
     var onDetail by remember { mutableStateOf(false) }
-//    var onDetail by remember { mutableStateOf(true) }
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content) }
 
@@ -248,32 +241,76 @@ fun TodoBottomSheet(
                 style = HmStyle.text16,
                 fontWeight = FontWeight.Bold
             )
-
-
         }
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonColors(
-                contentColor = HMColor.Background,
-                containerColor = HMColor.Primary,
-                disabledContentColor = HMColor.Box,
-                disabledContainerColor = HMColor.Primary,
-            ),
-            onClick = {
-                upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
-                onDismissRequest()
+        if (todo.id != 0) {
+            Row(Modifier.fillMaxWidth()) {
+                Button(
+                    modifier = Modifier.fillMaxWidth().weight(1F).padding(end = 8.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonColors(
+                        contentColor = HMColor.Primary,
+                        containerColor = HMColor.Gray,
+                        disabledContentColor = HMColor.Gray,
+                        disabledContainerColor = HMColor.Primary,
+                    ),
+                    onClick = {
+                        upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                        onDismissRequest()
+                    }
+                ) {
+                    Text(
+                        text = "삭제",
+                        style = HmStyle.text16,
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Button(
+                    modifier = Modifier.fillMaxWidth().weight(1F).padding(start = 8.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonColors(
+                        contentColor = HMColor.Background,
+                        containerColor = HMColor.Primary,
+                        disabledContentColor = HMColor.Box,
+                        disabledContainerColor = HMColor.Primary,
+                    ),
+                    onClick = {
+                        upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                        onDismissRequest()
+                    }
+                ) {
+                    Text(
+                        text = "수정",
+                        style = HmStyle.text16,
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
-        ) {
-            Text(
-                text = "저장",
-                style = HmStyle.text16,
-                modifier = Modifier.padding(vertical = 4.dp),
-                fontWeight = FontWeight.Bold
-            )
-        }
 
+        } else {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonColors(
+                    contentColor = HMColor.Background,
+                    containerColor = HMColor.Primary,
+                    disabledContentColor = HMColor.Box,
+                    disabledContainerColor = HMColor.Primary,
+                ),
+                onClick = {
+                    upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                    onDismissRequest()
+                }
+            ) {
+                Text(
+                    text = "저장",
+                    style = HmStyle.text16,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
 }
 
