@@ -3,7 +3,6 @@ package com.coldblue.todo
 import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.CurrentGroup
-import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 
 sealed interface BottomSheetUiState {

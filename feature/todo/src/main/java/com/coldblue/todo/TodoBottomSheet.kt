@@ -1,31 +1,31 @@
 package com.coldblue.todo
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -44,16 +44,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.ToggleInfo
 import kotlinx.coroutines.launch
@@ -67,18 +70,16 @@ fun TodoBottomSheet(
     todo: Todo,
     upsertTodo: (Todo) -> Unit,
     onDismissRequest: () -> Unit,
-    today: LocalDate
+    today: LocalDate,
+    sheetState: SheetState,
 ) {
 
-//    var onSwitch by remember { mutableStateOf(true) }
     var onSwitch by remember { mutableStateOf(false) }
+    var time: LocalTime by remember { mutableStateOf(todo.time ?: LocalTime.now()) }
     var onDetail by remember { mutableStateOf(false) }
-//    var onDetail by remember { mutableStateOf(true) }
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content) }
 
-    var time by remember { mutableStateOf(LocalTime.now()) }
-    var isAm by remember { mutableStateOf(time.hour < 12) }
 
     val dateButtons = remember {
         mutableStateListOf(
@@ -88,8 +89,22 @@ fun TodoBottomSheet(
             ToggleInfo(false, "직접입력"),
         )
     }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     var date by remember { mutableStateOf(today) }
 
+
+
+    LaunchedEffect(onSwitch) {
+        sheetState.expand()
+    }
+
+    LaunchedEffect(onDetail) {
+        sheetState.expand()
+    }
+    LaunchedEffect(dateButtons.last().isChecked) {
+        sheetState.expand()
+    }
 
 
     Column(
@@ -98,75 +113,35 @@ fun TodoBottomSheet(
         TextField(
             modifier = Modifier.fillMaxWidth(),
             value = titleText,
+            maxLines = 1,
             onValueChange = {
                 titleText = it
             },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+//                    focusManager.clearFocus(false)
+                }
+            ),
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = HMColor.Primary,
                 containerColor = Color.Transparent
             ),
         )
-        Text(
-            modifier = Modifier.padding(top = 24.dp),
-            text = "시간",
-            style = HmStyle.text16,
-            fontWeight = FontWeight.Bold
+        HMTimePicker(
+            onSwitch = onSwitch,
+            onCheckedChange = {
+                onSwitch = !onSwitch
+            },
+            time = time,
+            onHourChange = { hour -> time = time.withHour(hour) },
+            onMinuteChange = { minute -> time = time.withMinute(minute) }
+
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = "시간없음")
-            Switch(checked = onSwitch, onCheckedChange = {
-                time = LocalTime.now()
-                onSwitch = !onSwitch
-            })
-        }
-        if (onSwitch) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CircularList(
-                    itemHeight = 40.dp,
-                    textStyle = HmStyle.text16,
-                    items = listOf("오전", "오후"),
-                    initialItem = if (isAm) "오전" else "오후",
-                    textColor = HMColor.SubText,
-                    selectedTextColor = HMColor.Text,
-                    onItemSelected = { _, _ -> }
-                )
-
-                InfiniteCircularList(
-                    itemHeight = 40.dp,
-                    textStyle = HmStyle.text16,
-                    items = List(12) { it + 1 },
-                    initialItem = time.hour % 12,
-                    textColor = HMColor.SubText,
-                    selectedTextColor = HMColor.Text,
-                    onItemSelected = { index, item ->
-                    }
-                )
-                Text(
-                    text = ":",
-                    style = HmStyle.text16,
-                    fontSize = HmStyle.text16.fontSize * 1.5F
-                )
-                InfiniteCircularList(
-                    itemHeight = 40.dp,
-                    textStyle = HmStyle.text16,
-                    items = List(60) { it.toString().padStart(2, '0') },
-                    initialItem = time.minute.toString().padStart(2, '0'),
-                    textColor = HMColor.SubText,
-                    selectedTextColor = HMColor.Text,
-                    onItemSelected = { a, b -> }
-                )
-            }
-
-        }
 
         if (!onDetail) {
             ClickableText(
@@ -220,14 +195,15 @@ fun TodoBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    InfiniteCircularList(
+                    CircularList(
                         itemHeight = 40.dp,
                         textStyle = HmStyle.text16,
                         items = List(101) { "${2000 + it}년" },
                         initialItem = "${date.year}년",
                         textColor = HMColor.SubText,
                         selectedTextColor = HMColor.Text,
-                        onItemSelected = { a, b -> }
+                        onItemSelected = { a, b -> },
+                        scrollState = rememberLazyListState(0)
                     )
                     InfiniteCircularList(
                         itemHeight = 40.dp,
@@ -239,7 +215,9 @@ fun TodoBottomSheet(
                         ),
                         textColor = HMColor.SubText,
                         selectedTextColor = HMColor.Text,
-                        onItemSelected = { a, b -> }
+                        onItemSelected = { a, b -> },
+                        scrollState = rememberLazyListState(0)
+
                     )
                     InfiniteCircularList(
                         itemHeight = 40.dp,
@@ -248,7 +226,9 @@ fun TodoBottomSheet(
                         initialItem = "${date.dayOfMonth}일",
                         textColor = HMColor.SubText,
                         selectedTextColor = HMColor.Text,
-                        onItemSelected = { a, b -> }
+                        onItemSelected = { a, b -> },
+                        scrollState = rememberLazyListState(0)
+
                     )
                 }
 
@@ -261,29 +241,181 @@ fun TodoBottomSheet(
                 style = HmStyle.text16,
                 fontWeight = FontWeight.Bold
             )
+        }
+        if (todo.id != 0) {
+            Row(Modifier.fillMaxWidth()) {
+                Button(
+                    modifier = Modifier.fillMaxWidth().weight(1F).padding(end = 8.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonColors(
+                        contentColor = HMColor.Primary,
+                        containerColor = HMColor.Gray,
+                        disabledContentColor = HMColor.Gray,
+                        disabledContainerColor = HMColor.Primary,
+                    ),
+                    onClick = {
+                        upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                        onDismissRequest()
+                    }
+                ) {
+                    Text(
+                        text = "삭제",
+                        style = HmStyle.text16,
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Button(
+                    modifier = Modifier.fillMaxWidth().weight(1F).padding(start = 8.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonColors(
+                        contentColor = HMColor.Background,
+                        containerColor = HMColor.Primary,
+                        disabledContentColor = HMColor.Box,
+                        disabledContainerColor = HMColor.Primary,
+                    ),
+                    onClick = {
+                        upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                        onDismissRequest()
+                    }
+                ) {
+                    Text(
+                        text = "수정",
+                        style = HmStyle.text16,
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
+        } else {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonColors(
+                    contentColor = HMColor.Background,
+                    containerColor = HMColor.Primary,
+                    disabledContentColor = HMColor.Box,
+                    disabledContainerColor = HMColor.Primary,
+                ),
+                onClick = {
+                    upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                    onDismissRequest()
+                }
+            ) {
+                Text(
+                    text = "저장",
+                    style = HmStyle.text16,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
 
+@Composable
+fun HMTimePicker(
+    onSwitch: Boolean,
+    onCheckedChange: () -> Unit,
+    time: LocalTime,
+    onHourChange: (Int) -> Unit,
+    onMinuteChange: (Int) -> Unit
+) {
+    var isAm by remember { mutableStateOf(time.hour < 12) }
+    val timeString = if (isAm) "오전" else "오후"
+
+    val amScrollState = rememberLazyListState(0)
+    var lastHour by remember { mutableIntStateOf(time.hour) }
+
+    val hourScrollState = rememberLazyListState(0)
+    val minScrollState = rememberLazyListState(0)
+
+    val coroutineState = rememberCoroutineScope()
+
+    Text(
+        modifier = Modifier.padding(top = 24.dp),
+        text = "시간",
+        style = HmStyle.text16,
+        fontWeight = FontWeight.Bold
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = if (onSwitch) "${timeString}${
+                time.hour.toString().padStart(2, ' ')
+            }:${time.minute.toString().padStart(2, '0')}" else "시간없음"
+        )
+        HMSwitch(onSwitch) {
+            onCheckedChange()
         }
 
-        Button(
+    }
+    if (onSwitch) {
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonColors(
-                contentColor = HMColor.Background,
-                containerColor = HMColor.Primary,
-                disabledContentColor = HMColor.Box,
-                disabledContainerColor = HMColor.Primary,
-            ),
-            onClick = {
-                upsertTodo(todo.copy(title = titleText, content = contentText))
-                onDismissRequest()
-            }
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            CircularList(
+                itemHeight = 40.dp,
+                textStyle = HmStyle.text16,
+                items = listOf("오전", "오후"),
+                initialItem = timeString,
+                textColor = HMColor.SubText,
+                selectedTextColor = HMColor.Text,
+                onItemSelected = { _, _ -> },
+                scrollState = amScrollState
+            )
+
+            InfiniteCircularList(
+                itemHeight = 40.dp,
+                textStyle = HmStyle.text16,
+                items = List(12) { it + 1 },
+                initialItem = time.hour % 12,
+                textColor = HMColor.SubText,
+                selectedTextColor = HMColor.Text,
+                onItemSelected = { index, item ->
+                    onHourChange(item)
+                    if (amScrollState.firstVisibleItemIndex == 0) {
+                        if (item == 12 && lastHour == 11 || item == 11 && lastHour == 12) {
+                            coroutineState.launch {
+                                amScrollState.animateScrollToItem(1, 0)
+                            }
+                        }
+                    } else {
+                        if (item == 12 && lastHour == 11 || item == 11 && lastHour == 12) {
+                            coroutineState.launch {
+                                amScrollState.animateScrollToItem(0, 0)
+                            }
+                        }
+                    }
+                    lastHour = item
+                },
+                scrollState = hourScrollState
+
+            )
             Text(
-                text = "저장",
+                text = ":",
                 style = HmStyle.text16,
-                modifier = Modifier.padding(vertical = 4.dp),
-                fontWeight = FontWeight.Bold
+                fontSize = HmStyle.text16.fontSize * 1.5F
+            )
+            InfiniteCircularList(
+                itemHeight = 40.dp,
+                textStyle = HmStyle.text16,
+                items = List(60) { it.toString().padStart(2, '0') },
+                initialItem = time.minute.toString().padStart(2, '0'),
+                textColor = HMColor.SubText,
+                selectedTextColor = HMColor.Text,
+                onItemSelected = { index, item ->
+                    onMinuteChange(item.toInt())
+                },
+                scrollState = minScrollState
+
             )
         }
 
@@ -322,12 +454,12 @@ fun <T> InfiniteCircularList(
     initialItem: T,
     itemScaleFact: Float = 1.5f,
     textStyle: TextStyle,
+    scrollState: LazyListState,
     textColor: Color,
     selectedTextColor: Color,
     onItemSelected: (index: Int, item: T) -> Unit = { _, _ -> }
 ) {
     val itemHalfHeight = LocalDensity.current.run { itemHeight.toPx() / 2f }
-    val scrollState = rememberLazyListState(0)
     var lastSelectedIndex by remember { mutableIntStateOf(0) }
     val coroutineState = rememberCoroutineScope()
 
@@ -335,7 +467,9 @@ fun <T> InfiniteCircularList(
         var targetIndex = items.indexOf(initialItem) - 1
         targetIndex += ((Int.MAX_VALUE / 2) / items.size) * items.size
         lastSelectedIndex = targetIndex
-        scrollState.scrollToItem(targetIndex)
+        scrollState.scrollToItem(lastSelectedIndex, 0)
+
+//        scrollState.animateScrollToItem(lastSelectedIndex, 0)
     }
     LazyColumn(
         modifier = Modifier
@@ -362,7 +496,7 @@ fun <T> InfiniteCircularList(
                                 (y > parentHalfHeight - itemHalfHeight && y < parentHalfHeight + itemHalfHeight)
                             val index = i - 1
                             if (isSelected && lastSelectedIndex != index) {
-                                onItemSelected(index % items.size, item)
+                                onItemSelected(index % items.size, items[index % items.size])
                                 lastSelectedIndex = index
                             }
                         },
@@ -384,12 +518,15 @@ fun <T> InfiniteCircularList(
                             },
                         ),
                         onClick = {
-                            val index = i - 1
-                            onItemSelected(index % items.size, item)
-                            lastSelectedIndex = index
-                            coroutineState.launch {
-                                scrollState.animateScrollToItem(lastSelectedIndex, 0)
+                            if (lastSelectedIndex != i) {
+                                val index = i - 1
+                                onItemSelected(index % items.size, item)
+                                lastSelectedIndex = index
+                                coroutineState.launch {
+                                    scrollState.animateScrollToItem(lastSelectedIndex, 0)
+                                }
                             }
+
                         },
                     )
                 }
@@ -406,23 +543,25 @@ fun <T> CircularList(
     items: List<T>,
     initialItem: T,
     itemScaleFact: Float = 1.5f,
+    scrollState: LazyListState,
     textStyle: TextStyle,
     textColor: Color,
     selectedTextColor: Color,
     onItemSelected: (index: Int, item: T) -> Unit = { _, _ -> }
 ) {
     val itemHalfHeight = LocalDensity.current.run { itemHeight.toPx() / 2f }
-    val scrollState = rememberLazyListState(0)
     val coroutineState = rememberCoroutineScope()
 
     var lastSelectedIndex by remember {
-        mutableIntStateOf(items.indexOf(initialItem))
+        mutableIntStateOf(0)
     }
 
     LaunchedEffect(items) {
         val targetIndex = items.indexOf(initialItem)
         lastSelectedIndex = targetIndex
-        scrollState.scrollToItem(lastSelectedIndex)
+        scrollState.scrollToItem(lastSelectedIndex, 0)
+//        scrollState.animateScrollToItem(lastSelectedIndex, 0)
+
     }
     LazyColumn(
         modifier = Modifier
@@ -495,7 +634,7 @@ fun TodoBottomSheetPreview() {
             .padding(16.dp)
     ) {
 
-        TodoBottomSheet(todo = Todo(""), {}, {}, LocalDate.now())
+//        TodoBottomSheet(todo = Todo(""), {}, {}, LocalDate.now(), sheetState = SheetState(true))
 
     }
 }

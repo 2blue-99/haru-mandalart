@@ -44,17 +44,6 @@ class TodoViewModel @Inject constructor(
     private val groupFlow = dateSate.flatMapLatest { getGroupWithCurrentUseCase(it) }
     private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }
 
-
-    init {
-        viewModelScope.launch {
-//            upsertTodoUseCase(Todo("1번이요","내용입니다"))
-//            upsertTodoUseCase(Todo("2번이요","내용입니다", date = LocalDate.now().plusDays(2)))
-//            upsertTodoUseCase(Todo("3번이요", "내용입니다", todoGroupId = 1))
-//            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 2))
-//            upsertTodoUseCase(Todo("4번이요","내용입니다", todoGroupId = 3))
-        }
-    }
-
     fun selectDate(date: LocalDate) {
         viewModelScope.launch {
             _dateSate.value = date
@@ -72,7 +61,6 @@ class TodoViewModel @Inject constructor(
             _bottomSheetUiSate.value = BottomSheetUiState.Down
         }
     }
-
 
     val todoUiState: StateFlow<TodoUiState> =
         groupFlow.combine(todoFlow) { group, todoList ->

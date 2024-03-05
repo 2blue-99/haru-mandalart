@@ -1,5 +1,6 @@
 package com.coldblue.todo
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -176,6 +178,25 @@ private fun TodoContent(
 
 ) {
     val sheetState = rememberModalBottomSheetState()
+
+//    val coroutineState = rememberCoroutineScope()
+    LaunchedEffect(bottomSheetUiSate){
+        Log.e("TAG", "TodoContent: ", )
+        when(bottomSheetUiSate){
+            is BottomSheetUiState.Up->{
+//                sheetState.show()
+                sheetState.expand()
+
+            }
+            is BottomSheetUiState.Down->{
+                sheetState.hide()
+
+            }
+        }
+
+    }
+
+
     if (bottomSheetUiSate is BottomSheetUiState.Up) {
         GroupBottomSheet(
             content = bottomSheetUiSate.content,
@@ -341,7 +362,7 @@ fun GroupBottomSheet(
                 }
 
                 is ContentState.Todo -> {
-                    TodoBottomSheet(content.todo, upsertTodo, onDismissRequest, date)
+                    TodoBottomSheet(content.todo, upsertTodo, onDismissRequest, date,sheetState)
 
                 }
             }
@@ -472,7 +493,6 @@ fun HaruManda(
         }
     }
 }
-
 @Composable
 fun TodoItem(
     todo: Todo,
@@ -505,12 +525,13 @@ fun TodoItem(
                 }
                 Row {
                     Text(text = todo.groupName, style = HmStyle.text12, color = HMColor.Primary)
-                    Text(text = todo.time, style = HmStyle.text12)
+                    Text(text = todo.time?.toString()?:"", style = HmStyle.text12)
                 }
             }
         }
     }
 }
+
 
 @Preview
 @Composable
@@ -529,9 +550,9 @@ fun TodoContentPreView() {
         },
         listOf(
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
-            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", time = "오전 11:35", todoGroupId = -1),
+            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
             Todo("DB설계", "", todoGroupId = -1),
-            Todo("디자인 3페이지", "", groupName = "", time = "오전 08:00", todoGroupId = -1)
+            Todo("디자인 3페이지", "", groupName = "", todoGroupId = -1)
         ),
         emptyList(),
         {},

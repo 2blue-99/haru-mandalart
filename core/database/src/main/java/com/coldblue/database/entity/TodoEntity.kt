@@ -6,13 +6,14 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Entity(tableName = "todo")
 data class TodoEntity(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "content") val content: String,
     @ColumnInfo(name = "is_done") val isDone: Boolean,
-    @ColumnInfo(name = "time") val time: String,
+    @ColumnInfo(name = "time") val time: LocalTime?,
     @ColumnInfo(name = "date") val date: LocalDate,
     @ColumnInfo(name = "todo_group_id") val todoGroupId: Int? = null,
     @ColumnInfo(name = "origin_id") val originId: Int,
