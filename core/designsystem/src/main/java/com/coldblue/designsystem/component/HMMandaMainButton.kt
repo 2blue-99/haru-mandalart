@@ -23,6 +23,7 @@ import com.coldblue.designsystem.theme.HmStyle
 fun HMButton(
     text: String,
     clickableState: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
 
@@ -32,7 +33,7 @@ fun HMButton(
     )
 
     Button(
-        modifier = Modifier.fillMaxWidth().height(50.dp),
+        modifier = modifier.fillMaxWidth().height(50.dp),
         shape = RoundedCornerShape(10.dp),
         border = AssistChipDefaults.assistChipBorder(enabled = true, borderColor = Color.Transparent),
         colors = ButtonDefaults.buttonColors(

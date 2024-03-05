@@ -19,16 +19,16 @@ fun HMTextField(
     inputText: String = "",
     onChangeText: (String) -> Unit
 ) {
-    var test by remember { mutableStateOf(inputText) }
+    var text by remember { mutableStateOf(inputText) }
     LaunchedEffect(inputText){
-        test = inputText
+        text = inputText
     }
     TextField(
         modifier = Modifier.fillMaxWidth(),
-        value = test,
+        value = text,
         onValueChange = {
-            test = it
-            onChangeText(test)
+            text = it
+            onChangeText(text)
         },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = HMColor.Primary,

@@ -4,7 +4,7 @@ import com.coldblue.mandalart.model.MandaUI
 
 sealed interface BottomSheetUIState {
     data object Down : BottomSheetUIState
-    data class Up(val bottomSheetContentState: BottomSheetContentType) : BottomSheetUIState
+    data class Up(val bottomSheetContentState: BottomSheetContentState) : BottomSheetUIState
 }
 
 sealed interface BottomSheetContentState {
@@ -24,7 +24,7 @@ sealed interface BottomSheetContentType {
     val title: String
 
     data class MandaFinal(
-        override val mandaUI: MandaUI = MandaUI("", id = 0)
+        override val mandaUI: MandaUI
     ) : BottomSheetContentType {
         override val title = "최종 목표"
     }

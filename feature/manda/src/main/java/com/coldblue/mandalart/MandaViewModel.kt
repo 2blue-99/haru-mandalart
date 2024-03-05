@@ -1,6 +1,7 @@
 package com.coldblue.mandalart
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.manda.GetDetailMandaUseCase
@@ -10,11 +11,14 @@ import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.mandalart.state.BottomSheetContentState
+import com.coldblue.mandalart.state.BottomSheetUIState
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -78,6 +82,17 @@ class MandaViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = MandaUIState.Loading
         )
+
+    private val _bottomSheetUIState = MutableStateFlow<BottomSheetUIState>(BottomSheetUIState.Down)
+    val bottomSheetUIState: StateFlow<BottomSheetUIState> get() = _bottomSheetUIState
+
+    fun changeBottomSheet(isShow: Boolean, uiState: BottomSheetContentState){
+        if(isShow){
+            _bottomSheetUIState.value = BottomSheetUIState.Up(uiState)
+        }else{
+            _bottomSheetUIState.value = BottomSheetUIState.Down
+        }
+    }
 
     fun upsertMandaFinal(text: String) {
         viewModelScope.launch {
