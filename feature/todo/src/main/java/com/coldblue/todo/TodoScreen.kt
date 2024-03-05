@@ -384,8 +384,6 @@ fun HaruManda(
     currentGroupList: List<CurrentGroupState>,
     showSheet: (ContentState) -> Unit,
 ) {
-    Log.e("TAG", "HaruManda: ${currentGroupList.first().currentGroup.hashCode()}")
-
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier

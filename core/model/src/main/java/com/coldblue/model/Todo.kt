@@ -9,7 +9,7 @@ data class Todo(
     val isDone: Boolean=false,
     val time: LocalTime?=null,
     val date: LocalDate=LocalDate.now(),
-    val todoGroupId: Int=-1,
+    val todoGroupId: Int?=-1,
     val groupName: String = "",
     val isDel: Boolean = false,
     val originId: Int = 0,

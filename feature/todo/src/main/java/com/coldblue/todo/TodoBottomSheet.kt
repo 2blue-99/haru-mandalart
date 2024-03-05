@@ -76,14 +76,13 @@ fun TodoBottomSheet(
     sheetState: SheetState,
     currentGroupList: List<CurrentGroup>,
 ) {
-
-
     var onSwitch by remember { mutableStateOf(false) }
     var time: LocalTime by remember { mutableStateOf(todo.time ?: LocalTime.now()) }
     var onDetail by remember { mutableStateOf(false) }
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content) }
 
+    var currentTodoGroupId by remember { mutableStateOf(currentGroupList.firstOrNull { it.todoGroupId == todo.todoGroupId }?.todoGroupId) }
 
     val dateButtons = remember {
         mutableStateListOf(
@@ -241,7 +240,9 @@ fun TodoBottomSheet(
 
             }
 
-            GroupPicker(currentGroupList, todo.todoGroupId)
+            GroupPicker(currentGroupList, currentTodoGroupId) { todoGroupId ->
+                currentTodoGroupId = todoGroupId
+            }
 
         }
         if (todo.id != 0) {
@@ -283,7 +284,14 @@ fun TodoBottomSheet(
                         disabledContainerColor = HMColor.Primary,
                     ),
                     onClick = {
-                        upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                        upsertTodo(
+                            todo.copy(
+                                title = titleText,
+                                content = contentText,
+                                time = time,
+                                todoGroupId = currentTodoGroupId
+                            )
+                        )
                         onDismissRequest()
                     }
                 ) {
@@ -307,7 +315,14 @@ fun TodoBottomSheet(
                     disabledContainerColor = HMColor.Primary,
                 ),
                 onClick = {
-                    upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                    upsertTodo(
+                        todo.copy(
+                            title = titleText,
+                            content = contentText,
+                            time = time,
+                            todoGroupId = currentTodoGroupId
+                        )
+                    )
                     onDismissRequest()
                 }
             ) {
@@ -325,29 +340,26 @@ fun TodoBottomSheet(
 @Composable
 fun GroupPicker(
     currentGroupList: List<CurrentGroup>,
-    currentGroupId: Int,
-
-    ) {
-
-
+    currentTodoGroupId: Int?,
+    onClick: (Int?) -> Unit
+) {
     val groupButtons = remember {
         mutableStateListOf<ToggleInfo>().apply {
-//            ToggleInfo(
-//                isChecked = !existGroup.any { it.currentGroup.id == currentGroupId },
-//                text = "그룸없음",
-//                currentGroupId = 0
-//            )
-
+            add(
+                ToggleInfo(
+                    isChecked = currentTodoGroupId == null,
+                    text = "그룸없음",
+                )
+            )
             addAll(currentGroupList.map { group ->
                 ToggleInfo(
-                    isChecked = currentGroupId == group.id,
+                    isChecked = currentTodoGroupId == group.todoGroupId,
                     text = group.name,
                     currentGroupId = group.id
                 )
             })
         }
     }
-
     Column {
         Text(
             modifier = Modifier.padding(top = 48.dp),
@@ -358,6 +370,7 @@ fun GroupPicker(
         Row {
             groupButtons.forEach { button ->
                 SelectButton(button) {
+                    onClick(button.currentGroupId)
                     groupButtons.replaceAll {
                         it.copy(isChecked = it.text == button.text)
                     }
