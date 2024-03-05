@@ -27,7 +27,9 @@ import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.theme.HMColor
 
 @Composable
-fun HMMandaEmptyButton() {
+fun HMMandaEmptyButton(
+    onClick: () -> Unit
+) {
     val stroke = Stroke(
         width = 10f,
         pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
@@ -38,13 +40,15 @@ fun HMMandaEmptyButton() {
             .fillMaxWidth()
             .aspectRatio(1F)
             .clip(RoundedCornerShape(8.dp))
-            .clickable {  }
             .drawBehind {
                 drawRoundRect(
                     color = HMColor.SubText,
                     style = stroke,
                     cornerRadius = CornerRadius(8.dp.toPx())
                 )
+            }
+            .clickable {
+                onClick()
             }
     ){
         Icon(
@@ -59,5 +63,5 @@ fun HMMandaEmptyButton() {
 @Preview
 @Composable
 fun HMMandaEmptyPreview() {
-    HMMandaEmptyButton()
+    HMMandaEmptyButton{}
 }
