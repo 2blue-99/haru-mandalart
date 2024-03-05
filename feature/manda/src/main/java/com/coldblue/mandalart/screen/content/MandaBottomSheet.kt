@@ -19,6 +19,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -64,7 +65,7 @@ fun MandaBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp, ),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp),
             verticalArrangement = Arrangement.spacedBy(60.dp)
         ) {
             Text(
@@ -154,7 +155,7 @@ fun MandaBottomSheet(
 fun MandaBottomSheetColor(
     onClick: (Int) -> Unit
 ) {
-    val colorStateList = remember {
+    val colorInfoListState = remember {
         mutableStateListOf(
             MandaColorInfo(HMColor.Dark.Pink, true, 0),
             MandaColorInfo(HMColor.Dark.Red, false, 1),
@@ -166,6 +167,7 @@ fun MandaBottomSheetColor(
             MandaColorInfo(HMColor.Dark.Purple, false, 7)
         )
     }
+
 
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -179,16 +181,17 @@ fun MandaBottomSheetColor(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            items(colorStateList.size) {
-                RoundButton(MandaColorInfo(color = HMColor.Gray, id = it, isChecked = false)) {
-                    onClick(it)
+            items(colorInfoListState.size) { index ->
+                RoundButton(colorInfoListState[index]) {
+                    onClick(index)
+                    colorInfoListState.forEachIndexed { colorIndex, colorInfo ->
+                        if(colorIndex == index)
+                            colorInfoListState[index] = colorInfoListState[index].copy(isChecked = true)
+                        else
+                            colorInfo.isChecked = false
+                    }
                 }
             }
-//            HMColor.Dark::class.java.declaredFields.forEach {
-//                item {
-//                    RoundButton(it.get(it) as Color)
-//                }
-//            }
         }
     }
 }
@@ -201,18 +204,20 @@ fun RoundButton(
     Box(
         modifier = Modifier
             .size(50.dp)
-            .background(if(colorStateList[]) color else Color.Transparent, shape = CircleShape),
+            .background(
+                if (colorInfo.isChecked) colorInfo.color else Color.Transparent,
+                shape = CircleShape
+            ),
         contentAlignment = Alignment.Center
     ) {
         Button(
             modifier = Modifier.size(40.dp),
             onClick = {
                 onClick()
-                isClicked = !isClicked
             },
             shape = CircleShape,
-            border = if (isClicked) BorderStroke(2.dp, HMColor.Background) else null,
-            colors = ButtonDefaults.buttonColors(containerColor = color)
+            border = if (colorInfo.isChecked) BorderStroke(2.dp, HMColor.Background) else null,
+            colors = ButtonDefaults.buttonColors(containerColor = colorInfo.color)
         ) { }
     }
 }

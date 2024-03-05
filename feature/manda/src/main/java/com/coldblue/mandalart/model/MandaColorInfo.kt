@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 
 data class MandaColorInfo(
     val color: Color,
-    val isChecked: Boolean,
+    var isChecked: Boolean,
     val id: Int
 )
 
