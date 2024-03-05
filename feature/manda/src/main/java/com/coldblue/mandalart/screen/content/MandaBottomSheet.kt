@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,10 +18,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,13 +37,14 @@ import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
-import com.coldblue.mandalart.state.BottomSheetContentState
-import com.coldblue.mandalart.state.BottomSheetContentType
+import com.coldblue.mandalart.state.MandaBottomSheetContentState
+import com.coldblue.mandalart.state.MandaBottomSheetContentType
+import com.coldblue.mandalart.model.MandaColorInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MandaBottomSheet(
-    bottomSheetContentState: BottomSheetContentState,
+    mandaBottomSheetContentState: MandaBottomSheetContentState,
     sheetState: SheetState,
     upsertMandaKey: (MandaUI) -> Unit,
     upsertMandaDetail: (MandaUI) -> Unit,
@@ -55,7 +55,7 @@ fun MandaBottomSheet(
     var buttonClickableState by remember { mutableStateOf(false) }
     var doneCheckedState by remember { mutableStateOf(false) }
 
-    val contentType = bottomSheetContentState.bottomSheetContentType
+    val contentType = mandaBottomSheetContentState.mandaBottomSheetContentType
 
     ModalBottomSheet(
         onDismissRequest = { onDisMiss() },
@@ -63,37 +63,43 @@ fun MandaBottomSheet(
     ) {
         Column(
             modifier = Modifier
-                .height(100.dp)
                 .fillMaxWidth()
-                .background(Color.Gray)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(30.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp, ),
+            verticalArrangement = Arrangement.spacedBy(60.dp)
         ) {
-            Text(text = contentType.title)
+            Text(
+                text = contentType.title,
+                style = HmStyle.text16,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
-            Text(text = contentType.title + " 이름")
-
-            HMTextField {
-                inputText = it
-                if (inputText.isBlank()) buttonClickableState = false
+            Column(
+                verticalArrangement = Arrangement.spacedBy((-5).dp)
+            ) {
+                Text(text = contentType.title + " 이름", style = HmStyle.text16)
+                HMTextField {
+                    inputText = it
+                    if (inputText.isBlank()) buttonClickableState = false
+                }
             }
 
-            if (contentType is BottomSheetContentType.MandaKey) {
+            if (contentType is MandaBottomSheetContentType.MandaKey) {
                 MandaBottomSheetColor {
                     colorIndex = it
                 }
             }
 
-            if (contentType is BottomSheetContentType.MandaDetail) {
+            if (contentType is MandaBottomSheetContentType.MandaDetail) {
                 MandaBottomSheetDone(doneCheckedState) {
                     doneCheckedState = it
                 }
             }
 
-            if (bottomSheetContentState is BottomSheetContentState.Insert) {
+            if (mandaBottomSheetContentState is MandaBottomSheetContentState.Insert) {
                 HMButton(text = "저장", clickableState = buttonClickableState) {
                     when (contentType) {
-                        is BottomSheetContentType.MandaDetail ->
+                        is MandaBottomSheetContentType.MandaDetail ->
                             upsertMandaDetail(contentType.mandaUI.copy(name = inputText))
 
                         else -> //TODO 여기
@@ -124,7 +130,7 @@ fun MandaBottomSheet(
                         modifier = Modifier.padding(start = 5.dp)
                     ) {
                         when (contentType) {
-                            is BottomSheetContentType.MandaDetail ->
+                            is MandaBottomSheetContentType.MandaDetail ->
                                 upsertMandaDetail(contentType.mandaUI.copy(name = inputText))
 
                             else -> //TODO 여기
@@ -148,6 +154,19 @@ fun MandaBottomSheet(
 fun MandaBottomSheetColor(
     onClick: (Int) -> Unit
 ) {
+    val colorStateList = remember {
+        mutableStateListOf(
+            MandaColorInfo(HMColor.Dark.Pink, true, 0),
+            MandaColorInfo(HMColor.Dark.Red, false, 1),
+            MandaColorInfo(HMColor.Dark.Orange, false, 2),
+            MandaColorInfo(HMColor.Dark.Yellow, false, 3),
+            MandaColorInfo(HMColor.Dark.Green, false, 4),
+            MandaColorInfo(HMColor.Dark.Blue, false, 5),
+            MandaColorInfo(HMColor.Dark.Indigo, false, 6),
+            MandaColorInfo(HMColor.Dark.Purple, false, 7)
+        )
+    }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -160,8 +179,8 @@ fun MandaBottomSheetColor(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            items(8) {
-                RoundButton(Color.Black) {
+            items(colorStateList.size) {
+                RoundButton(MandaColorInfo(color = HMColor.Gray, id = it, isChecked = false)) {
                     onClick(it)
                 }
             }
@@ -176,14 +195,13 @@ fun MandaBottomSheetColor(
 
 @Composable
 fun RoundButton(
-    color: Color,
+    colorInfo: MandaColorInfo,
     onClick: () -> Unit
 ) {
-    var isClicked by remember { mutableStateOf(false) }
     Box(
         modifier = Modifier
-            .size(if (isClicked) 50.dp else 40.dp)
-            .background(color, shape = CircleShape),
+            .size(50.dp)
+            .background(if(colorStateList[]) color else Color.Transparent, shape = CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Button(
@@ -219,5 +237,5 @@ fun MandaBottomSheetDone(
 @Preview
 @Composable
 fun BottomSheetPreview() {
-    MandaBottomSheetDone(false){}
+    MandaBottomSheetDone(false) {}
 }

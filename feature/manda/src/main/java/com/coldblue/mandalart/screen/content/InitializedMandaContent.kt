@@ -23,11 +23,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +47,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.HMMandaEmptyButton
 import com.coldblue.designsystem.component.HMMandaFillButton
@@ -54,6 +55,9 @@ import com.coldblue.designsystem.component.HMTitleComponent
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.mandalart.state.MandaBottomSheetContentState
+import com.coldblue.mandalart.state.MandaBottomSheetContentType
+import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
@@ -63,18 +67,31 @@ import kotlin.math.roundToInt
 const val MAX_MANDA_KEY_SIZE = 8
 const val MAX_MANDA_DETAIL_SIZE = 64
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitializedMandaContent(
     uiState: MandaUIState.InitializedSuccess,
+    mandaBottomSheetUIState: MandaBottomSheetUIState,
+    upsertMandaFinal: (String) -> Unit,
     upsertMandaKey: (MandaUI) -> Unit,
-    upsertMandaDetail: (MandaUI) -> Unit
+    upsertMandaDetail: (MandaUI) -> Unit,
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
-
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+
+    if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
+        MandaBottomSheet(
+            mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
+            sheetState = sheetState,
+            upsertMandaKey = upsertMandaKey,
+            upsertMandaDetail = upsertMandaDetail
+        ) { changeBottomSheet(false, null) }
+    }
 
     LaunchedEffect(Unit) { percentage = uiState.donePercentage }
 
@@ -92,12 +109,18 @@ fun InitializedMandaContent(
             detailMandaCnt = uiState.detailMandaCnt,
             donePercentage = uiState.donePercentage,
             animateDonePercentage = animateDonePercentage.value
-        )
+        ) {
+            changeBottomSheet(
+                true,
+                MandaBottomSheetContentState.Update(MandaBottomSheetContentType.MandaFinal(mandaUI = it))
+            )
+        }
 
         Mandalart(
             mandaStateList = uiState.mandaStateList,
             upsertMandaKey = upsertMandaKey,
-            upsertMandaDetail = upsertMandaDetail
+            upsertMandaDetail = upsertMandaDetail,
+            changeBottomSheet = changeBottomSheet
         )
     }
 }
@@ -108,7 +131,8 @@ fun MandaStatus(
     keyMandaCnt: Int,
     detailMandaCnt: Int,
     donePercentage: Float,
-    animateDonePercentage: Float
+    animateDonePercentage: Float,
+    onClickTitle: (MandaUI) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -126,11 +150,13 @@ fun MandaStatus(
             }
         }
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClickTitle(MandaUI(id = 4, name = finalName)) },
             textAlign = TextAlign.Center,
             text = "\" $finalName \"",
             style = HmStyle.text24,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -174,7 +200,8 @@ fun MandaStatus(
 fun Mandalart(
     mandaStateList: List<MandaState>,
     upsertMandaKey: (MandaUI) -> Unit,
-    upsertMandaDetail: (MandaUI) -> Unit
+    upsertMandaDetail: (MandaUI) -> Unit,
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit
 ) {
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
@@ -183,8 +210,6 @@ fun Mandalart(
     var zoomState by remember { mutableStateOf(false) }
     var beforeDirection by remember { mutableIntStateOf(-1) }
     var afterDirection by remember { mutableIntStateOf(-1) }
-    var offsetX by remember { mutableFloatStateOf(0f) }
-    var offsetY by remember { mutableFloatStateOf(0f) }
 
     val dampingRatio = 1f // 클수록 스프링 효과 작음
     val stiffness = 1000f // 클수록 빨리 확대, 축소 됨
@@ -258,81 +283,66 @@ fun Mandalart(
         if (abs(x) > abs(y)) {
             when {
                 x > 0 -> {  // left
-                    offsetX += x
-                    if(beforeDirection == 1)
+                    if (beforeDirection == 1)
                         afterDirection = 0
-                    else if(beforeDirection == 3)
+                    else if (beforeDirection == 3)
                         afterDirection = 2
-                    Log.e("TAG", "left dragEndDetector: $beforeDirection // $afterDirection", )
                 }
 
                 x < 0 -> {  // right
-                    offsetX += x
-                    if(beforeDirection == 0)
+                    if (beforeDirection == 0)
                         afterDirection = 1
-                    else if(beforeDirection == 2)
+                    else if (beforeDirection == 2)
                         afterDirection = 3
-                    Log.e("TAG", "right dragEndDetector: $beforeDirection // $afterDirection", )
                 }
             }
         } else {
             when {
                 y > 0 -> {    // Top
-                    offsetY += y
-                    if(beforeDirection == 2)
+                    if (beforeDirection == 2)
                         afterDirection = 0
-                    else if(beforeDirection == 3)
+                    else if (beforeDirection == 3)
                         afterDirection = 1
-                    Log.e("TAG", "Top dragEndDetector: $beforeDirection // $afterDirection", )
                 }
 
                 y < 0 -> {  // Bottom
-                    offsetY += y
-                    if(beforeDirection == 0)
+                    if (beforeDirection == 0)
                         afterDirection = 2
-                    else if(beforeDirection == 1)
+                    else if (beforeDirection == 1)
                         afterDirection = 3
-                    Log.e("TAG", "Bottom dragEndDetector: $beforeDirection // $afterDirection", )
                 }
             }
         }
     }
 
     fun dragEndDetector() {
-        Log.e("TAG", "dragEndDetector: $beforeDirection // $afterDirection", )
         when (afterDirection) {
             0 -> {
-                    if(beforeDirection == 1)
-                        zoomInAndOut(0)
-                    else if(beforeDirection == 2)
-                        zoomInAndOut(0)
-                offsetX = 0f
-                offsetY = 0f
+                if (beforeDirection == 1)
+                    zoomInAndOut(0)
+                else if (beforeDirection == 2)
+                    zoomInAndOut(0)
             }
-            1 -> {
-                    if(beforeDirection == 0)
-                        zoomInAndOut(2)
-                    else if(beforeDirection == 3)
-                        zoomInAndOut(2)
-                offsetX = 0f
-                offsetY = 0f
-            }
-            2 -> {
-                    if(beforeDirection == 0)
-                        zoomInAndOut(6)
-                    else if(beforeDirection == 3)
-                        zoomInAndOut(6)
 
-                offsetX = 0f
-                offsetY = 0f
+            1 -> {
+                if (beforeDirection == 0)
+                    zoomInAndOut(2)
+                else if (beforeDirection == 3)
+                    zoomInAndOut(2)
             }
+
+            2 -> {
+                if (beforeDirection == 0)
+                    zoomInAndOut(6)
+                else if (beforeDirection == 3)
+                    zoomInAndOut(6)
+            }
+
             3 -> {
-                    if(beforeDirection == 1)
-                        zoomInAndOut(8)
-                    else if(beforeDirection == 2)
-                        zoomInAndOut(8)
-                offsetX = 0f
-                offsetY = 0f
+                if (beforeDirection == 1)
+                    zoomInAndOut(8)
+                else if (beforeDirection == 2)
+                    zoomInAndOut(8)
             }
         }
     }
@@ -399,7 +409,15 @@ fun Mandalart(
                                                 modifier = Modifier.fillMaxSize()
                                             ) {
                                                 HMMandaEmptyButton {
-                                                    upsertMandaKey(MandaUI(id = state.id))
+//                                                    upsertMandaKey(MandaUI(id = state.id))
+                                                    changeBottomSheet(
+                                                        true,
+                                                        MandaBottomSheetContentState.Insert(
+                                                            MandaBottomSheetContentType.MandaKey(
+                                                                MandaUI(id = state.id)
+                                                            )
+                                                        )
+                                                    )
                                                 }
                                             }
                                         }
@@ -422,7 +440,14 @@ fun Mandalart(
                                                                             .padding(2.dp)
                                                                     ) {
                                                                         HMMandaEmptyButton {
-                                                                            upsertMandaDetail(type.mandaUI)
+                                                                            changeBottomSheet(
+                                                                                true,
+                                                                                MandaBottomSheetContentState.Insert(
+                                                                                    MandaBottomSheetContentType.MandaKey(
+                                                                                        type.mandaUI
+                                                                                    )
+                                                                                )
+                                                                            )
                                                                         }
                                                                     }
                                                                 }
@@ -437,7 +462,25 @@ fun Mandalart(
                                                                             name = type.mandaUI.name,
                                                                             outlineColor = type.mandaUI.darkColor
                                                                         ) {
-                                                                            upsertMandaKey(type.mandaUI)
+                                                                            if (type.mandaUI.id == 4) {
+                                                                                changeBottomSheet(
+                                                                                    true,
+                                                                                    MandaBottomSheetContentState.Update(
+                                                                                        MandaBottomSheetContentType.MandaFinal(
+                                                                                            type.mandaUI
+                                                                                        )
+                                                                                    )
+                                                                                )
+                                                                            } else {
+                                                                                changeBottomSheet(
+                                                                                    true,
+                                                                                    MandaBottomSheetContentState.Update(
+                                                                                        MandaBottomSheetContentType.MandaKey(
+                                                                                            type.mandaUI
+                                                                                        )
+                                                                                    )
+                                                                                )
+                                                                            }
                                                                         }
                                                                     }
 
@@ -452,7 +495,14 @@ fun Mandalart(
                                                                             backgroundColor = type.mandaUI.lightColor,
                                                                             textColor = HMColor.Text
                                                                         ) {
-                                                                            upsertMandaDetail(type.mandaUI)
+                                                                            changeBottomSheet(
+                                                                                true,
+                                                                                MandaBottomSheetContentState.Update(
+                                                                                    MandaBottomSheetContentType.MandaDetail(
+                                                                                        type.mandaUI
+                                                                                    )
+                                                                                )
+                                                                            )
                                                                         }
                                                                     }
 
@@ -467,7 +517,14 @@ fun Mandalart(
                                                                             backgroundColor = type.mandaUI.darkColor,
                                                                             textColor = HMColor.Background
                                                                         ) {
-                                                                            upsertMandaDetail(type.mandaUI)
+                                                                            changeBottomSheet(
+                                                                                true,
+                                                                                MandaBottomSheetContentState.Update(
+                                                                                    MandaBottomSheetContentType.MandaDetail(
+                                                                                        type.mandaUI
+                                                                                    )
+                                                                                )
+                                                                            )
                                                                         }
                                                                     }
                                                             }
@@ -500,42 +557,41 @@ fun Mandalart(
     }
 }
 
-@Preview
-@Composable
-fun MandaContentPreview() {
-    val stateList = mutableListOf<MandaState>()
-    val typeList = mutableListOf<MandaType>()
-    repeat(9) { cnt ->
-        if (cnt == 8) {
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-        } else {
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-            typeList.add(MandaType.None(MandaUI(id = 0)))
-        }
-        stateList.add(
-            MandaState.Exist(
-                mandaUIList = typeList.toList()
-            )
-        )
-        typeList.clear()
-    }
-    Mandalart(mandaStateList = stateList, upsertMandaKey = {}, upsertMandaDetail = {})
-}
+//@Preview
+//@Composable
+//fun MandaContentPreview() {
+//    val stateList = mutableListOf<MandaState>()
+//    val typeList = mutableListOf<MandaType>()
+//    repeat(9) { cnt ->
+//        if (cnt == 8) {
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
+//        } else {
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//            typeList.add(MandaType.None(MandaUI(id = 0)))
+//        }
+//        stateList.add(
+//            MandaState.Exist(
+//                mandaUIList = typeList.toList()
+//            )
+//        )
+//        typeList.clear()
+//    }
+//}
 
 //@Preview
 //@Composable
