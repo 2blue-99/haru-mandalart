@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.data.mapper.CurrentGroupMapper
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.CenterTitleText
 import com.coldblue.designsystem.component.TitleText
@@ -61,6 +62,7 @@ import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -102,7 +104,7 @@ fun TodoScreen(
                 bottomSheetUiSate = bottomSheetUiSate,
                 showSheet = { content -> todoViewModel.showSheet(content) },
                 hideSheet = { todoViewModel.hideSheet() },
-                insertTodo = { todo -> todoViewModel.upsertTodo(todo) },
+                upsertTodo = { todo -> todoViewModel.upsertTodo(todo) },
                 upsertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
@@ -125,7 +127,7 @@ private fun TodoContentWithState(
     bottomSheetUiSate: BottomSheetUiState,
     showSheet: (ContentState) -> Unit,
     hideSheet: () -> Unit,
-    insertTodo: (Todo) -> Unit,
+    upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
@@ -145,7 +147,7 @@ private fun TodoContentWithState(
                 bottomSheetUiSate,
                 showSheet,
                 hideSheet,
-                insertTodo,
+                upsertTodo,
                 upsertTodoGroup,
                 uiState.haruMandaList,
                 uiState.currentGroup,
@@ -524,7 +526,7 @@ fun TodoItem(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(vertical = 12.dp),
-            verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.Start
+            verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.Start,
         ) {
             Checkbox(checked = todo.isDone, onCheckedChange = { onTodoToggle(todo) })
             Column {
@@ -534,12 +536,34 @@ fun TodoItem(
                     Text(text = todo.title)
                 }
                 Row {
-                    Text(text = todo.groupName, style = HmStyle.text12, color = HMColor.Primary)
-                    Text(text = todo.time?.toString() ?: "", style = HmStyle.text12)
+                    Text(
+                        modifier = Modifier.padding(end = 4.dp),
+                        text = todo.groupName,
+                        style = HmStyle.text12,
+                        color = HMColor.Primary
+                    )
+                    Text(text = todo.time?.getDisplayName() ?: "", style = HmStyle.text12)
                 }
             }
         }
     }
+}
+
+fun LocalTime.getDisplayName(): String {
+    val isAm = this.hour < 12
+    return if (isAm) {
+        "오전 ${this.hour + 1}:${this.minute.padTwoZero()}"
+    } else {
+        "오후 ${this.hour - 12}:${this.minute.padTwoZero()}"
+    }
+}
+
+fun Int.padTwoZero(): String {
+    return this.toString().padStart(2, '0')
+}
+
+fun Int.padTwoSpace(): String {
+    return this.toString().padStart(2, ' ')
 }
 
 

@@ -120,7 +120,7 @@ class TodoViewModel @Inject constructor(
 
     fun upsertTodo(todo: Todo) {
         viewModelScope.launch {
-            upsertTodoUseCase(todo.copy(date = dateSate.value))
+            upsertTodoUseCase(todo)
         }
     }
 
