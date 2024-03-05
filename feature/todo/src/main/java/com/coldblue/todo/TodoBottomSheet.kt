@@ -1,5 +1,6 @@
 package com.coldblue.todo
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -57,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.ToggleInfo
 import kotlinx.coroutines.launch
@@ -72,7 +74,9 @@ fun TodoBottomSheet(
     onDismissRequest: () -> Unit,
     today: LocalDate,
     sheetState: SheetState,
+    currentGroupList: List<CurrentGroup>,
 ) {
+
 
     var onSwitch by remember { mutableStateOf(false) }
     var time: LocalTime by remember { mutableStateOf(todo.time ?: LocalTime.now()) }
@@ -172,6 +176,8 @@ fun TodoBottomSheet(
                     containerColor = Color.Transparent
                 ),
             )
+
+
             Text(
                 modifier = Modifier.padding(top = 24.dp),
                 text = "날짜",
@@ -235,17 +241,16 @@ fun TodoBottomSheet(
 
             }
 
-            Text(
-                modifier = Modifier.padding(top = 48.dp),
-                text = "그룹",
-                style = HmStyle.text16,
-                fontWeight = FontWeight.Bold
-            )
+            GroupPicker(currentGroupList, todo.todoGroupId)
+
         }
         if (todo.id != 0) {
             Row(Modifier.fillMaxWidth()) {
                 Button(
-                    modifier = Modifier.fillMaxWidth().weight(1F).padding(end = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1F)
+                        .padding(end = 8.dp),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonColors(
                         contentColor = HMColor.Primary,
@@ -266,7 +271,10 @@ fun TodoBottomSheet(
                     )
                 }
                 Button(
-                    modifier = Modifier.fillMaxWidth().weight(1F).padding(start = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1F)
+                        .padding(start = 8.dp),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonColors(
                         contentColor = HMColor.Background,
@@ -312,6 +320,52 @@ fun TodoBottomSheet(
             }
         }
     }
+}
+
+@Composable
+fun GroupPicker(
+    currentGroupList: List<CurrentGroup>,
+    currentGroupId: Int,
+
+    ) {
+
+
+    val groupButtons = remember {
+        mutableStateListOf<ToggleInfo>().apply {
+//            ToggleInfo(
+//                isChecked = !existGroup.any { it.currentGroup.id == currentGroupId },
+//                text = "그룸없음",
+//                currentGroupId = 0
+//            )
+
+            addAll(currentGroupList.map { group ->
+                ToggleInfo(
+                    isChecked = currentGroupId == group.id,
+                    text = group.name,
+                    currentGroupId = group.id
+                )
+            })
+        }
+    }
+
+    Column {
+        Text(
+            modifier = Modifier.padding(top = 48.dp),
+            text = "그룹",
+            style = HmStyle.text16,
+            fontWeight = FontWeight.Bold
+        )
+        Row {
+            groupButtons.forEach { button ->
+                SelectButton(button) {
+                    groupButtons.replaceAll {
+                        it.copy(isChecked = it.text == button.text)
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 @Composable

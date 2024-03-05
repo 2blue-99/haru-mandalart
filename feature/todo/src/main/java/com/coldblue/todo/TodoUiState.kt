@@ -15,8 +15,9 @@ sealed interface TodoUiState {
     data class Success(
         val today: LocalDate,
         val todoList: List<Todo>,
-        val currentGroupList: List<CurrentGroupState>,
-        val todoGroupList: List<TodoGroup>
+        val haruMandaList: List<CurrentGroupState>,
+        val todoGroupList: List<TodoGroup>,
+        val currentGroup: List<CurrentGroup>
     ) : TodoUiState
 
 }
