@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 @Dao
 interface TodoDao {
-    @Query("SELECT todo.*, IFNULL(todo_group.name, '') AS groupName FROM todo LEFT JOIN todo_group ON todo.todo_group_id = todo_group.id WHERE date=:date")
+    @Query("SELECT todo.*, IFNULL(todo_group.name, '') AS groupName FROM todo LEFT JOIN todo_group ON todo.todo_group_id = todo_group.id WHERE date=:date AND todo.is_del=0")
     fun getTodo(date: LocalDate): Flow<List<TodoWithGroupName>>
 
 

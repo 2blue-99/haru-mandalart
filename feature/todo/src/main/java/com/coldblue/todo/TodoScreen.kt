@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.data.mapper.CurrentGroupMapper
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.CenterTitleText
 import com.coldblue.designsystem.component.TitleText
@@ -61,6 +62,7 @@ import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -102,7 +104,7 @@ fun TodoScreen(
                 bottomSheetUiSate = bottomSheetUiSate,
                 showSheet = { content -> todoViewModel.showSheet(content) },
                 hideSheet = { todoViewModel.hideSheet() },
-                insertTodo = { todo -> todoViewModel.upsertTodo(todo) },
+                upsertTodo = { todo -> todoViewModel.upsertTodo(todo) },
                 upsertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
@@ -125,7 +127,7 @@ private fun TodoContentWithState(
     bottomSheetUiSate: BottomSheetUiState,
     showSheet: (ContentState) -> Unit,
     hideSheet: () -> Unit,
-    insertTodo: (Todo) -> Unit,
+    upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
@@ -145,9 +147,10 @@ private fun TodoContentWithState(
                 bottomSheetUiSate,
                 showSheet,
                 hideSheet,
-                insertTodo,
+                upsertTodo,
                 upsertTodoGroup,
-                uiState.currentGroupList,
+                uiState.haruMandaList,
+                uiState.currentGroup,
                 uiState.todoList,
                 uiState.todoGroupList,
                 onTodoToggle,
@@ -167,7 +170,8 @@ private fun TodoContent(
     hideSheet: () -> Unit,
     upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
-    currentGroupList: List<CurrentGroupState>,
+    currentGroupStateList: List<CurrentGroupState>,
+    currentGroupList: List<CurrentGroup>,
     todoList: List<Todo>,
     todoGroupList: List<TodoGroup>,
     onTodoToggle: (Todo) -> Unit,
@@ -178,19 +182,17 @@ private fun TodoContent(
 
 ) {
     val sheetState = rememberModalBottomSheetState()
-
 //    val coroutineState = rememberCoroutineScope()
-    LaunchedEffect(bottomSheetUiSate){
-        Log.e("TAG", "TodoContent: ", )
-        when(bottomSheetUiSate){
-            is BottomSheetUiState.Up->{
+    LaunchedEffect(bottomSheetUiSate) {
+        when (bottomSheetUiSate) {
+            is BottomSheetUiState.Up -> {
 //                sheetState.show()
                 sheetState.expand()
 
             }
-            is BottomSheetUiState.Down->{
-                sheetState.hide()
 
+            is BottomSheetUiState.Down -> {
+                sheetState.hide()
             }
         }
 
@@ -203,6 +205,7 @@ private fun TodoContent(
             sheetState = sheetState,
             onDismissRequest = { hideSheet() },
             todoGroupList = todoGroupList,
+            currentGroupStateList = currentGroupStateList,
             currentGroupList = currentGroupList,
             upsertCurrentGroup = upsertCurrentGroup,
             upsertTodoGroup = upsertTodoGroup,
@@ -225,7 +228,7 @@ private fun TodoContent(
             CenterTitleText("하루,만다라트")
         }
         item {
-            HaruManda(currentGroupList, showSheet)
+            HaruManda(currentGroupStateList, showSheet)
         }
         item {
             TitleText("오늘 할 일")
@@ -322,7 +325,8 @@ fun GroupBottomSheet(
     content: ContentState,
     sheetState: SheetState,
     todoGroupList: List<TodoGroup>,
-    currentGroupList: List<CurrentGroupState>,
+    currentGroupStateList: List<CurrentGroupState>,
+    currentGroupList: List<CurrentGroup>,
     onDismissRequest: () -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
@@ -353,7 +357,7 @@ fun GroupBottomSheet(
                     TodoGroupBottomSheetWithState(
                         content.currentGroup,
                         todoGroupList,
-                        currentGroupList,
+                        currentGroupStateList,
                         upsertCurrentGroup,
                         upsertTodoGroup,
                         onDismissRequest,
@@ -362,7 +366,14 @@ fun GroupBottomSheet(
                 }
 
                 is ContentState.Todo -> {
-                    TodoBottomSheet(content.todo, upsertTodo, onDismissRequest, date,sheetState)
+                    TodoBottomSheet(
+                        content.todo,
+                        upsertTodo,
+                        onDismissRequest,
+                        date,
+                        sheetState,
+                        currentGroupList
+                    )
 
                 }
             }
@@ -493,6 +504,7 @@ fun HaruManda(
         }
     }
 }
+
 @Composable
 fun TodoItem(
     todo: Todo,
@@ -514,7 +526,7 @@ fun TodoItem(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(vertical = 12.dp),
-            verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.Start
+            verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.Start,
         ) {
             Checkbox(checked = todo.isDone, onCheckedChange = { onTodoToggle(todo) })
             Column {
@@ -524,12 +536,34 @@ fun TodoItem(
                     Text(text = todo.title)
                 }
                 Row {
-                    Text(text = todo.groupName, style = HmStyle.text12, color = HMColor.Primary)
-                    Text(text = todo.time?.toString()?:"", style = HmStyle.text12)
+                    Text(
+                        modifier = Modifier.padding(end = 4.dp),
+                        text = todo.groupName,
+                        style = HmStyle.text12,
+                        color = HMColor.Primary
+                    )
+                    Text(text = todo.time?.getDisplayName() ?: "", style = HmStyle.text12)
                 }
             }
         }
     }
+}
+
+fun LocalTime.getDisplayName(): String {
+    val isAm = this.hour < 12
+    return if (isAm) {
+        "오전 ${this.hour + 1}:${this.minute.padTwoZero()}"
+    } else {
+        "오후 ${this.hour - 12}:${this.minute.padTwoZero()}"
+    }
+}
+
+fun Int.padTwoZero(): String {
+    return this.toString().padStart(2, '0')
+}
+
+fun Int.padTwoSpace(): String {
+    return this.toString().padStart(2, ' ')
 }
 
 
@@ -545,9 +579,10 @@ fun TodoContentPreView() {
         List<CurrentGroupState>(9) {
             CurrentGroupState.Done(
                 "안드로이드",
-                CurrentGroup(1, id = 2, date = LocalDate.now(), index = 2)
+                CurrentGroup(1, id = 2, date = LocalDate.now(), index = 2, name = "")
             )
         },
+        listOf(CurrentGroup(1, "", false, 1, LocalDate.now())),
         listOf(
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
             Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),

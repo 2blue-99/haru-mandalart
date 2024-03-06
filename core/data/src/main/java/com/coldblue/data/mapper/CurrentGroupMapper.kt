@@ -36,7 +36,7 @@ object CurrentGroupMapper {
             id = entity.id,
             index = entity.index,
             date = entity.date,
-            todoGroupId = entity.todoGroupId
+            todoGroupId = entity.todoGroupId,
         )
     }
 }

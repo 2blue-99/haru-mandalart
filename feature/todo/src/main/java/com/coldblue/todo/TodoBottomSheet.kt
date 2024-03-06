@@ -1,14 +1,15 @@
 package com.coldblue.todo
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -57,8 +60,10 @@ import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.ToggleInfo
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -72,14 +77,15 @@ fun TodoBottomSheet(
     onDismissRequest: () -> Unit,
     today: LocalDate,
     sheetState: SheetState,
+    currentGroupList: List<CurrentGroup>,
 ) {
-
     var onSwitch by remember { mutableStateOf(false) }
     var time: LocalTime by remember { mutableStateOf(todo.time ?: LocalTime.now()) }
     var onDetail by remember { mutableStateOf(false) }
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content) }
 
+    var currentTodoGroupId by remember { mutableStateOf(currentGroupList.firstOrNull { it.todoGroupId == todo.todoGroupId }?.todoGroupId) }
 
     val dateButtons = remember {
         mutableStateListOf(
@@ -93,8 +99,6 @@ fun TodoBottomSheet(
     val focusManager = LocalFocusManager.current
     var date by remember { mutableStateOf(today) }
 
-
-
     LaunchedEffect(onSwitch) {
         sheetState.expand()
     }
@@ -107,166 +111,177 @@ fun TodoBottomSheet(
     }
 
 
-    Column(
-    ) {
-        Text(text = "할 일", style = HmStyle.text16, fontWeight = FontWeight.Bold)
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = titleText,
-            maxLines = 1,
-            onValueChange = {
-                titleText = it
-            },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-//                    focusManager.clearFocus(false)
-                }
-            ),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = HMColor.Primary,
-                containerColor = Color.Transparent
-            ),
-        )
-        HMTimePicker(
-            onSwitch = onSwitch,
-            onCheckedChange = {
-                onSwitch = !onSwitch
-            },
-            time = time,
-            onHourChange = { hour -> time = time.withHour(hour) },
-            onMinuteChange = { minute -> time = time.withMinute(minute) }
-
-        )
-
-
-        if (!onDetail) {
-            ClickableText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 8.dp),
-                text = AnnotatedString("세부설정"),
-                style = TextStyle(color = HMColor.Gray, textAlign = TextAlign.End),
-                onClick = { onDetail = true })
-        }
-
-
-        if (onDetail) {
-            Text(
-                modifier = Modifier.padding(top = 24.dp),
-                text = "설명",
-                style = HmStyle.text16,
-                fontWeight = FontWeight.Bold
-            )
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = contentText,
-                onValueChange = {
-                    contentText = it
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = HMColor.Primary,
-                    containerColor = Color.Transparent
-                ),
-            )
-            Text(
-                modifier = Modifier.padding(top = 24.dp),
-                text = "날짜",
-                style = HmStyle.text16,
-                fontWeight = FontWeight.Bold
-            )
-            Text(text = date.toString())
-
-            Row {
-                dateButtons.forEach { button ->
-                    SelectButton(button) {
-                        date = today.plusDays(button.plus)
-                        dateButtons.replaceAll {
-                            it.copy(isChecked = it.text == button.text)
-                        }
-                    }
-                }
-            }
-            if (dateButtons.last().isChecked) {
-                Row(
+    Box() {
+        LazyColumn(Modifier.padding(bottom = 60.dp)) {
+            item {
+                Text(text = "할 일", style = HmStyle.text16, fontWeight = FontWeight.Bold)
+                TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularList(
-                        itemHeight = 40.dp,
-                        textStyle = HmStyle.text16,
-                        items = List(101) { "${2000 + it}년" },
-                        initialItem = "${date.year}년",
-                        textColor = HMColor.SubText,
-                        selectedTextColor = HMColor.Text,
-                        onItemSelected = { a, b -> },
-                        scrollState = rememberLazyListState(0)
-                    )
-                    InfiniteCircularList(
-                        itemHeight = 40.dp,
-                        textStyle = HmStyle.text16,
-                        items = List(12) { "${it + 1}월" },
-                        initialItem = date.month.getDisplayName(
-                            java.time.format.TextStyle.FULL,
-                            Locale.KOREA
-                        ),
-                        textColor = HMColor.SubText,
-                        selectedTextColor = HMColor.Text,
-                        onItemSelected = { a, b -> },
-                        scrollState = rememberLazyListState(0)
-
-                    )
-                    InfiniteCircularList(
-                        itemHeight = 40.dp,
-                        textStyle = HmStyle.text16,
-                        items = List(date.lengthOfMonth()) { "${it + 1}일" },
-                        initialItem = "${date.dayOfMonth}일",
-                        textColor = HMColor.SubText,
-                        selectedTextColor = HMColor.Text,
-                        onItemSelected = { a, b -> },
-                        scrollState = rememberLazyListState(0)
-
-                    )
-                }
-
-
-            }
-
-            Text(
-                modifier = Modifier.padding(top = 48.dp),
-                text = "그룹",
-                style = HmStyle.text16,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        if (todo.id != 0) {
-            Row(Modifier.fillMaxWidth()) {
-                Button(
-                    modifier = Modifier.fillMaxWidth().weight(1F).padding(end = 8.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonColors(
-                        contentColor = HMColor.Primary,
-                        containerColor = HMColor.Gray,
-                        disabledContentColor = HMColor.Gray,
-                        disabledContainerColor = HMColor.Primary,
+                    value = titleText,
+                    maxLines = 1,
+                    onValueChange = {
+                        titleText = it
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
                     ),
-                    onClick = {
-                        upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
-                        onDismissRequest()
-                    }
-                ) {
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+//                    focusManager.clearFocus(false)
+                        }
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = HMColor.Primary,
+                        containerColor = Color.Transparent
+                    ),
+                )
+            }
+            item {
+                HMTimePicker(
+                    onSwitch = onSwitch,
+                    onCheckedChange = {
+                        onSwitch = !onSwitch
+                    },
+                    time = time,
+                    onHourChange = { hour -> time = time.withHour(hour) },
+                    onMinuteChange = { minute -> time = time.withMinute(minute) }
+                )
+            }
+            if (!onDetail) {
+                item {
+                    ClickableText(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 8.dp),
+                        text = AnnotatedString("세부설정"),
+                        style = TextStyle(color = HMColor.Gray, textAlign = TextAlign.End),
+                        onClick = { onDetail = true })
+                }
+            }
+            if (onDetail) {
+                item {
                     Text(
-                        text = "삭제",
+                        modifier = Modifier.padding(top = 24.dp),
+                        text = "설명",
                         style = HmStyle.text16,
-                        modifier = Modifier.padding(vertical = 4.dp),
                         fontWeight = FontWeight.Bold
                     )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = contentText,
+                        onValueChange = {
+                            contentText = it
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = HMColor.Primary,
+                            containerColor = Color.Transparent
+                        ),
+                    )
                 }
+                item {
+                    Text(
+                        modifier = Modifier.padding(top = 24.dp),
+                        text = "날짜",
+                        style = HmStyle.text16,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(text = date.toString())
+
+                    Row {
+                        dateButtons.forEach { button ->
+                            SelectButton(button) {
+                                date = today.plusDays(button.plus)
+                                dateButtons.replaceAll {
+                                    it.copy(isChecked = it.text == button.text)
+                                }
+                            }
+                        }
+                    }
+                    if (dateButtons.last().isChecked) {
+
+                        HMDatePicker(
+                            date,
+                            onYearChange = { year -> date = date.withYear(year) },
+                            onMonthChange = { month -> date = date.withMonth(month) },
+                            onDayChange = { day -> date = date.withDayOfMonth(day) })
+
+                    }
+                }
+                item {
+                    GroupPicker(currentGroupList, currentTodoGroupId) { todoGroupId ->
+                        currentTodoGroupId = todoGroupId
+                    }
+                }
+            }
+        }
+        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+            if (todo.id != 0) {
+                Row(Modifier.fillMaxWidth()) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1F)
+                            .padding(end = 8.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonColors(
+                            contentColor = HMColor.Primary,
+                            containerColor = HMColor.Gray,
+                            disabledContentColor = HMColor.Gray,
+                            disabledContainerColor = HMColor.Primary,
+                        ),
+                        onClick = {
+                            upsertTodo(
+                                todo.copy(
+                                    isDel = true
+                                )
+                            )
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(
+                            text = "삭제",
+                            style = HmStyle.text16,
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1F)
+                            .padding(start = 8.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonColors(
+                            contentColor = HMColor.Background,
+                            containerColor = HMColor.Primary,
+                            disabledContentColor = HMColor.Box,
+                            disabledContainerColor = HMColor.Primary,
+                        ),
+                        onClick = {
+                            upsertTodo(
+                                todo.copy(
+                                    title = titleText,
+                                    content = contentText,
+                                    time = time,
+                                    todoGroupId = currentTodoGroupId,
+                                    date = date
+                                )
+                            )
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text(
+                            text = "수정",
+                            style = HmStyle.text16,
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            } else {
                 Button(
-                    modifier = Modifier.fillMaxWidth().weight(1F).padding(start = 8.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonColors(
                         contentColor = HMColor.Background,
@@ -275,43 +290,123 @@ fun TodoBottomSheet(
                         disabledContainerColor = HMColor.Primary,
                     ),
                     onClick = {
-                        upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
+                        Log.e("TAG", "TodoBottomSheet: ${date.toString()}")
+                        upsertTodo(
+                            todo.copy(
+                                title = titleText,
+                                content = contentText,
+                                time = time,
+                                todoGroupId = currentTodoGroupId,
+                                date = date
+                            )
+                        )
                         onDismissRequest()
                     }
                 ) {
                     Text(
-                        text = "수정",
+                        text = "저장",
                         style = HmStyle.text16,
                         modifier = Modifier.padding(vertical = 4.dp),
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
+        }
 
-        } else {
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonColors(
-                    contentColor = HMColor.Background,
-                    containerColor = HMColor.Primary,
-                    disabledContentColor = HMColor.Box,
-                    disabledContainerColor = HMColor.Primary,
-                ),
-                onClick = {
-                    upsertTodo(todo.copy(title = titleText, content = contentText, time = time))
-                    onDismissRequest()
-                }
-            ) {
-                Text(
-                    text = "저장",
-                    style = HmStyle.text16,
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    fontWeight = FontWeight.Bold
+    }
+}
+
+@Composable
+fun HMDatePicker(
+    date: LocalDate,
+    onYearChange: (Int) -> Unit,
+    onMonthChange: (Int) -> Unit,
+    onDayChange: (Int) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        CircularList(
+            itemHeight = 40.dp,
+            textStyle = HmStyle.text16,
+            items = List(101) { "${2000 + it}년" },
+            initialItem = "${date.year}년",
+            textColor = HMColor.SubText,
+            selectedTextColor = HMColor.Text,
+            onItemSelected = { a, year -> onYearChange(year.dropLast(1).toInt()) },
+            scrollState = rememberLazyListState(0)
+        )
+        InfiniteCircularList(
+            itemHeight = 40.dp,
+            textStyle = HmStyle.text16,
+            items = List(12) { "${it + 1}월" },
+            initialItem = date.month.getDisplayName(
+                java.time.format.TextStyle.FULL,
+                Locale.KOREA
+            ),
+            textColor = HMColor.SubText,
+            selectedTextColor = HMColor.Text,
+            onItemSelected = { a, month -> onMonthChange(month.dropLast(1).toInt()) },
+            scrollState = rememberLazyListState(0)
+
+        )
+        InfiniteCircularList(
+            itemHeight = 40.dp,
+            textStyle = HmStyle.text16,
+            items = List(date.lengthOfMonth()) { "${it + 1}일" },
+            initialItem = "${date.dayOfMonth}일",
+            textColor = HMColor.SubText,
+            selectedTextColor = HMColor.Text,
+            onItemSelected = { a, day -> onDayChange(day.dropLast(1).toInt()) },
+            scrollState = rememberLazyListState(0)
+
+        )
+    }
+}
+
+@Composable
+fun GroupPicker(
+    currentGroupList: List<CurrentGroup>,
+    currentTodoGroupId: Int?,
+    onClick: (Int?) -> Unit
+) {
+    val groupButtons = remember {
+        mutableStateListOf<ToggleInfo>().apply {
+            add(
+                ToggleInfo(
+                    isChecked = currentTodoGroupId == null,
+                    text = "그룸없음",
                 )
+            )
+            addAll(currentGroupList.map { group ->
+                ToggleInfo(
+                    isChecked = currentTodoGroupId == group.todoGroupId,
+                    text = group.name,
+                    currentGroupId = group.id
+                )
+            })
+        }
+    }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            modifier = Modifier.padding(top = 48.dp),
+            text = "그룹",
+            style = HmStyle.text16,
+            fontWeight = FontWeight.Bold
+        )
+        LazyRow(modifier = Modifier.fillMaxWidth()) {
+            items(groupButtons) { group ->
+                SelectButton(group) {
+                    onClick(group.currentGroupId)
+                    groupButtons.replaceAll {
+                        it.copy(isChecked = it.text == group.text)
+                    }
+                }
             }
         }
     }
+
 }
 
 @Composable
@@ -346,9 +441,7 @@ fun HMTimePicker(
             .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = if (onSwitch) "${timeString}${
-                time.hour.toString().padStart(2, ' ')
-            }:${time.minute.toString().padStart(2, '0')}" else "시간없음"
+            text = if (onSwitch) "${timeString}${time.hour.padTwoSpace()}:${time.minute.padTwoZero()}" else "시간없음"
         )
         HMSwitch(onSwitch) {
             onCheckedChange()
@@ -407,8 +500,8 @@ fun HMTimePicker(
             InfiniteCircularList(
                 itemHeight = 40.dp,
                 textStyle = HmStyle.text16,
-                items = List(60) { it.toString().padStart(2, '0') },
-                initialItem = time.minute.toString().padStart(2, '0'),
+                items = List(60) { it.padTwoZero() },
+                initialItem = time.minute.padTwoZero(),
                 textColor = HMColor.SubText,
                 selectedTextColor = HMColor.Text,
                 onItemSelected = { index, item ->
@@ -622,19 +715,5 @@ fun <T> CircularList(
         item {
             Box(modifier = Modifier.size(itemHeight))
         }
-    }
-}
-
-@Preview
-@Composable
-fun TodoBottomSheetPreview() {
-    Column(
-        modifier = Modifier
-            .background(HMColor.Background)
-            .padding(16.dp)
-    ) {
-
-//        TodoBottomSheet(todo = Todo(""), {}, {}, LocalDate.now(), sheetState = SheetState(true))
-
     }
 }

@@ -70,7 +70,8 @@ class TodoViewModel @Inject constructor(
                 today = dateSate.value,
                 todoList = todoList,
                 todoGroupList = todoGroupList,
-                currentGroupList = List(9) { it ->
+                currentGroup = group.currentGroupList.map { cur -> cur.copy(name = todoGroupList.first { it.id == cur.todoGroupId }.name) },
+                haruMandaList = List(9) { it ->
                     val index = it + 1
                     if (currentGroupList.keys.contains(index)) {
                         val currentGroup = currentGroupList[index]!!.first()
@@ -103,7 +104,7 @@ class TodoViewModel @Inject constructor(
                             currentGroup = CurrentGroup(
                                 todoGroupId = -1,
                                 index = index,
-                                date = dateSate.value
+                                date = dateSate.value,
                             )
                         )
                     }
@@ -119,7 +120,7 @@ class TodoViewModel @Inject constructor(
 
     fun upsertTodo(todo: Todo) {
         viewModelScope.launch {
-            upsertTodoUseCase(todo.copy(date = dateSate.value))
+            upsertTodoUseCase(todo)
         }
     }
 
