@@ -30,6 +30,7 @@ object MandaUtils {
         val keyIdList = keys.map { it.id }.toMutableList()
 
         val doneArr = BooleanArray(10) { true }
+        val groupList = mutableListOf<Int>()
 
         val resultList = mutableListOf<MandaState>()
         val typeList = mutableListOf<MandaType>()
@@ -44,11 +45,12 @@ object MandaUtils {
                 val colors = indexToDarkLightColor(detail.colorIndex)
 
                 doneArr[keyIndex] = false
+                groupList.add(id)
 
                 if (detail.isDone)
-                    typeList.add(MandaType.Done(detail.asMandaUI(colors, true)))
+                    typeList.add(MandaType.Detail(detail.asMandaUI(colors, true)))
                 else
-                    typeList.add(MandaType.DetailStart(detail.asMandaUI(colors, false)))
+                    typeList.add(MandaType.Detail(detail.asMandaUI(colors, false)))
 
             } else {
                 typeList.add(MandaType.None(MandaUI(id = id)))
@@ -59,21 +61,24 @@ object MandaUtils {
                 if (keyIdList.contains(keyIndex)) {
                     val key = keyList.removeFirst()
                     val colors = indexToDarkLightColor(key.colorIndex)
-                    if(doneArr[keyIndex]) {
-                        typeList[4] = MandaType.Done(key.asMandaUI(colors, true))
-                        keyGroupList.add(MandaType.Done(key.asMandaUI(colors, true)))
+                    if (doneArr[keyIndex]) {
+                        val mandaKey =
+                            MandaType.Key(key.asMandaUI(colors, true), groupList.toList())
+                        typeList[4] = mandaKey
+                        keyGroupList.add(mandaKey)
+                    } else {
+                        val mandaKey =
+                            MandaType.Key(key.asMandaUI(colors, false), groupList.toList())
+                        typeList[4] = mandaKey
+                        keyGroupList.add(mandaKey)
                     }
-                    else {
-                        typeList[4] = MandaType.KeyStart(key.asMandaUI(colors, false))
-                        keyGroupList.add(MandaType.KeyStart(key.asMandaUI(colors, false)))
-                    }
-
                     resultList.add(MandaState.Exist(typeList.toList()))
-                }else{
+                } else {
                     resultList.add(MandaState.Empty(keyIndex))
-                    keyGroupList.add(MandaType.None(MandaUI(id=keyIndex)))
+                    keyGroupList.add(MandaType.None(MandaUI(id = keyIndex)))
                 }
                 typeList.clear()
+                groupList.clear()
                 keyIndex++
             }
         }
@@ -83,7 +88,7 @@ object MandaUtils {
         keyGroupList[4].mandaUI.lightColor = HMColor.Primary
 
         // 센터에 있는 키 만다 수정 로직
-        repeat(9){
+        repeat(9) {
             resultList[4] = MandaState.Exist(keyGroupList.toList())
         }
 
@@ -93,27 +98,27 @@ object MandaUtils {
 
     private fun indexToDarkLightColor(index: Int): Pair<Color, Color> {
         return when (index) {
-            1 -> Pair(HMColor.Dark.Pink, HMColor.Light.Pink)
-            2 -> Pair(HMColor.Dark.Red, HMColor.Light.Red)
-            3 -> Pair(HMColor.Dark.Orange, HMColor.Light.Orange)
-            4 -> Pair(HMColor.Dark.Yellow, HMColor.Light.Yellow)
-            5 -> Pair(HMColor.Dark.Green, HMColor.Light.Green)
-            6 -> Pair(HMColor.Dark.Blue, HMColor.Light.Blue)
-            7 -> Pair(HMColor.Dark.Indigo, HMColor.Light.Indigo)
+            0 -> Pair(HMColor.Dark.Pink, HMColor.Light.Pink)
+            1 -> Pair(HMColor.Dark.Red, HMColor.Light.Red)
+            2 -> Pair(HMColor.Dark.Orange, HMColor.Light.Orange)
+            3 -> Pair(HMColor.Dark.Yellow, HMColor.Light.Yellow)
+            4 -> Pair(HMColor.Dark.Green, HMColor.Light.Green)
+            5 -> Pair(HMColor.Dark.Blue, HMColor.Light.Blue)
+            6 -> Pair(HMColor.Dark.Indigo, HMColor.Light.Indigo)
             else -> Pair(HMColor.Dark.Purple, HMColor.Light.Purple)
         }
     }
 
     fun colorToIndex(color: Color): Int {
         return when (color) {
-            HMColor.Dark.Pink -> 1
-            HMColor.Dark.Red -> 2
-            HMColor.Dark.Orange -> 3
-            HMColor.Dark.Yellow -> 4
-            HMColor.Dark.Green -> 5
-            HMColor.Dark.Blue -> 6
-            HMColor.Dark.Indigo -> 7
-            else -> 8
+            HMColor.Dark.Pink -> 0
+            HMColor.Dark.Red -> 1
+            HMColor.Dark.Orange -> 2
+            HMColor.Dark.Yellow -> 3
+            HMColor.Dark.Green -> 4
+            HMColor.Dark.Blue -> 5
+            HMColor.Dark.Indigo -> 6
+            else -> 7
         }
     }
 }

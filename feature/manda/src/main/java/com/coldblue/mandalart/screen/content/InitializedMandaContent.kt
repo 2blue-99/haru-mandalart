@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
@@ -30,7 +29,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -49,7 +47,6 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.HMMandaEmptyButton
@@ -82,7 +79,7 @@ fun InitializedMandaContent(
     upsertMandaFinal: (String) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
-    deleteMandaKey: (Int) -> Unit,
+    deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
@@ -145,6 +142,8 @@ fun MandaStatus(
     animateDonePercentage: Float,
     onClickTitle: (MandaUI) -> Unit
 ) {
+
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -419,7 +418,8 @@ fun Mandalart(
                                                         true,
                                                         MandaBottomSheetContentState.Insert(
                                                             MandaBottomSheetContentType.MandaKey(
-                                                                MandaUI(id = state.id)
+                                                                MandaUI(id = state.id),
+                                                                null
                                                             )
                                                         )
                                                     )
@@ -446,42 +446,21 @@ fun Mandalart(
                                                                             .padding(2.dp)
                                                                     ) {
                                                                         HMMandaEmptyButton {
-                                                                            changeBottomSheet(
-                                                                                true,
-                                                                                MandaBottomSheetContentState.Insert(
-                                                                                    MandaBottomSheetContentType.MandaKey(
-                                                                                        type.mandaUI
-                                                                                    )
-                                                                                )
-                                                                            )
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                                is MandaType.KeyStart ->
-                                                                    Box(
-                                                                        modifier = Modifier
-                                                                            .weight(1f)
-                                                                            .padding(2.dp)
-                                                                    ) {
-                                                                        HMMandaOutlineButton(
-                                                                            name = type.mandaUI.name,
-                                                                            outlineColor = type.mandaUI.darkColor
-                                                                        ) {
-                                                                            if (type.mandaUI.id == 4) {
+                                                                            if (keyColumn + keyRow * 3 == 4) {
                                                                                 changeBottomSheet(
                                                                                     true,
-                                                                                    MandaBottomSheetContentState.Update(
-                                                                                        MandaBottomSheetContentType.MandaFinal(
-                                                                                            type.mandaUI
+                                                                                    MandaBottomSheetContentState.Insert(
+                                                                                        MandaBottomSheetContentType.MandaKey(
+                                                                                            type.mandaUI,
+                                                                                            null
                                                                                         )
                                                                                     )
                                                                                 )
                                                                             } else {
                                                                                 changeBottomSheet(
                                                                                     true,
-                                                                                    MandaBottomSheetContentState.Update(
-                                                                                        MandaBottomSheetContentType.MandaKey(
+                                                                                    MandaBottomSheetContentState.Insert(
+                                                                                        MandaBottomSheetContentType.MandaDetail(
                                                                                             type.mandaUI
                                                                                         )
                                                                                     )
@@ -489,50 +468,95 @@ fun Mandalart(
                                                                             }
                                                                         }
                                                                     }
+                                                                }
 
-                                                                is MandaType.DetailStart ->
+                                                                is MandaType.Key -> {
+                                                                    val data = type.mandaUI
+                                                                    Box(
+                                                                        modifier = Modifier
+                                                                            .weight(1f)
+                                                                            .padding(2.dp)
+                                                                    ) {
+                                                                        if (data.isDone) {
+                                                                            HMMandaFillButton(
+                                                                                name = data.name,
+                                                                                backgroundColor = data.darkColor,
+                                                                                textColor = HMColor.Background
+                                                                            ) {
+                                                                                if (data.id == 4) {
+                                                                                    changeBottomSheet(
+                                                                                        true,
+                                                                                        MandaBottomSheetContentState.Update(
+                                                                                            MandaBottomSheetContentType.MandaFinal(
+                                                                                                data
+                                                                                            )
+                                                                                        )
+                                                                                    )
+                                                                                } else {
+                                                                                    changeBottomSheet(
+                                                                                        true,
+                                                                                        MandaBottomSheetContentState.Update(
+                                                                                            MandaBottomSheetContentType.MandaKey(
+                                                                                                data,
+                                                                                                type.groupIdList
+                                                                                            )
+                                                                                        )
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                        } else {
+                                                                            HMMandaOutlineButton(
+                                                                                name = data.name,
+                                                                                outlineColor = data.darkColor
+                                                                            ) {
+                                                                                if (data.id == 4) {
+                                                                                    changeBottomSheet(
+                                                                                        true,
+                                                                                        MandaBottomSheetContentState.Update(
+                                                                                            MandaBottomSheetContentType.MandaFinal(
+                                                                                                data
+                                                                                            )
+                                                                                        )
+                                                                                    )
+                                                                                } else {
+                                                                                    changeBottomSheet(
+                                                                                        true,
+                                                                                        MandaBottomSheetContentState.Update(
+                                                                                            MandaBottomSheetContentType.MandaKey(
+                                                                                                data,
+                                                                                                type.groupIdList
+                                                                                            )
+                                                                                        )
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                is MandaType.Detail -> {
+                                                                    val data = type.mandaUI
                                                                     Box(
                                                                         modifier = Modifier
                                                                             .weight(1f)
                                                                             .padding(2.dp)
                                                                     ) {
                                                                         HMMandaFillButton(
-                                                                            name = type.mandaUI.name,
-                                                                            backgroundColor = type.mandaUI.lightColor,
+                                                                            name = data.name,
+                                                                            backgroundColor = if (data.isDone) data.darkColor else data.lightColor,
                                                                             textColor = HMColor.Text
                                                                         ) {
                                                                             changeBottomSheet(
                                                                                 true,
                                                                                 MandaBottomSheetContentState.Update(
                                                                                     MandaBottomSheetContentType.MandaDetail(
-                                                                                        type.mandaUI
+                                                                                        data
                                                                                     )
                                                                                 )
                                                                             )
                                                                         }
                                                                     }
-
-                                                                is MandaType.Done ->
-                                                                    Box(
-                                                                        modifier = Modifier
-                                                                            .weight(1f)
-                                                                            .padding(2.dp)
-                                                                    ) {
-                                                                        HMMandaFillButton(
-                                                                            name = type.mandaUI.name,
-                                                                            backgroundColor = type.mandaUI.darkColor,
-                                                                            textColor = HMColor.Background
-                                                                        ) {
-                                                                            changeBottomSheet(
-                                                                                true,
-                                                                                MandaBottomSheetContentState.Update(
-                                                                                    MandaBottomSheetContentType.MandaDetail(
-                                                                                        type.mandaUI
-                                                                                    )
-                                                                                )
-                                                                            )
-                                                                        }
-                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     }

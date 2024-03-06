@@ -31,15 +31,16 @@ sealed interface MandaType {
         override val mandaUI: MandaUI
     ) : MandaType
 
-    data class KeyStart(
+    data class Key(
+        override val mandaUI: MandaUI,
+        val groupIdList: List<Int>
+    ) : MandaType
+
+    data class Detail(
         override val mandaUI: MandaUI
     ) : MandaType
 
-    data class DetailStart(
-        override val mandaUI: MandaUI
-    ) : MandaType
-
-    data class Done(
-        override val mandaUI: MandaUI
-    ) : MandaType
+//    data class Done(
+//        override val mandaUI: MandaUI
+//    ) : MandaType
 }

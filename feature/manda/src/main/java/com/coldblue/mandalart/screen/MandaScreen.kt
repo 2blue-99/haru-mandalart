@@ -62,7 +62,7 @@ fun MandaContentWithState(
     upsertFinalManda: (String) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
-    deleteMandaKey: (Int) -> Unit,
+    deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit

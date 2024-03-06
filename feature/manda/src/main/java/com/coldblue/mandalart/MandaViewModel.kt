@@ -47,55 +47,6 @@ class MandaViewModel @Inject constructor(
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase
 ) : ViewModel() {
 
-    init {
-        viewModelScope.launch {
-            upsertMandaKeyUseCase(MandaKey(id = 1, name = "TEST", colorIndex = 1))
-            upsertMandaKeyUseCase(MandaKey(id = 5, name = "TEST", colorIndex = 5))
-            upsertMandaKeyUseCase(MandaKey(id = 8, name = "TEST", colorIndex = 7))
-            upsertMandaKeyUseCase(MandaKey(id = 9, name = "TEST", colorIndex = 8))
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 8,
-                    name = "TEST",
-                    colorIndex = 8,
-                    isDone = false
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 2,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 3,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 4,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 6,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-        }
-    }
-
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
@@ -105,7 +56,7 @@ class MandaViewModel @Inject constructor(
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
-                        donePercentage = mandaDetails.count { it.isDone } / mandaDetails.size.toFloat(),
+                        donePercentage = (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f,
                         finalName = mandaKeys.last().name,
                         mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
                     )
@@ -159,10 +110,10 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun deleteMandaKey(id: Int) {
+    fun deleteMandaKey(id: Int, detailIdList: List<Int>) {
         Log.e("TAG", "deleteMandaKey: $id")
         viewModelScope.launch {
-            deleteMandaKeyUseCase(id)
+            deleteMandaKeyUseCase(id, detailIdList)
         }
     }
 

@@ -15,7 +15,7 @@ sealed interface MandaBottomSheetContentState {
     ) : MandaBottomSheetContentState
 
     data class Update(
-        override val mandaBottomSheetContentType: MandaBottomSheetContentType
+        override val mandaBottomSheetContentType: MandaBottomSheetContentType,
     ) : MandaBottomSheetContentState
 }
 
@@ -30,7 +30,8 @@ sealed interface MandaBottomSheetContentType {
     }
 
     data class MandaKey(
-        override val mandaUI: MandaUI
+        override val mandaUI: MandaUI,
+        val groupIdList: List<Int>?
     ) : MandaBottomSheetContentType {
         override val title = "핵심 목표"
     }

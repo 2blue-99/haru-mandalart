@@ -59,7 +59,7 @@ fun MandaBottomSheet(
     upsertMandaFinal: (String) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
-    deleteMandaKey: (Int) -> Unit,
+    deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
     onDisMiss: () -> Unit
 ) {
@@ -68,7 +68,7 @@ fun MandaBottomSheet(
 
     var inputText by remember { mutableStateOf(mandaUI.name) }
     var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.darkColor)) }
-    var buttonClickableState by remember { mutableStateOf(false) }
+    var buttonClickableState by remember { mutableStateOf(mandaBottomSheetContentState is MandaBottomSheetContentState.Update) }
     var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
 
 
@@ -129,6 +129,7 @@ fun MandaBottomSheet(
                             else ->
                                 upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
                         }
+                        onDisMiss()
                     }
                 }
 
@@ -148,9 +149,15 @@ fun MandaBottomSheet(
                                     is MandaBottomSheetContentType.MandaDetail ->
                                         deleteMandaDetail(mandaUI.id)
 
-                                    else ->
-                                        deleteMandaKey(mandaUI.id)
+                                    is MandaBottomSheetContentType.MandaKey ->
+                                        deleteMandaKey(
+                                            mandaUI.id,
+                                            contentType.groupIdList ?: emptyList()
+                                        )
+
+                                    is MandaBottomSheetContentType.MandaFinal -> {}
                                 }
+                                onDisMiss()
                             }
                         ) {
                             Text(
@@ -182,8 +189,8 @@ fun MandaBottomSheet(
                                             colorIndex
                                         )
                                     )
-
                             }
+                            onDisMiss()
                         }
                     }
                 }
