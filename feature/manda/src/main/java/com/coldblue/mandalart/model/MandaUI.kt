@@ -9,22 +9,25 @@ data class MandaUI(
     val name: String = "",
     var darkColor: Color = HMColor.Dark.Pink,
     var lightColor: Color = HMColor.Light.Pink,
+    var isDone: Boolean = false,
     val id: Int
 )
 
-fun MandaKey.asMandaUI(colors: Pair<Color,Color>): MandaUI =
+fun MandaKey.asMandaUI(colors: Pair<Color,Color>, isDone: Boolean): MandaUI =
     MandaUI(
         name = this.name,
         darkColor = colors.first,
         lightColor = colors.second,
+        isDone = isDone,
         id = this.id
     )
 
-fun MandaDetail.asMandaUI(colors: Pair<Color,Color>): MandaUI =
+fun MandaDetail.asMandaUI(colors: Pair<Color,Color>, isDone: Boolean): MandaUI =
     MandaUI(
         name = this.name,
         darkColor = colors.first,
         lightColor = colors.second,
+        isDone = isDone,
         id = this.id
     )
 

@@ -1,5 +1,6 @@
 package com.coldblue.designsystem.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,13 +22,15 @@ import com.coldblue.designsystem.theme.HMColor
 
 @Composable
 fun HMTextField(
-    name: String,
     inputText: String = "",
     onChangeText: (String) -> Unit
 ) {
-    var text by remember { mutableStateOf(name) }
+
+    var text by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+
+
     LaunchedEffect(inputText) {
         text = inputText
     }

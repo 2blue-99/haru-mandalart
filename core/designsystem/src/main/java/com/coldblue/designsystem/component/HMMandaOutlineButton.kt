@@ -31,7 +31,6 @@ fun HMMandaOutlineButton(
     outlineColor: Color,
     onClick: () -> Unit
 ) {
-    Log.e("TAG", "HMMandaOutlineButton: $name")
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier

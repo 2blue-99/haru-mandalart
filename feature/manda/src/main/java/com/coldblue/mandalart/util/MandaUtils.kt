@@ -46,9 +46,9 @@ object MandaUtils {
                 doneArr[keyIndex] = false
 
                 if (detail.isDone)
-                    typeList.add(MandaType.Done(detail.asMandaUI(colors)))
+                    typeList.add(MandaType.Done(detail.asMandaUI(colors, true)))
                 else
-                    typeList.add(MandaType.DetailStart(detail.asMandaUI(colors)))
+                    typeList.add(MandaType.DetailStart(detail.asMandaUI(colors, false)))
 
             } else {
                 typeList.add(MandaType.None(MandaUI(id = id)))
@@ -60,12 +60,12 @@ object MandaUtils {
                     val key = keyList.removeFirst()
                     val colors = indexToDarkLightColor(key.colorIndex)
                     if(doneArr[keyIndex]) {
-                        typeList[4] = MandaType.Done(key.asMandaUI(colors))
-                        keyGroupList.add(MandaType.Done(key.asMandaUI(colors)))
+                        typeList[4] = MandaType.Done(key.asMandaUI(colors, true))
+                        keyGroupList.add(MandaType.Done(key.asMandaUI(colors, true)))
                     }
                     else {
-                        typeList[4] = MandaType.KeyStart(key.asMandaUI(colors))
-                        keyGroupList.add(MandaType.KeyStart(key.asMandaUI(colors)))
+                        typeList[4] = MandaType.KeyStart(key.asMandaUI(colors, false))
+                        keyGroupList.add(MandaType.KeyStart(key.asMandaUI(colors, false)))
                     }
 
                     resultList.add(MandaState.Exist(typeList.toList()))
@@ -101,6 +101,19 @@ object MandaUtils {
             6 -> Pair(HMColor.Dark.Blue, HMColor.Light.Blue)
             7 -> Pair(HMColor.Dark.Indigo, HMColor.Light.Indigo)
             else -> Pair(HMColor.Dark.Purple, HMColor.Light.Purple)
+        }
+    }
+
+    fun colorToIndex(color: Color): Int {
+        return when (color) {
+            HMColor.Dark.Pink -> 1
+            HMColor.Dark.Red -> 2
+            HMColor.Dark.Orange -> 3
+            HMColor.Dark.Yellow -> 4
+            HMColor.Dark.Green -> 5
+            HMColor.Dark.Blue -> 6
+            HMColor.Dark.Indigo -> 7
+            else -> 8
         }
     }
 }

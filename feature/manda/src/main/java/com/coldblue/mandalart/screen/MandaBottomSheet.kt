@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.screen
 
+import android.util.Log
 import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -46,6 +47,7 @@ import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.model.MandaColorInfo
 import com.coldblue.mandalart.model.asMandaDetail
 import com.coldblue.mandalart.model.asMandaKey
+import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 
@@ -61,13 +63,17 @@ fun MandaBottomSheet(
     deleteMandaDetail: (Int) -> Unit,
     onDisMiss: () -> Unit
 ) {
-    var inputText by remember { mutableStateOf("") }
-    var colorIndex by remember { mutableIntStateOf(0) }
-    var buttonClickableState by remember { mutableStateOf(false) }
-    var doneCheckedState by remember { mutableStateOf(false) }
-
     val contentType = mandaBottomSheetContentState.mandaBottomSheetContentType
     val mandaUI = contentType.mandaUI
+
+    var inputText by remember { mutableStateOf(mandaUI.name) }
+    var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.darkColor)) }
+    var buttonClickableState by remember { mutableStateOf(false) }
+    var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
+
+
+
+    Log.e("TAG", "MandaBottomSheet: $mandaUI")
 
     ModalBottomSheet(
         onDismissRequest = { onDisMiss() },
@@ -90,7 +96,7 @@ fun MandaBottomSheet(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
                 Text(text = contentType.title + " 이름", style = HmStyle.text16)
-                HMTextField(name = mandaUI.name) {
+                HMTextField(inputText = inputText) {
                     inputText = it
                     buttonClickableState = inputText.isNotBlank()
                 }
