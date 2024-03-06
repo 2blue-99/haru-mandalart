@@ -18,6 +18,17 @@ object HMColor {
     val Background = Color(0xFFFFFFFF)
     val Box = Color(0xFFF2F4F8)
 
+//    val darkColorList = mapOf(
+//        "Pink" to Color(0xFFAD24B0),
+//        "Red" to Color(0xFFB93B50),
+//        "Orange" to Color(0xFFAF5030),
+//        "Yellow" to Color(0xFFA7741B),
+//        "Green" to Color(0xFF167263),
+//        "Blue" to Color(0xFF337DA5),
+//        "Indigo" to Color(0xFF333FA5),
+//        "Purple" to Color(0xFF6124B0)
+//    )
+
     object Dark {
         val Pink = Color(0xFFAD24B0)
         val Red = Color(0xFFB93B50)

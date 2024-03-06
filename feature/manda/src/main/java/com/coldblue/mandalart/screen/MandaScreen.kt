@@ -15,6 +15,8 @@ import com.coldblue.mandalart.MandaViewModel
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
 import com.coldblue.mandalart.screen.content.UnInitializedMandaContent
+import com.coldblue.mandalart.state.MandaBottomSheetContentState
+import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaUIState
 
 @Composable
@@ -22,7 +24,9 @@ fun MandaScreen(
     mandaViewModel: MandaViewModel = hiltViewModel(),
 ) {
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
+    val bottomSheetUiState by mandaViewModel.mandaBottomSheetUIState.collectAsStateWithLifecycle()
     val context = LocalFocusManager.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -34,11 +38,13 @@ fun MandaScreen(
             }
     ) {
         MandaContentWithState(
-            mandaUiState,
-            mandaViewModel::updateMandaInitState,
-            mandaViewModel::upsertMandaFinal,
-            mandaViewModel::upsertMandaKey,
-            mandaViewModel::upsertMandaDetail,
+            mandaUIState = mandaUiState,
+            mandaBottomSheetUiState = bottomSheetUiState,
+            updateInitState = mandaViewModel::updateMandaInitState,
+            upsertFinalManda = mandaViewModel::upsertMandaFinal,
+            upsertMandaKey = mandaViewModel::upsertMandaKey,
+            upsertMandaDetail = mandaViewModel::upsertMandaDetail,
+            changeBottomSheet = mandaViewModel::changeBottomSheet
         )
     }
 }
@@ -46,10 +52,12 @@ fun MandaScreen(
 @Composable
 fun MandaContentWithState(
     mandaUIState: MandaUIState,
+    mandaBottomSheetUiState: MandaBottomSheetUIState,
     updateInitState: (Boolean) -> Unit,
     upsertFinalManda: (String) -> Unit,
     upsertMandaKey: (MandaUI) -> Unit,
-    upsertMandaDetail: (MandaUI) -> Unit
+    upsertMandaDetail: (MandaUI) -> Unit,
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {}
@@ -64,8 +72,11 @@ fun MandaContentWithState(
         is MandaUIState.InitializedSuccess -> {
             InitializedMandaContent(
                 uiState = mandaUIState,
+                mandaBottomSheetUIState = mandaBottomSheetUiState,
+                upsertMandaFinal = upsertFinalManda,
                 upsertMandaKey = upsertMandaKey,
-                upsertMandaDetail = upsertMandaDetail
+                upsertMandaDetail = upsertMandaDetail,
+                changeBottomSheet = changeBottomSheet
             )
 
         }
