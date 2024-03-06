@@ -33,7 +33,7 @@ fun HMMandaFillButton(
             .aspectRatio(1F)
             .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
-//            .clickable { onClick() }
+            .clickable { onClick() }
     ) {
         Text(
             textAlign = TextAlign.Center,

@@ -93,6 +93,7 @@ fun InitializedMandaContent(
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
             sheetState = sheetState,
+            upsertMandaFinal = upsertMandaFinal,
             upsertMandaKey = upsertMandaKey,
             upsertMandaDetail = upsertMandaDetail
         ) { changeBottomSheet(false, null) }
@@ -412,7 +413,6 @@ fun Mandalart(
                                                 modifier = Modifier.fillMaxSize()
                                             ) {
                                                 HMMandaEmptyButton {
-//                                                    upsertMandaKey(MandaUI(id = state.id))
                                                     changeBottomSheet(
                                                         true,
                                                         MandaBottomSheetContentState.Insert(
@@ -434,8 +434,8 @@ fun Mandalart(
                                                 repeat(3) { detailRow ->
                                                     Row(modifier = Modifier.fillMaxWidth()) {
                                                         repeat(3) { detailColumn ->
-                                                            when (val type =
-                                                                state.mandaUIList[detailColumn + detailRow * 3]) {
+                                                            when (val type = state.mandaUIList[detailColumn + detailRow * 3]) {
+
                                                                 is MandaType.None -> {
                                                                     Box(
                                                                         modifier = Modifier

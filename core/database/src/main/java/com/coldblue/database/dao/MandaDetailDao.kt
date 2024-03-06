@@ -14,4 +14,10 @@ interface MandaDetailDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMandaDetails(mandaDetailEntity: List<MandaDetailEntity>)
+
+    @Query("Update manda_detail Set is_del = 1 Where id = :idList")
+    suspend fun deleteMandaDetails(idList: List<Int>)
+
+    @Query("Update manda_detail Set is_del = 1")
+    suspend fun deleteAllMandaDetail()
 }

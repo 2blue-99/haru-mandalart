@@ -21,10 +21,11 @@ import com.coldblue.designsystem.theme.HMColor
 
 @Composable
 fun HMTextField(
+    name: String,
     inputText: String = "",
     onChangeText: (String) -> Unit
 ) {
-    var text by remember { mutableStateOf(inputText) }
+    var text by remember { mutableStateOf(name) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     LaunchedEffect(inputText) {
@@ -52,10 +53,4 @@ fun HMTextField(
             }
         )
     )
-}
-
-@Preview
-@Composable
-fun Preview() {
-    HMTextField {}
 }

@@ -18,4 +18,12 @@ class MandaDetailRepositoryImpl @Inject constructor(
         mandaDetailDao.upsertMandaDetails(mandaDetails.map { it.asEntity() })
     }
 
+    override suspend fun deleteMandaDetail(idList: List<Int>) {
+        mandaDetailDao.deleteMandaDetails(idList)
+    }
+
+    override suspend fun deleteAllMandaDetail() {
+        mandaDetailDao.deleteAllMandaDetail()
+    }
+
 }

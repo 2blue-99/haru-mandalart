@@ -12,14 +12,6 @@ data class MandaUI(
     val id: Int
 )
 
-fun MandaDetail.asMandaUI(colors: Pair<Color,Color>): MandaUI =
-    MandaUI(
-        name = this.name,
-        darkColor = colors.first,
-        lightColor = colors.second,
-        id = this.id
-    )
-
 fun MandaKey.asMandaUI(colors: Pair<Color,Color>): MandaUI =
     MandaUI(
         name = this.name,
@@ -28,16 +20,26 @@ fun MandaKey.asMandaUI(colors: Pair<Color,Color>): MandaUI =
         id = this.id
     )
 
+fun MandaDetail.asMandaUI(colors: Pair<Color,Color>): MandaUI =
+    MandaUI(
+        name = this.name,
+        darkColor = colors.first,
+        lightColor = colors.second,
+        id = this.id
+    )
 
+fun MandaUI.asMandaKey(name: String, colorIndex: Int): MandaKey =
+    MandaKey(
+        name = name,
+        colorIndex = colorIndex,
+        id = id
+    )
 
-//fun MandaDetail.asMandaUI(): MandaUI = MandaUI(
-//    name = this.name,
-//    mandaId = this.mandaId,
-//    id = this.id
-//)
-//
-//fun MandaKey.asMandaUI(): MandaUI = MandaUI(
-//    name = this.name,
-//    colorIndex = this.colorIndex,
-//    id = this.id
-//)
+fun MandaUI.asMandaDetail(name: String, isDone: Boolean, colorIndex: Int): MandaDetail =
+    MandaDetail(
+        name = name,
+        isDone = isDone,
+        colorIndex = colorIndex,
+        id = id
+    )
+
