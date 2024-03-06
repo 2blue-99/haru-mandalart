@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -28,6 +30,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -45,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -55,6 +59,7 @@ import com.coldblue.designsystem.component.HMTitleComponent
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.mandalart.screen.MandaBottomSheet
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
@@ -135,7 +140,8 @@ fun MandaStatus(
     onClickTitle: (MandaUI) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -149,14 +155,11 @@ fun MandaStatus(
                 Icon(imageVector = Icons.Default.Add, contentDescription = "")
             }
         }
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClickTitle(MandaUI(id = 4, name = finalName)) },
-            textAlign = TextAlign.Center,
-            text = "\" $finalName \"",
+        ClickableText(
+            modifier = Modifier.background(Color.Yellow),
+            text = AnnotatedString("\" $finalName \""),
+            onClick = { onClickTitle(MandaUI(id = 4, name = finalName)) },
             style = HmStyle.text24,
-            fontWeight = FontWeight.Bold,
         )
         Row(
             modifier = Modifier.fillMaxWidth(),

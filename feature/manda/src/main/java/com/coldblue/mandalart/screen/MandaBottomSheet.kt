@@ -1,4 +1,4 @@
-package com.coldblue.mandalart.screen.content
+package com.coldblue.mandalart.screen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,7 +20,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -118,17 +119,22 @@ fun MandaBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Button(
-                        modifier = Modifier.padding(end = 5.dp),
+                        modifier = Modifier
+                            .padding(end = 5.dp)
+                            .height(50.dp)
+                            .weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = HMColor.SubText),
                         shape = RoundedCornerShape(10.dp),
                         onClick = { }
                     ) {
-                        Text(text = "삭제", style = HmStyle.text16, color = HMColor.Primary)
+                        Text(text = "삭제", style = HmStyle.text16, color = HMColor.Primary, fontWeight = FontWeight.Bold)
                     }
                     HMButton(
                         text = "저장",
                         clickableState = buttonClickableState,
-                        modifier = Modifier.padding(start = 5.dp)
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .weight(1f),
                     ) {
                         when (contentType) {
                             is MandaBottomSheetContentType.MandaDetail ->
@@ -185,8 +191,9 @@ fun MandaBottomSheetColor(
                 RoundButton(colorInfoListState[index]) {
                     onClick(index)
                     colorInfoListState.forEachIndexed { colorIndex, colorInfo ->
-                        if(colorIndex == index)
-                            colorInfoListState[index] = colorInfoListState[index].copy(isChecked = true)
+                        if (colorIndex == index)
+                            colorInfoListState[index] =
+                                colorInfoListState[index].copy(isChecked = true)
                         else
                             colorInfo.isChecked = false
                     }
