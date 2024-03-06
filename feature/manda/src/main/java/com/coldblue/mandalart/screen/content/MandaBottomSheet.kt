@@ -81,7 +81,7 @@ fun MandaBottomSheet(
                 Text(text = contentType.title + " 이름", style = HmStyle.text16)
                 HMTextField {
                     inputText = it
-                    if (inputText.isBlank()) buttonClickableState = false
+                    buttonClickableState = inputText.isNotBlank()
                 }
             }
 
