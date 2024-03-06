@@ -4,15 +4,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.coldblue.data.navi.Route
 import com.coldblue.mandalart.screen.MandaScreen
 
+const val mandaRoute = "Manda"
 fun NavController.navigateToManda(navOptions: NavOptions? = null){
-    this.navigate(Route.manda, navOptions)
+    this.navigate(mandaRoute, navOptions)
 }
 
 fun NavGraphBuilder.mandaScreen(){
-    composable(route = Route.manda){
+    composable(route =mandaRoute){
         MandaScreen()
     }
 }
