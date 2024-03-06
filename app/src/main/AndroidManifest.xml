@@ -30,7 +30,7 @@
         </activity>
 
         <receiver android:name="com.coldblue.data.alarm.AlarmReceiver" />
-        <receiver android:name="com.coldblue.data.notification.TodoNotificationReceiver" />
+        <receiver android:name=".notification.TodoNotificationReceiver" />
         <receiver
             android:name="com.coldblue.data.alarm.BootCompletedReceiver"
             android:exported="false">

@@ -1,4 +1,4 @@
-package com.coldblue.data.notification
+package com.coldblue.haru_mandalart.notification
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,7 +7,7 @@ import android.content.Intent
 class TodoNotificationReceiver:BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
-        val service = TodoNotificationService(context)
+        val service = TodoNotificationServiceImpl(context)
         service.showNotification(++Counter.value,"눌림요")
     }
 }

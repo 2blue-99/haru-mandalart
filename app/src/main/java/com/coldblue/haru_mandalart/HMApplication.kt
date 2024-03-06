@@ -1,11 +1,10 @@
 package com.coldblue.haru_mandalart
 
 import android.app.Application
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import com.coldblue.data.notification.TodoNotificationService
+import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -18,11 +17,11 @@ class HMApplication : Application() {
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
-            TodoNotificationService.CHANNEL_ID,
-            TodoNotificationService.CHANNEL_NAME,
-            TodoNotificationService.IMPORTANCE,
+            TodoNotificationServiceImpl.CHANNEL_ID,
+            TodoNotificationServiceImpl.CHANNEL_NAME,
+            TodoNotificationServiceImpl.IMPORTANCE,
         )
-        channel.description = TodoNotificationService.description
+        channel.description = TodoNotificationServiceImpl.description
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
