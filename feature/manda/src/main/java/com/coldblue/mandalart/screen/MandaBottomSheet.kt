@@ -57,6 +57,8 @@ fun MandaBottomSheet(
     upsertMandaFinal: (String) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
+    deleteMandaKey: (Int) -> Unit,
+    deleteMandaDetail: (Int) -> Unit,
     onDisMiss: () -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
@@ -110,7 +112,14 @@ fun MandaBottomSheet(
                     HMButton(text = "저장", clickableState = buttonClickableState) {
                         when (contentType) {
                             is MandaBottomSheetContentType.MandaDetail ->
-                                upsertMandaDetail(mandaUI.asMandaDetail(inputText, doneCheckedState, colorIndex))
+                                upsertMandaDetail(
+                                    mandaUI.asMandaDetail(
+                                        inputText,
+                                        doneCheckedState,
+                                        colorIndex
+                                    )
+                                )
+
                             else ->
                                 upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
                         }
@@ -128,7 +137,15 @@ fun MandaBottomSheet(
                                 .weight(1f),
                             colors = ButtonDefaults.buttonColors(containerColor = HMColor.SubText),
                             shape = RoundedCornerShape(10.dp),
-                            onClick = {  }
+                            onClick = {
+                                when (contentType) {
+                                    is MandaBottomSheetContentType.MandaDetail ->
+                                        deleteMandaDetail(mandaUI.id)
+
+                                    else ->
+                                        deleteMandaKey(mandaUI.id)
+                                }
+                            }
                         ) {
                             Text(
                                 text = "삭제",

@@ -66,6 +66,8 @@ import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.model.MandaDetail
+import com.coldblue.model.MandaKey
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -78,8 +80,11 @@ fun InitializedMandaContent(
     uiState: MandaUIState.InitializedSuccess,
     mandaBottomSheetUIState: MandaBottomSheetUIState,
     upsertMandaFinal: (String) -> Unit,
-    upsertMandaKey: (MandaUI) -> Unit,
-    upsertMandaDetail: (MandaUI) -> Unit,
+    upsertMandaKey: (MandaKey) -> Unit,
+    upsertMandaDetail: (MandaDetail) -> Unit,
+    deleteMandaKey: (Int) -> Unit,
+    deleteMandaDetail: (Int) -> Unit,
+    deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
@@ -95,7 +100,9 @@ fun InitializedMandaContent(
             sheetState = sheetState,
             upsertMandaFinal = upsertMandaFinal,
             upsertMandaKey = upsertMandaKey,
-            upsertMandaDetail = upsertMandaDetail
+            upsertMandaDetail = upsertMandaDetail,
+            deleteMandaKey = deleteMandaKey,
+            deleteMandaDetail = deleteMandaDetail
         ) { changeBottomSheet(false, null) }
     }
 
@@ -124,8 +131,6 @@ fun InitializedMandaContent(
 
         Mandalart(
             mandaStateList = uiState.mandaStateList,
-            upsertMandaKey = upsertMandaKey,
-            upsertMandaDetail = upsertMandaDetail,
             changeBottomSheet = changeBottomSheet
         )
     }
@@ -157,7 +162,6 @@ fun MandaStatus(
             }
         }
         ClickableText(
-            modifier = Modifier.background(Color.Yellow),
             text = AnnotatedString("\" $finalName \""),
             onClick = { onClickTitle(MandaUI(id = 4, name = finalName)) },
             style = HmStyle.text24,
@@ -203,8 +207,6 @@ fun MandaStatus(
 @Composable
 fun Mandalart(
     mandaStateList: List<MandaState>,
-    upsertMandaKey: (MandaUI) -> Unit,
-    upsertMandaDetail: (MandaUI) -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit
 ) {
     var scaleX by remember { mutableFloatStateOf(1f) }
@@ -434,7 +436,8 @@ fun Mandalart(
                                                 repeat(3) { detailRow ->
                                                     Row(modifier = Modifier.fillMaxWidth()) {
                                                         repeat(3) { detailColumn ->
-                                                            when (val type = state.mandaUIList[detailColumn + detailRow * 3]) {
+                                                            when (val type =
+                                                                state.mandaUIList[detailColumn + detailRow * 3]) {
 
                                                                 is MandaType.None -> {
                                                                     Box(
