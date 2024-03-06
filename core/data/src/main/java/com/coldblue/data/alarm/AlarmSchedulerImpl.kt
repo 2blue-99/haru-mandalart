@@ -4,29 +4,30 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.coldblue.data.util.toMillis
 import com.coldblue.model.AlarmItem
-import java.time.ZoneId
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class AlarmSchedulerImpl @Inject constructor(
     private val context: Context,
-    private val alarmManager :AlarmManager,
+    private val alarmManager: AlarmManager,
 ) : AlarmScheduler {
     override fun schedule(item: AlarmItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("EXTRA_MESSAGE", item.message)
+            putExtra(TODO_TITLE, item.title)
         }
-
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            item.time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
+            item.time.toMillis(),
             PendingIntent.getBroadcast(
                 context,
-                item.hashCode(),//유니크한 값 업데이트시 구분
+                item.id,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
-
         )
     }
 
@@ -34,7 +35,7 @@ class AlarmSchedulerImpl @Inject constructor(
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                item.hashCode(),//유니크한 값 업데이트시 구분
+                item.id,
                 Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )

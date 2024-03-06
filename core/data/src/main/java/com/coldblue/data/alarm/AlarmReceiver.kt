@@ -8,10 +8,6 @@ import com.coldblue.data.notification.TodoNotificationService
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-//@AndroidEntryPoint
-//힐트로 가능
-//late init 으로
-
 @AndroidEntryPoint
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -19,14 +15,16 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var todoNotificationService: TodoNotificationService
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val message = intent?.getStringExtra("EXTRA_MESSAGE") ?: return
+        val message = intent?.getStringExtra(TODO_TITLE) ?: return
         Log.e("TAG", "onReceive: $message")
-        showNotification(2, "이것은 알ㄹ미이다")
+        showNotification(2, message)
 
     }
 
-    fun showNotification(cnt: Int, text: String) {
-        todoNotificationService.showNotification(cnt, text)
+    fun showNotification(cnt: Int, message: String) {
+        todoNotificationService.showNotification(cnt, message)
     }
 
 }
+
+internal const val TODO_TITLE = "TODO_TITLE"

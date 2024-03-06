@@ -57,7 +57,8 @@ fun SettingScreen(
             Button(onClick = {
                 alarmItem = AlarmItem(
                     LocalDateTime.now().plusSeconds(secondText.toLong()),
-                    msg
+                    msg,
+                    1234
                 )
                 alarmItem?.let(settingViewModel::schedule)
                 secondText = ""

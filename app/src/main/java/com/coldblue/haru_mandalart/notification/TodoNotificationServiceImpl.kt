@@ -16,7 +16,7 @@ class TodoNotificationServiceImpl @Inject constructor(
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    override fun showNotification(cnt: Int, text: String) {
+    override fun showNotification(cnt: Int, message: String) {
         val activityIntent = Intent(context, MainActivity::class.java)
         val activityPeningIntent = PendingIntent.getActivity(
             context,
@@ -33,14 +33,13 @@ class TodoNotificationServiceImpl @Inject constructor(
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_android_black_24dp).setContentTitle("타이틀이여")
-            .setContentText("$text $cnt")
+            .setContentText("$message $cnt")
             .setContentIntent(activityPeningIntent) // 알림 누르면 앱키는것
             .addAction(
                 R.drawable.ic_android_black_24dp,
                 "증가여",
                 incrementIntent
             ).build()
-
 
         notificationManager.notify(
             1, notification
