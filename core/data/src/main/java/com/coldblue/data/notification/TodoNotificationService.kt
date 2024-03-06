@@ -1,20 +1,50 @@
 package com.coldblue.data.notification
 
-import android.app.Notification
+import android.app.AlarmManager
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.coldblue.data.R
+import javax.inject.Inject
 
-class TodoNotificationService(
-    private val context: Context
+class TodoNotificationService @Inject constructor(
+    private val context: Context,
+//    val d= MainActivity::class.java
 ) {
-//    val activityIntent = Intent(context,)
-    fun showNotification(text: String) {
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    fun showNotification(cnt: Int, text: String) {
+//        val activityIntent = Intent(context, MainActivity::class.java)
+//        val activityPeningIntent = PendingIntent.getActivity(
+//            context,
+//            1,
+//            activityIntent,
+//            PendingIntent.FLAG_IMMUTABLE
+//        )
+        val incrementIntent = PendingIntent.getBroadcast(
+            context,
+            2,
+            Intent(context, TodoNotificationReceiver::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_android_black_24dp).setContentTitle("타이틀이여")
-            .setContentText(text)
+            .setContentText("$text $cnt")
+//            .setContentIntent(activityPeningIntent) // 알림 누르면 앱키는것
+            .addAction(
+                R.drawable.ic_android_black_24dp,
+                "증가여",
+                incrementIntent
+            ).build()
 
+
+        notificationManager.notify(
+            1, notification
+        )
     }
 
     companion object {
