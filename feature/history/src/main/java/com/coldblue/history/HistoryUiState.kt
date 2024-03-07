@@ -9,7 +9,7 @@ sealed interface HistoryUiState {
     data class Error(val msg: String) : HistoryUiState
 
     data class Success(
-        val historyWeekList: List<HistoryWeek>,
+        val controllerList: List<ControllerWeek>,
         val todoYearList: List<Int>,
         val today: LocalDate,
         val todoList: List<Todo>,
@@ -17,22 +17,22 @@ sealed interface HistoryUiState {
 
 }
 
-data class HistoryWeek(
-    val month: String = "",
-    val historyBoxList: List<HistoryBoxUIState>
+data class ControllerWeek(
+    val month: Int,
+    val controllerDayList: List<ControllerDayState>
 )
 
-sealed interface HistoryBoxUIState {
-    data object Default: HistoryBoxUIState
+sealed interface ControllerDayState {
+    data object Default: ControllerDayState
 
-    data class Empty(val date: LocalDate): HistoryBoxUIState
+    data class Empty(val timeState: ControllerTimeState): ControllerDayState
 
-    data class Exist(val date: LocalDate): HistoryBoxUIState
+    data class Exist(val timeState: ControllerTimeState): ControllerDayState
 }
 
-sealed interface HistoryBoxTimeState {
+sealed interface ControllerTimeState {
     val date: LocalDate
-    data class Past(override val date: LocalDate): HistoryBoxTimeState
+    data class Past(override val date: LocalDate): ControllerTimeState
 
-    data class Future(override val date: LocalDate): HistoryBoxTimeState
+    data class Future(override val date: LocalDate): ControllerTimeState
 }

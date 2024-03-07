@@ -12,7 +12,6 @@ import com.coldblue.model.Todo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toSet
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -35,9 +34,9 @@ class TodoRepositoryImpl @Inject constructor(
         return todoDao.getTodoDate(year.toFirstLocalDate(), year.toLastLocalDate()).map { it.sorted() }
     }
 
-    override fun getTodoYearRange(): Flow<Pair<Int, Int>> {
+    override fun getTodoYearList(): Flow<List<Int>> {
         return todoDao.getTodoMinYear().combine(todoDao.getTodoMaxYear()) { minYear, maxYear ->
-            Pair(minYear.year, maxYear.year)
+            (minYear.year..maxYear.year).toList()
         }
     }
 

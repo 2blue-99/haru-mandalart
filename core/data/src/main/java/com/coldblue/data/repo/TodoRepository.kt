@@ -11,7 +11,7 @@ interface TodoRepository {
 
     fun getTodoDate(year: Int): Flow<List<LocalDate>>
 
-    fun getTodoYearRange(): Flow<Pair<Int, Int>>
+    fun getTodoYearList(): Flow<List<Int>>
 
     suspend fun delTodo(todoId: Int)
 

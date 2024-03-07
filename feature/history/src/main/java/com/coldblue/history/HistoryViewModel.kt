@@ -1,20 +1,18 @@
 package com.coldblue.history
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetTodoDateUseCase
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.GetTodoYearRangeUseCase
+import com.coldblue.history.util.HistoryUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -53,8 +51,13 @@ class HistoryViewModel @Inject constructor(
 
 
 
-    val uiState: StateFlow<Any> = combine(todoFlow, dateFlow, getTodoYearRangeUseCase()) { todo, date, year->
-
+    val historyUiState: StateFlow<HistoryUiState> = combine(dateFlow, getTodoYearRangeUseCase(), todoFlow) { dateList, yearList, todoList ->
+        HistoryUiState.Success(
+            controllerList = HistoryUtil.controllerListMaker(dateSate.value.year, dateList),
+            todoYearList = yearList,
+            today = dateSate.value,
+            todoList = todoList
+        )
     }.catch {
         HistoryUiState.Error(it.message ?: "Error")
     }.stateIn(
