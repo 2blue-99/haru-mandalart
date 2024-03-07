@@ -3,6 +3,9 @@ package com.coldblue.mandalart
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coldblue.domain.manda.DeleteMandaAllUseCase
+import com.coldblue.domain.manda.DeleteMandaDetailUseCase
+import com.coldblue.domain.manda.DeleteMandaKeyUseCase
 import com.coldblue.domain.manda.GetDetailMandaUseCase
 import com.coldblue.domain.manda.GetKeyMandaUseCase
 import com.coldblue.domain.manda.UpsertMandaDetailUseCase
@@ -35,59 +38,14 @@ class MandaViewModel @Inject constructor(
 
     private val getKeyMandaUseCase: GetKeyMandaUseCase,
     private val upsertMandaKeyUseCase: UpsertMandaKeyUseCase,
+    private val deleteMandaKeyUseCase: DeleteMandaKeyUseCase,
 
     private val getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
-) : ViewModel() {
+    private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
 
-    init {
-        viewModelScope.launch {
-            upsertMandaKeyUseCase(MandaKey(id = 1, name = "TEST", colorIndex = 1))
-            upsertMandaKeyUseCase(MandaKey(id = 5, name = "TEST", colorIndex = 5))
-            upsertMandaKeyUseCase(MandaKey(id = 8, name = "TEST", colorIndex = 7))
-            upsertMandaKeyUseCase(MandaKey(id = 9, name = "TEST", colorIndex = 8))
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 8,
-                    name = "TEST",
-                    colorIndex = 8,
-                    isDone = false
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 2,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 3,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 4,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-            upsertMandaDetailUseCase(
-                MandaDetail(
-                    id = 6,
-                    name = "TEST",
-                    colorIndex = 5,
-                    isDone = true
-                )
-            )
-        }
-    }
+    private val deleteMandaAllUseCase: DeleteMandaAllUseCase
+) : ViewModel() {
 
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
@@ -98,7 +56,7 @@ class MandaViewModel @Inject constructor(
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
-                        donePercentage = mandaDetails.count { it.isDone } / mandaDetails.size.toFloat(),
+                        donePercentage = (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f,
                         finalName = mandaKeys.last().name,
                         mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
                     )
@@ -132,23 +90,44 @@ class MandaViewModel @Inject constructor(
     }
 
     fun upsertMandaFinal(text: String) {
+        Log.e("TAG", "upsertMandaFinal: $text")
         viewModelScope.launch {
             upsertMandaKeyUseCase(MandaKey(id = 5, name = text))
         }
     }
 
-    fun upsertMandaKey(mandaUI: MandaUI) {
-        Log.e("TAG", "upsertMandaKey: $mandaUI")
-//        viewModelScope.launch {
-//            upsertMandaKeyUseCase(MandaKey(name = "", ))
-//        }
+    fun upsertMandaKey(mandaKey: MandaKey) {
+        Log.e("TAG", "upsertMandaKey: $mandaKey")
+        viewModelScope.launch {
+            upsertMandaKeyUseCase(mandaKey)
+        }
     }
 
-    fun upsertMandaDetail(mandaUI: MandaUI) {
-        Log.e("TAG", "upsertMandaDetail: $mandaUI")
-//        viewModelScope.launch {
-//            upsertMandaDetailUseCase(MandaDetail(name = "", isDone = false, colorIndex = 1))
-//        }
+    fun upsertMandaDetail(mandaDetail: MandaDetail) {
+        Log.e("TAG", "upsertMandaDetail: $mandaDetail")
+        viewModelScope.launch {
+            upsertMandaDetailUseCase(mandaDetail)
+        }
+    }
+
+    fun deleteMandaKey(id: Int, detailIdList: List<Int>) {
+        Log.e("TAG", "deleteMandaKey: $id")
+        viewModelScope.launch {
+            deleteMandaKeyUseCase(id, detailIdList)
+        }
+    }
+
+    fun deleteMandaDetail(id: Int) {
+        Log.e("TAG", "deleteMandaDetail: $id")
+        viewModelScope.launch {
+            deleteMandaDetailUseCase(id)
+        }
+    }
+
+    fun deleteMandaAll() {
+        viewModelScope.launch {
+            deleteMandaAllUseCase()
+        }
     }
 
     fun updateMandaInitState(state: Boolean) {

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,14 +31,15 @@ fun HMMandaOutlineButton(
     outlineColor: Color,
     onClick: () -> Unit
 ) {
-    Log.e("TAG", "HMMandaOutlineButton: $name")
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1F)
-            .border(BorderStroke(2.dp, outlineColor),RoundedCornerShape(8.dp))
             .background(HMColor.Background)
+            .border(BorderStroke(2.dp, outlineColor),RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
     ) {
         Text(
             modifier = Modifier.padding(5.dp),

@@ -14,4 +14,10 @@ interface MandaKeyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMandaKeys(mandaEntities: List<MandaKeyEntity>)
+
+    @Query("Update manda_key Set is_del = 1 Where id = :idList")
+    suspend fun deleteMandaKeys(idList: List<Int>)
+
+    @Query("Update manda_key Set is_del = 1")
+    suspend fun deleteAllMandaKey()
 }

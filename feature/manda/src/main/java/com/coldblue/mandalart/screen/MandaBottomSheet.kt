@@ -1,12 +1,16 @@
-package com.coldblue.mandalart.screen.content
+package com.coldblue.mandalart.screen
 
+import android.util.Log
+import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,7 +23,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -29,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,22 +45,35 @@ import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.model.MandaColorInfo
+import com.coldblue.mandalart.model.asMandaDetail
+import com.coldblue.mandalart.model.asMandaKey
+import com.coldblue.mandalart.util.MandaUtils
+import com.coldblue.model.MandaDetail
+import com.coldblue.model.MandaKey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MandaBottomSheet(
     mandaBottomSheetContentState: MandaBottomSheetContentState,
     sheetState: SheetState,
-    upsertMandaKey: (MandaUI) -> Unit,
-    upsertMandaDetail: (MandaUI) -> Unit,
+    upsertMandaFinal: (String) -> Unit,
+    upsertMandaKey: (MandaKey) -> Unit,
+    upsertMandaDetail: (MandaDetail) -> Unit,
+    deleteMandaKey: (Int, List<Int>) -> Unit,
+    deleteMandaDetail: (Int) -> Unit,
     onDisMiss: () -> Unit
 ) {
-    var inputText by remember { mutableStateOf("") }
-    var colorIndex by remember { mutableIntStateOf(0) }
-    var buttonClickableState by remember { mutableStateOf(false) }
-    var doneCheckedState by remember { mutableStateOf(false) }
-
     val contentType = mandaBottomSheetContentState.mandaBottomSheetContentType
+    val mandaUI = contentType.mandaUI
+
+    var inputText by remember { mutableStateOf(mandaUI.name) }
+    var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.darkColor)) }
+    var buttonClickableState by remember { mutableStateOf(mandaBottomSheetContentState is MandaBottomSheetContentState.Update) }
+    var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
+
+
+
+    Log.e("TAG", "MandaBottomSheet: $mandaUI")
 
     ModalBottomSheet(
         onDismissRequest = { onDisMiss() },
@@ -66,7 +83,7 @@ fun MandaBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 40.dp),
-            verticalArrangement = Arrangement.spacedBy(60.dp)
+            verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             Text(
                 text = contentType.title,
@@ -79,69 +96,101 @@ fun MandaBottomSheet(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
                 Text(text = contentType.title + " 이름", style = HmStyle.text16)
-                HMTextField {
+                HMTextField(inputText = inputText) {
                     inputText = it
                     buttonClickableState = inputText.isNotBlank()
                 }
             }
 
-            if (contentType is MandaBottomSheetContentType.MandaKey) {
-                MandaBottomSheetColor {
-                    colorIndex = it
-                }
+            when (contentType) {
+                is MandaBottomSheetContentType.MandaFinal ->
+                    Spacer(modifier = Modifier.height(70.dp))
+
+                is MandaBottomSheetContentType.MandaKey ->
+                    MandaBottomSheetColor { colorIndex = it }
+
+                is MandaBottomSheetContentType.MandaDetail ->
+                    MandaBottomSheetDone(doneCheckedState) { doneCheckedState = it }
             }
 
-            if (contentType is MandaBottomSheetContentType.MandaDetail) {
-                MandaBottomSheetDone(doneCheckedState) {
-                    doneCheckedState = it
-                }
-            }
-
-            if (mandaBottomSheetContentState is MandaBottomSheetContentState.Insert) {
-                HMButton(text = "저장", clickableState = buttonClickableState) {
-                    when (contentType) {
-                        is MandaBottomSheetContentType.MandaDetail ->
-                            upsertMandaDetail(contentType.mandaUI.copy(name = inputText))
-
-                        else -> //TODO 여기
-                            upsertMandaKey(
-                                contentType.mandaUI.copy(
-                                    name = inputText,
-                                    darkColor = Color.DarkGray,
-                                    lightColor = Color.DarkGray,
-                                )
-                            )
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Button(
-                        modifier = Modifier.padding(end = 5.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = HMColor.SubText),
-                        shape = RoundedCornerShape(10.dp),
-                        onClick = { }
-                    ) {
-                        Text(text = "삭제", style = HmStyle.text16, color = HMColor.Primary)
-                    }
-                    HMButton(
-                        text = "저장",
-                        clickableState = buttonClickableState,
-                        modifier = Modifier.padding(start = 5.dp)
-                    ) {
+            when (mandaBottomSheetContentState) {
+                is MandaBottomSheetContentState.Insert -> {
+                    HMButton(text = "저장", clickableState = buttonClickableState) {
                         when (contentType) {
                             is MandaBottomSheetContentType.MandaDetail ->
-                                upsertMandaDetail(contentType.mandaUI.copy(name = inputText))
-
-                            else -> //TODO 여기
-                                upsertMandaKey(
-                                    contentType.mandaUI.copy(
-                                        name = inputText,
-                                        darkColor = Color.DarkGray,
-                                        lightColor = Color.DarkGray,
+                                upsertMandaDetail(
+                                    mandaUI.asMandaDetail(
+                                        inputText,
+                                        doneCheckedState,
+                                        colorIndex
                                     )
                                 )
+
+                            else ->
+                                upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                        }
+                        onDisMiss()
+                    }
+                }
+
+                is MandaBottomSheetContentState.Update -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Button(
+                            modifier = Modifier
+                                .padding(end = 5.dp)
+                                .height(50.dp)
+                                .weight(1f),
+                            colors = ButtonDefaults.buttonColors(containerColor = HMColor.SubText),
+                            shape = RoundedCornerShape(10.dp),
+                            onClick = {
+                                when (contentType) {
+                                    is MandaBottomSheetContentType.MandaDetail ->
+                                        deleteMandaDetail(mandaUI.id)
+
+                                    is MandaBottomSheetContentType.MandaKey ->
+                                        deleteMandaKey(
+                                            mandaUI.id,
+                                            contentType.groupIdList ?: emptyList()
+                                        )
+
+                                    is MandaBottomSheetContentType.MandaFinal -> {}
+                                }
+                                onDisMiss()
+                            }
+                        ) {
+                            Text(
+                                text = "삭제",
+                                style = HmStyle.text16,
+                                color = HMColor.Primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        HMButton(
+                            text = "저장",
+                            clickableState = buttonClickableState,
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .weight(1f),
+                        ) {
+                            when (contentType) {
+                                is MandaBottomSheetContentType.MandaFinal ->
+                                    upsertMandaFinal(inputText)
+
+                                is MandaBottomSheetContentType.MandaKey ->
+                                    upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+
+                                is MandaBottomSheetContentType.MandaDetail ->
+                                    upsertMandaDetail(
+                                        mandaUI.asMandaDetail(
+                                            inputText,
+                                            doneCheckedState,
+                                            colorIndex
+                                        )
+                                    )
+                            }
+                            onDisMiss()
                         }
                     }
                 }
@@ -185,8 +234,9 @@ fun MandaBottomSheetColor(
                 RoundButton(colorInfoListState[index]) {
                     onClick(index)
                     colorInfoListState.forEachIndexed { colorIndex, colorInfo ->
-                        if(colorIndex == index)
-                            colorInfoListState[index] = colorInfoListState[index].copy(isChecked = true)
+                        if (colorIndex == index)
+                            colorInfoListState[index] =
+                                colorInfoListState[index].copy(isChecked = true)
                         else
                             colorInfo.isChecked = false
                     }

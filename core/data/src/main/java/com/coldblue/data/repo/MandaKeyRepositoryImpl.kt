@@ -17,4 +17,13 @@ class MandaKeyRepositoryImpl @Inject constructor(
     override suspend fun upsertMandaKeys(mandaKeys: List<MandaKey>) {
         mandaKeyDao.upsertMandaKeys(mandaKeys.map { it.asEntity() })
     }
+
+    override suspend fun deleteMandaKeys(idList: List<Int>) {
+        mandaKeyDao.deleteMandaKeys(idList)
+    }
+
+    override suspend fun deleteAllMandaDetail() {
+        mandaKeyDao.deleteAllMandaKey()
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.coldblue.data.repo
 
+import android.util.Log
 import com.coldblue.data.mapper.Mapper.asEntity
 import com.coldblue.data.mapper.Mapper.asDomain
 import com.coldblue.database.dao.MandaDetailDao
@@ -16,6 +17,14 @@ class MandaDetailRepositoryImpl @Inject constructor(
 
     override suspend fun upsertMandaDetails(mandaDetails: List<MandaDetail>) {
         mandaDetailDao.upsertMandaDetails(mandaDetails.map { it.asEntity() })
+    }
+
+    override suspend fun deleteMandaDetail(idList: List<Int>) {
+        mandaDetailDao.deleteMandaDetails(idList)
+    }
+
+    override suspend fun deleteAllMandaDetail() {
+        mandaDetailDao.deleteAllMandaDetail()
     }
 
 }

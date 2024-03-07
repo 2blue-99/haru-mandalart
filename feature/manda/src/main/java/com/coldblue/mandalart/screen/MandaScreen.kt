@@ -18,6 +18,8 @@ import com.coldblue.mandalart.screen.content.UnInitializedMandaContent
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.model.MandaDetail
+import com.coldblue.model.MandaKey
 
 @Composable
 fun MandaScreen(
@@ -44,6 +46,9 @@ fun MandaScreen(
             upsertFinalManda = mandaViewModel::upsertMandaFinal,
             upsertMandaKey = mandaViewModel::upsertMandaKey,
             upsertMandaDetail = mandaViewModel::upsertMandaDetail,
+            deleteMandaKey = mandaViewModel::deleteMandaKey,
+            deleteMandaDetail = mandaViewModel::deleteMandaDetail,
+            deleteMandaAll = mandaViewModel::deleteMandaAll,
             changeBottomSheet = mandaViewModel::changeBottomSheet
         )
     }
@@ -55,8 +60,11 @@ fun MandaContentWithState(
     mandaBottomSheetUiState: MandaBottomSheetUIState,
     updateInitState: (Boolean) -> Unit,
     upsertFinalManda: (String) -> Unit,
-    upsertMandaKey: (MandaUI) -> Unit,
-    upsertMandaDetail: (MandaUI) -> Unit,
+    upsertMandaKey: (MandaKey) -> Unit,
+    upsertMandaDetail: (MandaDetail) -> Unit,
+    deleteMandaKey: (Int, List<Int>) -> Unit,
+    deleteMandaDetail: (Int) -> Unit,
+    deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
 ) {
     when (mandaUIState) {
@@ -76,6 +84,9 @@ fun MandaContentWithState(
                 upsertMandaFinal = upsertFinalManda,
                 upsertMandaKey = upsertMandaKey,
                 upsertMandaDetail = upsertMandaDetail,
+                deleteMandaKey = deleteMandaKey,
+                deleteMandaDetail = deleteMandaDetail,
+                deleteMandaAll = deleteMandaAll,
                 changeBottomSheet = changeBottomSheet
             )
 
