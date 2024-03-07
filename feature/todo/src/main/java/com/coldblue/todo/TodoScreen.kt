@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.mapper.CurrentGroupMapper
+import com.coldblue.data.util.getDisplayName
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.CenterTitleText
 import com.coldblue.designsystem.component.TitleText
@@ -549,22 +550,6 @@ fun TodoItem(
     }
 }
 
-fun LocalTime.getDisplayName(): String {
-    val isAm = this.hour < 12
-    return if (isAm) {
-        "오전 ${this.hour + 1}:${this.minute.padTwoZero()}"
-    } else {
-        "오후 ${this.hour - 12}:${this.minute.padTwoZero()}"
-    }
-}
-
-fun Int.padTwoZero(): String {
-    return this.toString().padStart(2, '0')
-}
-
-fun Int.padTwoSpace(): String {
-    return this.toString().padStart(2, ' ')
-}
 
 
 @Preview

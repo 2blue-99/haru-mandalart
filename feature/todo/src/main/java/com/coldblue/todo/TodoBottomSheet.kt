@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,23 +46,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.coldblue.data.util.isAm
+import com.coldblue.data.util.padTwoSpace
+import com.coldblue.data.util.padTwoZero
+import com.coldblue.data.util.toPm
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.ToggleInfo
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -81,6 +81,12 @@ fun TodoBottomSheet(
 ) {
     var onSwitch by remember { mutableStateOf(false) }
     var time: LocalTime by remember { mutableStateOf(todo.time ?: LocalTime.now()) }
+    var timeString: String by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        timeString = if (time.isAm()) "오전" else "오후"
+    }
+
     var onDetail by remember { mutableStateOf(false) }
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content) }
@@ -96,7 +102,6 @@ fun TodoBottomSheet(
         )
     }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
     var date by remember { mutableStateOf(today) }
 
     LaunchedEffect(onSwitch) {
@@ -128,7 +133,6 @@ fun TodoBottomSheet(
                     keyboardActions = KeyboardActions(
                         onDone = {
                             keyboardController?.hide()
-//                    focusManager.clearFocus(false)
                         }
                     ),
                     colors = TextFieldDefaults.textFieldColors(
@@ -144,8 +148,13 @@ fun TodoBottomSheet(
                         onSwitch = !onSwitch
                     },
                     time = time,
-                    onHourChange = { hour -> time = time.withHour(hour) },
-                    onMinuteChange = { minute -> time = time.withMinute(minute) }
+                    onHourChange = { hour ->
+                        time = time.withHour(hour)
+                    },
+//                    onHourChange = { hour -> time = if(hour<12) time.withHour(hour) else time.withHour(hour+12)   },
+                    onMinuteChange = { minute -> time = time.withMinute(minute) },
+                    onAmPmChange = { amPm -> timeString = amPm },
+                    timeString = timeString
                 )
             }
             if (!onDetail) {
@@ -263,7 +272,7 @@ fun TodoBottomSheet(
                                 todo.copy(
                                     title = titleText,
                                     content = contentText,
-                                    time = time,
+                                    time = if(timeString=="오후") time.toPm() else time,
                                     todoGroupId = currentTodoGroupId,
                                     date = date
                                 )
@@ -290,12 +299,11 @@ fun TodoBottomSheet(
                         disabledContainerColor = HMColor.Primary,
                     ),
                     onClick = {
-                        Log.e("TAG", "TodoBottomSheet: ${date.toString()}")
                         upsertTodo(
                             todo.copy(
                                 title = titleText,
                                 content = contentText,
-                                time = time,
+                                time = if(timeString=="오후") time.toPm() else time,
                                 todoGroupId = currentTodoGroupId,
                                 date = date
                             )
@@ -414,12 +422,11 @@ fun HMTimePicker(
     onSwitch: Boolean,
     onCheckedChange: () -> Unit,
     time: LocalTime,
+    timeString: String,
+    onAmPmChange: (String) -> Unit,
     onHourChange: (Int) -> Unit,
     onMinuteChange: (Int) -> Unit
 ) {
-    var isAm by remember { mutableStateOf(time.hour < 12) }
-    val timeString = if (isAm) "오전" else "오후"
-
     val amScrollState = rememberLazyListState(0)
     var lastHour by remember { mutableIntStateOf(time.hour) }
 
@@ -479,12 +486,14 @@ fun HMTimePicker(
                             coroutineState.launch {
                                 amScrollState.animateScrollToItem(1, 0)
                             }
+                            onAmPmChange("오후")
                         }
                     } else {
                         if (item == 12 && lastHour == 11 || item == 11 && lastHour == 12) {
                             coroutineState.launch {
                                 amScrollState.animateScrollToItem(0, 0)
                             }
+                            onAmPmChange("오전")
                         }
                     }
                     lastHour = item

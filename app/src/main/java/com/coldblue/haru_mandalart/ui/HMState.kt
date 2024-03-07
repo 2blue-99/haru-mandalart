@@ -9,11 +9,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.coldblue.data.navi.Route
 import com.coldblue.haru_mandalart.navigation.TopLevelDestination
+import com.coldblue.history.navigation.historyRoute
 import com.coldblue.history.navigation.navigateToHistory
+import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.navigateToManda
+import com.coldblue.setting.navigation.settingRoute
 import com.coldblue.todo.navigation.navigateToTodo
+import com.coldblue.todo.navigation.todoRoute
 
 @Composable
 fun rememberHMState(
@@ -38,7 +41,7 @@ class HMAppState(
     fun checkBottomNavBar(): Boolean {
         currentLocation.let {
             return when(it?.route){
-                Route.todo, Route.manda, Route.history-> true
+                todoRoute, mandaRoute, historyRoute-> true
                 else -> false
             }
         }
@@ -48,7 +51,7 @@ class HMAppState(
     fun checkTopBar(): Boolean {
         currentLocation.let {
             return when(it?.route){
-                Route.setting -> true
+                settingRoute -> true
                 else -> false
             }
         }
@@ -65,9 +68,9 @@ class HMAppState(
             restoreState = true
         }
         when (route) {
-            Route.history -> navController.navigateToHistory(navOptions)
-            Route.manda -> navController.navigateToManda(navOptions)
-            Route.todo -> navController.navigateToTodo(navOptions)
+            historyRoute -> navController.navigateToHistory(navOptions)
+            mandaRoute -> navController.navigateToManda(navOptions)
+            todoRoute -> navController.navigateToTodo(navOptions)
         }
     }
 }
