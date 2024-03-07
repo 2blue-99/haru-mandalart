@@ -20,8 +20,6 @@ fun HistoryScreen(
 
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
     val dateState by historyViewModel.dateSate.collectAsStateWithLifecycle()
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
