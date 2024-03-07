@@ -13,4 +13,3 @@ data class MandaKey(
     val colorIndex: Int = 0,
     val id: Int = 0
 )
-

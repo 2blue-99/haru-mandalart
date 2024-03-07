@@ -34,6 +34,26 @@ class TodoViewModel @Inject constructor(
     private val toggleTodoUseCase: ToggleTodoUseCase,
     private val deleteCurrentGroupUseCase: DeleteCurrentGroupUseCase
 ) : ViewModel() {
+//    init {
+//        viewModelScope.launch {
+//            upsertTodoUseCase(Todo(
+//                title = "TEST",
+//                date = LocalDate.parse("2022-01-01")
+//            ))
+//            upsertTodoUseCase(Todo(
+//                title = "TEST",
+//                date = LocalDate.parse("2023-01-01")
+//            ))
+//            upsertTodoUseCase(Todo(
+//                title = "TEST",
+//                date = LocalDate.parse("2024-12-31")
+//            ))
+//            upsertTodoUseCase(Todo(
+//                title = "TEST",
+//                date = LocalDate.parse("2024-01-01")
+//            ))
+//        }
+//    }
 
     private val _bottomSheetUiSate = MutableStateFlow<BottomSheetUiState>(BottomSheetUiState.Down)
     val bottomSheetUiSate: StateFlow<BottomSheetUiState> = _bottomSheetUiSate

@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.TitleText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.Todo
-import com.coldblue.todo.TodoItem
 import java.time.LocalDate
 
 @Composable
@@ -46,7 +45,7 @@ fun HistoryContent(
             TitleText(text = "기록")
         }
         items(todoList) {
-            TodoItem(todo = it, onTodoToggle = {}, showSheet = {})
+//            TodoItem(todo = it, onTodoToggle = {}, showSheet = {})
         }
 
     }

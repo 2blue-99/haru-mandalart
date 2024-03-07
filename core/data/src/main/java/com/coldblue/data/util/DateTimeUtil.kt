@@ -36,7 +36,14 @@ fun LocalTime.toPm(): LocalTime {
     return this.withHour(this.hour + 12)
 }
 
-
 fun LocalTime.isAm(): Boolean {
     return this.hour < 12
+}
+
+fun String.toFirstLocalDate(): LocalDate {
+    return LocalDate.parse("$this-01-01")
+}
+
+fun String.toLastLocalDate(): LocalDate {
+    return LocalDate.parse("$this-12-31")
 }

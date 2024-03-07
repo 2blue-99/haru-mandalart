@@ -9,6 +9,10 @@ interface TodoRepository {
 
     fun getTodo(date: LocalDate): Flow<List<Todo>>
 
+    fun getTodoDate(year: String): Flow<List<LocalDate>>
+
+    fun getTodoYearRange(): Flow<Pair<LocalDate, LocalDate>>
+
     suspend fun delTodo(todoId: Int)
 
 }

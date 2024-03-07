@@ -4,11 +4,15 @@ import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
 import com.coldblue.data.util.isNotToday
+import com.coldblue.data.util.toFirstLocalDate
+import com.coldblue.data.util.toLastLocalDate
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.model.AlarmItem
 import com.coldblue.model.Todo
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toSet
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -25,6 +29,16 @@ class TodoRepositoryImpl @Inject constructor(
 
     override fun getTodo(date: LocalDate): Flow<List<Todo>> {
         return todoDao.getTodo(date).map { it.asDomain() }
+    }
+
+    override fun getTodoDate(year: String): Flow<List<LocalDate>> {
+        return todoDao.getTodoDate(year.toFirstLocalDate(), year.toLastLocalDate()).map { it.sorted() }
+    }
+
+    override fun getTodoYearRange(): Flow<Pair<LocalDate, LocalDate>> {
+        return todoDao.getTodoMinYear().combine(todoDao.getTodoMaxYear()) { minYear, maxYear ->
+            Pair(minYear, maxYear)
+        }
     }
 
     override suspend fun delTodo(todoId: Int) {
