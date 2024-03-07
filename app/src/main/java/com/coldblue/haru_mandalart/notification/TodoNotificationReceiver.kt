@@ -8,6 +8,6 @@ class TodoNotificationReceiver:BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
         val service = TodoNotificationServiceImpl(context)
-        service.showNotification(++Counter.value,"눌림요")
+        service.showNotification("눌림요")
     }
 }
