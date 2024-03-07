@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetTodoYearRangeUseCase @Inject constructor(
     private val todoRepository: TodoRepository
 ) {
-    operator fun invoke(): Flow<Pair<LocalDate,LocalDate>> =
+    operator fun invoke(): Flow<Pair<Int,Int>> =
         todoRepository.getTodoYearRange()
 }

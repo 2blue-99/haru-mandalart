@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetTodoDateUseCase @Inject constructor(
     private val todoRepository: TodoRepository
 ) {
-    operator fun invoke(year: String): Flow<List<LocalDate>> =
+    operator fun invoke(year: Int): Flow<List<LocalDate>> =
         todoRepository.getTodoDate(year)
 }

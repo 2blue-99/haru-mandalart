@@ -31,13 +31,13 @@ class TodoRepositoryImpl @Inject constructor(
         return todoDao.getTodo(date).map { it.asDomain() }
     }
 
-    override fun getTodoDate(year: String): Flow<List<LocalDate>> {
+    override fun getTodoDate(year: Int): Flow<List<LocalDate>> {
         return todoDao.getTodoDate(year.toFirstLocalDate(), year.toLastLocalDate()).map { it.sorted() }
     }
 
-    override fun getTodoYearRange(): Flow<Pair<LocalDate, LocalDate>> {
+    override fun getTodoYearRange(): Flow<Pair<Int, Int>> {
         return todoDao.getTodoMinYear().combine(todoDao.getTodoMaxYear()) { minYear, maxYear ->
-            Pair(minYear, maxYear)
+            Pair(minYear.year, maxYear.year)
         }
     }
 

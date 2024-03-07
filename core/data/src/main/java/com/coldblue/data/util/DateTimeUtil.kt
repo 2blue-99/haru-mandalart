@@ -40,10 +40,10 @@ fun LocalTime.isAm(): Boolean {
     return this.hour < 12
 }
 
-fun String.toFirstLocalDate(): LocalDate {
+fun Int.toFirstLocalDate(): LocalDate {
     return LocalDate.parse("$this-01-01")
 }
 
-fun String.toLastLocalDate(): LocalDate {
+fun Int.toLastLocalDate(): LocalDate {
     return LocalDate.parse("$this-12-31")
 }
