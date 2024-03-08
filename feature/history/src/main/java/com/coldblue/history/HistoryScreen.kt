@@ -1,5 +1,6 @@
 package com.coldblue.history
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -19,7 +20,7 @@ fun HistoryScreen(
 ) {
 
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
-    val dateState by historyViewModel.dateSate.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -27,34 +28,28 @@ fun HistoryScreen(
     ) {
         HistoryContentWithState(
             historyUiState,
-            dateState,
-            { date -> historyViewModel.selectDate(date) }
+            historyViewModel::selectDate
         )
     }
-    Column {
-        Text(text = "HistoryScreen")
-        Button(onClick = { navigateToSetting() }) {
-            Text(text = "Navigate To Setting")
-        }
-    }
+//    Column {
+//        Text(text = "HistoryScreen")
+//        Button(onClick = { navigateToSetting() }) {
+//            Text(text = "Navigate To Setting")
+//        }
+//    }
 }
 
 @Composable
 fun HistoryContentWithState(
     uiState: HistoryUiState,
-    selectedDate: LocalDate,
     selectDate: (LocalDate) -> Unit
 ) {
     when (uiState) {
-        is HistoryUiState.Loading -> {
-            Text(text = "로딩")
-        }
-
+        is HistoryUiState.Loading -> Text(text = "로딩")
         is HistoryUiState.Error -> Text(text = uiState.msg)
         is HistoryUiState.Success ->
             HistoryContent(
-                uiState.todoList,
-                selectedDate,
+                uiState,
                 selectDate
             )
     }

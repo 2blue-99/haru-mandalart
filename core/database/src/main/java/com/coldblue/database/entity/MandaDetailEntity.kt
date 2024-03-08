@@ -12,5 +12,5 @@ data class MandaDetailEntity(
     @ColumnInfo(name = "update_time") val updateTime: String,
     @ColumnInfo(name = "color_index") val colorIndex: Int,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "is_done") val isDone: Boolean,
+    @ColumnInfo(name = "is_done") val isDone: Boolean
 )

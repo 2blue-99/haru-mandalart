@@ -56,7 +56,14 @@ fun LocalDateTime.toMillis(): Long {
     return truncatedTo(ChronoUnit.MINUTES).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
 }
 
-
 fun LocalTime.isAm(): Boolean {
     return hour in listOf(23, 0..10)
+}
+
+fun Int.toFirstLocalDate(): LocalDate {
+    return LocalDate.parse("$this-01-01")
+}
+
+fun Int.toLastLocalDate(): LocalDate {
+    return LocalDate.parse("$this-12-31")
 }
