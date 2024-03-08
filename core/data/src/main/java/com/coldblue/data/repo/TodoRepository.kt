@@ -9,7 +9,7 @@ interface TodoRepository {
 
     fun getTodo(date: LocalDate): Flow<List<Todo>>
 
-    fun getTodoDate(year: Int): Flow<List<LocalDate>>
+    fun getYearlyExistTodoDate(year: Int): Flow<List<LocalDate>>
 
     fun getTodoYearList(): Flow<List<Int>>
 

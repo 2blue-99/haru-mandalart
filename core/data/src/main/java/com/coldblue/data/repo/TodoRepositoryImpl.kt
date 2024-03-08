@@ -30,7 +30,7 @@ class TodoRepositoryImpl @Inject constructor(
         return todoDao.getTodo(date).map { it.asDomain() }
     }
 
-    override fun getTodoDate(year: Int): Flow<List<LocalDate>> {
+    override fun getYearlyExistTodoDate(year: Int): Flow<List<LocalDate>> {
         return todoDao.getTodoDate(year.toFirstLocalDate(), year.toLastLocalDate()).map { it.sorted() }
     }
 

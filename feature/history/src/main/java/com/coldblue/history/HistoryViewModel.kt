@@ -2,7 +2,7 @@ package com.coldblue.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.domain.todo.GetTodoDateUseCase
+import com.coldblue.domain.todo.GetYearlyExistTodoDateUseCase
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.GetTodoYearRangeUseCase
 import com.coldblue.history.util.HistoryUtil
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     getTodoUseCase: GetTodoUseCase,
-    getTodoDateUseCase: GetTodoDateUseCase,
+    getYearlyExistTodoDateUseCase: GetYearlyExistTodoDateUseCase,
     getTodoYearRangeUseCase: GetTodoYearRangeUseCase
 ) : ViewModel() {
 //    init {
@@ -47,11 +47,11 @@ class HistoryViewModel @Inject constructor(
 
     private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }
 
-    private val dateFlow = yearSate.flatMapLatest { getTodoDateUseCase(it) }
+    private val yearlyExistDateFlow = yearSate.flatMapLatest { getYearlyExistTodoDateUseCase(it) }
 
 
 
-    val historyUiState: StateFlow<HistoryUiState> = combine(dateFlow, getTodoYearRangeUseCase(), todoFlow) { dateList, yearList, todoList ->
+    val historyUiState: StateFlow<HistoryUiState> = combine(yearlyExistDateFlow, getTodoYearRangeUseCase(), todoFlow) { dateList, yearList, todoList ->
         HistoryUiState.Success(
             controllerList = HistoryUtil.controllerListMaker(dateSate.value.year, dateList),
             todoYearList = yearList,
