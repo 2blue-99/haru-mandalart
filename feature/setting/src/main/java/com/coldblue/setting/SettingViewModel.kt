@@ -16,4 +16,8 @@ class SettingViewModel @Inject constructor(
         settingHelper.showOss()
     }
 
+    fun showPlayStore() {
+        settingHelper.showPlayStore()
+    }
+
 }

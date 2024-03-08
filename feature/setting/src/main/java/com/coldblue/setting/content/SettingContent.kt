@@ -26,7 +26,9 @@ import com.coldblue.designsystem.theme.HmStyle
 
 @Composable
 fun SettingContent(
-    showOss: () -> Unit
+    showOss: () -> Unit,
+    showPlayStore: () -> Unit
+
 
 ) {
     Column(
@@ -51,7 +53,7 @@ fun SettingContent(
                     contentDescription = "문의"
                 )
             }
-            SettingItem(title = "앱 평가하기", isClickable = true, onClick = {}) {
+            SettingItem(title = "앱 평가하기", isClickable = true, onClick = { showPlayStore() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "앱 평가"
@@ -110,6 +112,6 @@ fun SettingItem(
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent({})
+    SettingContent({},{})
 
 }

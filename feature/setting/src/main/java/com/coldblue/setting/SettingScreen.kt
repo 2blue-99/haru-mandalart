@@ -16,16 +16,18 @@ fun SettingScreen(
             .fillMaxSize()
     ) {
         SettingContentWithState(
-            showOss = settingViewModel::showOss
+            showOss = settingViewModel::showOss,
+            showPlayStore = settingViewModel::showPlayStore,
         )
     }
 }
 
 @Composable
 fun SettingContentWithState(
-    showOss: () -> Unit
+    showOss: () -> Unit,
+    showPlayStore: () -> Unit
 ) {
 
-    SettingContent(showOss)
+    SettingContent(showOss,showPlayStore)
 
 }
