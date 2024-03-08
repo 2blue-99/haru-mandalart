@@ -39,11 +39,8 @@ class HistoryViewModel @Inject constructor(
 
 
     val historyUiState: StateFlow<HistoryUiState> = combine(yearlyExistDateFlow, getTodoYearRangeUseCase(), todoFlow) { dateList, yearList, todoList ->
-        Log.e("TAG", "dateList: $dateList", )
-        Log.e("TAG", "yearList: $yearList", )
-        Log.e("TAG", "todoList: $todoList", )
         HistoryUiState.Success(
-            controllerList = HistoryUtil.controllerListMaker(dateSate.value.year, dateList),
+            controllerList = HistoryUtil.controllerListMaker(yearSate.value, dateList),
             todoYearList = yearList,
             today = dateSate.value,
             todoList = todoList
@@ -63,6 +60,11 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-
+    fun selectYear(year: Int) {
+        viewModelScope.launch {
+            _dateSate.value = dateSate.value.withYear(year)
+            _yearSate.value = year
+        }
+    }
 
 }
