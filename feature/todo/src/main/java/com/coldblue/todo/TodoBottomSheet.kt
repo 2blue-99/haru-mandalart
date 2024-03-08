@@ -54,10 +54,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.coldblue.data.util.getAmPmHour
 import com.coldblue.data.util.isAm
 import com.coldblue.data.util.padTwoSpace
 import com.coldblue.data.util.padTwoZero
-import com.coldblue.data.util.toPm
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -272,7 +272,7 @@ fun TodoBottomSheet(
                                 todo.copy(
                                     title = titleText,
                                     content = contentText,
-                                    time = if(timeString=="오후") time.toPm() else time,
+                                    time = time.getAmPmHour(timeString),
                                     todoGroupId = currentTodoGroupId,
                                     date = date
                                 )
@@ -303,7 +303,7 @@ fun TodoBottomSheet(
                             todo.copy(
                                 title = titleText,
                                 content = contentText,
-                                time = if(timeString=="오후") time.toPm() else time,
+                                time = time.getAmPmHour(timeString),
                                 todoGroupId = currentTodoGroupId,
                                 date = date
                             )
