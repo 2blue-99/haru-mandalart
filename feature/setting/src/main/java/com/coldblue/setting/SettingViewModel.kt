@@ -8,16 +8,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val scheduler: AlarmScheduler,
 ) : ViewModel() {
 
-    fun schedule(item: AlarmItem) {
-        scheduler.schedule(item)
-    }
 
-    fun cancel(item: AlarmItem) {
-        scheduler.cancel(item)
-    }
 
 
 
