@@ -15,14 +15,17 @@ fun SettingScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        SettingContentWithState()
+        SettingContentWithState(
+            showOss = settingViewModel::showOss
+        )
     }
 }
 
 @Composable
 fun SettingContentWithState(
+    showOss: () -> Unit
 ) {
 
-    SettingContent()
+    SettingContent(showOss)
 
 }

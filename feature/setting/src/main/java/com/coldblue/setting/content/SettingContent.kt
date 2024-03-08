@@ -25,7 +25,10 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 
 @Composable
-fun SettingContent() {
+fun SettingContent(
+    showOss: () -> Unit
+
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +57,7 @@ fun SettingContent() {
                     contentDescription = "앱 평가"
                 )
             }
-            SettingItem(title = "오픈소스 라이센스", isClickable = true, onClick = {}) {
+            SettingItem(title = "오픈소스 라이센스", isClickable = true, onClick = { showOss() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "오픈소스 라이센스"
@@ -107,6 +110,6 @@ fun SettingItem(
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent()
+    SettingContent({})
 
 }
