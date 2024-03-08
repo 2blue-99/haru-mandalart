@@ -20,6 +20,7 @@ fun HistoryScreen(
 ) {
 
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
+    Log.e("TAG", "HistoryScreen: $historyUiState", )
 
     Column(
         modifier = Modifier

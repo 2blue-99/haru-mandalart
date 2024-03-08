@@ -15,13 +15,13 @@ interface TodoDao {
     fun getTodo(date: LocalDate): Flow<List<TodoWithGroupName>>
 
     @Query("SELECT DISTINCT(todo.date) FROM todo WHERE date >= :startDate AND date <= :endDate AND is_del=0")
-    fun getTodoDate(startDate: LocalDate, endDate: LocalDate): Flow<List<LocalDate>>
+    fun getYearlyExistTodoDate(startDate: LocalDate, endDate: LocalDate): Flow<List<LocalDate>?>
 
     @Query("SELECT min(todo.date)  FROM todo WHERE is_del=0")
-    fun getTodoMinYear(): Flow<LocalDate>
+    fun getTodoMinYear(): Flow<LocalDate?>
 
     @Query("SELECT max(todo.date)  FROM todo WHERE is_del=0")
-    fun getTodoMaxYear(): Flow<LocalDate>
+    fun getTodoMaxYear(): Flow<LocalDate?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodo(todo: TodoEntity)

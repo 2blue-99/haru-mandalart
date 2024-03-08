@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 object HMColor {
     val Primary = Color(0xFF432ED1)
+    val LightPrimary = Color(0xFF8373F0)
     val Text = Color(0xFF222222)
     val SubText = Color(0xFFB8BBBF)
     val Gray = Color(0xFFD9DBE3)

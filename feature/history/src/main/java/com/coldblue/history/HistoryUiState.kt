@@ -18,12 +18,12 @@ sealed interface HistoryUiState {
 }
 
 data class ControllerWeek(
-    val month: Int,
+    val month: Int?,
     val controllerDayList: List<ControllerDayState>
 )
 
 sealed interface ControllerDayState {
-    data object Default: ControllerDayState
+    data class Default(val dayWeek: String = ""): ControllerDayState
 
     data class Empty(val timeState: ControllerTimeState): ControllerDayState
 
