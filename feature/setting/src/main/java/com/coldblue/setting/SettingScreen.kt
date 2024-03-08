@@ -18,6 +18,8 @@ fun SettingScreen(
         SettingContentWithState(
             showOss = settingViewModel::showOss,
             showPlayStore = settingViewModel::showPlayStore,
+            showContact = settingViewModel::showContact,
+            versionName = settingViewModel.versionName
         )
     }
 }
@@ -25,9 +27,11 @@ fun SettingScreen(
 @Composable
 fun SettingContentWithState(
     showOss: () -> Unit,
-    showPlayStore: () -> Unit
+    showPlayStore: () -> Unit,
+    showContact: () -> Unit,
+    versionName: String
 ) {
 
-    SettingContent(showOss,showPlayStore)
+    SettingContent(showOss, showPlayStore, showContact, versionName)
 
 }

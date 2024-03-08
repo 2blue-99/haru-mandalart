@@ -31,12 +31,12 @@ fun HistoryScreen(
             historyViewModel::selectDate
         )
     }
-//    Column {
-//        Text(text = "HistoryScreen")
-//        Button(onClick = { navigateToSetting() }) {
-//            Text(text = "Navigate To Setting")
-//        }
-//    }
+    Column {
+        Text(text = "HistoryScreen")
+        Button(onClick = { navigateToSetting() }) {
+            Text(text = "Navigate To Setting")
+        }
+    }
 }
 
 @Composable

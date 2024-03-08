@@ -27,7 +27,9 @@ import com.coldblue.designsystem.theme.HmStyle
 @Composable
 fun SettingContent(
     showOss: () -> Unit,
-    showPlayStore: () -> Unit
+    showPlayStore: () -> Unit,
+    showContact: () -> Unit,
+    versionName: String
 
 
 ) {
@@ -47,7 +49,7 @@ fun SettingContent(
             SettingItem(title = "현재계정") {
                 Text(text = "hno05039@gmail.com")
             }
-            SettingItem(title = "문의하기", isClickable = true, onClick = {}) {
+            SettingItem(title = "문의하기", isClickable = true, onClick = { showContact() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "문의"
@@ -66,7 +68,7 @@ fun SettingContent(
                 )
             }
             SettingItem(title = "앱 버전") {
-                Text(text = "v 1.0")
+                Text(text = "v $versionName")
             }
             SettingItem(title = "탈퇴", isLast = true, isClickable = true, onClick = {}) {
                 Icon(
@@ -112,6 +114,6 @@ fun SettingItem(
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent({},{})
+    SettingContent({}, {},{},"1.0")
 
 }
