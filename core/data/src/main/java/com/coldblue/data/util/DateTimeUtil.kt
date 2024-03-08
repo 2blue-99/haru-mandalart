@@ -38,7 +38,7 @@ fun Int.toAm(): Int {
 }
 
 fun Int.toPm(): Int {
-    return this + 12
+    return if (this == 12) 23 else this + 12
 }
 
 fun Int.padTwoZero(): String {
