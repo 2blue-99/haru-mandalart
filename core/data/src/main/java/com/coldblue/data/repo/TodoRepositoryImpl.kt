@@ -1,5 +1,6 @@
 package com.coldblue.data.repo
 
+import android.util.Log
 import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
@@ -31,17 +32,15 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     override fun getYearlyExistTodoDate(year: Int): Flow<List<LocalDate>> {
-        return todoDao.getYearlyExistTodoDate(year.toFirstLocalDate(), year.toLastLocalDate()).map {
-            it ?: emptyList()
-        }
+        return todoDao.getYearlyExistTodoDate(year.toFirstLocalDate(), year.toLastLocalDate())
     }
 
     override fun getTodoYearList(): Flow<List<Int>> {
         return todoDao.getTodoMinYear().combine(todoDao.getTodoMaxYear()) { minYear, maxYear ->
-            if(minYear!=null && maxYear!=null)
+            if (minYear != null && maxYear != null)
                 (minYear.year..maxYear.year).toList()
             else
-                listOf(2023)
+                listOf(LocalDate.now().year)
         }
     }
 

@@ -21,6 +21,8 @@ fun HistoryScreen(
 
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
 
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -32,12 +34,13 @@ fun HistoryScreen(
             selectDate = historyViewModel::selectDate
         )
     }
-//    Column {
-//        Text(text = "HistoryScreen")
-//        Button(onClick = { navigateToSetting() }) {
-//            Text(text = "Navigate To Setting")
-//        }
-//    }
+    Column {
+        Text(text = "HistoryScreen")
+        Button(onClick = { navigateToSetting() }) {
+            Text(text = "Navigate To Setting")
+        }
+    }
+
 }
 
 @Composable
