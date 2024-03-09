@@ -102,92 +102,111 @@ fun HistoryController(
     val screenWidth = LocalConfiguration.current.screenWidthDp
 
     Column {
-        LazyRow(
-            Modifier
-                .fillMaxWidth()
-                .background(HMColor.Background),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            itemsIndexed(controllerList) { weekIndex, controllerWeek ->
-                Column(
-                    modifier = Modifier.width((screenWidth / 16).dp),
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    ControllerBox(
-                        containerColor = Color.Transparent,
-                        sideText = if (controllerWeek.month != null) controllerWeek.month.toString() else "",
-                        clickAble = false
-                    ) {}
+        Row {
+            Column(
+                modifier = Modifier.width((screenWidth / 16).dp)
+            ){
+                ControllerBox(
+                    containerColor = Color.Transparent,
+                    sideText = "",
+                    clickAble = false
+                ) {}
+                controllerList[0].controllerDayList.forEach {
+                    if(it is ControllerDayState.Default)
+                        ControllerBox(
+                            containerColor = Color.Transparent,
+                            sideText = it.dayWeek,
+                            clickAble = false
+                        ) {}
+                }
+            }
+            LazyRow(
+                Modifier
+                    .fillMaxWidth()
+                    .background(HMColor.Background),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                itemsIndexed(controllerList.slice(1..< controllerList.size)) { weekIndex, controllerWeek ->
+                    Column(
+                        modifier = Modifier.width((screenWidth / 16).dp),
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        ControllerBox(
+                            containerColor = Color.Transparent,
+                            sideText = if (controllerWeek.month != null) controllerWeek.month.toString() else "",
+                            clickAble = false
+                        ) {}
 
-                    controllerWeek.controllerDayList.forEachIndexed { dayIndex, dayState ->
-                        val stateIndex = (weekIndex * 7) + dayIndex
-                        when (dayState) {
+                        controllerWeek.controllerDayList.forEachIndexed { dayIndex, dayState ->
+                            val stateIndex = (weekIndex * 7) + dayIndex
+                            when (dayState) {
 
-                            is ControllerDayState.Default -> {
-                                ControllerBox(
-                                    containerColor = Color.Transparent,
-                                    sideText = dayState.dayWeek,
-                                    clickAble = false
-                                ) {}
-                            }
+                                is ControllerDayState.Default -> {
+                                    ControllerBox(
+                                        containerColor = Color.Transparent,
+                                        sideText = dayState.dayWeek,
+                                        clickAble = false
+                                    ) {}
+                                }
 
-                            is ControllerDayState.Empty -> {
-                                when (val timeState = dayState.timeState) {
+                                is ControllerDayState.Empty -> {
+                                    when (val timeState = dayState.timeState) {
 
-                                    is ControllerTimeState.Past -> {
-                                        ControllerBox(
-                                            containerColor = HMColor.Gray,
-                                            isClicked = boxClickStateList[stateIndex]
-                                        ) {
-                                            boxClickStateList[beforeBoxIndex] = false
-                                            boxClickStateList[stateIndex] = true
-                                            beforeBoxIndex = stateIndex
-                                            selectDate(timeState.date)
+                                        is ControllerTimeState.Past -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Gray,
+                                                isClicked = boxClickStateList[stateIndex]
+                                            ) {
+                                                boxClickStateList[beforeBoxIndex] = false
+                                                boxClickStateList[stateIndex] = true
+                                                beforeBoxIndex = stateIndex
+                                                selectDate(timeState.date)
+                                            }
                                         }
-                                    }
 
-                                    is ControllerTimeState.Future -> {
-                                        ControllerBox(
-                                            containerColor = HMColor.Box,
-                                            isClicked = boxClickStateList[stateIndex]
-                                        ) {
-                                            boxClickStateList[beforeBoxIndex] = false
-                                            boxClickStateList[stateIndex] = true
-                                            beforeBoxIndex = stateIndex
-                                            selectDate(timeState.date)
+                                        is ControllerTimeState.Future -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Box,
+                                                isClicked = boxClickStateList[stateIndex]
+                                            ) {
+                                                boxClickStateList[beforeBoxIndex] = false
+                                                boxClickStateList[stateIndex] = true
+                                                beforeBoxIndex = stateIndex
+                                                selectDate(timeState.date)
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            is ControllerDayState.Exist -> {
-                                when (val timeState = dayState.timeState) {
+                                is ControllerDayState.Exist -> {
+                                    when (val timeState = dayState.timeState) {
 
-                                    is ControllerTimeState.Past -> {
-                                        ControllerBox(
-                                            containerColor = HMColor.Box,
-                                            tintColor = HMColor.Primary,
-                                            isExistTodo = true,
-                                            isClicked = boxClickStateList[stateIndex]
-                                        ) {
-                                            boxClickStateList[beforeBoxIndex] = false
-                                            boxClickStateList[stateIndex] = true
-                                            beforeBoxIndex = stateIndex
-                                            selectDate(timeState.date)
+                                        is ControllerTimeState.Past -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Box,
+                                                tintColor = HMColor.Primary,
+                                                isExistTodo = true,
+                                                isClicked = boxClickStateList[stateIndex]
+                                            ) {
+                                                boxClickStateList[beforeBoxIndex] = false
+                                                boxClickStateList[stateIndex] = true
+                                                beforeBoxIndex = stateIndex
+                                                selectDate(timeState.date)
+                                            }
                                         }
-                                    }
 
-                                    is ControllerTimeState.Future -> {
-                                        ControllerBox(
-                                            containerColor = HMColor.Background,
-                                            tintColor = HMColor.LightPrimary,
-                                            isExistTodo = true,
-                                            isClicked = boxClickStateList[stateIndex]
-                                        ) {
-                                            boxClickStateList[beforeBoxIndex] = false
-                                            boxClickStateList[stateIndex] = true
-                                            beforeBoxIndex = stateIndex
-                                            selectDate(timeState.date)
+                                        is ControllerTimeState.Future -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Background,
+                                                tintColor = HMColor.LightPrimary,
+                                                isExistTodo = true,
+                                                isClicked = boxClickStateList[stateIndex]
+                                            ) {
+                                                boxClickStateList[beforeBoxIndex] = false
+                                                boxClickStateList[stateIndex] = true
+                                                beforeBoxIndex = stateIndex
+                                                selectDate(timeState.date)
+                                            }
                                         }
                                     }
                                 }
@@ -196,22 +215,22 @@ fun HistoryController(
                     }
                 }
             }
-        }
-        LazyRow(
-            Modifier
-                .fillMaxWidth()
-                .background(HMColor.Background),
-            horizontalArrangement = Arrangement.End
-        ) {
-            itemsIndexed(todoYearList) { index, year ->
-                ControllerYearButton(
-                    year = year,
-                    isChecked = yearClickStateList[index],
-                ) {
-                    selectYear(year)
-                    val arr = BooleanArray(todoYearList.size)
-                    arr[index] = true
-                    yearClickStateList = arr
+            LazyRow(
+                Modifier
+                    .fillMaxWidth()
+                    .background(HMColor.Background),
+                horizontalArrangement = Arrangement.End
+            ) {
+                itemsIndexed(todoYearList) { index, year ->
+                    ControllerYearButton(
+                        year = year,
+                        isChecked = yearClickStateList[index],
+                    ) {
+                        selectYear(year)
+                        val arr = BooleanArray(todoYearList.size)
+                        arr[index] = true
+                        yearClickStateList = arr
+                    }
                 }
             }
         }
