@@ -11,6 +11,9 @@ class LocalDateConvert {
     fun localDateToString(localDate: LocalDate): String =
         localDate.format(formatter)
     @TypeConverter
-    fun stringToLocalDate(date: String): LocalDate =
-        LocalDate.parse(date, formatter)
+    fun stringToLocalDate(date: String?): LocalDate? {
+        return if (date == null) null
+        else LocalDate.parse(date, formatter)
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.coldblue.history
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetYearlyExistTodoDateUseCase
@@ -25,19 +26,6 @@ class HistoryViewModel @Inject constructor(
     getYearlyExistTodoDateUseCase: GetYearlyExistTodoDateUseCase,
     getTodoYearRangeUseCase: GetTodoYearRangeUseCase
 ) : ViewModel() {
-//    init {
-//        viewModelScope.launch {
-//            getTodoDateUseCase("2024").collect{
-//                Log.e("TAG", "date : $it", )
-//            }
-//        }
-//
-//        viewModelScope.launch {
-//            getTodoYearRangeUseCase().collect{
-//                Log.e("TAG", "Year Range: $it", )
-//            }
-//        }
-//    }
 
     private val _yearSate = MutableStateFlow<Int>(LocalDate.now().year)
     val yearSate: StateFlow<Int> = _yearSate
@@ -50,33 +38,21 @@ class HistoryViewModel @Inject constructor(
     private val yearlyExistDateFlow = yearSate.flatMapLatest { getYearlyExistTodoDateUseCase(it) }
 
 
-
     val historyUiState: StateFlow<HistoryUiState> = combine(yearlyExistDateFlow, getTodoYearRangeUseCase(), todoFlow) { dateList, yearList, todoList ->
         HistoryUiState.Success(
-            controllerList = HistoryUtil.controllerListMaker(dateSate.value.year, dateList),
+            controllerList = HistoryUtil.controllerListMaker(yearSate.value, dateList),
             todoYearList = yearList,
             today = dateSate.value,
             todoList = todoList
         )
     }.catch {
         HistoryUiState.Error(it.message ?: "Error")
+        Log.e("TAG", "Error: ${it.message}")
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = HistoryUiState.Loading
     )
-
-
-    //HistoryUiState 수정 & 필요한거 combine
-//    val historyUiState: StateFlow<HistoryUiState> = todoFlow.map {
-////        HistoryUiState.Success(dateSate.value, it)
-////    }.catch {
-////        HistoryUiState.Error(it.message ?: "Error")
-////    }.stateIn(
-////        scope = viewModelScope,
-////        started = SharingStarted.WhileSubscribed(5_000),
-////        initialValue = HistoryUiState.Loading
-////    )
 
     fun selectDate(date: LocalDate) {
         viewModelScope.launch {
@@ -84,6 +60,11 @@ class HistoryViewModel @Inject constructor(
         }
     }
 
-
+    fun selectYear(year: Int) {
+        viewModelScope.launch {
+            _dateSate.value = dateSate.value.withYear(year)
+            _yearSate.value = year
+        }
+    }
 
 }

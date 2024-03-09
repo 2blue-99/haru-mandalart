@@ -1,6 +1,5 @@
 package com.coldblue.history.util
 
-import android.util.Log
 import com.coldblue.history.ControllerDayState
 import com.coldblue.history.ControllerTimeState
 import com.coldblue.history.ControllerWeek
@@ -17,13 +16,33 @@ object HistoryUtil {
         val startDayOfWeek = startDay.dayOfWeek.value
         var currentMonth: Int = 0
 
+
+        // 요일 텍스트 박스 삽입
+        weekList.add(ControllerDayState.Default())
+        weekList.add(ControllerDayState.Default("월"))
+        weekList.add(ControllerDayState.Default())
+        weekList.add(ControllerDayState.Default("수"))
+        weekList.add(ControllerDayState.Default())
+        weekList.add(ControllerDayState.Default("금"))
+        weekList.add(ControllerDayState.Default())
+        resultList.add(ControllerWeek(null, weekList.toList()))
+
+        weekList.clear()
+
         // 첫 주에 시작하는 요일 위치 맞춰주기
         if (startDayOfWeek != 1)
             repeat(startDayOfWeek - 1) {
-                weekList.add(ControllerDayState.Default)
+                weekList.add(ControllerDayState.Default())
             }
 
-        while (currentDay <= endDay) {
+        while (true) {
+            if (currentDay > endDay) {
+                // 12월 마지막 주 삽입
+                resultList.add(ControllerWeek(month = null, controllerDayList = weekList.toList()))
+                break
+            }
+
+
             // Todo가 존재하는 Day
             if (existList.contains(currentDay)) {
                 if (currentDay <= today) {
@@ -41,16 +60,17 @@ object HistoryUtil {
             }
 
             if (weekList.size == 7) {
+                val firstDayMonth = currentDay.minusDays(6).month.value
                 resultList.add(
                     ControllerWeek(
-                        if (currentMonth == currentDay.dayOfMonth) 0 else currentDay.dayOfMonth,
-                        weekList
+                        month = if (currentMonth == firstDayMonth) null else currentDay.month.value,
+                        controllerDayList = weekList.toList()
                     )
                 )
-                currentMonth = currentDay.dayOfMonth
+                currentMonth = firstDayMonth
+                weekList.clear()
             }
             currentDay = currentDay.plusDays(1)
-            Log.e("TAG", "controllerListMaker: $resultList", )
         }
         return resultList
     }

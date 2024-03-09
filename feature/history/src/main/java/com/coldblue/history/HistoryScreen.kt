@@ -21,14 +21,17 @@ fun HistoryScreen(
 
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
 
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
 
     ) {
         HistoryContentWithState(
-            historyUiState,
-            historyViewModel::selectDate
+            uiState = historyUiState,
+            selectYear = historyViewModel::selectYear,
+            selectDate = historyViewModel::selectDate
         )
     }
     Column {
@@ -42,6 +45,7 @@ fun HistoryScreen(
 @Composable
 fun HistoryContentWithState(
     uiState: HistoryUiState,
+    selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit
 ) {
     when (uiState) {
@@ -49,8 +53,9 @@ fun HistoryContentWithState(
         is HistoryUiState.Error -> Text(text = uiState.msg)
         is HistoryUiState.Success ->
             HistoryContent(
-                uiState,
-                selectDate
+                historyUiState = uiState,
+                selectYear = selectYear,
+                selectDate = selectDate
             )
     }
 
