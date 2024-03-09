@@ -14,12 +14,13 @@ object Mapper {
     )
 
     fun MandaKey.asEntity(): MandaKeyEntity = MandaKeyEntity(
-        id = id,
+        name = name,
+        colorIndex = colorIndex,
+        originId = 0,
         isSync = false,
         isDel = false,
         updateTime = LocalDateTime.now().toString(),
-        name = name,
-        colorIndex = colorIndex
+        id = id,
     )
 
 
@@ -31,12 +32,13 @@ object Mapper {
     )
 
     fun MandaDetail.asEntity(): MandaDetailEntity = MandaDetailEntity(
-        isSync = false,
-        isDel = false,
-        updateTime = "updateTime",
         name = name,
         isDone = isDone,
         colorIndex = colorIndex,
+        originId = 0,
+        isSync = false,
+        isDel = false,
+        updateTime = "updateTime",
         id = id,
     )
 }

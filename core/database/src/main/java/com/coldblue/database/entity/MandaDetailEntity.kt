@@ -6,11 +6,12 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "manda_detail")
 data class MandaDetailEntity(
-    @PrimaryKey val id: Int,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "color_index") val colorIndex: Int,
+    @ColumnInfo(name = "origin_id") val originId: Int,
     @ColumnInfo(name = "is_sync") val isSync: Boolean,
     @ColumnInfo(name = "is_del") val isDel: Boolean,
     @ColumnInfo(name = "update_time") val updateTime: String,
-    @ColumnInfo(name = "color_index") val colorIndex: Int,
-    @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "is_done") val isDone: Boolean
+    @ColumnInfo(name = "is_done") val isDone: Boolean,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0
 )
