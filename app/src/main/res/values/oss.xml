@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.OpensourceLicense" parent="Theme.AppCompat.Light">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_700</item>
+        <!-- Secondary brand color. -->
+
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textColorPrimary">@color/purple_700</item>
+        <item name="android:statusBarColor">@color/white</item>
+
+
+        <item name="android:windowAnimationStyle">@style/OpenSourceItemAnimation</item>
+
+    </style>
+
+    <style name="OpenSourceItemAnimation">
+        <item name="android:activityOpenEnterAnimation">@anim/anim_slide_right_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_slide_right_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/anim_slide_left_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/anim_slide_left_exit</item>
+    </style>
+
+
+</resources>

@@ -25,7 +25,14 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 
 @Composable
-fun SettingContent() {
+fun SettingContent(
+    showOss: () -> Unit,
+    showPlayStore: () -> Unit,
+    showContact: () -> Unit,
+    versionName: String
+
+
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,26 +49,26 @@ fun SettingContent() {
             SettingItem(title = "현재계정") {
                 Text(text = "hno05039@gmail.com")
             }
-            SettingItem(title = "문의하기", isClickable = true, onClick = {}) {
+            SettingItem(title = "문의하기", isClickable = true, onClick = { showContact() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "문의"
                 )
             }
-            SettingItem(title = "앱 평가하기", isClickable = true, onClick = {}) {
+            SettingItem(title = "앱 평가하기", isClickable = true, onClick = { showPlayStore() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "앱 평가"
                 )
             }
-            SettingItem(title = "오픈소스 라이센스", isClickable = true, onClick = {}) {
+            SettingItem(title = "오픈소스 라이센스", isClickable = true, onClick = { showOss() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "오픈소스 라이센스"
                 )
             }
             SettingItem(title = "앱 버전") {
-                Text(text = "v 1.0")
+                Text(text = "v $versionName")
             }
             SettingItem(title = "탈퇴", isLast = true, isClickable = true, onClick = {}) {
                 Icon(
@@ -107,6 +114,6 @@ fun SettingItem(
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent()
+    SettingContent({}, {},{},"1.0")
 
 }

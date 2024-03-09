@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -34,6 +35,7 @@ import com.coldblue.data.util.LoginState
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.login.LoginScreen
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.flowOf

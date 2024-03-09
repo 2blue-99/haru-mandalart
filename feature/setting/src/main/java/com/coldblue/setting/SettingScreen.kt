@@ -15,14 +15,23 @@ fun SettingScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        SettingContentWithState()
+        SettingContentWithState(
+            showOss = settingViewModel::showOss,
+            showPlayStore = settingViewModel::showPlayStore,
+            showContact = settingViewModel::showContact,
+            versionName = settingViewModel.versionName
+        )
     }
 }
 
 @Composable
 fun SettingContentWithState(
+    showOss: () -> Unit,
+    showPlayStore: () -> Unit,
+    showContact: () -> Unit,
+    versionName: String
 ) {
 
-    SettingContent()
+    SettingContent(showOss, showPlayStore, showContact, versionName)
 
 }
