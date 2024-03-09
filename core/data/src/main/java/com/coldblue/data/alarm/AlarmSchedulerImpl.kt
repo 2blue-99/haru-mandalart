@@ -19,16 +19,35 @@ class AlarmSchedulerImpl @Inject constructor(
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(TODO_TITLE, item.title)
         }
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            item.time.toMillis(),
-            PendingIntent.getBroadcast(
-                context,
-                item.id,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        Log.e("TAG", "schedule: ${item.time}", )
+        Log.e("TAG", "schedule: ${LocalDateTime.now()}", )
+        try {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                item.time.toMillis(),
+                PendingIntent.getBroadcast(
+                    context,
+                    item.id,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
             )
-        )
+            Log.e("TAG", "알람 추가")
+
+        } catch (e: Exception) {
+            Log.e("TAG", "schedule: ${e.message}")
+
+        }
+//        alarmManager.setExactAndAllowWhileIdle(
+//            AlarmManager.RTC_WAKEUP,
+//            item.time.toMillis(),
+//            PendingIntent.getBroadcast(
+//                context,
+//                item.id,
+//                intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+//            )
+//        )
     }
 
     override fun cancel(item: AlarmItem) {

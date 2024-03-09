@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.hm.android.application)
     alias(libs.plugins.hm.android.hilt)
     alias(libs.plugins.hm.android.application.compose)
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 android {
     namespace = "com.coldblue.haru_mandalart"
@@ -55,4 +56,7 @@ dependencies {
 
     implementation(libs.hilt.ext.work)
     implementation(libs.androidx.work.ktx)
+
+    implementation (libs.play.services.oss.licenses)
+
 }

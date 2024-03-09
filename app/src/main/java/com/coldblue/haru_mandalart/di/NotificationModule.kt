@@ -1,4 +1,4 @@
-package com.coldblue.haru_mandalart
+package com.coldblue.haru_mandalart.di
 
 import android.content.Context
 import com.coldblue.data.notification.TodoNotificationService
@@ -17,5 +17,4 @@ object NotificationModule {
     @Provides
     fun provideTodoNotificationService(@ApplicationContext context: Context): TodoNotificationService =
         TodoNotificationServiceImpl(context)
-
 }

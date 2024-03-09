@@ -4,8 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!--    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />-->
+<!--    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />-->
     <application
         android:name=".HMApplication"
         android:allowBackup="true"
@@ -20,7 +19,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Harumandalart">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +26,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/Theme.OpensourceLicense" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.OpensourceLicense" />
+
 
         <receiver android:name="com.coldblue.data.alarm.AlarmReceiver" />
         <receiver android:name=".notification.TodoNotificationReceiver" />
@@ -37,8 +43,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-
-
         </receiver>
 
     </application>

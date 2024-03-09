@@ -40,7 +40,6 @@ fun HistoryScreen(
             Text(text = "Navigate To Setting")
         }
     }
-
 }
 
 @Composable

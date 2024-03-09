@@ -9,13 +9,13 @@ import java.time.temporal.ChronoUnit
 
 
 fun LocalTime.getDisplayName(): String {
-
     return if (isAm()) {
         "오전 ${hour.getAm()}:${minute.padTwoZero()}"
     } else {
         "오후 ${hour.getPm()}:${minute.padTwoZero()}"
     }
 }
+
 fun LocalTime.getAmPmHour(timeString: String): LocalTime {
     return if (timeString == "오전") {
         withHour(hour.toAm())
@@ -25,7 +25,7 @@ fun LocalTime.getAmPmHour(timeString: String): LocalTime {
 }
 
 fun Int.getAm(): Int {
-    return if (this == 23) 12 else this + 1
+    return if (this == 23) 12 else this
 }
 
 fun Int.getPm(): Int {
@@ -36,8 +36,9 @@ fun Int.getPm(): Int {
 fun Int.toAm(): Int {
     return if (this == 12) 0 else this
 }
+
 fun Int.toPm(): Int {
-    return this + 12
+    return if (this == 12) 23 else this + 12
 }
 
 fun Int.padTwoZero(): String {
@@ -57,7 +58,10 @@ fun LocalDateTime.toMillis(): Long {
 }
 
 fun LocalTime.isAm(): Boolean {
-    return hour in listOf(23, 0..10)
+    return when (hour) {
+        23, in 0..10 -> true
+        else -> false
+    }
 }
 
 fun Int.toFirstLocalDate(): LocalDate {
