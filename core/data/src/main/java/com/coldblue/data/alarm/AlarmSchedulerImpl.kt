@@ -16,15 +16,17 @@ class AlarmSchedulerImpl @Inject constructor(
     private val alarmManager: AlarmManager,
 ) : AlarmScheduler {
     override fun schedule(item: AlarmItem) {
+        if (item.time == null) return
+
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(TODO_TITLE, item.title)
         }
-        Log.e("TAG", "schedule: ${item.time}", )
-        Log.e("TAG", "schedule: ${LocalDateTime.now()}", )
+        Log.e("TAG", "schedule: ${item.time}")
+        Log.e("TAG", "schedule: ${LocalDateTime.now()}")
         try {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                item.time.toMillis(),
+                item.time!!.toMillis(),
                 PendingIntent.getBroadcast(
                     context,
                     item.id,

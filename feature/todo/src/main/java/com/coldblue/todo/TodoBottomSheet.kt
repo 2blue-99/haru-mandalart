@@ -58,6 +58,7 @@ import com.coldblue.data.util.getAmPmHour
 import com.coldblue.data.util.isAm
 import com.coldblue.data.util.padTwoSpace
 import com.coldblue.data.util.padTwoZero
+import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -226,6 +227,7 @@ fun TodoBottomSheet(
         }
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             if (todo.id != 0) {
+
                 Row(Modifier.fillMaxWidth()) {
                     Button(
                         modifier = Modifier
@@ -255,68 +257,68 @@ fun TodoBottomSheet(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1F)
-                            .padding(start = 8.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonColors(
-                            contentColor = HMColor.Background,
-                            containerColor = HMColor.Primary,
-                            disabledContentColor = HMColor.Box,
-                            disabledContainerColor = HMColor.Primary,
-                        ),
-                        onClick = {
-                            upsertTodo(
-                                todo.copy(
-                                    title = titleText,
-                                    content = contentText,
-                                    time = time.getAmPmHour(timeString),
-                                    todoGroupId = currentTodoGroupId,
-                                    date = date
-                                )
-                            )
-                            onDismissRequest()
-                        }
+
+                    HMButton(
+                        text = "수정",
+                        clickableState = titleText.isNotEmpty(),
+                        modifier = Modifier.weight(1F)
                     ) {
-                        Text(
-                            text = "수정",
-                            style = HmStyle.text16,
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            } else {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonColors(
-                        contentColor = HMColor.Background,
-                        containerColor = HMColor.Primary,
-                        disabledContentColor = HMColor.Box,
-                        disabledContainerColor = HMColor.Primary,
-                    ),
-                    onClick = {
                         upsertTodo(
                             todo.copy(
                                 title = titleText,
                                 content = contentText,
-                                time = time.getAmPmHour(timeString),
+                                time = if (onSwitch) time.getAmPmHour(timeString) else null,
                                 todoGroupId = currentTodoGroupId,
                                 date = date
                             )
                         )
                         onDismissRequest()
                     }
-                ) {
-                    Text(
-                        text = "저장",
-                        style = HmStyle.text16,
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        fontWeight = FontWeight.Bold
+//                    Button(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .weight(1F)
+//                            .padding(start = 8.dp),
+//                        shape = RoundedCornerShape(10.dp),
+//                        colors = ButtonColors(
+//                            contentColor = HMColor.Background,
+//                            containerColor = HMColor.Primary,
+//                            disabledContentColor = HMColor.Box,
+//                            disabledContainerColor = HMColor.Primary,
+//                        ),
+//                        onClick = {
+//                            upsertTodo(
+//                                todo.copy(
+//                                    title = titleText,
+//                                    content = contentText,
+//                                    time = if (onSwitch) time.getAmPmHour(timeString) else null,
+//                                    todoGroupId = currentTodoGroupId,
+//                                    date = date
+//                                )
+//                            )
+//                            onDismissRequest()
+//                        }
+//                    ) {
+//                        Text(
+//                            text = "수정",
+//                            style = HmStyle.text16,
+//                            modifier = Modifier.padding(vertical = 4.dp),
+//                            fontWeight = FontWeight.Bold
+//                        )
+//                    }
+                }
+            } else {
+                HMButton(text = "저장", clickableState = titleText.isNotEmpty()) {
+                    upsertTodo(
+                        todo.copy(
+                            title = titleText,
+                            content = contentText,
+                            time = if (onSwitch) time.getAmPmHour(timeString) else null,
+                            todoGroupId = currentTodoGroupId,
+                            date = date
+                        )
                     )
+                    onDismissRequest()
                 }
             }
         }

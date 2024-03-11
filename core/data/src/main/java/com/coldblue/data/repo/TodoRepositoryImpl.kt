@@ -57,6 +57,10 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     private fun Todo.syncAlarm() {
+        if (time == null) {
+            cancelAlarm(AlarmItem(id = id))
+            return
+        }
         if (date.isNotToday()) return
         if (isDel or isDone) {
             cancelAlarm(AlarmItem(LocalDateTime.of(date, time), title, id))
