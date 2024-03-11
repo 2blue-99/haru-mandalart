@@ -272,7 +272,7 @@ fun TodoBottomSheet(
                                 todo.copy(
                                     title = titleText,
                                     content = contentText,
-                                    time = time.getAmPmHour(timeString),
+                                    time = if (onSwitch) time.getAmPmHour(timeString) else null,
                                     todoGroupId = currentTodoGroupId,
                                     date = date
                                 )
@@ -303,7 +303,7 @@ fun TodoBottomSheet(
                             todo.copy(
                                 title = titleText,
                                 content = contentText,
-                                time = time.getAmPmHour(timeString),
+                                time = if (onSwitch) time.getAmPmHour(timeString) else null,
                                 todoGroupId = currentTodoGroupId,
                                 date = date
                             )
