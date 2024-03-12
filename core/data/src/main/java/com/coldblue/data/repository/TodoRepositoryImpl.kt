@@ -1,6 +1,5 @@
-package com.coldblue.data.repo
+package com.coldblue.data.repository
 
-import android.util.Log
 import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
@@ -28,7 +27,7 @@ class TodoRepositoryImpl @Inject constructor(
     override suspend fun upsertTodo(todo: Todo) {
         todoDao.upsertTodo(todo.asEntity())
         todo.syncAlarm()
-        sync()
+        syncRead()
     }
 
     override fun getTodo(date: LocalDate): Flow<List<Todo>> {
@@ -52,11 +51,11 @@ class TodoRepositoryImpl @Inject constructor(
         todoDao.deleteTodo(todoId)
     }
 
-    override suspend fun sync(): Boolean {
+    override suspend fun syncRead(): Boolean {
         val data = todoDataSource.getTodo("0")
 
         Logger.d(data.map { it.title })
-        return false
+        return true
     }
 
     private fun scheduleAlarm(item: AlarmItem) {

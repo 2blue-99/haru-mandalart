@@ -1,6 +1,6 @@
 package com.coldblue.domain.todo
 
-import com.coldblue.data.repo.TodoRepository
+import com.coldblue.data.repository.TodoRepository
 import javax.inject.Inject
 
 class DeleteTodoUseCase @Inject constructor(

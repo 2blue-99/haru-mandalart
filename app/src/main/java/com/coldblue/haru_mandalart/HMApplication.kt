@@ -4,19 +4,63 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.util.Log
+import androidx.work.Configuration
+import androidx.work.ListenableWorker
+import androidx.work.WorkerFactory
+import androidx.work.WorkerParameters
+import com.coldblue.data.repository.TodoRepository
+import com.coldblue.data.sync.SyncReadHelper
+import com.coldblue.data.sync.worker.SyncReadWorker
+import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
-class HMApplication : Application() {
+class HMApplication : Application(), Configuration.Provider {
+    @Inject
+    lateinit var workerFactory: SyncWorkerFactory
+    override val workManagerConfiguration: Configuration
+        get() =
+            Configuration.Builder().setMinimumLoggingLevel(Log.DEBUG)
+                .setWorkerFactory(workerFactory)
+                .build()
+
     override fun onCreate() {
         super.onCreate()
+        SyncReadHelper.initialize(this)
         createNotificationChannel()
         initLogger()
+    }
+
+    class SyncWorkerFactory @Inject constructor(
+        private val todoRepository: TodoRepository,
+    ) : WorkerFactory() {
+        override fun createWorker(
+            appContext: Context,
+            workerClassName: String,
+            workerParameters: WorkerParameters
+        ): ListenableWorker? {
+            return when (workerClassName) {
+                SyncReadWorker::class.java.name -> SyncReadWorker(
+                    appContext,
+                    workerParameters,
+                    todoRepository,
+                )
+
+                SyncWriteWorker::class.java.name -> SyncWriteWorker(
+                    appContext,
+                    workerParameters,
+                )
+
+                else -> null
+            }
+        }
     }
 
     private fun createNotificationChannel() {

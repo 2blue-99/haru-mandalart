@@ -1,7 +1,7 @@
 package com.coldblue.haru_mandalart.di
 
 import android.content.Context
-import com.coldblue.data.notification.TodoNotificationService
+import com.coldblue.data.alarm.TodoNotificationService
 import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
 import dagger.Module
 import dagger.Provides

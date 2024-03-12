@@ -1,12 +1,14 @@
 package com.coldblue.data.util
 
-import android.util.Log
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
+fun getUpdateTime(): String {
+    return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli().toString()
+}
 
 fun LocalTime.getDisplayName(): String {
     return if (isAm()) {

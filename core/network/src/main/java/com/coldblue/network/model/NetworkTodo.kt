@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class NetworkTodo(
     val id: Int = 0,
     val title: String,
-    val content: String?=null,
+    val content: String? = null,
     val is_done: Boolean,
     val date: String,
     val update_time: String,

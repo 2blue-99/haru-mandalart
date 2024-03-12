@@ -1,4 +1,4 @@
-package com.coldblue.data.repo
+package com.coldblue.data.repository
 
 import com.coldblue.model.Todo
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +15,7 @@ interface TodoRepository {
 
     suspend fun delTodo(todoId: Int)
 
-    suspend fun sync():Boolean
+    suspend fun syncRead():Boolean
 
 
 }

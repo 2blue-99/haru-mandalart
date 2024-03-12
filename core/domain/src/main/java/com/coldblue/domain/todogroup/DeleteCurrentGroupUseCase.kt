@@ -1,6 +1,6 @@
 package com.coldblue.domain.todogroup
 
-import com.coldblue.data.repo.CurrentGroupRepository
+import com.coldblue.data.repository.CurrentGroupRepository
 import javax.inject.Inject
 
 class DeleteCurrentGroupUseCase @Inject constructor(

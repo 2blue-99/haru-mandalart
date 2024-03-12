@@ -1,15 +1,11 @@
 package com.coldblue.data.mapper
 
-import com.coldblue.database.entity.CurrentGroupEntity
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.entity.TodoEntity
-import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.database.entity.TodoWithGroupName
-import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
-import java.time.LocalDate
 
 object TodoEntityMapper {
-
     fun asEntity(domain: Todo): TodoEntity {
         return TodoEntity(
             title = domain.title,
@@ -17,11 +13,11 @@ object TodoEntityMapper {
             isDone = domain.isDone,
             time = domain.time,
             date = domain.date,
-            todoGroupId = if (domain.todoGroupId == -1) null else domain.todoGroupId,
-            originId = 0,
+            todoGroupId = domain.todoGroupId,
+            originId = domain.originId,
             isSync = false,
             isDel = domain.isDel,
-            updateTime = LocalDate.now().toString(),
+            updateTime = getUpdateTime(),
             id = domain.id,
         )
     }
@@ -39,7 +35,7 @@ object TodoEntityMapper {
             isDone = entity.todo.isDone,
             time = entity.todo.time,
             date = entity.todo.date,
-            todoGroupId = entity.todo.todoGroupId ?: -1,
+            todoGroupId = entity.todo.todoGroupId,
             isDel = entity.todo.isDel,
             originId = entity.todo.originId,
             groupName = entity.groupName,

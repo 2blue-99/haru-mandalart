@@ -1,6 +1,6 @@
 package com.coldblue.domain.todogroup
 
-import com.coldblue.data.repo.CurrentGroupRepository
+import com.coldblue.data.repository.CurrentGroupRepository
 import com.coldblue.model.CurrentGroup
 import javax.inject.Inject
 
