@@ -1,4 +1,4 @@
-package com.coldblue.data.repo
+package com.coldblue.data.repository
 
 import kotlinx.coroutines.flow.Flow
 

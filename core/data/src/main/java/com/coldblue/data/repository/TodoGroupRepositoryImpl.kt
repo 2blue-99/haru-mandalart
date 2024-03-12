@@ -1,4 +1,4 @@
-package com.coldblue.data.repo
+package com.coldblue.data.repository
 
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity

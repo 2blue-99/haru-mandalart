@@ -1,6 +1,6 @@
 package com.coldblue.domain.user
 
-import com.coldblue.data.repo.UserRepository
+import com.coldblue.data.repository.UserRepository
 import javax.inject.Inject
 
 class UpdateUserTokenUseCase @Inject constructor(

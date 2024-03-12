@@ -1,6 +1,6 @@
 package com.coldblue.domain.manda
 
-import com.coldblue.data.repo.MandaKeyRepository
+import com.coldblue.data.repository.MandaKeyRepository
 import com.coldblue.model.MandaKey
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

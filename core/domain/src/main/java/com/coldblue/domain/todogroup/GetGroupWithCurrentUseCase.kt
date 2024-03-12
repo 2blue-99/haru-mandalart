@@ -1,7 +1,7 @@
 package com.coldblue.domain.todogroup
 
-import com.coldblue.data.repo.CurrentGroupRepository
-import com.coldblue.data.repo.TodoGroupRepository
+import com.coldblue.data.repository.CurrentGroupRepository
+import com.coldblue.data.repository.TodoGroupRepository
 import com.coldblue.model.GroupWithCurrent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

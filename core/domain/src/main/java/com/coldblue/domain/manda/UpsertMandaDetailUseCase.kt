@@ -1,6 +1,6 @@
 package com.coldblue.domain.manda
 
-import com.coldblue.data.repo.MandaDetailRepository
+import com.coldblue.data.repository.MandaDetailRepository
 import com.coldblue.model.MandaDetail
 import javax.inject.Inject
 
