@@ -5,6 +5,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.FormatStrategy
+import com.orhanobut.logger.Logger
+import com.orhanobut.logger.PrettyFormatStrategy
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -12,7 +16,7 @@ class HMApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-
+        initLogger()
     }
 
     private fun createNotificationChannel() {
@@ -28,4 +32,10 @@ class HMApplication : Application() {
         notificationManager.createNotificationChannel(channel)
     }
 
+    private fun initLogger() {
+        val strategy: FormatStrategy = PrettyFormatStrategy.newBuilder()
+            .tag("logger").showThreadInfo(false).methodCount(1)
+            .build()
+        Logger.addLogAdapter(AndroidLogAdapter(strategy))
+    }
 }

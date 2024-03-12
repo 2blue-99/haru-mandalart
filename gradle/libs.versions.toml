@@ -1,6 +1,7 @@
 [versions]
 androidxActivity = "1.8.2"
 androidGradlePlugin = "8.2.2"
+logger = "2.2.0"
 org-jetbrains-kotlin-android = "1.8.10"
 androidxLifecycle = "2.7.0"
 kotlinxCoroutines = "1.7.3"
@@ -75,6 +76,7 @@ play-services-oss-licenses = { module = "com.google.android.gms:play-services-os
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+orhanobut-logger = { group = "com.orhanobut", name = "logger", version.ref = "logger" }
 
 androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
 
@@ -113,8 +115,6 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 # Plugins defined by this project
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin-android" }
-
-
 
 hm-android-application = { id = "hm.android.application", version = "unspecified" }
 hm-android-application-compose = { id = "hm.android.application.compose", version = "unspecified" }
