@@ -15,4 +15,7 @@ interface TodoRepository {
 
     suspend fun delTodo(todoId: Int)
 
+    suspend fun sync():Boolean
+
+
 }

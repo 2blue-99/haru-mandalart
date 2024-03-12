@@ -3,6 +3,9 @@ package com.coldblue.network.di
 import com.coldblue.network.BuildConfig
 import com.coldblue.network.SupabaseDataSource
 import com.coldblue.network.SupabaseDataSourceImpl
+import com.coldblue.network.datasource.TodoDataSource
+import com.coldblue.network.datasourceImpl.TodoDataSourceImpl
+import com.orhanobut.logger.Logger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,4 +41,9 @@ object SupabaseModule {
     @Provides
     fun provideSupaRepository(client: SupabaseClient): SupabaseDataSource =
         SupabaseDataSourceImpl(client)
+
+    @Singleton
+    @Provides
+    fun provideTodoDataSource(client: SupabaseClient): TodoDataSource =
+        TodoDataSourceImpl(client)
 }

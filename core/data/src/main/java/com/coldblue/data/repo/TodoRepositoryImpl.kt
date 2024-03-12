@@ -10,6 +10,8 @@ import com.coldblue.data.util.toLastLocalDate
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.model.AlarmItem
 import com.coldblue.model.Todo
+import com.coldblue.network.datasource.TodoDataSource
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -20,11 +22,13 @@ import javax.inject.Inject
 class TodoRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val alarmScheduler: AlarmScheduler,
+    private val todoDataSource: TodoDataSource,
 ) : TodoRepository {
 
     override suspend fun upsertTodo(todo: Todo) {
         todoDao.upsertTodo(todo.asEntity())
         todo.syncAlarm()
+        sync()
     }
 
     override fun getTodo(date: LocalDate): Flow<List<Todo>> {
@@ -46,6 +50,13 @@ class TodoRepositoryImpl @Inject constructor(
 
     override suspend fun delTodo(todoId: Int) {
         todoDao.deleteTodo(todoId)
+    }
+
+    override suspend fun sync(): Boolean {
+        val data = todoDataSource.getTodo("0")
+
+        Logger.d(data.map { it.title })
+        return false
     }
 
     private fun scheduleAlarm(item: AlarmItem) {
