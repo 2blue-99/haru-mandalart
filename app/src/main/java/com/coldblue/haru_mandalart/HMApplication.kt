@@ -9,7 +9,7 @@ import androidx.work.Configuration
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.coldblue.data.repository.TodoRepository
+import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.sync.SyncReadHelper
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
@@ -33,7 +33,6 @@ class HMApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        SyncReadHelper.initialize(this)
         createNotificationChannel()
         initLogger()
     }
@@ -56,6 +55,7 @@ class HMApplication : Application(), Configuration.Provider {
                 SyncWriteWorker::class.java.name -> SyncWriteWorker(
                     appContext,
                     workerParameters,
+                    todoRepository
                 )
 
                 else -> null

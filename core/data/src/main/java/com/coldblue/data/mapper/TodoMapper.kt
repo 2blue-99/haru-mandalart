@@ -1,9 +1,13 @@
 package com.coldblue.data.mapper
 
 import com.coldblue.data.util.getUpdateTime
+import com.coldblue.data.util.toDate
+import com.coldblue.data.util.toTime
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoWithGroupName
 import com.coldblue.model.Todo
+import com.coldblue.network.model.NetworkTodo
+import com.orhanobut.logger.Logger
 
 object TodoEntityMapper {
     fun asEntity(domain: Todo): TodoEntity {
@@ -48,14 +52,62 @@ object TodoEntityMapper {
             todoEntity.asDomain()
         }
     }
+
+    fun asEntity(network: List<NetworkTodo>, todoIds: List<Int?>): List<TodoEntity> {
+        return network.mapIndexed { index, networkTodo ->
+            networkTodo.asEntity(todoIds[index])
+        }
+    }
+
+    fun asEntity(network: NetworkTodo, todoId: Int?): TodoEntity {
+        return TodoEntity(
+            title = network.title,
+            content = network.content,
+            isDone = network.is_done,
+            time = network.time.toTime(),
+            date = network.date.toDate(),
+            todoGroupId = network.todo_group_id,
+            originId = network.id,
+            isSync = true,
+            isDel = network.is_del,
+            updateTime = network.update_time,
+            id = todoId ?: 0,
+        )
+    }
 }
+
+fun List<TodoEntity>.asNetworkModel(): List<NetworkTodo> {
+    return this.map {
+        it.asNetworkModel()
+    }
+}
+
+fun TodoEntity.asNetworkModel() = NetworkTodo(
+    title = title,
+    content = content,
+    is_done = isDone,
+    date = date.toString(),
+    todo_group_id = todoGroupId,
+    update_time = updateTime,
+    time = time?.run { this.toString() },
+    is_del = isDel,
+    id = originId
+)
 
 fun List<Todo>.asEntity(): List<TodoEntity> {
     return TodoEntityMapper.asEntity(this)
 }
 
+fun List<NetworkTodo>.asEntity(todoIds: List<Int?>): List<TodoEntity> {
+    return TodoEntityMapper.asEntity(this, todoIds)
+}
+
 fun Todo.asEntity(): TodoEntity {
     return TodoEntityMapper.asEntity(this)
+}
+
+fun NetworkTodo.asEntity(todoId: Int?): TodoEntity {
+    return TodoEntityMapper.asEntity(this, todoId)
 }
 
 fun List<TodoWithGroupName>.asDomain(): List<Todo> {

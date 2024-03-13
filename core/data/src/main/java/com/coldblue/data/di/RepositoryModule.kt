@@ -1,15 +1,15 @@
 package com.coldblue.data.di
 
-import com.coldblue.data.repository.MandaDetailRepository
-import com.coldblue.data.repository.MandaDetailRepositoryImpl
-import com.coldblue.data.repository.MandaKeyRepository
-import com.coldblue.data.repository.MandaKeyRepositoryImpl
-import com.coldblue.data.repository.CurrentGroupRepository
-import com.coldblue.data.repository.CurrentGroupRepositoryImpl
-import com.coldblue.data.repository.TodoGroupRepository
-import com.coldblue.data.repository.TodoGroupRepositoryImpl
-import com.coldblue.data.repository.TodoRepository
-import com.coldblue.data.repository.TodoRepositoryImpl
+import com.coldblue.data.repository.manda.MandaDetailRepository
+import com.coldblue.data.repository.manda.MandaDetailRepositoryImpl
+import com.coldblue.data.repository.manda.MandaKeyRepository
+import com.coldblue.data.repository.manda.MandaKeyRepositoryImpl
+import com.coldblue.data.repository.todo.CurrentGroupRepository
+import com.coldblue.data.repository.todo.CurrentGroupRepositoryImpl
+import com.coldblue.data.repository.todo.TodoGroupRepository
+import com.coldblue.data.repository.todo.TodoGroupRepositoryImpl
+import com.coldblue.data.repository.todo.TodoRepository
+import com.coldblue.data.repository.todo.TodoRepositoryImpl
 import com.coldblue.data.repository.UserRepository
 import com.coldblue.data.repository.UserRepositoryImpl
 import com.coldblue.data.util.LoginHelper

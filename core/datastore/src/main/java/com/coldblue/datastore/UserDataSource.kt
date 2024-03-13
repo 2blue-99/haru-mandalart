@@ -11,8 +11,8 @@ interface UserDataSource {
     val isInit: Flow<Boolean>
 
     suspend fun updateToken(token: String)
-    suspend fun updateTodoTime(time: String)
-    suspend fun updateMandaTime(time: String)
+    suspend fun setTodoUpdateTime(time: String)
+    suspend fun setMandaUpdateTime(time: String)
     suspend fun updateTutorial(state: Boolean)
     suspend fun updateAlarm(state: Boolean)
     suspend fun updateInit(state: Boolean)

@@ -5,11 +5,11 @@ import java.time.LocalTime
 
 data class Todo(
     val title: String,
-    val content: String="",
-    val isDone: Boolean=false,
-    val time: LocalTime?=null,
-    val date: LocalDate=LocalDate.now(),
-    val todoGroupId: Int?=null,
+    val content: String? = null,
+    val isDone: Boolean = false,
+    val time: LocalTime? = null,
+    val date: LocalDate = LocalDate.now(),
+    val todoGroupId: Int? = null,
     val groupName: String = "",
     val isDel: Boolean = false,
     val originId: Int = 0,

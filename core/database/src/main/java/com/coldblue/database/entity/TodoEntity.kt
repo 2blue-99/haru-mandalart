@@ -11,7 +11,7 @@ import java.time.LocalTime
 @Entity(tableName = "todo")
 data class TodoEntity(
     @ColumnInfo(name = "title") val title: String,
-    @ColumnInfo(name = "content") val content: String,
+    @ColumnInfo(name = "content") val content: String?,
     @ColumnInfo(name = "is_done") val isDone: Boolean,
     @ColumnInfo(name = "time") val time: LocalTime?,
     @ColumnInfo(name = "date") val date: LocalDate,

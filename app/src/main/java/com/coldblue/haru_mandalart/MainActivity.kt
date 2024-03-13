@@ -30,12 +30,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.data.sync.SyncReadHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.login.LoginScreen
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.orhanobut.logger.Logger
 import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.flowOf
@@ -47,6 +49,8 @@ class MainActivity : ComponentActivity() {
     lateinit var loginHelper: LoginHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContent {
             HarumandalartTheme {
                 val context = LocalContext.current
@@ -82,9 +86,13 @@ class MainActivity : ComponentActivity() {
                     BackOnPressed()
 //                    HMApp()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
-                        when(it){
+                        when (it) {
                             LoginState.Logout -> LoginScreen()
-                            LoginState.Login -> HMApp()
+                            LoginState.Login -> {
+                                SyncReadHelper.initialize(this)
+                                HMApp()
+                            }
+
                             else -> {}
                         }
                     }

@@ -33,12 +33,12 @@ class UserDataSourceImpl @Inject constructor(
             preferences[tokenKey] = token
         }
     }
-    override suspend fun updateTodoTime(time: String) {
+    override suspend fun setTodoUpdateTime(time: String) {
         dataStore.edit { preferences ->
             preferences[todoKey] = time
         }
     }
-    override suspend fun updateMandaTime(time: String) {
+    override suspend fun setMandaUpdateTime(time: String) {
         dataStore.edit { preferences ->
             preferences[mandaKey] = time
         }

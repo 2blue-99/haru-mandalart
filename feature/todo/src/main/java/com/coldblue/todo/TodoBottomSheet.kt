@@ -90,7 +90,7 @@ fun TodoBottomSheet(
 
     var onDetail by remember { mutableStateOf(false) }
     var titleText by remember { mutableStateOf(todo.title) }
-    var contentText by remember { mutableStateOf(todo.content) }
+    var contentText by remember { mutableStateOf(todo.content?:"") }
 
     var currentTodoGroupId by remember { mutableStateOf(currentGroupList.firstOrNull { it.todoGroupId == todo.todoGroupId }?.todoGroupId) }
 
