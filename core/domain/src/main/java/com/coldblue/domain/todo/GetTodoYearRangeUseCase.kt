@@ -1,6 +1,6 @@
 package com.coldblue.domain.todo
 
-import com.coldblue.data.repository.TodoRepository
+import com.coldblue.data.repository.todo.TodoRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

@@ -6,7 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkerParameters
-import com.coldblue.data.repository.TodoRepository
+import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.sync.SyncReadHelper.SYNC_READ
 import com.coldblue.data.sync.SyncReadHelper.syncReadConstraints
 import com.orhanobut.logger.Logger
@@ -31,14 +31,11 @@ class SyncReadWorker @AssistedInject constructor(
                 async { todoRepository.syncRead() },
             ).all { it }
             if (syncedSucceed) {
-                Logger.d("리드 실행성공")
                 Result.success()
             } else {
-                Logger.e("리드 실행 다시")
                 Result.retry()
             }
         } catch (e: Exception) {
-            Logger.e("리드 실행 실패")
             Result.failure()
         }
     }

@@ -1,6 +1,6 @@
 package com.coldblue.domain.manda
 
-import com.coldblue.data.repository.MandaDetailRepository
+import com.coldblue.data.repository.manda.MandaDetailRepository
 import javax.inject.Inject
 
 class DeleteMandaDetailUseCase @Inject constructor(

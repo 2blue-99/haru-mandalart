@@ -1,4 +1,4 @@
-package com.coldblue.data.repository
+package com.coldblue.data.repository.manda
 
 import com.coldblue.model.MandaKey
 import kotlinx.coroutines.flow.Flow

@@ -19,11 +19,11 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateTodoTime(time: String) {
-        userDataSource.updateTodoTime(time)
+        userDataSource.setTodoUpdateTime(time)
     }
 
     override suspend fun updateMandaTime(time: String) {
-        userDataSource.updateMandaTime(time)
+        userDataSource.setMandaUpdateTime(time)
     }
 
     override suspend fun updateTutorial(state: Boolean) {

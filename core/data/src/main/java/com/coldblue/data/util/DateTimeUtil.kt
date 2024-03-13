@@ -10,6 +10,10 @@ fun getUpdateTime(): String {
     return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli().toString()
 }
 
+fun getUpdateTime(list: List<String>): String {
+    return list.max()
+}
+
 fun LocalTime.getDisplayName(): String {
     return if (isAm()) {
         "오전 ${hour.getAm()}:${minute.padTwoZero()}"

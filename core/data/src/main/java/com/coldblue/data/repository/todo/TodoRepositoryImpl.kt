@@ -1,18 +1,22 @@
-package com.coldblue.data.repository
+package com.coldblue.data.repository.todo
 
+import android.util.Log
 import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.isNotToday
 import com.coldblue.data.util.toFirstLocalDate
 import com.coldblue.data.util.toLastLocalDate
 import com.coldblue.database.dao.TodoDao
+import com.coldblue.datastore.UserDataSource
 import com.coldblue.model.AlarmItem
 import com.coldblue.model.Todo
 import com.coldblue.network.datasource.TodoDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,6 +25,7 @@ import javax.inject.Inject
 class TodoRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val alarmScheduler: AlarmScheduler,
+    private val userDataSource: UserDataSource,
     private val todoDataSource: TodoDataSource,
 ) : TodoRepository {
 
@@ -52,31 +57,34 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncRead(): Boolean {
-        val data = todoDataSource.getTodo("0")
+        return try {
+            val newTodos = todoDataSource.getTodo(userDataSource.todoUpdateTime.first())
+            val originIds = newTodos.map { it.id }
+            val todoIds = todoDao.getTodoIdByOriginIds(originIds)
+            val toUpsertTodos = newTodos.asEntity(todoIds)
+            todoDao.upsertTodos(toUpsertTodos)
+            userDataSource.setTodoUpdateTime(getUpdateTime(toUpsertTodos.map { it.updateTime }))
 
-        Logger.d(data.map { it.title })
-        return true
+            true
+        } catch (e: Exception) {
+            Logger.e(e.message ?: "err")
+            false
+        }
+
     }
 
-    private fun scheduleAlarm(item: AlarmItem) {
-        alarmScheduler.schedule(item)
-    }
-
-    private fun cancelAlarm(item: AlarmItem) {
-        alarmScheduler.cancel(item)
-    }
 
     private fun Todo.syncAlarm() {
         if (time == null) {
-            cancelAlarm(AlarmItem(id = id))
+            alarmScheduler.cancel(AlarmItem(id = id))
             return
         }
         if (date.isNotToday()) return
         if (isDel or isDone) {
-            cancelAlarm(AlarmItem(LocalDateTime.of(date, time), title, id))
+            alarmScheduler.cancel(AlarmItem(LocalDateTime.of(date, time), title, id))
             return
         }
-        scheduleAlarm(AlarmItem(LocalDateTime.of(date, time), title, id))
+        alarmScheduler.schedule(AlarmItem(LocalDateTime.of(date, time), title, id))
     }
 
 }

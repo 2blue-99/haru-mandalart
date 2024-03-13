@@ -1,4 +1,4 @@
-package com.coldblue.data.repository
+package com.coldblue.data.repository.todo
 
 import com.coldblue.model.TodoGroup
 import kotlinx.coroutines.flow.Flow
