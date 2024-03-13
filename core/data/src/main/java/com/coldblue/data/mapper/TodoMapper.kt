@@ -89,7 +89,7 @@ fun TodoEntity.asNetworkModel() = NetworkTodo(
     date = date.toString(),
     todo_group_id = todoGroupId,
     update_time = updateTime,
-    time = time?.run { this.toString() },
+    time = if (time == null) null else time.toString(),
     is_del = isDel,
     id = originId
 )

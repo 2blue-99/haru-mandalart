@@ -1,10 +1,11 @@
 package com.coldblue.network.model
 
+import com.coldblue.model.NetworkModel
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class NetworkTodo(
-    val id: Int = 0,
+    override val id: Int = 0,
     val title: String,
     val content: String? = null,
     val is_done: Boolean,
@@ -14,4 +15,4 @@ data class NetworkTodo(
     val time: String? = null,
     val is_del: Boolean,
     val user_id: String? = null,
-)
+) : NetworkModel
