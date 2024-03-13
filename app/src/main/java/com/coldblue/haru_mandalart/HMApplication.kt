@@ -33,7 +33,6 @@ class HMApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        SyncReadHelper.initialize(this)
         createNotificationChannel()
         initLogger()
     }
@@ -56,6 +55,7 @@ class HMApplication : Application(), Configuration.Provider {
                 SyncWriteWorker::class.java.name -> SyncWriteWorker(
                     appContext,
                     workerParameters,
+                    todoRepository
                 )
 
                 else -> null

@@ -31,7 +31,10 @@ class SyncReadWorker @AssistedInject constructor(
                 async { todoRepository.syncRead() },
             ).all { it }
             if (syncedSucceed) {
+                Logger.d("읽기 성공")
+                
                 Result.success()
+
             } else {
                 Result.retry()
             }

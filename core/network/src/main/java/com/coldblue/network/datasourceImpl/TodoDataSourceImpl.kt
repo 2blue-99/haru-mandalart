@@ -3,6 +3,7 @@ package com.coldblue.network.datasourceImpl
 import com.coldblue.network.datasource.TodoDataSource
 import com.coldblue.network.model.NetworkId
 import com.coldblue.network.model.NetworkTodo
+import com.orhanobut.logger.Logger
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
@@ -16,10 +17,11 @@ class TodoDataSourceImpl @Inject constructor(
             filter {
                 NetworkTodo::update_time gt update
             }
-        }.decodeList()
+        }.decodeList<NetworkTodo>()
     }
 
     override suspend fun upsertTodo(todo: List<NetworkTodo>): List<Int> {
+        Logger.d(todo)
         val result =
             client.postgrest["todo"].upsert(todo, onConflict = "id") {
                 select(Columns.list("id"))

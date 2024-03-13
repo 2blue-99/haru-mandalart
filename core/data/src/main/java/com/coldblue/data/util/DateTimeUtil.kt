@@ -1,18 +1,29 @@
 package com.coldblue.data.util
 
+import com.orhanobut.logger.Logger
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 fun getUpdateTime(): String {
     return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli().toString()
 }
 
-fun getUpdateTime(list: List<String>): String {
-    return list.max()
+fun String?.toTime(): LocalTime? {
+    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
+    return if (this.isNullOrBlank()) null
+    else LocalTime.parse(this, formatter)
+
 }
+
+fun String.toDate(): LocalDate {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return LocalDate.parse(this, formatter)
+}
+
 
 fun LocalTime.getDisplayName(): String {
     return if (isAm()) {

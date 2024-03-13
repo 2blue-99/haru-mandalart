@@ -4,7 +4,8 @@ import android.util.Log
 import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
-import com.coldblue.data.util.getUpdateTime
+import com.coldblue.data.mapper.asNetworkModel
+import com.coldblue.data.sync.SyncWriteHelper
 import com.coldblue.data.util.isNotToday
 import com.coldblue.data.util.toFirstLocalDate
 import com.coldblue.data.util.toLastLocalDate
@@ -27,12 +28,13 @@ class TodoRepositoryImpl @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val userDataSource: UserDataSource,
     private val todoDataSource: TodoDataSource,
+    private val syncWriteHelper: SyncWriteHelper,
 ) : TodoRepository {
 
     override suspend fun upsertTodo(todo: Todo) {
         todoDao.upsertTodo(todo.asEntity())
         todo.syncAlarm()
-        syncRead()
+        syncWriteHelper.syncWrite()
     }
 
     override fun getTodo(date: LocalDate): Flow<List<Todo>> {
@@ -57,20 +59,41 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncRead(): Boolean {
-        return try {
+
+        try {
+
             val newTodos = todoDataSource.getTodo(userDataSource.todoUpdateTime.first())
             val originIds = newTodos.map { it.id }
             val todoIds = todoDao.getTodoIdByOriginIds(originIds)
             val toUpsertTodos = newTodos.asEntity(todoIds)
             todoDao.upsertTodos(toUpsertTodos)
-            userDataSource.setTodoUpdateTime(getUpdateTime(toUpsertTodos.map { it.updateTime }))
 
-            true
+            val maxUpdateTime = toUpsertTodos.maxOfOrNull { it.updateTime }
+            maxUpdateTime?.run { userDataSource.setTodoUpdateTime(this) }
+            return true
         } catch (e: Exception) {
-            Logger.e(e.message ?: "err")
-            false
+            Logger.e("${e.message}")
+            return false
         }
 
+    }
+
+    override suspend fun syncWrite(): Boolean {
+        return try {
+            val toWrite = todoDao.getToWriteTodos(userDataSource.todoUpdateTime.first())
+            Logger.d(toWrite)
+            val originIdList = todoDataSource.upsertTodo(toWrite.asNetworkModel())
+            val todosWithOriginId = toWrite.mapIndexed { index, todoEntity ->
+                todoEntity.copy(originId = originIdList[index], isSync = true)
+            }
+            todoDao.upsertTodos(todosWithOriginId)
+            val maxUpdateTime = toWrite.maxOfOrNull { it.updateTime }
+            maxUpdateTime?.run { userDataSource.setTodoUpdateTime(this) }
+            true
+        } catch (e: Exception) {
+            Logger.e("${e.message}")
+            false
+        }
     }
 
 

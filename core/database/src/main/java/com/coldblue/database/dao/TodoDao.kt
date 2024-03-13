@@ -39,6 +39,10 @@ interface TodoDao {
 
 
 
+
+
+    @Query("SELECT * FROM todo WHERE update_time > :updateTime AND is_sync=0")
+    fun getToWriteTodos(updateTime: String): List<TodoEntity>
     @Transaction
     fun getTodoIdByOriginIds(originIds: List<Int>): List<Int?> {
         return originIds.map { originId ->

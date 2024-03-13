@@ -1,10 +1,13 @@
 package com.coldblue.data.mapper
 
 import com.coldblue.data.util.getUpdateTime
+import com.coldblue.data.util.toDate
+import com.coldblue.data.util.toTime
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoWithGroupName
 import com.coldblue.model.Todo
 import com.coldblue.network.model.NetworkTodo
+import com.orhanobut.logger.Logger
 
 object TodoEntityMapper {
     fun asEntity(domain: Todo): TodoEntity {
@@ -61,8 +64,8 @@ object TodoEntityMapper {
             title = network.title,
             content = network.content,
             isDone = network.is_done,
-            time = network.time,
-            date = network.date,
+            time = network.time.toTime(),
+            date = network.date.toDate(),
             todoGroupId = network.todo_group_id,
             originId = network.id,
             isSync = true,
@@ -72,6 +75,24 @@ object TodoEntityMapper {
         )
     }
 }
+
+fun List<TodoEntity>.asNetworkModel(): List<NetworkTodo> {
+    return this.map {
+        it.asNetworkModel()
+    }
+}
+
+fun TodoEntity.asNetworkModel() = NetworkTodo(
+    title = title,
+    content = content,
+    is_done = isDone,
+    date = date.toString(),
+    todo_group_id = todoGroupId,
+    update_time = updateTime,
+    time = time?.run { this.toString() },
+    is_del = isDel,
+    id = originId
+)
 
 fun List<Todo>.asEntity(): List<TodoEntity> {
     return TodoEntityMapper.asEntity(this)
@@ -84,7 +105,6 @@ fun List<NetworkTodo>.asEntity(todoIds: List<Int?>): List<TodoEntity> {
 fun Todo.asEntity(): TodoEntity {
     return TodoEntityMapper.asEntity(this)
 }
-
 
 fun NetworkTodo.asEntity(todoId: Int?): TodoEntity {
     return TodoEntityMapper.asEntity(this, todoId)
