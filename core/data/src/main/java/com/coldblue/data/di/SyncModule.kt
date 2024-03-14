@@ -17,7 +17,7 @@ import javax.inject.Singleton
 object SyncModule {
     @Provides
     @Singleton
-    fun provideSyncWriteHelper(@ApplicationContext appContext: Context,updateTimeDataSource: UpdateTimeDataSource): SyncHelper {
-        return SyncHelperImpl(appContext,updateTimeDataSource)
+    fun provideSyncWriteHelper(@ApplicationContext appContext: Context): SyncHelper {
+        return SyncHelperImpl(appContext)
     }
 }

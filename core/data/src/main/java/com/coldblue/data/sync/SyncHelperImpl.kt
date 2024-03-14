@@ -20,7 +20,6 @@ import javax.inject.Inject
 
 class SyncHelperImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val updateTimeDataSource: UpdateTimeDataSource,
 ) : SyncHelper {
     private val SYNC_WRITE = "SyncWrite"
     private val SYNC_READ = "SyncRead"
@@ -47,9 +46,12 @@ class SyncHelperImpl @Inject constructor(
         .setConstraints(syncConstraints)
         .build()
 
-    override suspend fun setMaxUpdateTime(data: List<SyncableEntity>) {
+    override suspend fun setMaxUpdateTime(
+        data: List<SyncableEntity>,
+        updateTime: suspend (String) -> Unit
+    ) {
         val maxUpdateTime = data.maxOfOrNull { it.updateTime }
-        maxUpdateTime?.run { updateTimeDataSource.setTodoUpdateTime(this) }
+        maxUpdateTime?.run { updateTime(this) }
     }
 
     override fun syncWrite() {
@@ -69,8 +71,11 @@ class SyncHelperImpl @Inject constructor(
         )
     }
 
-    override suspend fun <T> toSyncData(getToSyncData: suspend (String) -> List<T>): List<T> {
-        return getToSyncData(updateTimeDataSource.todoUpdateTime.first())
+    override suspend fun <T> toSyncData(
+        getToSyncData: suspend (String) -> List<T>,
+        updateTime: String
+    ): List<T> {
+        return getToSyncData(updateTime)
     }
 
 
