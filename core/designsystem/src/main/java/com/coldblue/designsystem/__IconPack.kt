@@ -6,6 +6,8 @@ import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Home
 import com.coldblue.designsystem.iconpack.Manda
 import com.coldblue.designsystem.iconpack.Plus
+import com.coldblue.designsystem.iconpack.ZoomIn
+import com.coldblue.designsystem.iconpack.ZoomOut
 import kotlin.collections.List as ____KtList
 
 public object IconPack
@@ -17,6 +19,6 @@ public val IconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(History, Home, Manda,Check,Plus)
+    __AllIcons= listOf(History, Home, Manda,Check,Plus, ZoomIn, ZoomOut)
     return __AllIcons!!
   }

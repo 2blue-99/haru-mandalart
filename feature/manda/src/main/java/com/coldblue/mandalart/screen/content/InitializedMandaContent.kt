@@ -23,10 +23,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -49,10 +51,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMMandaEmptyButton
 import com.coldblue.designsystem.component.HMMandaFillButton
 import com.coldblue.designsystem.component.HMMandaOutlineButton
 import com.coldblue.designsystem.component.HMTitleComponent
+import com.coldblue.designsystem.iconpack.ZoomIn
+import com.coldblue.designsystem.iconpack.ZoomOut
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
@@ -352,27 +357,29 @@ fun Mandalart(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
+    Column {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd
         ) {
-            Button(
+            IconButton(
                 modifier = Modifier.size(30.dp),
                 onClick = {
                     if (zoomState)
                         zoomInAndOut(-1)
                     else
-                        zoomInAndOut(1) // TODO 임의 값
+                        zoomInAndOut(1)
                 }
-            ) { Text(text = "C") }
+            ) {
+                if(zoomState)
+                    Icon(imageVector = IconPack.ZoomOut, tint = HMColor.Primary, contentDescription = "")
+                else
+                    Icon(imageVector = IconPack.ZoomIn, tint = HMColor.Primary, contentDescription = "")
+            }
         }
-
         LazyColumn(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(0.9f)
@@ -582,7 +589,6 @@ fun Mandalart(
 
                 }
             }
-
         }
     }
 }
