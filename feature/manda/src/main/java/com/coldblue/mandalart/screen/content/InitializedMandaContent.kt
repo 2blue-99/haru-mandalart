@@ -51,10 +51,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMMandaEmptyButton
 import com.coldblue.designsystem.component.HMMandaFillButton
 import com.coldblue.designsystem.component.HMMandaOutlineButton
 import com.coldblue.designsystem.component.HMTitleComponent
+import com.coldblue.designsystem.iconpack.ZoomIn
+import com.coldblue.designsystem.iconpack.ZoomOut
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
@@ -355,6 +358,25 @@ fun Mandalart(
     }
 
     Column {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            IconButton(
+                modifier = Modifier.size(30.dp),
+                onClick = {
+                    if (zoomState)
+                        zoomInAndOut(-1)
+                    else
+                        zoomInAndOut(1)
+                }
+            ) {
+                if(zoomState)
+                    Icon(imageVector = IconPack.ZoomOut, tint = HMColor.Primary, contentDescription = "")
+                else
+                    Icon(imageVector = IconPack.ZoomIn, tint = HMColor.Primary, contentDescription = "")
+            }
+        }
         LazyColumn(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -566,26 +588,6 @@ fun Mandalart(
                     }
 
                 }
-            }
-        }
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            IconButton(
-                modifier = Modifier.size(30.dp),
-                onClick = {
-                    if (zoomState)
-                        zoomInAndOut(-1)
-                    else
-                        zoomInAndOut(1)
-                }
-            ) {
-                if(zoomState)
-                    Icon(imageVector = Icons.Default.AddCircle, tint = HMColor.Primary, contentDescription = "")
-                else
-                    Icon(imageVector = Icons.Default.Add, tint = HMColor.Primary, contentDescription = "")
             }
         }
     }
