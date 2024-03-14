@@ -14,7 +14,10 @@ interface TodoGroupDao {
     fun getTodoGroup(): Flow<List<TodoGroupEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertTodoGroup(todoGroupEntities: TodoGroupEntity)
+    suspend fun upsertTodoGroup(todoGroup: TodoGroupEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertTodoGroup(todoGroups: List<TodoGroupEntity>)
 
     @Query("Delete From todo_group WHERE id = :todoGroupId")
     suspend fun deleteTodoGroup(todoGroupId: Int)

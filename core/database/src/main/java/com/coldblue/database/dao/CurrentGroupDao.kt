@@ -21,6 +21,9 @@ interface CurrentGroupDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCurrentGroup(currentGroup: CurrentGroupEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertCurrentGroup(currentGroups: List<CurrentGroupEntity>)
+
     @Transaction
     suspend fun deleteCurrentGroupWithTodo(currentGroupId: Int, todoGroupId: Int) {
         deleteCurrentGroup(currentGroupId)

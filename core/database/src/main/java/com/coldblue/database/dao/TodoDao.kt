@@ -29,7 +29,7 @@ interface TodoDao {
     suspend fun upsertTodo(todo: TodoEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertTodos(todos: List<TodoEntity>)
+    suspend fun upsertTodo(todos: List<TodoEntity>)
 
     @Query("Delete From todo WHERE id = :todoId")
     suspend fun deleteTodo(todoId: Int)
