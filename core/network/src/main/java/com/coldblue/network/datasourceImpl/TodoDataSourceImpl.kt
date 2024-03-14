@@ -19,9 +19,9 @@ class TodoDataSourceImpl @Inject constructor(
         }.decodeList<NetworkTodo>()
     }
 
-    override suspend fun upsertTodo(todo: List<NetworkTodo>): List<Int> {
+    override suspend fun upsertTodo(todos: List<NetworkTodo>): List<Int> {
         val result =
-            client.postgrest["todo"].upsert(todo, onConflict = "id") {
+            client.postgrest["todo"].upsert(todos, onConflict = "id") {
                 select(Columns.list("id"))
             }.decodeList<NetworkId>()
         return result.map { it.id }

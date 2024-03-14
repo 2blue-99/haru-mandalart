@@ -19,9 +19,9 @@ class CurrentGroupDataSourceImpl @Inject constructor(
         }.decodeList<NetworkCurrentGroup>()
     }
 
-    override suspend fun upsertCurrentGroup(currentGroup: List<NetworkCurrentGroup>): List<Int> {
+    override suspend fun upsertCurrentGroup(currentGroups: List<NetworkCurrentGroup>): List<Int> {
         val result =
-            client.postgrest["currentGroup"].upsert(currentGroup, onConflict = "id") {
+            client.postgrest["currentGroup"].upsert(currentGroups, onConflict = "id") {
                 select(Columns.list("id"))
             }.decodeList<NetworkId>()
         return result.map { it.id }

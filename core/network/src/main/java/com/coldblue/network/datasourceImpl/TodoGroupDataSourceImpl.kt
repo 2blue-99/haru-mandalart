@@ -19,9 +19,9 @@ class TodoGroupDataSourceImpl @Inject constructor(
         }.decodeList<NetWorkTodoGroup>()
     }
 
-    override suspend fun upsertTodoGroup(todoGroup: List<NetWorkTodoGroup>): List<Int> {
+    override suspend fun upsertTodoGroup(todoGroups: List<NetWorkTodoGroup>): List<Int> {
         val result =
-            client.postgrest["todoGroup"].upsert(todoGroup, onConflict = "id") {
+            client.postgrest["todoGroup"].upsert(todoGroups, onConflict = "id") {
                 select(Columns.list("id"))
             }.decodeList<NetworkId>()
         return result.map { it.id }

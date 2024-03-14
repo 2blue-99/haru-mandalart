@@ -6,5 +6,5 @@ interface CurrentGroupDataSource {
 
     suspend fun getCurrentGroup(update: String): List<NetworkCurrentGroup>
 
-    suspend fun upsertCurrentGroup(currentGroup: List<NetworkCurrentGroup>): List<Int>
+    suspend fun upsertCurrentGroup(currentGroups: List<NetworkCurrentGroup>): List<Int>
 }

@@ -6,5 +6,5 @@ interface TodoGroupDataSource {
 
     suspend fun getTodoGroup(update: String): List<NetWorkTodoGroup>
 
-    suspend fun upsertTodoGroup(todoGroup: List<NetWorkTodoGroup>): List<Int>
+    suspend fun upsertTodoGroup(todoGroups: List<NetWorkTodoGroup>): List<Int>
 }

@@ -26,4 +26,12 @@ class MandaKeyRepositoryImpl @Inject constructor(
         mandaKeyDao.deleteAllMandaKey()
     }
 
+    override suspend fun syncRead(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun syncWrite(): Boolean {
+        TODO("Not yet implemented")
+    }
+
 }
