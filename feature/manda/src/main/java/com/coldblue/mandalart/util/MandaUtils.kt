@@ -39,7 +39,6 @@ object MandaUtils {
 
         val centerList = mutableListOf<MandaType>()
 
-
         for (keyId in 1..9) {
 
             if (keyIdList.contains(keyId)) {
@@ -50,7 +49,7 @@ object MandaUtils {
 
                 for (id in 1..9) {
 
-                    val detailId = id + (keyId-1)*9
+                    val detailId = id + (keyId - 1) * 9
 
                     if (detailIdList.contains(detailId)) {
                         val detail = detailList.removeFirst()
@@ -68,7 +67,7 @@ object MandaUtils {
                             )
                         )
 
-                        if(!detail.isDone)
+                        if (!detail.isDone)
                             isDone = false
 
                     } else {
@@ -81,15 +80,22 @@ object MandaUtils {
                 }
 
                 val keyType = MandaType.Key(
-                    mandaUI = MandaUI(id = 5, name = key.name, darkColor = darkColor, isDone = isDone),
+                    mandaUI = MandaUI(
+                        id = keyId,
+                        name = key.name,
+                        darkColor = if (keyId == 5) HMColor.Primary else darkColor,
+                        isDone = isDone
+                    ),
                     groupIdList = groupIdList
                 )
                 smallList[4] = keyType
                 centerList.add(keyType)
-                bigList.add(MandaState.Exist(
-                    id = keyId,
-                    mandaUIList = smallList.toList()
-                ))
+                bigList.add(
+                    MandaState.Exist(
+                        id = keyId,
+                        mandaUIList = smallList.toList()
+                    )
+                )
                 smallList.clear()
             } else {
                 bigList.add(MandaState.Empty(id = keyId))
@@ -129,7 +135,7 @@ object MandaUtils {
             HMColor.Dark.Green -> 4
             HMColor.Dark.Blue -> 5
             HMColor.Dark.Indigo -> 6
-            else -> 7
+            else -> 0
         }
     }
 }

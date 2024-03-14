@@ -493,6 +493,11 @@ fun Mandalart(
                                                                             color = data.darkColor,
                                                                             isDone = data.isDone
                                                                         ) {
+                                                                            Log.e(
+                                                                                "TAG",
+                                                                                "Mandalart: $data",
+
+                                                                            )
                                                                             changeBottomSheet(
                                                                                 true,
                                                                                 MandaBottomSheetContentState.Update(

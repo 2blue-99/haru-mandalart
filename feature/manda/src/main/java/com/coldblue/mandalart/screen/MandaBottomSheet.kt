@@ -71,8 +71,6 @@ fun MandaBottomSheet(
     var buttonClickableState by remember { mutableStateOf(mandaBottomSheetContentState is MandaBottomSheetContentState.Update) }
     var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
 
-
-
     Log.e("TAG", "MandaBottomSheet: $mandaUI")
 
     ModalBottomSheet(
