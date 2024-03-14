@@ -23,10 +23,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -352,27 +354,10 @@ fun Mandalart(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            Button(
-                modifier = Modifier.size(30.dp),
-                onClick = {
-                    if (zoomState)
-                        zoomInAndOut(-1)
-                    else
-                        zoomInAndOut(1) // TODO 임의 값
-                }
-            ) { Text(text = "C") }
-        }
-
+    Column {
         LazyColumn(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(0.9f)
@@ -582,7 +567,26 @@ fun Mandalart(
 
                 }
             }
+        }
 
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            IconButton(
+                modifier = Modifier.size(30.dp),
+                onClick = {
+                    if (zoomState)
+                        zoomInAndOut(-1)
+                    else
+                        zoomInAndOut(1)
+                }
+            ) {
+                if(zoomState)
+                    Icon(imageVector = Icons.Default.AddCircle, tint = HMColor.Primary, contentDescription = "")
+                else
+                    Icon(imageVector = Icons.Default.Add, tint = HMColor.Primary, contentDescription = "")
+            }
         }
     }
 }
