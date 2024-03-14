@@ -1,7 +1,6 @@
 package com.coldblue.data.mapper
 
 import com.coldblue.database.entity.CurrentGroupEntity
-import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.CurrentGroup
 import java.time.LocalDate
 

@@ -4,19 +4,18 @@ import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
 import com.coldblue.data.mapper.asNetworkModel
-import com.coldblue.data.sync.SyncWriteHelper
+import com.coldblue.data.mapper.asSyncedEntity
+import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.isNotToday
 import com.coldblue.data.util.toFirstLocalDate
 import com.coldblue.data.util.toLastLocalDate
 import com.coldblue.database.dao.TodoDao
-import com.coldblue.datastore.UserDataSource
 import com.coldblue.model.AlarmItem
 import com.coldblue.model.Todo
 import com.coldblue.network.datasource.TodoDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,15 +24,14 @@ import javax.inject.Inject
 class TodoRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val alarmScheduler: AlarmScheduler,
-    private val userDataSource: UserDataSource,
     private val todoDataSource: TodoDataSource,
-    private val syncWriteHelper: SyncWriteHelper,
+    private val syncHelper: SyncHelper,
 ) : TodoRepository {
 
     override suspend fun upsertTodo(todo: Todo) {
         todoDao.upsertTodo(todo.asEntity())
         todo.syncAlarm()
-        syncWriteHelper.syncWrite()
+        syncHelper.syncWrite()
     }
 
     override fun getTodo(date: LocalDate): Flow<List<Todo>> {
@@ -59,15 +57,12 @@ class TodoRepositoryImpl @Inject constructor(
 
     override suspend fun syncRead(): Boolean {
         try {
-            val remoteNew = todoDataSource.getTodo(userDataSource.todoUpdateTime.first())
+            val remoteNew = syncHelper.toSyncData(todoDataSource::getTodo)
             val originIds = remoteNew.map { it.id }
             val todoIds = todoDao.getTodoIdByOriginIds(originIds)
-
             val toUpsertTodos = remoteNew.asEntity(todoIds)
-
             todoDao.upsertTodos(toUpsertTodos)
-            val maxUpdateTime = toUpsertTodos.maxOfOrNull { it.updateTime }
-            maxUpdateTime?.run { userDataSource.setTodoUpdateTime(this) }
+            syncHelper.setMaxUpdateTime(toUpsertTodos)
             return true
         } catch (e: Exception) {
             Logger.e("${e.message}")
@@ -77,16 +72,11 @@ class TodoRepositoryImpl @Inject constructor(
 
     override suspend fun syncWrite(): Boolean {
         try {
-            val localNew = todoDao.getToWriteTodos(userDataSource.todoUpdateTime.first())
+            val localNew = syncHelper.toSyncData(todoDao::getToWriteTodos)
             val originIds = todoDataSource.upsertTodo(localNew.asNetworkModel())
-
-            val toUpsertTodos = localNew.mapIndexed { index, todoEntity ->
-                todoEntity.copy(originId = originIds[index], isSync = true)
-            }
-
+            val toUpsertTodos = localNew.asSyncedEntity(originIds)
             todoDao.upsertTodos(toUpsertTodos)
-            val maxUpdateTime = localNew.maxOfOrNull { it.updateTime }
-            maxUpdateTime?.run { userDataSource.setTodoUpdateTime(this) }
+            syncHelper.setMaxUpdateTime(toUpsertTodos)
             return true
         } catch (e: Exception) {
             Logger.e("${e.message}")

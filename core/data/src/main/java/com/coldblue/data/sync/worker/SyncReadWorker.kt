@@ -3,12 +3,8 @@ package com.coldblue.data.sync.worker
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkerParameters
 import com.coldblue.data.repository.todo.TodoRepository
-import com.coldblue.data.sync.SyncReadHelper.SYNC_READ
-import com.coldblue.data.sync.SyncReadHelper.syncReadConstraints
 import com.orhanobut.logger.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -41,12 +37,5 @@ class SyncReadWorker @AssistedInject constructor(
         } catch (e: Exception) {
             Result.failure()
         }
-    }
-
-    companion object {
-        fun startUpSyncWork() = OneTimeWorkRequestBuilder<SyncReadWorker>().addTag(SYNC_READ)
-            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setConstraints(syncReadConstraints)
-            .build()
     }
 }

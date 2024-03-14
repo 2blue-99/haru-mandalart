@@ -31,12 +31,10 @@ class SyncWriteWorker @AssistedInject constructor(
                 Result.success()
             } else {
                 Logger.d("다시")
-
                 Result.retry()
             }
         } catch (e: Exception) {
             Logger.d("실패")
-
             Result.failure()
         }
     }
