@@ -12,7 +12,7 @@ class CurrentGroupDataSourceImpl @Inject constructor(
     private val client: SupabaseClient
 ) : CurrentGroupDataSource {
     override suspend fun getCurrentGroup(update: String): List<NetworkCurrentGroup> {
-        return client.postgrest["current_group"].select {
+        return client.postgrest["currentGroup"].select {
             filter {
                 NetworkCurrentGroup::update_time gt update
             }
@@ -21,7 +21,7 @@ class CurrentGroupDataSourceImpl @Inject constructor(
 
     override suspend fun upsertCurrentGroup(currentGroup: List<NetworkCurrentGroup>): List<Int> {
         val result =
-            client.postgrest["current_group"].upsert(currentGroup, onConflict = "id") {
+            client.postgrest["currentGroup"].upsert(currentGroup, onConflict = "id") {
                 select(Columns.list("id"))
             }.decodeList<NetworkId>()
         return result.map { it.id }

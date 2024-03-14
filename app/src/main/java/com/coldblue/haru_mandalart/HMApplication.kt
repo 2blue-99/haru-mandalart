@@ -9,6 +9,7 @@ import androidx.work.Configuration
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.coldblue.data.repository.todo.CurrentGroupRepository
 import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.sync.worker.SyncReadWorker
@@ -18,6 +19,7 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
+import dagger.assisted.Assisted
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -40,7 +42,9 @@ class HMApplication : Application(), Configuration.Provider {
     class SyncWorkerFactory @Inject constructor(
         private val todoRepository: TodoRepository,
         private val todoGroupRepository: TodoGroupRepository,
-    ) : WorkerFactory() {
+        private val currentGroupRepository: CurrentGroupRepository,
+
+        ) : WorkerFactory() {
         override fun createWorker(
             appContext: Context,
             workerClassName: String,
@@ -51,14 +55,16 @@ class HMApplication : Application(), Configuration.Provider {
                     appContext,
                     workerParameters,
                     todoRepository,
-                    todoGroupRepository
+                    todoGroupRepository,
+                    currentGroupRepository
                 )
 
                 SyncWriteWorker::class.java.name -> SyncWriteWorker(
                     appContext,
                     workerParameters,
                     todoRepository,
-                    todoGroupRepository
+                    todoGroupRepository,
+                    currentGroupRepository
                 )
 
                 else -> null
