@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.coldblue.database.entity.CurrentGroupEntity
+import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,9 @@ interface CurrentGroupDao {
     @Query("UPDATE todo SET todo_group_id=null WHERE todo_group_id = :todoGroupId")
     suspend fun deleteTodoByCurrentGroup(todoGroupId: Int)
 
+
+    @Query("SELECT * FROM current_group WHERE update_time > :updateTime AND is_sync=0")
+    fun getToWriteCurrentGroup(updateTime: String): List<CurrentGroupEntity>
 
     @Transaction
     fun getCurrentGroupIdByOriginIds(originIds: List<Int>): List<Int?> {

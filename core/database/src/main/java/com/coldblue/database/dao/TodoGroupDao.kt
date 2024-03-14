@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -23,6 +24,8 @@ interface TodoGroupDao {
     suspend fun deleteTodoGroup(todoGroupId: Int)
 
 
+    @Query("SELECT * FROM todo_group WHERE update_time > :updateTime AND is_sync=0")
+    fun getToWriteTodoGroups(updateTime: String): List<TodoGroupEntity>
     @Transaction
     fun getTodoGroupIdByOriginIds(originIds: List<Int>): List<Int?> {
         return originIds.map { originId ->

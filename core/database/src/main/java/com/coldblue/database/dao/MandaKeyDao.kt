@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.coldblue.database.entity.MandaKeyEntity
+import com.coldblue.database.entity.TodoGroupEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -23,6 +24,8 @@ interface MandaKeyDao {
     suspend fun deleteAllMandaKey()
 
 
+    @Query("SELECT * FROM manda_key WHERE update_time > :updateTime AND is_sync=0")
+    fun getToWriteMandaKeys(updateTime: String): List<MandaKeyEntity>
     @Transaction
     fun getMandaKeyIdByOriginIds(originIds: List<Int>): List<Int?> {
         return originIds.map { originId ->
