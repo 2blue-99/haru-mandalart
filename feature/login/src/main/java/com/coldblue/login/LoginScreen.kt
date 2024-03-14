@@ -40,6 +40,7 @@ fun LoginScreen(
     val context = LocalContext.current
 
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
+
     when (val state = loginUiState) {
         is LoginUiState.Fail -> {
             Toast.makeText(context, "실패 : ${state.loginException.msg}", Toast.LENGTH_SHORT).show()
@@ -49,6 +50,7 @@ fun LoginScreen(
 //                is LoginExceptionState.DropDown->  {}
 //            }
         }
+
         else -> {}
     }
 

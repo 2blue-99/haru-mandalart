@@ -15,18 +15,46 @@ class UserDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : UserDataSource {
     private val tokenKey = stringPreferencesKey("token")
+    private val emailKey = stringPreferencesKey("email")
     private val tutorialKey = booleanPreferencesKey("tutorial")
     private val alarmKey = booleanPreferencesKey("alarm")
     private val initKey = booleanPreferencesKey("initManda")
 
-    override val token: Flow<String> = dataStore.data.map { preferences -> preferences[tokenKey] ?: "" }
-    override val isTutorial: Flow<Boolean> = dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
-    override val isAlarm: Flow<Boolean> = dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
-    override val isInit: Flow<Boolean> = dataStore.data.map { preferences -> preferences[initKey] ?: false }
+    override val token: Flow<String> =
+        dataStore.data.map { preferences -> preferences[tokenKey] ?: "" }
+    override val email: Flow<String> =
+        dataStore.data.map { preferences -> preferences[emailKey] ?: "" }
+    override val isTutorial: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
+    override val isAlarm: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
+    override val isInit: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[initKey] ?: false }
+
+    override suspend fun reset() {
+        dataStore.edit { preferences ->
+            preferences[tokenKey] = ""
+        }
+        dataStore.edit { preferences ->
+            preferences[tutorialKey] = false
+        }
+        dataStore.edit { preferences ->
+            preferences[emailKey] = ""
+        }
+//        dataStore.edit { preferences ->
+//            preferences[initKey] = false
+//        }
+    }
 
     override suspend fun updateToken(token: String) {
         dataStore.edit { preferences ->
             preferences[tokenKey] = token
+        }
+    }
+
+    override suspend fun updateEmail(email: String) {
+        dataStore.edit { preferences ->
+            preferences[emailKey] = email
         }
     }
 

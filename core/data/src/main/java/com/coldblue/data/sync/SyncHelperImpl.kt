@@ -41,10 +41,12 @@ class SyncHelperImpl @Inject constructor(
             .build()
     }
 
-    private fun startUpSyncWork() = OneTimeWorkRequestBuilder<SyncReadWorker>().addTag(SYNC_READ)
-        .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-        .setConstraints(syncConstraints)
-        .build()
+    private fun startUpSyncWork():OneTimeWorkRequest {
+        return OneTimeWorkRequestBuilder<SyncReadWorker>().addTag(SYNC_READ)
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setConstraints(syncConstraints)
+            .build()
+    }
 
     override suspend fun setMaxUpdateTime(
         data: List<SyncableEntity>,
@@ -69,6 +71,10 @@ class SyncHelperImpl @Inject constructor(
             ExistingWorkPolicy.KEEP,
             startUpSyncWork()
         )
+    }
+
+    override suspend fun reset() {
+        WorkManager.getInstance(context).cancelAllWork()
     }
 
 //    override suspend fun <T> toSyncData(

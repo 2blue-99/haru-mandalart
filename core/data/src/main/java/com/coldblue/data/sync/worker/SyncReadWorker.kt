@@ -16,6 +16,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 
 
@@ -40,14 +41,16 @@ class SyncReadWorker @AssistedInject constructor(
                 async { mandaDetailRepository.syncRead() },
                 ).all { it }
             if (syncedSucceed) {
-                Logger.d("읽기 성공")
-
+                Logger.d("리드 성공")
                 Result.success()
-
             } else {
+                Logger.d("리드 다시")
+
                 Result.retry()
             }
         } catch (e: Exception) {
+            Logger.d("리드 실패")
+
             Result.failure()
         }
     }

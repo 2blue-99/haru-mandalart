@@ -26,6 +26,7 @@ interface MandaKeyDao {
 
     @Query("SELECT * FROM manda_key WHERE update_time > :updateTime AND is_sync=0")
     fun getToWriteMandaKeys(updateTime: String): List<MandaKeyEntity>
+
     @Transaction
     fun getMandaKeyIdByOriginIds(originIds: List<Int>): List<Int?> {
         return originIds.map { originId ->
@@ -35,4 +36,7 @@ interface MandaKeyDao {
 
     @Query("SELECT id FROM manda_key WHERE origin_id = :originId")
     fun getMandaKeyIdByOriginId(originId: Int): Int?
+
+    @Query("SELECT * FROM manda_key WHERE id = 5 AND is_del = 0")
+    fun getFinalManda(): Flow<MandaKeyEntity?>
 }

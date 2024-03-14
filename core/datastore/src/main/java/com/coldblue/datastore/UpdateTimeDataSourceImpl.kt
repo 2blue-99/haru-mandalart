@@ -33,6 +33,20 @@ class UpdateTimeDataSourceImpl @Inject constructor(
         dataStore.data.map { preferences -> preferences[PreferencesKey.MANDA_DETAIL] ?: "0" }
 
 
+    override suspend fun reset() {
+        val keys = listOf(
+            PreferencesKey.TODO,
+            PreferencesKey.TODO_GROUP,
+            PreferencesKey.CURRENT_GROUP,
+            PreferencesKey.MANDA_KEY,
+            PreferencesKey.MANDA_DETAIL
+        )
+        keys.forEach {
+            dataStore.edit { preferences ->
+                preferences[it] = "0"
+            }
+        }
+    }
 
     override suspend fun setTodoUpdateTime(time: String) {
         dataStore.edit { preferences ->

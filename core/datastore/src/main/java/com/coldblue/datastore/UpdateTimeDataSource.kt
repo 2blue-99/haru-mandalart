@@ -14,4 +14,5 @@ interface UpdateTimeDataSource {
     suspend fun setCurrentGroupUpdateTime(time: String)
     suspend fun setMandaKeyUpdateTime(time: String)
     suspend fun setMandaDetailUpdateTime(time: String)
+    suspend fun reset()
 }
