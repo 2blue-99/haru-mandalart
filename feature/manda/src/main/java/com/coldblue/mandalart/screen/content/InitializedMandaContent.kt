@@ -5,7 +5,9 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -20,11 +22,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -43,19 +44,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.component.HMMandaEmptyButton
-import com.coldblue.designsystem.component.HMMandaFillButton
-import com.coldblue.designsystem.component.HMMandaOutlineButton
 import com.coldblue.designsystem.component.HMTitleComponent
+import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.iconpack.ZoomIn
 import com.coldblue.designsystem.iconpack.ZoomOut
 import com.coldblue.designsystem.theme.HMColor
@@ -371,10 +377,18 @@ fun Mandalart(
                         zoomInAndOut(1)
                 }
             ) {
-                if(zoomState)
-                    Icon(imageVector = IconPack.ZoomOut, tint = HMColor.Primary, contentDescription = "")
+                if (zoomState)
+                    Icon(
+                        imageVector = IconPack.ZoomOut,
+                        tint = HMColor.Primary,
+                        contentDescription = ""
+                    )
                 else
-                    Icon(imageVector = IconPack.ZoomIn, tint = HMColor.Primary, contentDescription = "")
+                    Icon(
+                        imageVector = IconPack.ZoomIn,
+                        tint = HMColor.Primary,
+                        contentDescription = ""
+                    )
             }
         }
         LazyColumn(
@@ -415,17 +429,17 @@ fun Mandalart(
                                         .weight(1f)
                                         .padding(horizontal = 5.dp)
                                 ) {
-                                    when (val state = mandaStateList[keyColumn + keyRow * 3]) {
+                                    when (val bigBox = mandaStateList[keyColumn + keyRow * 3]) {
                                         is MandaState.Empty -> {
                                             Box(
                                                 modifier = Modifier.fillMaxSize()
                                             ) {
-                                                HMMandaEmptyButton {
+                                                MandaEmptyBox {
                                                     changeBottomSheet(
                                                         true,
                                                         MandaBottomSheetContentState.Insert(
                                                             MandaBottomSheetContentType.MandaKey(
-                                                                MandaUI(id = state.id),
+                                                                MandaUI(id = bigBox.id),
                                                                 null
                                                             )
                                                         )
@@ -441,117 +455,75 @@ fun Mandalart(
                                                 modifier = Modifier.fillMaxSize()
                                             ) {
                                                 repeat(3) { detailRow ->
-                                                    Row(modifier = Modifier.fillMaxWidth()) {
-                                                        repeat(3) { detailColumn ->
-                                                            when (val type =
-                                                                state.mandaUIList[detailColumn + detailRow * 3]) {
 
+                                                    Row {
+                                                        repeat(3) { detailColumn ->
+                                                            when (val smallBox =
+                                                                bigBox.mandaUIList[detailColumn + detailRow * 3]) {
                                                                 is MandaType.None -> {
                                                                     Box(
                                                                         modifier = Modifier
                                                                             .weight(1f)
                                                                             .padding(2.dp)
                                                                     ) {
-                                                                        HMMandaEmptyButton {
-                                                                            if (keyColumn + keyRow * 3 == 4) {
-                                                                                changeBottomSheet(
-                                                                                    true,
-                                                                                    MandaBottomSheetContentState.Insert(
-                                                                                        MandaBottomSheetContentType.MandaKey(
-                                                                                            type.mandaUI,
-                                                                                            null
-                                                                                        )
+                                                                        MandaEmptyBox(
+                                                                            color = smallBox.mandaUI.darkColor
+                                                                        ) {
+                                                                            changeBottomSheet(
+                                                                                true,
+                                                                                MandaBottomSheetContentState.Insert(
+                                                                                    MandaBottomSheetContentType.MandaDetail(
+                                                                                        smallBox.mandaUI,
                                                                                     )
                                                                                 )
-                                                                            } else {
-                                                                                changeBottomSheet(
-                                                                                    true,
-                                                                                    MandaBottomSheetContentState.Insert(
-                                                                                        MandaBottomSheetContentType.MandaDetail(
-                                                                                            type.mandaUI
-                                                                                        )
-                                                                                    )
-                                                                                )
-                                                                            }
+                                                                            )
                                                                         }
                                                                     }
                                                                 }
 
                                                                 is MandaType.Key -> {
-                                                                    val data = type.mandaUI
+                                                                    val data = smallBox.mandaUI
                                                                     Box(
                                                                         modifier = Modifier
                                                                             .weight(1f)
                                                                             .padding(2.dp)
                                                                     ) {
-                                                                        if (data.isDone) {
-                                                                            HMMandaFillButton(
-                                                                                name = data.name,
-                                                                                backgroundColor = data.darkColor,
-                                                                                textColor = HMColor.Background
-                                                                            ) {
-                                                                                if (data.id == 4) {
-                                                                                    changeBottomSheet(
-                                                                                        true,
-                                                                                        MandaBottomSheetContentState.Update(
-                                                                                            MandaBottomSheetContentType.MandaFinal(
-                                                                                                data
-                                                                                            )
+                                                                        MandaKeyBox(
+                                                                            name = data.name,
+                                                                            color = data.darkColor,
+                                                                            isDone = data.isDone
+                                                                        ) {
+                                                                            changeBottomSheet(
+                                                                                true,
+                                                                                MandaBottomSheetContentState.Update(
+                                                                                    if (bigBox.id == 5) {
+                                                                                        MandaBottomSheetContentType.MandaFinal(
+                                                                                            data
                                                                                         )
-                                                                                    )
-                                                                                } else {
-                                                                                    changeBottomSheet(
-                                                                                        true,
-                                                                                        MandaBottomSheetContentState.Update(
-                                                                                            MandaBottomSheetContentType.MandaKey(
-                                                                                                data,
-                                                                                                type.groupIdList
-                                                                                            )
+                                                                                    } else {
+                                                                                        MandaBottomSheetContentType.MandaKey(
+                                                                                            data,
+                                                                                            smallBox.groupIdList
                                                                                         )
-                                                                                    )
-                                                                                }
-                                                                            }
-                                                                        } else {
-                                                                            HMMandaOutlineButton(
-                                                                                name = data.name,
-                                                                                outlineColor = data.darkColor
-                                                                            ) {
-                                                                                if (data.id == 4) {
-                                                                                    changeBottomSheet(
-                                                                                        true,
-                                                                                        MandaBottomSheetContentState.Update(
-                                                                                            MandaBottomSheetContentType.MandaFinal(
-                                                                                                data
-                                                                                            )
-                                                                                        )
-                                                                                    )
-                                                                                } else {
-                                                                                    changeBottomSheet(
-                                                                                        true,
-                                                                                        MandaBottomSheetContentState.Update(
-                                                                                            MandaBottomSheetContentType.MandaKey(
-                                                                                                data,
-                                                                                                type.groupIdList
-                                                                                            )
-                                                                                        )
-                                                                                    )
-                                                                                }
-                                                                            }
+                                                                                    }
+                                                                                )
+                                                                            )
                                                                         }
                                                                     }
                                                                 }
 
                                                                 is MandaType.Detail -> {
-                                                                    val data = type.mandaUI
+                                                                    val data = smallBox.mandaUI
                                                                     Box(
                                                                         modifier = Modifier
                                                                             .weight(1f)
                                                                             .padding(2.dp)
                                                                     ) {
-                                                                        HMMandaFillButton(
+                                                                        MandaDetailBox(
                                                                             name = data.name,
-                                                                            backgroundColor = if (data.isDone) data.darkColor else data.lightColor,
-                                                                            textColor = HMColor.Text
+                                                                            darkColor = data.darkColor,
+                                                                            lightColor = data.lightColor,
+                                                                            isDone = data.isDone
                                                                         ) {
                                                                             changeBottomSheet(
                                                                                 true,
@@ -593,52 +565,99 @@ fun Mandalart(
     }
 }
 
-//@Preview
-//@Composable
-//fun MandaContentPreview() {
-//    val stateList = mutableListOf<MandaState>()
-//    val typeList = mutableListOf<MandaType>()
-//    repeat(9) { cnt ->
-//        if (cnt == 8) {
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//            typeList.add(MandaType.DetailStart(MandaUI(name = "Test", id = 1)))
-//        } else {
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//            typeList.add(MandaType.None(MandaUI(id = 0)))
-//        }
-//        stateList.add(
-//            MandaState.Exist(
-//                mandaUIList = typeList.toList()
-//            )
-//        )
-//        typeList.clear()
-//    }
-//}
+@Composable
+fun MandaKeyBox(
+    name: String,
+    color: Color,
+    isDone: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1F)
+            .border(BorderStroke(2.dp, color), RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (isDone) color else HMColor.Background)
+            .clickable { onClick() }
+    ) {
+        Text(
+            modifier = Modifier.padding(5.dp),
+            textAlign = TextAlign.Center,
+            color = if (isDone) HMColor.Background else color,
+            text = name,
+            style = HmStyle.text6
+        )
+    }
+}
 
-//@Preview
-//@Composable
-//fun MandaContentPreview() {
-//    val stateList = mutableListOf<MandaState>()
-//    val typeList = mutableListOf<MandaType>()
-//    repeat(9) { cnt ->
-////        repeat(9){it ->
-////            typeList.add(MandaType.Empty(id = 0 ))
-////        }
-//        stateList.add(MandaState.Empty(id = 0))
-//    }
-//    MandaContent(mandaStateList = stateList)
-//}
+@Composable
+fun MandaDetailBox(
+    name: String,
+    darkColor: Color,
+    lightColor: Color,
+    isDone: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1F)
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (isDone) darkColor else lightColor)
+            .clickable { onClick() }
+    ) {
+        Text(
+            textAlign = TextAlign.Center,
+            text = name,
+            color = if (isDone) HMColor.Background else HMColor.Text,
+            modifier = Modifier.padding(5.dp),
+            style = HmStyle.text8
+        )
+    }
+}
+
+@Composable
+fun MandaEmptyBox(
+    color: Color = HMColor.SubText,
+    onClick: () -> Unit
+) {
+    val stroke = Stroke(
+        width = 10f,
+        pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
+    )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1F)
+            .clip(RoundedCornerShape(8.dp))
+            .drawBehind {
+                drawRoundRect(
+                    color = color,
+                    style = stroke,
+                    cornerRadius = CornerRadius(8.dp.toPx())
+                )
+            }
+            .clickable {
+                onClick()
+            }
+    ) {
+        Icon(
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(0.35f),
+            imageVector = IconPack.Plus,
+            tint = HMColor.SubText,
+            contentDescription = ""
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DetailBoxPreview() {
+    MandaEmptyBox() {}
+}

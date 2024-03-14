@@ -50,7 +50,7 @@ object MandaUtils {
 
                 for (id in 1..9) {
 
-                    val detailId = id + keyId*9
+                    val detailId = id + (keyId-1)*9
 
                     if (detailIdList.contains(detailId)) {
                         val detail = detailList.removeFirst()
@@ -60,6 +60,7 @@ object MandaUtils {
                             MandaType.Detail(
                                 mandaUI = MandaUI(
                                     id = detailId,
+                                    name = detail.name,
                                     darkColor = darkColor,
                                     lightColor = lightColor,
                                     isDone = detail.isDone
@@ -80,24 +81,28 @@ object MandaUtils {
                 }
 
                 val keyType = MandaType.Key(
-                    mandaUI = MandaUI(id = 5, darkColor = darkColor, isDone = isDone),
+                    mandaUI = MandaUI(id = 5, name = key.name, darkColor = darkColor, isDone = isDone),
                     groupIdList = groupIdList
                 )
-
                 smallList[4] = keyType
                 centerList.add(keyType)
-                bigList.add(MandaState.Exist(mandaUIList = smallList.toList()))
+                bigList.add(MandaState.Exist(
+                    id = keyId,
+                    mandaUIList = smallList.toList()
+                ))
                 smallList.clear()
             } else {
-
                 bigList.add(MandaState.Empty(id = keyId))
-
+                centerList.add(MandaType.None(mandaUI = MandaUI(id = keyId)))
             }
         }
 
-        bigList[4] = MandaState.Exist(mandaUIList = centerList.toList())
+        bigList[4] = MandaState.Exist(
+            id = 5,
+            mandaUIList = centerList.toList()
+        )
 
-        Log.e("TAG", "transformToMandaList: $bigList")
+        bigList.forEach { Log.e("TAG", "transformToMandaList: $it") }
         Logger.d(bigList)
         return bigList
     }
