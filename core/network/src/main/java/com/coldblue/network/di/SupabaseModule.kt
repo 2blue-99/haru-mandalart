@@ -3,8 +3,16 @@ package com.coldblue.network.di
 import com.coldblue.network.BuildConfig
 import com.coldblue.network.SupabaseDataSource
 import com.coldblue.network.SupabaseDataSourceImpl
+import com.coldblue.network.datasource.CurrentGroupDataSource
+import com.coldblue.network.datasource.MandaDetailDataSource
+import com.coldblue.network.datasource.MandaKeyDataSource
 import com.coldblue.network.datasource.TodoDataSource
+import com.coldblue.network.datasource.TodoGroupDataSource
+import com.coldblue.network.datasourceImpl.CurrentGroupDataSourceImpl
+import com.coldblue.network.datasourceImpl.MandaDetailDataSourceImpl
+import com.coldblue.network.datasourceImpl.MandaKeyDataSourceImpl
 import com.coldblue.network.datasourceImpl.TodoDataSourceImpl
+import com.coldblue.network.datasourceImpl.TodoGroupDataSourceImpl
 import com.orhanobut.logger.Logger
 import dagger.Module
 import dagger.Provides
@@ -27,9 +35,9 @@ object SupabaseModule {
     fun provideSupabaseClient(): SupabaseClient = createSupabaseClient(
         supabaseUrl = BuildConfig.SupaUrl,
         supabaseKey = BuildConfig.SupaKey
-    ){
+    ) {
         install(Auth)
-        install(ComposeAuth){ googleNativeLogin(serverClientId = BuildConfig.ClientId) }
+        install(ComposeAuth) { googleNativeLogin(serverClientId = BuildConfig.ClientId) }
         install(Postgrest)
     }
 
@@ -46,4 +54,28 @@ object SupabaseModule {
     @Provides
     fun provideTodoDataSource(client: SupabaseClient): TodoDataSource =
         TodoDataSourceImpl(client)
+
+
+    @Singleton
+    @Provides
+    fun provideTodoGroupDataSource(client: SupabaseClient): TodoGroupDataSource =
+        TodoGroupDataSourceImpl(client)
+
+
+    @Singleton
+    @Provides
+    fun provideCurrentGroupDataSource(client: SupabaseClient): CurrentGroupDataSource =
+        CurrentGroupDataSourceImpl(client)
+
+
+    @Singleton
+    @Provides
+    fun provideMandaKeyDataSource(client: SupabaseClient): MandaKeyDataSource =
+        MandaKeyDataSourceImpl(client)
+
+
+    @Singleton
+    @Provides
+    fun provideMandaDetailDataSource(client: SupabaseClient): MandaDetailDataSource =
+        MandaDetailDataSourceImpl(client)
 }

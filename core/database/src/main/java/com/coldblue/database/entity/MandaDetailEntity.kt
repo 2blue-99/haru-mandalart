@@ -8,10 +8,10 @@ import androidx.room.PrimaryKey
 data class MandaDetailEntity(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "color_index") val colorIndex: Int,
-    @ColumnInfo(name = "origin_id") val originId: Int,
-    @ColumnInfo(name = "is_sync") val isSync: Boolean,
+    @ColumnInfo(name = "origin_id") override val originId: Int,
+    @ColumnInfo(name = "is_sync") override val isSync: Boolean,
     @ColumnInfo(name = "is_del") val isDel: Boolean,
-    @ColumnInfo(name = "update_time") val updateTime: String,
+    @ColumnInfo(name = "update_time") override val updateTime: String,
     @ColumnInfo(name = "is_done") val isDone: Boolean,
-    @PrimaryKey(autoGenerate = true) val id: Int = 0
-)
+    @PrimaryKey(autoGenerate = true) override val id: Int = 0
+):SyncableEntity

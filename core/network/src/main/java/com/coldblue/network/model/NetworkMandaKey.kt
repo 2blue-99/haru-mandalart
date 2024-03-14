@@ -4,15 +4,11 @@ import com.coldblue.model.NetworkModel
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NetworkTodo(
+data class NetworkMandaKey(
     override val id: Int = 0,
-    val title: String,
-    val content: String? = null,
-    val is_done: Boolean,
-    val date: String,
-    val update_time: String,
-    val todo_group_id: Int? = null,
-    val time: String? = null,
+    val name: String,
+    val color_index: Int,
     val is_del: Boolean,
+    val update_time: String,
     val user_id: String? = null,
 ) : NetworkModel

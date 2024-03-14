@@ -7,5 +7,5 @@ interface TodoDataSource {
 
     suspend fun getTodo(update: String): List<NetworkTodo>
 
-    suspend fun upsertTodo(todo: List<NetworkTodo>): List<Int>
+    suspend fun upsertTodo(todos: List<NetworkTodo>): List<Int>
 }

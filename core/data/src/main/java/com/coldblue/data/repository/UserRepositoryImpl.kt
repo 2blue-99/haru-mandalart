@@ -8,8 +8,6 @@ class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
 ) : UserRepository {
     override val token: Flow<String> = userDataSource.token
-    override val todoUpdateTime: Flow<String> = userDataSource.todoUpdateTime
-    override val mandaUpdateTime: Flow<String> = userDataSource.mandaUpdateTime
     override val isTutorial: Flow<Boolean> = userDataSource.isTutorial
     override val isAlarm: Flow<Boolean> = userDataSource.isAlarm
     override val isInit: Flow<Boolean> = userDataSource.isInit
@@ -17,15 +15,6 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun updateToken(token: String) {
         userDataSource.updateToken(token)
     }
-
-    override suspend fun updateTodoTime(time: String) {
-        userDataSource.setTodoUpdateTime(time)
-    }
-
-    override suspend fun updateMandaTime(time: String) {
-        userDataSource.setMandaUpdateTime(time)
-    }
-
     override suspend fun updateTutorial(state: Boolean) {
         userDataSource.updateTutorial(state)
     }

@@ -1,10 +1,10 @@
 package com.coldblue.data.mapper
 
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.entity.MandaDetailEntity
 import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import java.time.LocalDateTime
 
 object Mapper {
     fun MandaKeyEntity.asDomain(): MandaKey = MandaKey(
@@ -19,10 +19,9 @@ object Mapper {
         originId = 0,
         isSync = false,
         isDel = false,
-        updateTime = LocalDateTime.now().toString(),
+        updateTime = getUpdateTime(),
         id = id,
     )
-
 
     fun MandaDetailEntity.asDomain(): MandaDetail = MandaDetail(
         name = name,
@@ -38,7 +37,7 @@ object Mapper {
         originId = 0,
         isSync = false,
         isDel = false,
-        updateTime = "updateTime",
+        updateTime = getUpdateTime(),
         id = id,
     )
 }

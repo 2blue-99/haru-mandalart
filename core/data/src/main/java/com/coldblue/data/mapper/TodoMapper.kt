@@ -82,6 +82,24 @@ fun List<TodoEntity>.asNetworkModel(): List<NetworkTodo> {
     }
 }
 
+fun List<TodoEntity>.asSyncedEntity(originIds: List<Int>): List<TodoEntity> {
+    return this.mapIndexed { index, entity ->
+        TodoEntity(
+            title = entity.title,
+            content = entity.content,
+            isDone = entity.isDone,
+            time = entity.time,
+            date = entity.date,
+            todoGroupId = entity.todoGroupId,
+            originId = originIds[index],
+            isSync = true,
+            isDel = entity.isDel,
+            updateTime = entity.updateTime,
+            id = entity.id,
+        )
+    }
+}
+
 fun TodoEntity.asNetworkModel() = NetworkTodo(
     title = title,
     content = content,
@@ -89,7 +107,7 @@ fun TodoEntity.asNetworkModel() = NetworkTodo(
     date = date.toString(),
     todo_group_id = todoGroupId,
     update_time = updateTime,
-    time = time?.run { this.toString() },
+    time = if (time == null) null else time.toString(),
     is_del = isDel,
     id = originId
 )

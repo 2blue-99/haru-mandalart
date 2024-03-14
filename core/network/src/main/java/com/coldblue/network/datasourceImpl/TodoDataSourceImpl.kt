@@ -3,7 +3,6 @@ package com.coldblue.network.datasourceImpl
 import com.coldblue.network.datasource.TodoDataSource
 import com.coldblue.network.model.NetworkId
 import com.coldblue.network.model.NetworkTodo
-import com.orhanobut.logger.Logger
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
@@ -20,10 +19,9 @@ class TodoDataSourceImpl @Inject constructor(
         }.decodeList<NetworkTodo>()
     }
 
-    override suspend fun upsertTodo(todo: List<NetworkTodo>): List<Int> {
-        Logger.d(todo)
+    override suspend fun upsertTodo(todos: List<NetworkTodo>): List<Int> {
         val result =
-            client.postgrest["todo"].upsert(todo, onConflict = "id") {
+            client.postgrest["todo"].upsert(todos, onConflict = "id") {
                 select(Columns.list("id"))
             }.decodeList<NetworkId>()
         return result.map { it.id }

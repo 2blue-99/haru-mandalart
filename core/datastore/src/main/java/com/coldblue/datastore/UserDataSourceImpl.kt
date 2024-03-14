@@ -15,15 +15,11 @@ class UserDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : UserDataSource {
     private val tokenKey = stringPreferencesKey("token")
-    private val todoKey = stringPreferencesKey("todo")
-    private val mandaKey = stringPreferencesKey("manda")
     private val tutorialKey = booleanPreferencesKey("tutorial")
     private val alarmKey = booleanPreferencesKey("alarm")
     private val initKey = booleanPreferencesKey("initManda")
 
     override val token: Flow<String> = dataStore.data.map { preferences -> preferences[tokenKey] ?: "" }
-    override val todoUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[todoKey] ?: "0" }
-    override val mandaUpdateTime: Flow<String> = dataStore.data.map { preferences -> preferences[mandaKey] ?: "0" }
     override val isTutorial: Flow<Boolean> = dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
     override val isAlarm: Flow<Boolean> = dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
     override val isInit: Flow<Boolean> = dataStore.data.map { preferences -> preferences[initKey] ?: false }
@@ -31,16 +27,6 @@ class UserDataSourceImpl @Inject constructor(
     override suspend fun updateToken(token: String) {
         dataStore.edit { preferences ->
             preferences[tokenKey] = token
-        }
-    }
-    override suspend fun setTodoUpdateTime(time: String) {
-        dataStore.edit { preferences ->
-            preferences[todoKey] = time
-        }
-    }
-    override suspend fun setMandaUpdateTime(time: String) {
-        dataStore.edit { preferences ->
-            preferences[mandaKey] = time
         }
     }
 

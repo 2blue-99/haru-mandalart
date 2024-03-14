@@ -13,9 +13,6 @@ import java.time.LocalDate
 @Dao
 interface TodoDao {
 
-    @Query("SELECT * FROM todo")
-    suspend fun getAllTodo(): List<TodoEntity>
-
     @Query("SELECT todo.*, IFNULL(todo_group.name, '') AS groupName FROM todo LEFT JOIN todo_group ON todo.todo_group_id = todo_group.id WHERE date=:date AND todo.is_del=0")
     fun getTodo(date: LocalDate): Flow<List<TodoWithGroupName>>
 
@@ -32,13 +29,10 @@ interface TodoDao {
     suspend fun upsertTodo(todo: TodoEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertTodos(todos: List<TodoEntity>)
+    suspend fun upsertTodo(todos: List<TodoEntity>)
 
     @Query("Delete From todo WHERE id = :todoId")
     suspend fun deleteTodo(todoId: Int)
-
-
-
 
 
     @Query("SELECT * FROM todo WHERE update_time > :updateTime AND is_sync=0")

@@ -9,8 +9,11 @@ import androidx.work.Configuration
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.coldblue.data.repository.manda.MandaDetailRepository
+import com.coldblue.data.repository.manda.MandaKeyRepository
+import com.coldblue.data.repository.todo.CurrentGroupRepository
+import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoRepository
-import com.coldblue.data.sync.SyncReadHelper
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
@@ -39,6 +42,11 @@ class HMApplication : Application(), Configuration.Provider {
 
     class SyncWorkerFactory @Inject constructor(
         private val todoRepository: TodoRepository,
+        private val todoGroupRepository: TodoGroupRepository,
+        private val currentGroupRepository: CurrentGroupRepository,
+        private val mandaKeyRepository: MandaKeyRepository,
+        private val mandaDetailRepository: MandaDetailRepository
+
     ) : WorkerFactory() {
         override fun createWorker(
             appContext: Context,
@@ -50,12 +58,20 @@ class HMApplication : Application(), Configuration.Provider {
                     appContext,
                     workerParameters,
                     todoRepository,
+                    todoGroupRepository,
+                    currentGroupRepository,
+                    mandaKeyRepository,
+                    mandaDetailRepository
                 )
 
                 SyncWriteWorker::class.java.name -> SyncWriteWorker(
                     appContext,
                     workerParameters,
-                    todoRepository
+                    todoRepository,
+                    todoGroupRepository,
+                    currentGroupRepository,
+                    mandaKeyRepository,
+                    mandaDetailRepository
                 )
 
                 else -> null

@@ -1,8 +1,11 @@
 package com.coldblue.data.mapper
 
+import com.coldblue.data.util.toDate
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.CurrentGroup
+import com.coldblue.network.model.NetWorkTodoGroup
+import com.coldblue.network.model.NetworkCurrentGroup
 import java.time.LocalDate
 
 
@@ -38,6 +41,49 @@ object CurrentGroupMapper {
             date = entity.date,
             todoGroupId = entity.todoGroupId,
         )
+    }
+
+    fun List<NetworkCurrentGroup>.asEntity(todoGroupIds: List<Int?>): List<CurrentGroupEntity> {
+        return this.mapIndexed { index, networkCurrentGroup ->
+            CurrentGroupEntity(
+                originId = networkCurrentGroup.id,
+                date = networkCurrentGroup.date.toDate(),
+                isSync = true,
+                isDel = networkCurrentGroup.is_del,
+                updateTime = networkCurrentGroup.update_time,
+                index = networkCurrentGroup.index,
+                todoGroupId = networkCurrentGroup.todo_group_id,
+                id = todoGroupIds[index] ?: 0,
+            )
+        }
+    }
+
+    fun List<CurrentGroupEntity>.asNetworkModel(): List<NetworkCurrentGroup> {
+        return this.map {
+            NetworkCurrentGroup(
+                date = it.date.toString(),
+                index = it.index,
+                todo_group_id = it.todoGroupId,
+                update_time = it.updateTime,
+                is_del = it.isDel,
+                id = it.originId
+            )
+        }
+    }
+
+    fun List<CurrentGroupEntity>.asSyncedEntity(originIds: List<Int>): List<CurrentGroupEntity> {
+        return this.mapIndexed { index, entity ->
+            CurrentGroupEntity(
+                originId = originIds[index],
+                isSync = true,
+                isDel = entity.isDel,
+                updateTime = entity.updateTime,
+                date = entity.date,
+                index = entity.index,
+                todoGroupId = entity.todoGroupId,
+                id = entity.id,
+            )
+        }
     }
 }
 
