@@ -107,9 +107,6 @@ object MandaUtils {
             id = 5,
             mandaUIList = centerList.toList()
         )
-
-        bigList.forEach { Log.e("TAG", "transformToMandaList: $it") }
-        Logger.d(bigList)
         return bigList
     }
 

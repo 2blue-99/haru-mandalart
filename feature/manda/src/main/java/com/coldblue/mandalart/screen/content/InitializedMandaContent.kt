@@ -76,6 +76,7 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -95,6 +96,7 @@ fun InitializedMandaContent(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
 ) {
+    Logger.d(uiState.donePercentage)
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
@@ -114,7 +116,7 @@ fun InitializedMandaContent(
         ) { changeBottomSheet(false, null) }
     }
 
-    LaunchedEffect(Unit) { percentage = uiState.donePercentage }
+    LaunchedEffect(uiState.donePercentage) { percentage = uiState.donePercentage }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
