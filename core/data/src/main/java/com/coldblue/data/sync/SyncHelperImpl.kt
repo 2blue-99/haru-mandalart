@@ -11,6 +11,7 @@ import androidx.work.WorkManager
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.database.entity.SyncableEntity
+import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.datastore.UserDataSource
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 class SyncHelperImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val userDataSource: UserDataSource,
+    private val updateTimeDataSource: UpdateTimeDataSource,
 ) : SyncHelper {
     private val SYNC_WRITE = "SyncWrite"
     private val SYNC_READ = "SyncRead"
@@ -48,7 +49,7 @@ class SyncHelperImpl @Inject constructor(
 
     override suspend fun setMaxUpdateTime(data: List<SyncableEntity>) {
         val maxUpdateTime = data.maxOfOrNull { it.updateTime }
-        maxUpdateTime?.run { userDataSource.setTodoUpdateTime(this) }
+        maxUpdateTime?.run { updateTimeDataSource.setTodoUpdateTime(this) }
     }
 
     override fun syncWrite() {
@@ -69,7 +70,7 @@ class SyncHelperImpl @Inject constructor(
     }
 
     override suspend fun <T> toSyncData(getToSyncData: suspend (String) -> List<T>): List<T> {
-        return getToSyncData(userDataSource.todoUpdateTime.first())
+        return getToSyncData(updateTimeDataSource.todoUpdateTime.first())
     }
 
 

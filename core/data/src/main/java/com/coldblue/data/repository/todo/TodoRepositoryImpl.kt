@@ -61,7 +61,7 @@ class TodoRepositoryImpl @Inject constructor(
             val originIds = remoteNew.map { it.id }
             val todoIds = todoDao.getTodoIdByOriginIds(originIds)
             val toUpsertTodos = remoteNew.asEntity(todoIds)
-            todoDao.upsertTodos(toUpsertTodos)
+            todoDao.upsertTodo(toUpsertTodos)
             syncHelper.setMaxUpdateTime(toUpsertTodos)
             return true
         } catch (e: Exception) {
@@ -75,7 +75,7 @@ class TodoRepositoryImpl @Inject constructor(
             val localNew = syncHelper.toSyncData(todoDao::getToWriteTodos)
             val originIds = todoDataSource.upsertTodo(localNew.asNetworkModel())
             val toUpsertTodos = localNew.asSyncedEntity(originIds)
-            todoDao.upsertTodos(toUpsertTodos)
+            todoDao.upsertTodo(toUpsertTodos)
             syncHelper.setMaxUpdateTime(toUpsertTodos)
             return true
         } catch (e: Exception) {
