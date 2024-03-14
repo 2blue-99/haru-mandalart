@@ -19,6 +19,7 @@ sealed interface MandaState {
 
     data class Empty(val id: Int) : MandaState
 
+    // Detail 8개, Key 1개의 박스가 들어있음
     data class Exist(
         val mandaUIList: List<MandaType>
     ) : MandaState
@@ -39,8 +40,4 @@ sealed interface MandaType {
     data class Detail(
         override val mandaUI: MandaUI
     ) : MandaType
-
-//    data class Done(
-//        override val mandaUI: MandaUI
-//    ) : MandaType
 }
