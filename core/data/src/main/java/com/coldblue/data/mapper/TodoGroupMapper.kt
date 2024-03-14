@@ -42,6 +42,7 @@ object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
             todoEntity.asDomain()
         }
     }
+
     fun List<NetWorkTodoGroup>.asEntity(todoGroupIds: List<Int?>): List<TodoGroupEntity> {
         return this.mapIndexed { index, netWorkTodoGroup ->
             TodoGroupEntity(
@@ -51,6 +52,30 @@ object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
                 isDel = netWorkTodoGroup.is_del,
                 updateTime = netWorkTodoGroup.update_time,
                 id = todoGroupIds[index] ?: 0,
+            )
+        }
+    }
+
+    fun List<TodoGroupEntity>.asNetworkModel(): List<NetWorkTodoGroup> {
+        return this.map {
+            NetWorkTodoGroup(
+                name = it.name,
+                update_time = it.updateTime,
+                is_del = it.isDel,
+                id = it.originId
+            )
+        }
+    }
+
+    fun List<TodoGroupEntity>.asSyncedEntity(originIds: List<Int>): List<TodoGroupEntity> {
+        return this.mapIndexed { index, entity ->
+            TodoGroupEntity(
+                originId = originIds[index],
+                isSync = true,
+                isDel = entity.isDel,
+                updateTime = entity.updateTime,
+                name = entity.name,
+                id = entity.id,
             )
         }
     }

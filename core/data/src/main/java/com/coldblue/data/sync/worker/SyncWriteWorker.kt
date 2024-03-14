@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoRepository
 import com.orhanobut.logger.Logger
 import dagger.assisted.Assisted
@@ -17,13 +18,15 @@ import kotlinx.coroutines.withContext
 class SyncWriteWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    @Assisted private val todoRepository: TodoRepository
+    @Assisted private val todoRepository: TodoRepository,
+    @Assisted private val todoGroupRepository: TodoGroupRepository
 
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             val writeSucceed = awaitAll(
                 async { todoRepository.syncWrite() },
+                async { todoGroupRepository.syncWrite() },
             ).all { it }
 
             if (writeSucceed) {

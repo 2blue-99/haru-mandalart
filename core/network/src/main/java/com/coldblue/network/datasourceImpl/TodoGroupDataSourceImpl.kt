@@ -12,7 +12,7 @@ class TodoGroupDataSourceImpl @Inject constructor(
     private val client: SupabaseClient
 ) : TodoGroupDataSource {
     override suspend fun getTodoGroup(update: String): List<NetWorkTodoGroup> {
-        return client.postgrest["todo_group"].select {
+        return client.postgrest["todoGroup"].select {
             filter {
                 NetWorkTodoGroup::update_time gt update
             }
@@ -21,7 +21,7 @@ class TodoGroupDataSourceImpl @Inject constructor(
 
     override suspend fun upsertTodoGroup(todoGroup: List<NetWorkTodoGroup>): List<Int> {
         val result =
-            client.postgrest["todo_group"].upsert(todoGroup, onConflict = "id") {
+            client.postgrest["todoGroup"].upsert(todoGroup, onConflict = "id") {
                 select(Columns.list("id"))
             }.decodeList<NetworkId>()
         return result.map { it.id }

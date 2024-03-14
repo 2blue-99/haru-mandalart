@@ -7,7 +7,7 @@ interface SyncHelper {
 
     fun initialize()
 
-    suspend fun <T> toSyncData(getToSyncData: suspend (String) -> List<T>,updateTime:String): List<T>
+//    suspend fun <T> toSyncData(getToSyncData: suspend (String) -> List<T>,updateTime:String): List<T>
 
     suspend fun setMaxUpdateTime(data: List<SyncableEntity>,updateTime: suspend (String)->Unit)
 }

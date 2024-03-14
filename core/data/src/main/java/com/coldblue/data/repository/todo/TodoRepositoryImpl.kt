@@ -60,7 +60,7 @@ class TodoRepositoryImpl @Inject constructor(
 
     override suspend fun syncRead(): Boolean {
         try {
-            val remoteNew = syncHelper.toSyncData(todoDataSource::getTodo, updateTimeDataSource.todoUpdateTime.first())
+            val remoteNew = todoDataSource.getTodo(updateTimeDataSource.todoUpdateTime.first())
             val originIds = remoteNew.map { it.id }
             val todoIds = todoDao.getTodoIdByOriginIds(originIds)
             val toUpsertTodos = remoteNew.asEntity(todoIds)
@@ -75,7 +75,8 @@ class TodoRepositoryImpl @Inject constructor(
 
     override suspend fun syncWrite(): Boolean {
         try {
-            val localNew = syncHelper.toSyncData(todoDao::getToWriteTodos, updateTimeDataSource.todoUpdateTime.first())
+            val localNew = todoDao.getToWriteTodos(updateTimeDataSource.todoUpdateTime.first())
+
             val originIds = todoDataSource.upsertTodo(localNew.asNetworkModel())
             val toUpsertTodos = localNew.asSyncedEntity(originIds)
             todoDao.upsertTodo(toUpsertTodos)

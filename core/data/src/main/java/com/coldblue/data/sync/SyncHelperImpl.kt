@@ -71,12 +71,12 @@ class SyncHelperImpl @Inject constructor(
         )
     }
 
-    override suspend fun <T> toSyncData(
-        getToSyncData: suspend (String) -> List<T>,
-        updateTime: String
-    ): List<T> {
-        return getToSyncData(updateTime)
-    }
+//    override suspend fun <T> toSyncData(
+//        getToSyncData: suspend (String) -> List<T>,
+//        updateTime: String
+//    ): List<T> {
+//        return getToSyncData(updateTime)
+//    }
 
 
 }
