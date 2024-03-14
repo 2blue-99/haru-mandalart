@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.coldblue.database.entity.MandaDetailEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -20,4 +21,14 @@ interface MandaDetailDao {
 
     @Query("Update manda_detail Set is_del = 1")
     suspend fun deleteAllMandaDetail()
+
+    @Transaction
+    fun getMandaDetailIdByOriginIds(originIds: List<Int>): List<Int?> {
+        return originIds.map { originId ->
+            getMandaDetailIdByOriginId(originId)
+        }
+    }
+
+    @Query("SELECT id FROM manda_detail WHERE origin_id = :originId")
+    fun getMandaDetailIdByOriginId(originId: Int): Int?
 }
