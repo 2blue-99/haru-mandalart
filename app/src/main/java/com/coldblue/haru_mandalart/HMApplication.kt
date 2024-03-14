@@ -9,6 +9,8 @@ import androidx.work.Configuration
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.coldblue.data.repository.manda.MandaDetailRepository
+import com.coldblue.data.repository.manda.MandaKeyRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepository
 import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoRepository
@@ -19,7 +21,6 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
-import dagger.assisted.Assisted
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -43,8 +44,10 @@ class HMApplication : Application(), Configuration.Provider {
         private val todoRepository: TodoRepository,
         private val todoGroupRepository: TodoGroupRepository,
         private val currentGroupRepository: CurrentGroupRepository,
+        private val mandaKeyRepository: MandaKeyRepository,
+        private val mandaDetailRepository: MandaDetailRepository
 
-        ) : WorkerFactory() {
+    ) : WorkerFactory() {
         override fun createWorker(
             appContext: Context,
             workerClassName: String,
@@ -56,7 +59,9 @@ class HMApplication : Application(), Configuration.Provider {
                     workerParameters,
                     todoRepository,
                     todoGroupRepository,
-                    currentGroupRepository
+                    currentGroupRepository,
+                    mandaKeyRepository,
+                    mandaDetailRepository
                 )
 
                 SyncWriteWorker::class.java.name -> SyncWriteWorker(
@@ -64,7 +69,9 @@ class HMApplication : Application(), Configuration.Provider {
                     workerParameters,
                     todoRepository,
                     todoGroupRepository,
-                    currentGroupRepository
+                    currentGroupRepository,
+                    mandaKeyRepository,
+                    mandaDetailRepository
                 )
 
                 else -> null

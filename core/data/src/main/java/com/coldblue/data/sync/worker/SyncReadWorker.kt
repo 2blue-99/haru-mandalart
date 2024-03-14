@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.coldblue.data.repository.manda.MandaDetailRepository
+import com.coldblue.data.repository.manda.MandaKeyRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepositoryImpl
 import com.coldblue.data.repository.todo.TodoGroupRepository
@@ -24,6 +26,9 @@ class SyncReadWorker @AssistedInject constructor(
     @Assisted private val todoRepository: TodoRepository,
     @Assisted private val todoGroupRepository: TodoGroupRepository,
     @Assisted private val currentGroupRepository: CurrentGroupRepository,
+    @Assisted private val mandaKeyRepository: MandaKeyRepository,
+    @Assisted private val mandaDetailRepository: MandaDetailRepository
+
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
@@ -31,7 +36,8 @@ class SyncReadWorker @AssistedInject constructor(
                 async { todoRepository.syncRead() },
                 async { todoGroupRepository.syncRead() },
                 async { currentGroupRepository.syncRead() },
-
+                async { mandaKeyRepository.syncRead() },
+                async { mandaDetailRepository.syncRead() },
                 ).all { it }
             if (syncedSucceed) {
                 Logger.d("읽기 성공")
