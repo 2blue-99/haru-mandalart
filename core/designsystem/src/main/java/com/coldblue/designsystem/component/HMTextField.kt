@@ -30,10 +30,10 @@ fun HMTextField(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-
     LaunchedEffect(inputText) {
         text = inputText
     }
+
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = text,
