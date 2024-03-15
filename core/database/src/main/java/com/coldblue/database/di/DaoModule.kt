@@ -2,6 +2,7 @@ package com.coldblue.database.di
 
 import com.coldblue.database.AppDataBase
 import com.coldblue.database.dao.CurrentGroupDao
+import com.coldblue.database.dao.AppDao
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.TodoDao
@@ -39,5 +40,11 @@ object DaoModule {
     @Provides
     fun provideTodoGroupDao(dataBase: AppDataBase): TodoGroupDao =
         dataBase.todoGroupDao()
+
+    @Singleton
+    @Provides
+    fun provideHaruMandalartDao(dataBase: AppDataBase): AppDao =
+        dataBase.haruMandalrtDao()
+
 
 }

@@ -10,4 +10,6 @@ interface MandaKeyRepository: Syncable {
     suspend fun deleteMandaKeys(idList: List<Int>)
     suspend fun deleteAllMandaDetail()
 
+    fun isInit():Flow<Boolean>
+
 }

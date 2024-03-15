@@ -30,6 +30,7 @@ import com.coldblue.data.util.LoginState
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.login.LoginScreen
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

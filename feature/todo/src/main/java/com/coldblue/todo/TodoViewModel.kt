@@ -12,6 +12,7 @@ import com.coldblue.domain.todogroup.UpsertTodoGroupUseCase
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,6 +35,7 @@ class TodoViewModel @Inject constructor(
     private val toggleTodoUseCase: ToggleTodoUseCase,
     private val deleteCurrentGroupUseCase: DeleteCurrentGroupUseCase
 ) : ViewModel() {
+
     private val _bottomSheetUiSate = MutableStateFlow<BottomSheetUiState>(BottomSheetUiState.Down)
     val bottomSheetUiSate: StateFlow<BottomSheetUiState> = _bottomSheetUiSate
 

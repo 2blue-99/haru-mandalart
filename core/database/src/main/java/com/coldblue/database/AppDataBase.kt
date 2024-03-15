@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.coldblue.database.convert.LocalDateConvert
 import com.coldblue.database.convert.LocalTimeConverter
 import com.coldblue.database.dao.CurrentGroupDao
+import com.coldblue.database.dao.AppDao
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.TodoDao
@@ -35,5 +36,6 @@ abstract class AppDataBase : RoomDatabase() {
     abstract fun mandaDetailDao(): MandaDetailDao
     abstract fun todoDao(): TodoDao
     abstract fun todoGroupDao(): TodoGroupDao
+    abstract fun haruMandalrtDao(): AppDao
 
 }

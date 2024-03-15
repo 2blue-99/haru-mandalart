@@ -6,5 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface LoginHelper {
     val isLogin: Flow<LoginState>
     fun getComposeAuth(): ComposeAuth
-    fun getClientToken(): String
+    suspend fun setLoginSucceeded()
+    suspend fun setLogout()
+    suspend fun deleteUser()
 }
