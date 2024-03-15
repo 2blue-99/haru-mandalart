@@ -620,7 +620,7 @@ fun MandaDetailBox(
             text = name,
             color = if (isDone) HMColor.Background else HMColor.Text,
             modifier = Modifier.padding(5.dp),
-            style = HmStyle.text8
+            style = HmStyle.text4
         )
     }
 }
