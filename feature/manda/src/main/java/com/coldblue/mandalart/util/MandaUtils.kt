@@ -107,6 +107,7 @@ object MandaUtils {
             id = 5,
             mandaUIList = centerList.toList()
         )
+        bigList.forEach { Logger.d(it) }
         return bigList
     }
 
@@ -124,7 +125,7 @@ object MandaUtils {
     }
 
     fun colorToIndex(color: Color): Int {
-        val gap = when (color) {
+        return when (color) {
             HMColor.Dark.Pink -> 0
             HMColor.Dark.Red -> 1
             HMColor.Dark.Orange -> 2
@@ -134,7 +135,5 @@ object MandaUtils {
             HMColor.Dark.Indigo -> 6
             else -> 0
         }
-        Logger.d(gap)
-        return gap
     }
 }

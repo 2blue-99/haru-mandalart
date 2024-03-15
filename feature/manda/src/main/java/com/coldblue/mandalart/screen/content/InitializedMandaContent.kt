@@ -24,13 +24,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -76,7 +72,6 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -461,6 +456,7 @@ fun Mandalart(
                                                         repeat(3) { detailColumn ->
                                                             when (val smallBox =
                                                                 bigBox.mandaUIList[detailColumn + detailRow * 3]) {
+
                                                                 is MandaType.None -> {
                                                                     Box(
                                                                         modifier = Modifier
@@ -473,9 +469,15 @@ fun Mandalart(
                                                                             changeBottomSheet(
                                                                                 true,
                                                                                 MandaBottomSheetContentState.Insert(
-                                                                                    MandaBottomSheetContentType.MandaDetail(
-                                                                                        smallBox.mandaUI,
-                                                                                    )
+                                                                                    if (bigBox.id == 5){
+                                                                                        MandaBottomSheetContentType.MandaKey(
+                                                                                            smallBox.mandaUI,
+                                                                                        )
+                                                                                    }else{
+                                                                                        MandaBottomSheetContentType.MandaDetail(
+                                                                                            smallBox.mandaUI,
+                                                                                        )
+                                                                                    }
                                                                                 )
                                                                             )
                                                                         }
@@ -483,32 +485,32 @@ fun Mandalart(
                                                                 }
 
                                                                 is MandaType.Key -> {
-                                                                    val data = smallBox.mandaUI
+                                                                    val smallBoxData = smallBox.mandaUI
                                                                     Box(
                                                                         modifier = Modifier
                                                                             .weight(1f)
                                                                             .padding(2.dp)
                                                                     ) {
                                                                         MandaKeyBox(
-                                                                            name = data.name,
-                                                                            color = data.darkColor,
-                                                                            isDone = data.isDone
+                                                                            name = smallBoxData.name,
+                                                                            color = smallBoxData.darkColor,
+                                                                            isDone = smallBoxData.isDone
                                                                         ) {
                                                                             Log.e(
                                                                                 "TAG",
-                                                                                "Mandalart: $data",
+                                                                                "Mandalart: $smallBoxData",
 
                                                                             )
                                                                             changeBottomSheet(
                                                                                 true,
                                                                                 MandaBottomSheetContentState.Update(
-                                                                                    if (bigBox.id == 5) {
+                                                                                    if (bigBox.id == 5 && smallBoxData.id == 5) {
                                                                                         MandaBottomSheetContentType.MandaFinal(
-                                                                                            data
+                                                                                            smallBoxData
                                                                                         )
                                                                                     } else {
                                                                                         MandaBottomSheetContentType.MandaKey(
-                                                                                            data,
+                                                                                            smallBoxData,
                                                                                             smallBox.groupIdList
                                                                                         )
                                                                                     }
