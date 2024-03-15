@@ -19,10 +19,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -36,8 +42,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.TitleText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -45,11 +53,13 @@ import com.coldblue.history.ControllerDayState
 import com.coldblue.history.ControllerTimeState
 import com.coldblue.history.ControllerWeek
 import com.coldblue.history.HistoryUiState
+import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
 @Composable
 fun HistoryContent(
     historyUiState: HistoryUiState.Success,
+    navigateToSetting: () -> Unit,
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit
 ) {
@@ -60,7 +70,20 @@ fun HistoryContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
-        TitleText(text = "65개의 \n 하루, 만다라트")
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "65개의 \n 하루, 만다라트",
+                style = HmStyle.text20,
+                color = HMColor.Primary
+            )
+            IconButton(onClick = { navigateToSetting() }) {
+                Icon(imageVector = Icons.Default.Settings, tint = HMColor.Primary, contentDescription = "")
+            }
+        }
 
         HistoryController(
             controllerList = historyUiState.controllerList,
@@ -70,7 +93,7 @@ fun HistoryContent(
         )
 
         Column {
-            TitleText(text = historyUiState.today.toString())
+            Text(text = historyUiState.today.toString(), style = HmStyle.text20, color = HMColor.Primary)
             TitleText(text = "기록")
         }
 
@@ -94,25 +117,37 @@ fun HistoryController(
     selectDate: (LocalDate) -> Unit,
     selectYear: (Int) -> Unit
 ) {
-
-    // 이 코드 내부의 변화는 Recompose를 발생시키지 않음
+    // Todo 이 코드 내부의 변화는 Recompose를 발생시키지 않음
     val boxClickStateList = remember { MutableList((controllerList.size) * 7) { false } }
     var yearClickStateList by remember { mutableStateOf(BooleanArray(todoYearList.size)) }
     var beforeBoxIndex by remember { mutableIntStateOf(0) }
     val screenWidth = LocalConfiguration.current.screenWidthDp
+    var presentState by remember { mutableIntStateOf(-1) }
+
+    LaunchedEffect(presentState){
+        boxClickStateList[presentState] = true
+        beforeBoxIndex = presentState
+    }
+
+    fun boxController(stateIndex: Int, date: LocalDate){
+        boxClickStateList[beforeBoxIndex] = false
+        boxClickStateList[stateIndex] = true
+        beforeBoxIndex = stateIndex
+        selectDate(date)
+    }
 
     Column {
         Row {
             Column(
                 modifier = Modifier.width((screenWidth / 16).dp)
-            ){
+            ) {
                 ControllerBox(
                     containerColor = Color.Transparent,
                     sideText = "",
                     clickAble = false
                 ) {}
                 controllerList[0].controllerDayList.forEach {
-                    if(it is ControllerDayState.Default)
+                    if (it is ControllerDayState.Default)
                         ControllerBox(
                             containerColor = Color.Transparent,
                             sideText = it.dayWeek,
@@ -126,7 +161,7 @@ fun HistoryController(
                     .background(HMColor.Background),
                 horizontalArrangement = Arrangement.Start
             ) {
-                itemsIndexed(controllerList.slice(1..< controllerList.size)) { weekIndex, controllerWeek ->
+                itemsIndexed(controllerList.slice(1..<controllerList.size)) { weekIndex, controllerWeek ->
                     Column(
                         modifier = Modifier.width((screenWidth / 16).dp),
                         verticalArrangement = Arrangement.Top
@@ -155,24 +190,31 @@ fun HistoryController(
                                         is ControllerTimeState.Past -> {
                                             ControllerBox(
                                                 containerColor = HMColor.Gray,
+                                                tintColor = HMColor.Gray,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxClickStateList[beforeBoxIndex] = false
-                                                boxClickStateList[stateIndex] = true
-                                                beforeBoxIndex = stateIndex
-                                                selectDate(timeState.date)
+                                                boxController(stateIndex, timeState.date)
+                                            }
+                                        }
+
+                                        is ControllerTimeState.Present -> {
+                                            presentState = stateIndex
+                                            ControllerBox(
+                                                containerColor = HMColor.Gray,
+                                                tintColor = HMColor.Gray,
+                                                isClicked = boxClickStateList[stateIndex]
+                                            ) {
+                                                boxController(stateIndex, timeState.date)
                                             }
                                         }
 
                                         is ControllerTimeState.Future -> {
                                             ControllerBox(
                                                 containerColor = HMColor.Box,
+                                                tintColor = HMColor.Box,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxClickStateList[beforeBoxIndex] = false
-                                                boxClickStateList[stateIndex] = true
-                                                beforeBoxIndex = stateIndex
-                                                selectDate(timeState.date)
+                                                boxController(stateIndex, timeState.date)
                                             }
                                         }
                                     }
@@ -188,10 +230,19 @@ fun HistoryController(
                                                 isExistTodo = true,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxClickStateList[beforeBoxIndex] = false
-                                                boxClickStateList[stateIndex] = true
-                                                beforeBoxIndex = stateIndex
-                                                selectDate(timeState.date)
+                                                boxController(stateIndex, timeState.date)
+                                            }
+                                        }
+
+                                        is ControllerTimeState.Present -> {
+                                            presentState = stateIndex
+                                            ControllerBox(
+                                                containerColor = HMColor.Box,
+                                                tintColor = HMColor.Primary,
+                                                isExistTodo = true,
+                                                isClicked = boxClickStateList[stateIndex]
+                                            ) {
+                                                boxController(stateIndex, timeState.date)
                                             }
                                         }
 
@@ -202,10 +253,7 @@ fun HistoryController(
                                                 isExistTodo = true,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxClickStateList[beforeBoxIndex] = false
-                                                boxClickStateList[stateIndex] = true
-                                                beforeBoxIndex = stateIndex
-                                                selectDate(timeState.date)
+                                                boxController(stateIndex, timeState.date)
                                             }
                                         }
                                     }

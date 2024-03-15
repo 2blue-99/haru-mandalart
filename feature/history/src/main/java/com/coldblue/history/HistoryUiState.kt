@@ -18,7 +18,8 @@ sealed interface HistoryUiState {
 }
 
 data class ControllerWeek(
-    val month: Int?,
+    val month: Int? = null,
+    val todayIndex: Int? = null,
     val controllerDayList: List<ControllerDayState>
 )
 
@@ -33,6 +34,6 @@ sealed interface ControllerDayState {
 sealed interface ControllerTimeState {
     val date: LocalDate
     data class Past(override val date: LocalDate): ControllerTimeState
-
+    data class Present(override val date: LocalDate): ControllerTimeState
     data class Future(override val date: LocalDate): ControllerTimeState
 }

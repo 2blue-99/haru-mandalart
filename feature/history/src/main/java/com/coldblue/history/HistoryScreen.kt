@@ -1,6 +1,5 @@
 package com.coldblue.history
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -28,21 +27,17 @@ fun HistoryScreen(
     ) {
         HistoryContentWithState(
             uiState = historyUiState,
+            navigateToSetting = navigateToSetting,
             selectYear = historyViewModel::selectYear,
             selectDate = historyViewModel::selectDate
         )
-    }
-    Column {
-        Text(text = "HistoryScreen")
-        Button(onClick = { navigateToSetting() }) {
-            Text(text = "Navigate To Setting")
-        }
     }
 }
 
 @Composable
 fun HistoryContentWithState(
     uiState: HistoryUiState,
+    navigateToSetting: () -> Unit,
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit
 ) {
@@ -52,6 +47,7 @@ fun HistoryContentWithState(
         is HistoryUiState.Success ->
             HistoryContent(
                 historyUiState = uiState,
+                navigateToSetting = navigateToSetting,
                 selectYear = selectYear,
                 selectDate = selectDate
             )

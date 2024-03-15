@@ -25,7 +25,7 @@ object HistoryUtil {
         weekList.add(ControllerDayState.Default())
         weekList.add(ControllerDayState.Default("금"))
         weekList.add(ControllerDayState.Default())
-        resultList.add(ControllerWeek(null, weekList.toList()))
+        resultList.add(ControllerWeek(month = null, controllerDayList = weekList.toList()))
 
         weekList.clear()
 
@@ -45,16 +45,21 @@ object HistoryUtil {
 
             // Todo가 존재하는 Day
             if (existList.contains(currentDay)) {
-                if (currentDay <= today) {
+                if (currentDay < today) {
                     weekList.add(ControllerDayState.Exist(ControllerTimeState.Past(currentDay)))
-                } else {
+                } else if(currentDay == today){
+                    weekList.add(ControllerDayState.Exist(ControllerTimeState.Present(currentDay)))
+                }else {
                     weekList.add(ControllerDayState.Exist(ControllerTimeState.Future(currentDay)))
                 }
                 // Todo가 존재하지않는 Day
             } else {
-                if (currentDay <= today) {
+                if (currentDay < today) {
                     weekList.add(ControllerDayState.Empty(ControllerTimeState.Past(currentDay)))
-                } else {
+                } else if(currentDay == today){
+                    weekList.add(ControllerDayState.Empty(ControllerTimeState.Present(currentDay)))
+                }
+                else {
                     weekList.add(ControllerDayState.Empty(ControllerTimeState.Future(currentDay)))
                 }
             }
