@@ -124,7 +124,7 @@ object MandaUtils {
     }
 
     fun colorToIndex(color: Color): Int {
-        return when (color) {
+        val gap = when (color) {
             HMColor.Dark.Pink -> 0
             HMColor.Dark.Red -> 1
             HMColor.Dark.Orange -> 2
@@ -134,5 +134,7 @@ object MandaUtils {
             HMColor.Dark.Indigo -> 6
             else -> 0
         }
+        Logger.d(gap)
+        return gap
     }
 }

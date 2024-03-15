@@ -96,7 +96,6 @@ fun InitializedMandaContent(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
 ) {
-    Logger.d(uiState.donePercentage)
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
@@ -161,18 +160,18 @@ fun MandaStatus(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            FilledIconButton(
-                modifier = Modifier.size(30.dp),
-                onClick = { /*TODO*/ },
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = HMColor.Primary)
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "")
-            }
-        }
+//        Box(
+//            modifier = Modifier.fillMaxWidth(),
+//            contentAlignment = Alignment.CenterEnd
+//        ) {
+//            FilledIconButton(
+//                modifier = Modifier.size(30.dp),
+//                onClick = { /*TODO*/ },
+//                colors = IconButtonDefaults.filledIconButtonColors(containerColor = HMColor.Primary)
+//            ) {
+//                Icon(imageVector = Icons.Default.Add, contentDescription = "")
+//            }
+//        }
         ClickableText(
             text = AnnotatedString("\" $finalName \""),
             onClick = { onClickTitle(MandaUI(id = 4, name = finalName)) },
@@ -229,8 +228,8 @@ fun Mandalart(
     var beforeDirection by remember { mutableIntStateOf(-1) }
     var afterDirection by remember { mutableIntStateOf(-1) }
 
-    val dampingRatio = 1f // 클수록 스프링 효과 작음
-    val stiffness = 1000f // 클수록 빨리 확대, 축소 됨
+    val dampingRatio = 1f // 클수록 스프링 효과 감소
+    val stiffness = 1000f // 클수록 빨리 확대, 축소
 
     val animatedScaleX by animateFloatAsState(
         targetValue = scaleX,

@@ -50,6 +50,7 @@ import com.coldblue.mandalart.model.asMandaKey
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.orhanobut.logger.Logger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,9 +64,12 @@ fun MandaBottomSheet(
     deleteMandaDetail: (Int) -> Unit,
     onDisMiss: () -> Unit
 ) {
+
+
+
     val contentType = mandaBottomSheetContentState.mandaBottomSheetContentType
     val mandaUI = contentType.mandaUI
-
+    Logger.d(mandaUI)
     var inputText by remember { mutableStateOf(mandaUI.name) }
     var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.darkColor)) }
     var buttonClickableState by remember { mutableStateOf(mandaBottomSheetContentState is MandaBottomSheetContentState.Update) }
@@ -105,7 +109,7 @@ fun MandaBottomSheet(
                     Spacer(modifier = Modifier.height(70.dp))
 
                 is MandaBottomSheetContentType.MandaKey ->
-                    MandaBottomSheetColor { colorIndex = it }
+                    MandaBottomSheetColor(colorIndex) { colorIndex = it }
 
                 is MandaBottomSheetContentType.MandaDetail ->
                     MandaBottomSheetDone(doneCheckedState) { doneCheckedState = it }
@@ -200,11 +204,12 @@ fun MandaBottomSheet(
 
 @Composable
 fun MandaBottomSheetColor(
+    initColorIndex: Int,
     onClick: (Int) -> Unit
 ) {
     val colorInfoListState = remember {
         mutableStateListOf(
-            MandaColorInfo(HMColor.Dark.Pink, true, 0),
+            MandaColorInfo(HMColor.Dark.Pink, false, 0),
             MandaColorInfo(HMColor.Dark.Red, false, 1),
             MandaColorInfo(HMColor.Dark.Orange, false, 2),
             MandaColorInfo(HMColor.Dark.Yellow, false, 3),
@@ -214,6 +219,8 @@ fun MandaBottomSheetColor(
             MandaColorInfo(HMColor.Dark.Purple, false, 7)
         )
     }
+
+    colorInfoListState[initColorIndex].isChecked = true
 
 
     Column(
