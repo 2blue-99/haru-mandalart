@@ -107,6 +107,7 @@ object MandaUtils {
             id = 5,
             mandaUIList = centerList.toList()
         )
+        bigList.forEach { Logger.d(it) }
         return bigList
     }
 

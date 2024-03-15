@@ -1,7 +1,5 @@
 package com.coldblue.mandalart.screen
 
-import android.util.Log
-import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,12 +14,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -41,7 +41,6 @@ import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.model.MandaColorInfo
@@ -70,8 +69,23 @@ fun MandaBottomSheet(
     var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.darkColor)) }
     var buttonClickableState by remember { mutableStateOf(mandaBottomSheetContentState is MandaBottomSheetContentState.Update) }
     var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
+    var dialogState by remember { mutableStateOf(false) }
 
-    Log.e("TAG", "MandaBottomSheet: $mandaUI")
+    if (dialogState) {
+        MandaKeyDialog(
+            onDisMiss = {
+                dialogState = false
+                onDisMiss()
+            },
+            onDelete = {
+                deleteMandaKey(
+                    mandaUI.id,
+                    (contentType as MandaBottomSheetContentType.MandaKey).groupIdList ?: emptyList()
+                )
+                onDisMiss()
+            }
+        )
+    }
 
     ModalBottomSheet(
         onDismissRequest = { onDisMiss() },
@@ -105,7 +119,7 @@ fun MandaBottomSheet(
                     Spacer(modifier = Modifier.height(70.dp))
 
                 is MandaBottomSheetContentType.MandaKey ->
-                    MandaBottomSheetColor { colorIndex = it }
+                    MandaBottomSheetColor(colorIndex) { colorIndex = it }
 
                 is MandaBottomSheetContentType.MandaDetail ->
                     MandaBottomSheetDone(doneCheckedState) { doneCheckedState = it }
@@ -144,18 +158,17 @@ fun MandaBottomSheet(
                             shape = RoundedCornerShape(10.dp),
                             onClick = {
                                 when (contentType) {
-                                    is MandaBottomSheetContentType.MandaDetail ->
+                                    is MandaBottomSheetContentType.MandaDetail -> {
                                         deleteMandaDetail(mandaUI.id)
+                                        onDisMiss()
+                                    }
 
-                                    is MandaBottomSheetContentType.MandaKey ->
-                                        deleteMandaKey(
-                                            mandaUI.id,
-                                            contentType.groupIdList ?: emptyList()
-                                        )
+                                    is MandaBottomSheetContentType.MandaKey -> {
+                                        dialogState = true
+                                    }
 
                                     is MandaBottomSheetContentType.MandaFinal -> {}
                                 }
-                                onDisMiss()
                             }
                         ) {
                             Text(
@@ -200,11 +213,12 @@ fun MandaBottomSheet(
 
 @Composable
 fun MandaBottomSheetColor(
+    initColorIndex: Int,
     onClick: (Int) -> Unit
 ) {
     val colorInfoListState = remember {
         mutableStateListOf(
-            MandaColorInfo(HMColor.Dark.Pink, true, 0),
+            MandaColorInfo(HMColor.Dark.Pink, false, 0),
             MandaColorInfo(HMColor.Dark.Red, false, 1),
             MandaColorInfo(HMColor.Dark.Orange, false, 2),
             MandaColorInfo(HMColor.Dark.Yellow, false, 3),
@@ -214,6 +228,8 @@ fun MandaBottomSheetColor(
             MandaColorInfo(HMColor.Dark.Purple, false, 7)
         )
     }
+
+    colorInfoListState[initColorIndex].isChecked = true
 
 
     Column(
@@ -268,6 +284,31 @@ fun RoundButton(
             colors = ButtonDefaults.buttonColors(containerColor = colorInfo.color)
         ) { }
     }
+}
+
+@Composable
+fun MandaKeyDialog(
+    onDisMiss: () -> Unit,
+    onDelete: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDisMiss() },
+        text = { Text(text = "핵심목표를 삭제하면 포함된 세부목표가 전부 삭제됩니다.", style = HmStyle.text16, color = HMColor.Text) },
+        dismissButton = {
+            TextButton(onClick = { onDisMiss() }) {
+                Text(text = "취소", style = HmStyle.text16, color = HMColor.Text)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onDelete()
+                onDisMiss()
+            }) {
+                Text(text = "삭제", style = HmStyle.text16, color = HMColor.NegativeText)
+            }
+        },
+        shape = RoundedCornerShape(8.dp)
+    )
 }
 
 @Composable

@@ -15,6 +15,7 @@ object HMColor {
     val LightPrimary = Color(0xFF8373F0)
     val Text = Color(0xFF222222)
     val SubText = Color(0xFFB8BBBF)
+    val NegativeText = Color(0xFFB93B50)
     val Gray = Color(0xFFD9DBE3)
     val Background = Color(0xFFFFFFFF)
     val Box = Color(0xFFF2F4F8)

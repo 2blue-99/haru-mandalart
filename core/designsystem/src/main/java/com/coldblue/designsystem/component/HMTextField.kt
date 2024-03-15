@@ -30,7 +30,6 @@ fun HMTextField(
     var text by remember { mutableStateOf(inputText) }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = text,
