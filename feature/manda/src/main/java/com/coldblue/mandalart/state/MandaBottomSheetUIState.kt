@@ -31,7 +31,7 @@ sealed interface MandaBottomSheetContentType {
 
     data class MandaKey(
         override val mandaUI: MandaUI,
-        val groupIdList: List<Int>?
+        val groupIdList: List<Int>? = null
     ) : MandaBottomSheetContentType {
         override val title = "핵심 목표"
     }

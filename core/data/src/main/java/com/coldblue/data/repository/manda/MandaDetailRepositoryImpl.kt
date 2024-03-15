@@ -6,7 +6,9 @@ import com.coldblue.data.mapper.MandaDetailMapper.asSyncedEntity
 import com.coldblue.data.mapper.Mapper.asEntity
 import com.coldblue.data.mapper.Mapper.asDomain
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.dao.MandaDetailDao
+import com.coldblue.database.entity.MandaDetailEntity
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.MandaDetail
 import com.coldblue.network.datasource.MandaDetailDataSource

@@ -6,12 +6,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.mandalart.model.MandaUI
-import com.coldblue.mandalart.model.asMandaUI
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 
 object MandaUtils {
     @Composable
@@ -23,77 +23,91 @@ object MandaUtils {
         details: List<MandaDetail>
     ): List<MandaState> {
 
+        // 3X3 크기의 큰 박스 만들기
+        // key가 존재하는 곳은 3X3 크기의 작은 박스 만들어서 큰 박스에 넣기
+        // key 없는 곳은 Empty 박스를 큰 박스에 넣기
+        // 0번 인덱스부터 시작해서 4번째 박스는 키박스로 만들기
+
         val keyList = keys.toMutableList()
         val detailList = details.toMutableList()
 
         val detailIdList = details.map { it.id }.toMutableList()
         val keyIdList = keys.map { it.id }.toMutableList()
 
-        val doneArr = BooleanArray(10) { true }
-        val groupList = mutableListOf<Int>()
+        val bigList = mutableListOf<MandaState>()
+        val smallList = mutableListOf<MandaType>()
 
-        val resultList = mutableListOf<MandaState>()
-        val typeList = mutableListOf<MandaType>()
-        val keyGroupList = mutableListOf<MandaType>()
+        val centerList = mutableListOf<MandaType>()
 
-        var keyIndex = 1
+        for (keyId in 1..9) {
 
-        for (id in 1..81) {
-            if (detailIdList.contains(id)) {
+            if (keyIdList.contains(keyId)) {
+                val key = keyList.removeFirst()
+                val (darkColor, lightColor) = indexToDarkLightColor(key.colorIndex)
+                val groupIdList = mutableListOf<Int>()
+                var isDone = true
 
-                val detail = detailList.removeFirst()
-                val colors = indexToDarkLightColor(detail.colorIndex)
+                for (id in 1..9) {
 
-                doneArr[keyIndex] = false
-                groupList.add(id)
+                    val detailId = id + (keyId - 1) * 9
 
-                if (detail.isDone)
-                    typeList.add(MandaType.Detail(detail.asMandaUI(colors, true)))
-                else
-                    typeList.add(MandaType.Detail(detail.asMandaUI(colors, false)))
+                    if (detailIdList.contains(detailId)) {
+                        val detail = detailList.removeFirst()
+                        groupIdList.add(detail.id)
 
-            } else {
-                typeList.add(MandaType.None(MandaUI(id = id)))
-            }
+                        smallList.add(
+                            MandaType.Detail(
+                                mandaUI = MandaUI(
+                                    id = detailId,
+                                    name = detail.name,
+                                    darkColor = darkColor,
+                                    lightColor = lightColor,
+                                    isDone = detail.isDone
+                                )
+                            )
+                        )
 
-            // 9개 채우면 그룹으로 만들어서 ResultList에 삽입
-            if (typeList.size == 9) {
-                if (keyIdList.contains(keyIndex)) {
-                    val key = keyList.removeFirst()
-                    val colors = indexToDarkLightColor(key.colorIndex)
-                    if (doneArr[keyIndex]) {
-                        val mandaKey =
-                            MandaType.Key(key.asMandaUI(colors, true), groupList.toList())
-                        typeList[4] = mandaKey
-                        keyGroupList.add(mandaKey)
+                        if (!detail.isDone)
+                            isDone = false
+
                     } else {
-                        val mandaKey =
-                            MandaType.Key(key.asMandaUI(colors, false), groupList.toList())
-                        typeList[4] = mandaKey
-                        keyGroupList.add(mandaKey)
+                        smallList.add(
+                            MandaType.None(
+                                mandaUI = MandaUI(id = detailId, darkColor = darkColor)
+                            )
+                        )
                     }
-                    resultList.add(MandaState.Exist(typeList.toList()))
-                } else {
-                    resultList.add(MandaState.Empty(keyIndex))
-                    keyGroupList.add(MandaType.None(MandaUI(id = keyIndex)))
                 }
-                typeList.clear()
-                groupList.clear()
-                keyIndex++
+
+                val keyType = MandaType.Key(
+                    mandaUI = MandaUI(
+                        id = keyId,
+                        name = key.name,
+                        darkColor = if (keyId == 5) HMColor.Primary else darkColor,
+                        isDone = isDone
+                    ),
+                    groupIdList = groupIdList
+                )
+                smallList[4] = keyType
+                centerList.add(keyType)
+                bigList.add(
+                    MandaState.Exist(
+                        id = keyId,
+                        mandaUIList = smallList.toList()
+                    )
+                )
+                smallList.clear()
+            } else {
+                bigList.add(MandaState.Empty(id = keyId))
+                centerList.add(MandaType.None(mandaUI = MandaUI(id = keyId)))
             }
         }
 
-        // 최종 목표 만다 수정
-        keyGroupList[4].mandaUI.darkColor = HMColor.Primary
-        keyGroupList[4].mandaUI.lightColor = HMColor.Primary
-
-        // 센터에 있는 키 만다 수정 로직
-        repeat(9) {
-            resultList[4] = MandaState.Exist(keyGroupList.toList())
-        }
-
-        Log.e("TAG", "transformToMandaList: $resultList")
-        return resultList
+        bigList[4] = MandaState.Exist(
+            id = 5,
+            mandaUIList = centerList.toList()
+        )
+        return bigList
     }
 
     private fun indexToDarkLightColor(index: Int): Pair<Color, Color> {
@@ -118,7 +132,7 @@ object MandaUtils {
             HMColor.Dark.Green -> 4
             HMColor.Dark.Blue -> 5
             HMColor.Dark.Indigo -> 6
-            else -> 7
+            else -> 0
         }
     }
 }

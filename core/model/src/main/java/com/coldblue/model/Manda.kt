@@ -4,7 +4,7 @@ package com.coldblue.model
 data class MandaDetail(
     val name: String,
     val isDone: Boolean,
-    val colorIndex: Int,
+    val colorIndex: Int, // Todo 이거 삭제해야함
     val id: Int = 0
 )
 
