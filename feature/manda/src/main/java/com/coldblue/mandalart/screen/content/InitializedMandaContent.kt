@@ -21,16 +21,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -77,6 +74,7 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -161,18 +159,7 @@ fun MandaStatus(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-//        Box(
-//            modifier = Modifier.fillMaxWidth(),
-//            contentAlignment = Alignment.CenterEnd
-//        ) {
-//            FilledIconButton(
-//                modifier = Modifier.size(30.dp),
-//                onClick = { /*TODO*/ },
-//                colors = IconButtonDefaults.filledIconButtonColors(containerColor = HMColor.Primary)
-//            ) {
-//                Icon(imageVector = Icons.Default.Add, contentDescription = "")
-//            }
-//        }
+
         ClickableText(
             text = AnnotatedString("\" $finalName \""),
             onClick = { onClickTitle(MandaUI(id = 4, name = finalName)) },
@@ -209,7 +196,8 @@ fun MandaStatus(
             progress = { animateDonePercentage },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(10.dp),
+                .height(10.dp)
+                .clip(RoundedCornerShape(2.dp)),
             color = HMColor.Primary,
             trackColor = HMColor.Gray
         )
@@ -225,7 +213,8 @@ fun Mandalart(
     var scaleY by remember { mutableFloatStateOf(1f) }
     var pivotX by remember { mutableFloatStateOf(0f) }
     var pivotY by remember { mutableFloatStateOf(0f) }
-    var zoomState by remember { mutableStateOf(false) }
+    var isZoom by remember { mutableStateOf(false) }
+    var isGesture by remember { mutableStateOf(false) }
     var beforeDirection by remember { mutableIntStateOf(-1) }
     var afterDirection by remember { mutableIntStateOf(-1) }
 
@@ -246,52 +235,64 @@ fun Mandalart(
             stiffness = stiffness
         ), label = ""
     )
+    val animatedPivotX by animateFloatAsState(
+        targetValue = pivotX,
+        label = "",
+        finishedListener = {
+            isGesture = false
+        }
+    )
+    val animatedPivotY by animateFloatAsState(
+        targetValue = pivotY,
+        label = "",
+        finishedListener = {
+            isGesture = false
+        }
+    )
 
     fun zoomInAndOut(index: Int) {
-        Log.e("TAG", "zoomInAndOut: $index")
         when (index) {
             0, 1, 3, 4 -> {
-                pivotX = 0f
-                pivotY = 0f
+                isZoom = true
                 scaleX = 1.5f
                 scaleY = 1.5f
-                zoomState = true
+                pivotX = 0f
+                pivotY = 0f
                 beforeDirection = 0
-
             }
 
             2, 5 -> {
-                pivotX = 1f
-                pivotY = 0f
+                isZoom = true
                 scaleX = 1.5f
                 scaleY = 1.5f
-                zoomState = true
+                pivotX = 1f
+                pivotY = 0f
                 beforeDirection = 1
             }
 
             6, 7 -> {
-                pivotX = 0f
-                pivotY = 1f
+                isZoom = true
                 scaleX = 1.5f
                 scaleY = 1.5f
-                zoomState = true
+                pivotX = 0f
+                pivotY = 1f
                 beforeDirection = 2
             }
 
             8 -> {
-                pivotX = 1f
-                pivotY = 1f
+                isZoom = true
                 scaleX = 1.5f
                 scaleY = 1.5f
-                zoomState = true
+                pivotX = 1f
+                pivotY = 1f
                 beforeDirection = 3
             }
 
             // 축소
             else -> {
+                isZoom = false
                 scaleX = 1.0f
                 scaleY = 1.0f
-                zoomState = false
             }
         }
     }
@@ -334,6 +335,7 @@ fun Mandalart(
     }
 
     fun dragEndDetector() {
+        isGesture = true
         when (afterDirection) {
             0 -> {
                 if (beforeDirection == 1)
@@ -372,12 +374,12 @@ fun Mandalart(
                 shape = CircleShape,
                 containerColor = HMColor.Primary,
                 onClick = {
-                    if (zoomState)
+                    if (isZoom)
                         zoomInAndOut(-1)
                     else
                         zoomInAndOut(1)
                 }) {
-                if (zoomState)
+                if (isZoom)
                     Icon(
                         imageVector = IconPack.ZoomOut,
                         tint = HMColor.Background,
@@ -408,20 +410,21 @@ fun Mandalart(
                     Column(
                         modifier = Modifier
                             .graphicsLayer(
-                                scaleX = animatedScaleX.coerceIn(0.5f, 1.5f),
-                                scaleY = animatedScaleY.coerceIn(0.5f, 1.5f),
-                                transformOrigin = TransformOrigin(pivotX, pivotY)
+                                transformOrigin = TransformOrigin(if(isGesture) animatedPivotX else pivotX, if(isGesture) animatedPivotY else pivotY),
+                                scaleX = animatedScaleX,
+                                scaleY = animatedScaleY,
                             )
-                            .pointerInput(Unit) {
-                                detectDragGestures(
-                                    onDrag = { change, dragAmount ->
-                                        change.consume()
-                                        dragStartDetector(dragAmount)
-                                    },
-                                    onDragEnd = {
-                                        dragEndDetector()
-                                    }
-                                )
+                            .pointerInput(isZoom) {
+                                if(isZoom)
+                                    detectDragGestures(
+                                        onDrag = { change, dragAmount ->
+                                            change.consume()
+                                            dragStartDetector(dragAmount)
+                                        },
+                                        onDragEnd = {
+                                            dragEndDetector()
+                                        }
+                                    )
                             }
                     ) {
                         repeat(3) { keyRow ->
@@ -562,14 +565,15 @@ fun Mandalart(
                                                 }
                                             }
                                         }
-                                        if (!zoomState) {
+                                        if (!isZoom) {
                                             Spacer(modifier = Modifier
                                                 .background(Color.Transparent)
                                                 .fillMaxWidth()
                                                 .aspectRatio(1F)
                                                 .clickable {
-                                                    if (!zoomState)
+                                                    if (!isZoom) {
                                                         zoomInAndOut(keyColumn + keyRow * 3)
+                                                    }
                                                 }
                                             )
                                         }
