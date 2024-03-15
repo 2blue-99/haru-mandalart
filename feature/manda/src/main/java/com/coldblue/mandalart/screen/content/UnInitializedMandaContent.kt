@@ -23,6 +23,7 @@ import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMChip
 import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.mandalart.state.mandaFinalMaxLen
 import com.coldblue.mandalart.util.MandaUtils.getTagList
 
 @Composable
@@ -51,7 +52,7 @@ fun UnInitializedMandaContent(
             )
         }
         item {
-            HMTextField(inputText) {
+            HMTextField(inputText, maxLen = mandaFinalMaxLen) {
                 inputText = it
                 buttonClickableState = it.isNotBlank()
             }
