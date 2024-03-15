@@ -38,14 +38,11 @@ class SyncWriteWorker @AssistedInject constructor(
             ).all { it }
 
             if (writeSucceed) {
-                Logger.d("쓰기 성공")
                 Result.success()
             } else {
-                Logger.d("다시")
                 Result.retry()
             }
         } catch (e: Exception) {
-            Logger.d("실패")
             Result.failure()
         }
     }

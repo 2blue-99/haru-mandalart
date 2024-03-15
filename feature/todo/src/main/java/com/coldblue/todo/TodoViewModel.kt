@@ -6,6 +6,7 @@ import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.ToggleTodoUseCase
 import com.coldblue.domain.todo.UpsertTodoUseCase
 import com.coldblue.domain.todogroup.DeleteCurrentGroupUseCase
+import com.coldblue.domain.todogroup.DeleteTodoGroupUseCase
 import com.coldblue.domain.todogroup.GetGroupWithCurrentUseCase
 import com.coldblue.domain.todogroup.UpsertCurrentGroupUseCase
 import com.coldblue.domain.todogroup.UpsertTodoGroupUseCase
@@ -33,7 +34,8 @@ class TodoViewModel @Inject constructor(
     private val upsertCurrentGroupUseCase: UpsertCurrentGroupUseCase,
     private val upsertTodoUseCase: UpsertTodoUseCase,
     private val toggleTodoUseCase: ToggleTodoUseCase,
-    private val deleteCurrentGroupUseCase: DeleteCurrentGroupUseCase
+    private val deleteCurrentGroupUseCase: DeleteCurrentGroupUseCase,
+    private val deleteTodoGroupUseCase: DeleteTodoGroupUseCase,
 ) : ViewModel() {
 
     private val _bottomSheetUiSate = MutableStateFlow<BottomSheetUiState>(BottomSheetUiState.Down)
@@ -137,6 +139,12 @@ class TodoViewModel @Inject constructor(
         }
     }
 
+    fun upsertTodoGroup(todoGroupId: Int, name: String) {
+        viewModelScope.launch {
+            upsertTodoGroupUseCase(todoGroupId, name)
+        }
+    }
+
     fun upsertCurrentGroup(currentGroup: CurrentGroup) {
         viewModelScope.launch {
             upsertCurrentGroupUseCase(currentGroup)
@@ -146,6 +154,12 @@ class TodoViewModel @Inject constructor(
     fun deleteCurrentGroup(currentGroupId: Int, todoGroupId: Int) {
         viewModelScope.launch {
             deleteCurrentGroupUseCase(currentGroupId, todoGroupId)
+        }
+    }
+
+    fun deleteTodoGroup(todoGroupId: Int) {
+        viewModelScope.launch {
+            deleteTodoGroupUseCase(todoGroupId)
         }
     }
 }

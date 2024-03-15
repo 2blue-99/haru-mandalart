@@ -16,7 +16,7 @@ import java.time.LocalDate
 interface CurrentGroupDao {
     //    @Query("Select * From current_group")
 //    fun getCurrentGroup(date:LocalDate): Flow<List<CurrentGroupEntity>>
-    @Query("SELECT * FROM current_group WHERE date = :date OR date = (SELECT MAX(date) FROM current_group WHERE date < :date)")
+    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0 OR date = (SELECT MAX(date) FROM current_group WHERE date < :date AND is_del=0)")
     fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -31,7 +31,7 @@ interface CurrentGroupDao {
         deleteTodoByCurrentGroup(todoGroupId)
     }
 
-    @Query("Delete From current_group WHERE id = :currentGroupId")
+    @Query("UPDATE current_group SET is_del=1 WHERE id = :currentGroupId")
     suspend fun deleteCurrentGroup(currentGroupId: Int)
 
     @Query("UPDATE todo SET todo_group_id=null WHERE todo_group_id = :todoGroupId")
