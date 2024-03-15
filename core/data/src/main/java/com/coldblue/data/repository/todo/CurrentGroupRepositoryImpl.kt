@@ -28,7 +28,8 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         syncHelper.syncWrite()
     }
 
-    override fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>> {
+    override suspend fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>> {
+        currentGroupDao.setCurrentGroup(date)
         return currentGroupDao.getCurrentGroup(date).map { it.asDomain() }
     }
 

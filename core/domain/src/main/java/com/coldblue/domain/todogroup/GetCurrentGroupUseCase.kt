@@ -9,5 +9,5 @@ import javax.inject.Inject
 class GetCurrentGroupUseCase @Inject constructor(
     private val currentGroupRepository: CurrentGroupRepository
 ) {
-    operator fun invoke(date: LocalDate): Flow<List<CurrentGroup>> = currentGroupRepository.getCurrentGroup(date)
+    suspend operator fun invoke(date: LocalDate): Flow<List<CurrentGroup>> = currentGroupRepository.getCurrentGroup(date)
 }

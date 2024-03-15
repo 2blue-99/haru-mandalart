@@ -12,7 +12,7 @@ class GetGroupWithCurrentUseCase @Inject constructor(
     private val todoGroupRepository: TodoGroupRepository,
     private val currentGroupRepository: CurrentGroupRepository
 ) {
-    operator fun invoke(date:LocalDate): Flow<GroupWithCurrent> {
+    suspend operator fun invoke(date:LocalDate): Flow<GroupWithCurrent> {
         return todoGroupRepository.getTodoGroup()
             .combine(currentGroupRepository.getCurrentGroup(date)) { group, current ->
                 GroupWithCurrent(group, current)
