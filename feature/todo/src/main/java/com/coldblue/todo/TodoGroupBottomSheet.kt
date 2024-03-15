@@ -37,9 +37,7 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.TodoGroup
-import com.coldblue.model.ToggleInfo
 import com.coldblue.todo.dialog.TodoGroupDialog
-import com.orhanobut.logger.Logger
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

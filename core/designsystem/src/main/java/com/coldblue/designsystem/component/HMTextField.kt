@@ -24,7 +24,7 @@ import com.coldblue.designsystem.theme.HmStyle
 @Composable
 fun HMTextField(
     inputText: String = "",
-    maxLen: Int = 12,
+    maxLen: Int,
     onChangeText: (String) -> Unit = {}
 ) {
     var text by remember { mutableStateOf(inputText) }

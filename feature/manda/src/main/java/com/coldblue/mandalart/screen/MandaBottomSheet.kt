@@ -116,7 +116,7 @@ fun MandaBottomSheet(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
                 Text(text = contentType.title + " 이름", style = HmStyle.text16)
-                HMTextField(inputText = inputText) {
+                HMTextField(inputText = inputText, maxLen = contentType.maxLen) {
                     inputText = it
                     buttonClickableState = inputText.isNotBlank()
                 }
@@ -253,9 +253,12 @@ fun MandaBottomSheetColor(
         LazyColumn {
             item {
                 FlowRow {
-                    repeat(colorInfoListState.size){index ->
+                    repeat(colorInfoListState.size) { index ->
                         Box(
-                            modifier = Modifier.width((screenWidth/7).dp).aspectRatio(1f).padding(5.dp)
+                            modifier = Modifier
+                                .width((screenWidth / 7).dp)
+                                .aspectRatio(1f)
+                                .padding(5.dp)
                         ) {
                             RoundButton(colorInfoListState[index]) {
                                 onClick(index)
@@ -309,7 +312,13 @@ fun MandaKeyDialog(
 ) {
     AlertDialog(
         onDismissRequest = { onDisMiss() },
-        text = { Text(text = "핵심목표를 삭제하면 포함된 세부목표가 전부 삭제됩니다.", style = HmStyle.text16, color = HMColor.Text) },
+        text = {
+            Text(
+                text = "핵심목표를 삭제하면 포함된 세부목표가 전부 삭제됩니다.",
+                style = HmStyle.text16,
+                color = HMColor.Text
+            )
+        },
         dismissButton = {
             TextButton(onClick = { onDisMiss() }) {
                 Text(text = "취소", style = HmStyle.text16, color = HMColor.Text)
