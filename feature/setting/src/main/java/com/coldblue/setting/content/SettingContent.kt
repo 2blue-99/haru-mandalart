@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.DeleteDialog
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
@@ -47,7 +48,9 @@ fun SettingContent(
     var openDialog by remember { mutableStateOf(false) }
 
     if (openDialog) {
-        SimpleDialog(
+        DeleteDialog(
+            text = "탈퇴하면 모든 데이터가 완전히 삭제됩니다.",
+            deleteConfirmText = "탈퇴",
             onDismissRequest = {
                 openDialog = false
             },
@@ -147,38 +150,4 @@ fun SettingContentPreview() {
 
 }
 
-@Composable
-fun SimpleDialog(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-) {
-
-    AlertDialog(
-        shape = RoundedCornerShape(10.dp),
-        containerColor = HMColor.Background,
-        text = {
-            Text(
-                text = "탈퇴하면 모든 데이터가 완전히 삭제됩니다.",
-                fontWeight = FontWeight.Bold
-            )
-        }, onDismissRequest = {
-            onDismissRequest()
-        }, confirmButton = {
-            TextButton(onClick = {
-                onConfirmation()
-            }) {
-                Text(
-                    text = "탈퇴",
-                    color = HMColor.Dark.Red,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }, dismissButton = {
-            TextButton(onClick = {
-                onDismissRequest()
-            }) {
-                Text("취소", fontWeight = FontWeight.Bold, color = HMColor.Text)
-            }
-        })
-}
 

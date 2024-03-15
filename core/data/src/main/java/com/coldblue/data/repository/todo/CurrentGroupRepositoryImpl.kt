@@ -3,9 +3,6 @@ package com.coldblue.data.repository.todo
 import com.coldblue.data.mapper.CurrentGroupMapper.asEntity
 import com.coldblue.data.mapper.CurrentGroupMapper.asNetworkModel
 import com.coldblue.data.mapper.CurrentGroupMapper.asSyncedEntity
-import com.coldblue.data.mapper.TodoGroupMapper.asEntity
-import com.coldblue.data.mapper.TodoGroupMapper.asNetworkModel
-import com.coldblue.data.mapper.TodoGroupMapper.asSyncedEntity
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
 import com.coldblue.data.sync.SyncHelper

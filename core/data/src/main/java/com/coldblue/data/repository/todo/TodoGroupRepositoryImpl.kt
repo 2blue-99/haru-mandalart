@@ -28,12 +28,17 @@ class TodoGroupRepositoryImpl @Inject constructor(
         syncHelper.syncWrite()
     }
 
+    override suspend fun upsertTodoGroup(todoGroupId: Int, name: String) {
+        todoGroupDao.upsertTodoGroup(todoGroupId, name)
+        syncHelper.syncWrite()
+    }
+
     override fun getTodoGroup(): Flow<List<TodoGroup>> {
         return todoGroupDao.getTodoGroup().map { it.asDomain() }
     }
 
     override suspend fun delTodoGroup(todoGroupId: Int) {
-        todoGroupDao.deleteTodoGroup(todoGroupId)
+        todoGroupDao.deleteTodoGroupAndRelated(todoGroupId)
     }
 
     override suspend fun syncRead(): Boolean {
@@ -44,7 +49,10 @@ class TodoGroupRepositoryImpl @Inject constructor(
             val todoGroupIds = todoGroupDao.getTodoGroupIdByOriginIds(originIds)
             val toUpsertTodoGroups = remoteNew.asEntity(todoGroupIds)
             todoGroupDao.upsertTodoGroup(toUpsertTodoGroups)
-            syncHelper.setMaxUpdateTime(toUpsertTodoGroups, updateTimeDataSource::setTodoGroupUpdateTime)
+            syncHelper.setMaxUpdateTime(
+                toUpsertTodoGroups,
+                updateTimeDataSource::setTodoGroupUpdateTime
+            )
             return true
         } catch (e: Exception) {
             Logger.e("${e.message}")

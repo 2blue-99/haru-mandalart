@@ -41,15 +41,12 @@ class SyncReadWorker @AssistedInject constructor(
                 async { mandaDetailRepository.syncRead() },
                 ).all { it }
             if (syncedSucceed) {
-                Logger.d("리드 성공")
                 Result.success()
             } else {
-                Logger.d("리드 다시")
 
                 Result.retry()
             }
         } catch (e: Exception) {
-            Logger.d("리드 실패")
 
             Result.failure()
         }

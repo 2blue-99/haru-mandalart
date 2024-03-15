@@ -1,6 +1,5 @@
 package com.coldblue.todo
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -90,7 +89,7 @@ fun TodoBottomSheet(
 
     var onDetail by remember { mutableStateOf(false) }
     var titleText by remember { mutableStateOf(todo.title) }
-    var contentText by remember { mutableStateOf(todo.content?:"") }
+    var contentText by remember { mutableStateOf(todo.content ?: "") }
 
     var currentTodoGroupId by remember { mutableStateOf(currentGroupList.firstOrNull { it.todoGroupId == todo.todoGroupId }?.todoGroupId) }
 
@@ -274,38 +273,6 @@ fun TodoBottomSheet(
                         )
                         onDismissRequest()
                     }
-//                    Button(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .weight(1F)
-//                            .padding(start = 8.dp),
-//                        shape = RoundedCornerShape(10.dp),
-//                        colors = ButtonColors(
-//                            contentColor = HMColor.Background,
-//                            containerColor = HMColor.Primary,
-//                            disabledContentColor = HMColor.Box,
-//                            disabledContainerColor = HMColor.Primary,
-//                        ),
-//                        onClick = {
-//                            upsertTodo(
-//                                todo.copy(
-//                                    title = titleText,
-//                                    content = contentText,
-//                                    time = if (onSwitch) time.getAmPmHour(timeString) else null,
-//                                    todoGroupId = currentTodoGroupId,
-//                                    date = date
-//                                )
-//                            )
-//                            onDismissRequest()
-//                        }
-//                    ) {
-//                        Text(
-//                            text = "수정",
-//                            style = HmStyle.text16,
-//                            modifier = Modifier.padding(vertical = 4.dp),
-//                            fontWeight = FontWeight.Bold
-//                        )
-//                    }
                 }
             } else {
                 HMButton(text = "저장", clickableState = titleText.isNotEmpty()) {
@@ -664,12 +631,10 @@ fun <T> CircularList(
         val targetIndex = items.indexOf(initialItem)
         lastSelectedIndex = targetIndex
         scrollState.scrollToItem(lastSelectedIndex, 0)
-//        scrollState.animateScrollToItem(lastSelectedIndex, 0)
-
     }
     LazyColumn(
         modifier = Modifier
-            .width(itemHeight * 2)
+            .width(itemHeight * 2.5f)
             .height(itemHeight * numberOfDisplayedItems),
         state = scrollState,
         verticalArrangement = Arrangement.Top,

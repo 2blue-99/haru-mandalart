@@ -57,7 +57,6 @@ class SyncHelperImpl @Inject constructor(
     }
 
     override fun syncWrite() {
-        Logger.d("쓰기 요청")
         WorkManager.getInstance(context).beginUniqueWork(
             SYNC_READ + SYNC_WRITE,
             ExistingWorkPolicy.KEEP,
