@@ -8,7 +8,7 @@ import java.time.LocalDate
 interface CurrentGroupRepository : Syncable {
     suspend fun upsertCurrentGroup(currentGroup: CurrentGroup)
 
-    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>>
+    suspend fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>>
 
     suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int)
 }

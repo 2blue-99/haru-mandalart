@@ -9,6 +9,7 @@ import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -16,8 +17,8 @@ import java.time.LocalDate
 interface CurrentGroupDao {
     //    @Query("Select * From current_group")
 //    fun getCurrentGroup(date:LocalDate): Flow<List<CurrentGroupEntity>>
-    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0 OR date = (SELECT MAX(date) FROM current_group WHERE date < :date AND is_del=0)")
-    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
+//    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0 OR date = (SELECT MAX(date) FROM current_group WHERE date < :date AND is_del=0)")
+//    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCurrentGroup(currentGroup: CurrentGroupEntity)
@@ -50,4 +51,24 @@ interface CurrentGroupDao {
 
     @Query("SELECT id FROM current_group WHERE origin_id = :originId")
     fun getCurrentGroupIdByOriginId(originId: Int): Int?
+
+    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0")
+    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
+
+    @Query("SELECT COUNT(*) FROM current_group WHERE date = :date")
+    suspend fun getCurrentGroupCount(date: LocalDate): Int
+
+    @Query("SELECT * FROM current_group WHERE is_del=0 AND date = (SELECT MAX(date) FROM current_group)")
+    suspend fun getLatestCurrentGroups(): List<CurrentGroupEntity>
+
+
+    @Transaction
+    suspend fun setCurrentGroup(date: LocalDate) {
+        val groupCount = getCurrentGroupCount(date)
+        if (groupCount == 0) {
+            val latestGroups = getLatestCurrentGroups()
+            val updatedGroups = latestGroups.map { it.copy(date = date, id = 0) }
+            upsertCurrentGroup(updatedGroups)
+        }
+    }
 }
