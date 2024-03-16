@@ -4,9 +4,9 @@ import com.coldblue.model.AlarmItem
 
 interface AlarmScheduler {
 
-    fun schedule(item: AlarmItem)
+    fun add(item: AlarmItem)
 
-    fun cancel(item: AlarmItem)
+    fun cancel(id: Int)
 
     fun reset()
 }
