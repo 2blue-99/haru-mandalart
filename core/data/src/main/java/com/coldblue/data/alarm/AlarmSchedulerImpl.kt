@@ -25,6 +25,7 @@ class AlarmSchedulerImpl @Inject constructor(
         }
         try {
             alarmManager.setExactAndAllowWhileIdle(
+                // TODO  ELAPSED_REALTIME_WAKEUP -> 나라별 시간 기준으로 알람을 울리는거라는데
                 AlarmManager.RTC_WAKEUP,
                 item.time!!.toMillis(),
                 PendingIntent.getBroadcast(
@@ -37,16 +38,6 @@ class AlarmSchedulerImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e("TAG", "schedule: ${e.message}")
         }
-//        alarmManager.setExactAndAllowWhileIdle(
-//            AlarmManager.RTC_WAKEUP,
-//            item.time.toMillis(),
-//            PendingIntent.getBroadcast(
-//                context,
-//                item.id,
-//                intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-//            )
-//        )
     }
 
     override fun cancel(item: AlarmItem) {

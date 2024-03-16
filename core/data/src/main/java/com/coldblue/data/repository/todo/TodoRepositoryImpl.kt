@@ -48,13 +48,6 @@ class TodoRepositoryImpl @Inject constructor(
 
     override fun getTodoYearList(): Flow<List<Int>> {
         return todoDao.getUniqueTodoYear().map { it.toSoredIntList() }
-//        return todoDao.getUniqueTodoYear().map { it?.map { it.toInt() }?.sorted() ?: emptyList() }
-//        return todoDao.getTodoMinYear().combine(todoDao.getTodoMaxYear()) { minYear, maxYear ->
-//            if (minYear != null && maxYear != null)
-//                (minYear.year..maxYear.year).toList()
-//            else
-//                listOf(LocalDate.now().year)
-//        }
     }
 
     override fun getUniqueTodoCountByDate(): Flow<Int> {
