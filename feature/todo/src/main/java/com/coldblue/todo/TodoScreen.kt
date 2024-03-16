@@ -145,11 +145,8 @@ private fun TodoContentWithState(
 
 ) {
     when (uiState) {
-        is TodoUiState.Loading -> {
-            Text(text = "로딩")
-        }
-
-        is TodoUiState.Error -> Text(text = uiState.msg)
+        is TodoUiState.Loading -> {}
+        is TodoUiState.Error -> {}
         is TodoUiState.Success ->
             TodoContent(
                 bottomSheetUiSate,
@@ -230,7 +227,7 @@ private fun TodoContent(
         modifier = Modifier
             .fillMaxSize()
             .background(HMColor.Background)
-            .padding(16.dp),
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
     ) {
         item {
             WeeklyDatePicker(date, selectDate)

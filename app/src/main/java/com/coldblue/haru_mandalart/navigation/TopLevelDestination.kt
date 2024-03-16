@@ -5,26 +5,33 @@ import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Home
 import com.coldblue.designsystem.iconpack.Manda
+import com.coldblue.history.navigation.historyRoute
+import com.coldblue.mandalart.navigation.mandaRoute
+import com.coldblue.todo.navigation.todoRoute
 
 
 enum class TopLevelDestination(
+    val route: String,
     val titleText: String,
     val selectedIcon: ImageVector,
     val unSelectedIcon: ImageVector
 ) {
 
     HISTORY(
-        titleText = "History",
+        route= historyRoute,
+        titleText = "기록",
         selectedIcon = IconPack.History,
         unSelectedIcon = IconPack.History
     ),
     MANDA(
-        titleText = "Manda",
+        route= mandaRoute,
+        titleText = "만다라트",
         selectedIcon = IconPack.Manda,
         unSelectedIcon = IconPack.Manda
     ),
     TODO(
-        titleText = "Todo",
+        route= todoRoute,
+        titleText = "홈",
         selectedIcon = IconPack.Home,
         unSelectedIcon = IconPack.Home
     )

@@ -11,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.theme.HMColor
 
 @Composable
 fun RowScope.HMNavigationBarItem(
@@ -19,7 +21,7 @@ fun RowScope.HMNavigationBarItem(
     onClick: () -> Unit,
     icon: ImageVector,
     label: String
-){
+) {
     NavigationBarItem(
         selected = selected,
         onClick = { onClick() },
@@ -31,14 +33,13 @@ fun RowScope.HMNavigationBarItem(
             )
         },
         modifier = Modifier,
-        label = { Text(text = label)},
+        label = { Text(text = label, fontWeight = FontWeight.Bold) },
         alwaysShowLabel = true,
         colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = Color.DarkGray,
-            unselectedIconColor = Color.LightGray,
-            selectedTextColor = Color.DarkGray,
-            unselectedTextColor = Color.LightGray,
-            indicatorColor = Color.Gray,
+            selectedIconColor = HMColor.Primary,
+            unselectedIconColor = HMColor.Gray,
+            selectedTextColor = HMColor.Primary,
+            unselectedTextColor = HMColor.Gray,
         )
     )
 }
