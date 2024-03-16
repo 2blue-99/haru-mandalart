@@ -145,6 +145,7 @@ fun TodoBottomSheet(
             }
             item {
                 HMTimePicker(
+                    myTime = myTime,
                     onSwitch = onSwitch,
                     onCheckedChange = {
                         onSwitch = !onSwitch
@@ -154,7 +155,6 @@ fun TodoBottomSheet(
                     },
                     onMinuteChange = { minute -> myTime = myTime.copy(minute = minute) },
                     onAmPmChange = { ampm -> myTime = myTime.copy(ampm = ampm) },
-                    myTime = myTime
                 )
             }
             if (!onDetail) {
@@ -392,11 +392,12 @@ fun HMTimePicker(
     onHourChange: (Int) -> Unit,
     onMinuteChange: (Int) -> Unit
 ) {
-    val amScrollState = rememberLazyListState(0)
+    val amScrollState =
+        rememberLazyListState(if (myTime.ampm == "오전") 0 else 1).apply { Logger.d(this.firstVisibleItemIndex) }
     var lastHour by remember { mutableIntStateOf(myTime.hour) }
 
-    val hourScrollState = rememberLazyListState(0)
-    val minScrollState = rememberLazyListState(0)
+    val hourScrollState = rememberLazyListState(myTime.hour - 1)
+    val minScrollState = rememberLazyListState(myTime.minute - 1)
 
     val coroutineState = rememberCoroutineScope()
 
