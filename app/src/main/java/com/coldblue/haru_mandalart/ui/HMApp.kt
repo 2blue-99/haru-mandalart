@@ -1,22 +1,19 @@
 package com.coldblue.haru_mandalart.ui
 
-import android.app.Activity
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.coldblue.designsystem.component.HMNavigationBarItem
 import com.coldblue.designsystem.component.HMTopBar
+import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.haru_mandalart.navigation.TopLevelDestination
 import com.coldblue.haru_mandalart.navigation.HMNavHost
 
@@ -54,15 +51,21 @@ fun HMBottomBar(
     navigate: (String) -> Unit,
     checkCurrentLocation: NavDestination?
 ) {
-    NavigationBar {
-        destination.forEach { destination ->
-            val isSelected = checkCurrentLocation?.route == destination.titleText
-            HMNavigationBarItem(
-                selected = isSelected,
-                onClick = { navigate(destination.titleText) },
-                icon = if (isSelected) destination.selectedIcon else destination.unSelectedIcon,
-                label = destination.titleText
-            )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        HorizontalDivider(color = HMColor.Box, thickness = 1.dp)
+        NavigationBar(
+            contentColor = HMColor.Primary,
+            containerColor = HMColor.Background
+        ) {
+            destination.forEach { destination ->
+                val isSelected = checkCurrentLocation?.route == destination.route
+                HMNavigationBarItem(
+                    selected = isSelected,
+                    onClick = { navigate(destination.route) },
+                    icon = if (isSelected) destination.selectedIcon else destination.unSelectedIcon,
+                    label = destination.titleText
+                )
+            }
         }
     }
 }
