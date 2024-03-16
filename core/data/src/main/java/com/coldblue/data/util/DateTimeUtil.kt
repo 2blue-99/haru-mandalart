@@ -74,6 +74,10 @@ fun LocalDateTime.toMillis(): Long {
     return truncatedTo(ChronoUnit.MINUTES).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
 }
 
+fun LocalDate.formatToDot(): String {
+    return this.toString().replace("-", ". ")
+}
+
 fun LocalTime.isAm(): Boolean {
     return when (hour) {
         23, in 0..10 -> true
