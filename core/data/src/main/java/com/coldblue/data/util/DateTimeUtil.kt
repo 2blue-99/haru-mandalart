@@ -79,7 +79,7 @@ fun LocalDate.formatToDot(): String {
 }
 
 fun LocalDate.toDayOfWeekString(): String {
-    return when(this.dayOfWeek.value){
+    return when (this.dayOfWeek.value) {
         1 -> "월요일"
         2 -> "화요일"
         3 -> "수요일"
@@ -103,4 +103,10 @@ fun Int.toFirstLocalDate(): LocalDate {
 
 fun Int.toLastLocalDate(): LocalDate {
     return LocalDate.parse("$this-12-31")
+}
+
+fun List<String>?.toSoredIntList(): List<Int> {
+    return if (this.isNullOrEmpty()) emptyList()
+    else this.map { it.toInt() }.sorted()
+
 }

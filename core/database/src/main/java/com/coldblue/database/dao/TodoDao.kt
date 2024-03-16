@@ -19,13 +19,16 @@ interface TodoDao {
     @Query("SELECT DISTINCT(todo.date) FROM todo WHERE date >= :startDate AND date <= :endDate AND is_del=0")
     fun getYearlyExistTodoDate(startDate: LocalDate, endDate: LocalDate): Flow<List<LocalDate>>
 
-    @Query("SELECT min(todo.date)  FROM todo WHERE is_del=0")
-    fun getTodoMinYear(): Flow<LocalDate?>
+//    @Query("SELECT min(todo.date)  FROM todo WHERE is_del=0")
+//    fun getTodoMinYear(): Flow<LocalDate?>
+//
+//    @Query("SELECT max(todo.date)  FROM todo WHERE is_del=0")
+//    fun getTodoMaxYear(): Flow<LocalDate?>
 
-    @Query("SELECT max(todo.date)  FROM todo WHERE is_del=0")
-    fun getTodoMaxYear(): Flow<LocalDate?>
+    @Query("SELECT DISTINCT strftime('%Y',date) FROM todo WHERE is_del=0")
+    fun getUniqueTodoYear(): Flow<List<String>?>
 
-    @Query("SELECT COUNT(DISTINCT strftime('%Y-%M-%d',date)) FROM todo")
+    @Query("SELECT COUNT(DISTINCT strftime('%Y-%M-%d',date)) FROM todo WHERE is_del=0")
     fun getUniqueTodoCountByDate(): Flow<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

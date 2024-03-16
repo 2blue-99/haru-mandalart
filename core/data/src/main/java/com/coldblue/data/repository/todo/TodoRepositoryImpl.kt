@@ -9,6 +9,7 @@ import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.isNotToday
 import com.coldblue.data.util.toFirstLocalDate
 import com.coldblue.data.util.toLastLocalDate
+import com.coldblue.data.util.toSoredIntList
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
@@ -46,12 +47,14 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     override fun getTodoYearList(): Flow<List<Int>> {
-        return todoDao.getTodoMinYear().combine(todoDao.getTodoMaxYear()) { minYear, maxYear ->
-            if (minYear != null && maxYear != null)
-                (minYear.year..maxYear.year).toList()
-            else
-                listOf(LocalDate.now().year)
-        }
+        return todoDao.getUniqueTodoYear().map { it.toSoredIntList() }
+//        return todoDao.getUniqueTodoYear().map { it?.map { it.toInt() }?.sorted() ?: emptyList() }
+//        return todoDao.getTodoMinYear().combine(todoDao.getTodoMaxYear()) { minYear, maxYear ->
+//            if (minYear != null && maxYear != null)
+//                (minYear.year..maxYear.year).toList()
+//            else
+//                listOf(LocalDate.now().year)
+//        }
     }
 
     override fun getUniqueTodoCountByDate(): Flow<Int> {

@@ -65,7 +65,7 @@ class HistoryViewModel @Inject constructor(
 
     fun selectYear(year: Int) {
         viewModelScope.launch {
-            _dateSate.value = dateSate.value.withYear(year)
+//            _dateSate.value = dateSate.value.withYear(year)
             _yearSate.value = year
         }
     }

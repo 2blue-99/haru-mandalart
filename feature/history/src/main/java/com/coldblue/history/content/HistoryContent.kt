@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +61,10 @@ fun HistoryContent(
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit
 ) {
+
+    var clickedDate by remember { mutableStateOf(LocalDate.now()) }
+    var isClicked by remember { mutableStateOf(true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,12 +95,17 @@ fun HistoryContent(
             controllerList = historyUiState.controllerList,
             todoYearList = historyUiState.todoYearList,
             selectYear = selectYear,
-            selectDate = selectDate
+            selectDate = {
+                selectDate(it)
+                clickedDate = it
+                         },
+            onClick = { isClicked = it }
         )
 
         Column {
+            val clickedDate = "${clickedDate.formatToDot()} ${clickedDate.toDayOfWeekString()}"
             Text(
-                text = "${historyUiState.today.formatToDot()} ${historyUiState.today.toDayOfWeekString()}",
+                text = if(isClicked) clickedDate else "",
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
@@ -120,26 +130,60 @@ fun HistoryController(
     controllerList: List<ControllerWeek>,
     todoYearList: List<Int>,
     selectDate: (LocalDate) -> Unit,
-    selectYear: (Int) -> Unit
+    selectYear: (Int) -> Unit,
+    onClick: (Boolean) -> Unit
 ) {
-    // Todo 이 코드 내부의 변화는 Recompose를 발생시키지 않음
-    val boxClickStateList = remember { MutableList((controllerList.size) * 7) { false } }
-    var yearClickStateList = remember { mutableStateOf(BooleanArray(todoYearList.size){ todoYearList[it]==LocalDate.now().year }  ) }
-    var beforeBoxIndex by remember { mutableIntStateOf(0) }
+
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    var initState by remember { mutableIntStateOf(-1) }
+    val presentLocalYear = LocalDate.now().year
 
+    val boxClickStateList =
+        remember { mutableStateListOf<Boolean>().apply { addAll(List(controllerList.size * 7) { false }) } }
 
-    LaunchedEffect(initState) {
-        boxClickStateList[initState] = true
-        beforeBoxIndex = initState
+    val yearClickStateList =
+        remember { mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) } }
+
+    var beforeBoxIndex by remember { mutableIntStateOf(0) }
+    var beforeYearIndex by remember { mutableIntStateOf(todoYearList.indices.filter { todoYearList[it] == presentLocalYear }.firstOrNull()?:0) }
+
+    var initPickIndex by remember { mutableIntStateOf(0) }
+    var pickYear by remember { mutableIntStateOf(presentLocalYear) }
+
+    LaunchedEffect(todoYearList){
+        if(todoYearList.size != yearClickStateList.size){
+            yearClickStateList.clear()
+            yearClickStateList.addAll(mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) })
+        }
     }
 
-    fun boxController(stateIndex: Int, date: LocalDate) {
+    // Init & Click Box Pick Controller
+    LaunchedEffect(initPickIndex, pickYear) {
+        if (pickYear == presentLocalYear) {
+            onClick(true)
+            selectDate(LocalDate.now())
+            boxClickStateList[beforeBoxIndex] = false
+            boxClickStateList[initPickIndex] = true
+            beforeBoxIndex = initPickIndex
+        } else {
+            boxClickStateList[beforeBoxIndex] = false
+        }
+    }
+
+    fun boxController(presentIndex: Int, date: LocalDate) {
+
         boxClickStateList[beforeBoxIndex] = false
-        boxClickStateList[stateIndex] = true
-        beforeBoxIndex = stateIndex
+        boxClickStateList[presentIndex] = true
+        beforeBoxIndex = presentIndex
         selectDate(date)
+        onClick(true)
+    }
+
+    fun yearController(presentIndex: Int, year: Int) {
+        pickYear = year
+        yearClickStateList[beforeYearIndex] = false
+        yearClickStateList[presentIndex] = true
+        beforeYearIndex = presentIndex
+        onClick(false)
     }
 
     Column {
@@ -204,7 +248,7 @@ fun HistoryController(
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            initState = stateIndex
+                                            initPickIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Gray,
                                                 tintColor = HMColor.Gray,
@@ -241,7 +285,7 @@ fun HistoryController(
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            initState = stateIndex
+                                            initPickIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Box,
                                                 tintColor = HMColor.Primary,
@@ -279,12 +323,10 @@ fun HistoryController(
             itemsIndexed(todoYearList) { index, year ->
                 ControllerYearButton(
                     year = year,
-                    isChecked = yearClickStateList.value[index],
+                    isChecked = yearClickStateList[index],
                 ) {
                     selectYear(year)
-                    val arr = BooleanArray(todoYearList.size)
-                    arr[index] = true
-                    yearClickStateList.value = arr
+                    yearController(index, year)
                 }
             }
         }

@@ -20,7 +20,6 @@ sealed interface HistoryUiState {
 
 data class ControllerWeek(
     val month: Int? = null,
-    val todayIndex: Int? = null,
     val controllerDayList: List<ControllerDayState>
 )
 
