@@ -25,22 +25,10 @@ class TodoNotificationServiceImpl @Inject constructor(
             activityIntent,
             PendingIntent.FLAG_IMMUTABLE
         )
-//        val incrementIntent = PendingIntent.getBroadcast(
-//            context,
-//            2,
-//            Intent(context, TodoNotificationReceiver::class.java),
-//            PendingIntent.FLAG_IMMUTABLE
-//        )
-
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_android_black_24dp).setContentTitle("오늘 할 일")
-            .setContentText("$message")
-            .setContentIntent(activityPeningIntent) // 알림 누르면 앱키는것
-//            .addAction(
-//                R.drawable.ic_android_black_24dp,
-//                "증가여",
-//                incrementIntent
-//            )
+            .setContentText(message)
+            .setContentIntent(activityPeningIntent)
             .build()
 
         notificationManager.notify(
