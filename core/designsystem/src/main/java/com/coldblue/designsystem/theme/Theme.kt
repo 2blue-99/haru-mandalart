@@ -24,7 +24,8 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = HMColor.Primary,
     secondary = HMColor.Primary,
-    tertiary = HMColor.Primary
+    tertiary = HMColor.Primary,
+    background = HMColor.Background
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -58,8 +59,8 @@ fun HarumandalartTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = LightColorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = LightColorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
     }
 
