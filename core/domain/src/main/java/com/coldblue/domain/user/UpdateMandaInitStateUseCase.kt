@@ -1,6 +1,6 @@
 package com.coldblue.domain.user
 
-import com.coldblue.data.repository.UserRepository
+import com.coldblue.data.repository.user.UserRepository
 import javax.inject.Inject
 
 class UpdateMandaInitStateUseCase @Inject constructor(

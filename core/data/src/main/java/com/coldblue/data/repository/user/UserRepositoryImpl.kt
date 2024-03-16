@@ -1,4 +1,4 @@
-package com.coldblue.data.repository
+package com.coldblue.data.repository.user
 
 import com.coldblue.datastore.UserDataSource
 import kotlinx.coroutines.flow.Flow

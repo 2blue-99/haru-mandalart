@@ -10,8 +10,8 @@ import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoGroupRepositoryImpl
 import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.repository.todo.TodoRepositoryImpl
-import com.coldblue.data.repository.UserRepository
-import com.coldblue.data.repository.UserRepositoryImpl
+import com.coldblue.data.repository.user.UserRepository
+import com.coldblue.data.repository.user.UserRepositoryImpl
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginHelperImpl
 import dagger.Binds
