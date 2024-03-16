@@ -75,7 +75,19 @@ fun LocalDateTime.toMillis(): Long {
 }
 
 fun LocalDate.formatToDot(): String {
-    return this.toString().replace("-", ". ")
+    return this.toString().replace("-", ".")
+}
+
+fun LocalDate.toDayOfWeekString(): String {
+    return when (this.dayOfWeek.value) {
+        1 -> "월요일"
+        2 -> "화요일"
+        3 -> "수요일"
+        4 -> "목요일"
+        5 -> "금요일"
+        6 -> "토요일"
+        else -> "일요일"
+    }
 }
 
 fun LocalTime.isAm(): Boolean {
@@ -91,4 +103,10 @@ fun Int.toFirstLocalDate(): LocalDate {
 
 fun Int.toLastLocalDate(): LocalDate {
     return LocalDate.parse("$this-12-31")
+}
+
+fun List<String>?.toSoredIntList(): List<Int> {
+    return if (this.isNullOrEmpty()) emptyList()
+    else this.map { it.toInt() }.sorted()
+
 }

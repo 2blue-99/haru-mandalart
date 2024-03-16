@@ -1,6 +1,5 @@
 package com.coldblue.history.content
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,12 +19,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,10 +39,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.formatToDot
-import com.coldblue.designsystem.IconPack
+import com.coldblue.data.util.toDayOfWeekString
 import com.coldblue.designsystem.component.TitleText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -64,6 +61,10 @@ fun HistoryContent(
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit
 ) {
+
+    var clickedDate by remember { mutableStateOf(LocalDate.now()) }
+    var isClicked by remember { mutableStateOf(true) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -77,12 +78,16 @@ fun HistoryContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "65개의\n하루, 만다라트",
+                text = "${historyUiState.allTodoDayCnt}개의\n하루, 만다라트",
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
             IconButton(onClick = { navigateToSetting() }) {
-                Icon(imageVector = Icons.Default.Settings, tint = HMColor.Primary, contentDescription = "")
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    tint = HMColor.Primary,
+                    contentDescription = ""
+                )
             }
         }
 
@@ -90,11 +95,20 @@ fun HistoryContent(
             controllerList = historyUiState.controllerList,
             todoYearList = historyUiState.todoYearList,
             selectYear = selectYear,
-            selectDate = selectDate
+            selectDate = {
+                selectDate(it)
+                clickedDate = it
+                         },
+            onClick = { isClicked = it }
         )
 
         Column {
-            Text(text = "${historyUiState.today.formatToDot()} ${historyUiState.today.dayOfWeek}요일", style = HmStyle.text20, color = HMColor.Primary)
+            val clickedDate = "${clickedDate.formatToDot()} ${clickedDate.toDayOfWeekString()}"
+            Text(
+                text = if(isClicked) clickedDate else "",
+                style = HmStyle.text20,
+                color = HMColor.Primary
+            )
             TitleText(text = "기록")
         }
 
@@ -116,25 +130,60 @@ fun HistoryController(
     controllerList: List<ControllerWeek>,
     todoYearList: List<Int>,
     selectDate: (LocalDate) -> Unit,
-    selectYear: (Int) -> Unit
+    selectYear: (Int) -> Unit,
+    onClick: (Boolean) -> Unit
 ) {
-    // Todo 이 코드 내부의 변화는 Recompose를 발생시키지 않음
-    val boxClickStateList = remember { MutableList((controllerList.size) * 7) { false } }
-    var yearClickStateList by remember { mutableStateOf(BooleanArray(todoYearList.size)) }
-    var beforeBoxIndex by remember { mutableIntStateOf(0) }
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    var presentState by remember { mutableIntStateOf(-1) }
 
-    LaunchedEffect(presentState){
-        boxClickStateList[presentState] = true
-        beforeBoxIndex = presentState
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val presentLocalYear = LocalDate.now().year
+
+    val boxClickStateList =
+        remember { mutableStateListOf<Boolean>().apply { addAll(List(controllerList.size * 7) { false }) } }
+
+    val yearClickStateList =
+        remember { mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) } }
+
+    var beforeBoxIndex by remember { mutableIntStateOf(0) }
+    var beforeYearIndex by remember { mutableIntStateOf(todoYearList.indices.filter { todoYearList[it] == presentLocalYear }.firstOrNull()?:0) }
+
+    var initPickIndex by remember { mutableIntStateOf(0) }
+    var pickYear by remember { mutableIntStateOf(presentLocalYear) }
+
+    LaunchedEffect(todoYearList){
+        if(todoYearList.size != yearClickStateList.size){
+            yearClickStateList.clear()
+            yearClickStateList.addAll(mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) })
+        }
     }
 
-    fun boxController(stateIndex: Int, date: LocalDate){
+    // Init & Click Box Pick Controller
+    LaunchedEffect(initPickIndex, pickYear) {
+        if (pickYear == presentLocalYear) {
+            onClick(true)
+            selectDate(LocalDate.now())
+            boxClickStateList[beforeBoxIndex] = false
+            boxClickStateList[initPickIndex] = true
+            beforeBoxIndex = initPickIndex
+        } else {
+            boxClickStateList[beforeBoxIndex] = false
+        }
+    }
+
+    fun boxController(presentIndex: Int, date: LocalDate) {
+
         boxClickStateList[beforeBoxIndex] = false
-        boxClickStateList[stateIndex] = true
-        beforeBoxIndex = stateIndex
+        boxClickStateList[presentIndex] = true
+        beforeBoxIndex = presentIndex
         selectDate(date)
+        onClick(true)
+    }
+
+    fun yearController(presentIndex: Int, year: Int) {
+        pickYear = year
+        yearClickStateList[beforeYearIndex] = false
+        yearClickStateList[presentIndex] = true
+        beforeYearIndex = presentIndex
+        onClick(false)
     }
 
     Column {
@@ -169,7 +218,7 @@ fun HistoryController(
                     ) {
                         ControllerBox(
                             containerColor = Color.Transparent,
-                            sideText = if (controllerWeek.month != null) controllerWeek.month.toString() else "",
+                            sideText = if (controllerWeek.month != null) "${controllerWeek.month}월" else "",
                             clickAble = false
                         ) {}
 
@@ -199,7 +248,7 @@ fun HistoryController(
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            presentState = stateIndex
+                                            initPickIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Gray,
                                                 tintColor = HMColor.Gray,
@@ -236,7 +285,7 @@ fun HistoryController(
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            presentState = stateIndex
+                                            initPickIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Box,
                                                 tintColor = HMColor.Primary,
@@ -264,22 +313,20 @@ fun HistoryController(
                     }
                 }
             }
-            LazyRow(
-                Modifier
-                    .fillMaxWidth()
-                    .background(HMColor.Background),
-                horizontalArrangement = Arrangement.End
-            ) {
-                itemsIndexed(todoYearList) { index, year ->
-                    ControllerYearButton(
-                        year = year,
-                        isChecked = yearClickStateList[index],
-                    ) {
-                        selectYear(year)
-                        val arr = BooleanArray(todoYearList.size)
-                        arr[index] = true
-                        yearClickStateList = arr
-                    }
+        }
+        LazyRow(
+            Modifier
+                .fillMaxWidth()
+                .background(HMColor.Background),
+            horizontalArrangement = Arrangement.End
+        ) {
+            itemsIndexed(todoYearList) { index, year ->
+                ControllerYearButton(
+                    year = year,
+                    isChecked = yearClickStateList[index],
+                ) {
+                    selectYear(year)
+                    yearController(index, year)
                 }
             }
         }
@@ -306,7 +353,8 @@ fun ControllerBox(
                 if (isClicked) HMColor.Primary else Color.Transparent,
                 RoundedCornerShape(2.dp)
             )
-            .background(Color.Transparent)
+            .background(Color.Transparent),
+        contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
@@ -348,7 +396,12 @@ fun ControllerBox(
                 }
             }
             if (!clickAble)
-                Text(text = sideText)
+                Text(
+                    text = sideText,
+                    style = HmStyle.text8,
+                    overflow = TextOverflow.Visible,
+                    textAlign = TextAlign.Center
+                )
         }
     }
 }

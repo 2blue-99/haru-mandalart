@@ -14,16 +14,15 @@ object HistoryUtil {
         val today = LocalDate.now()
         var currentDay = startDay
         val startDayOfWeek = startDay.dayOfWeek.value
-        var currentMonth: Int = 0
-
+        var currentMonth= 0
 
         // 요일 텍스트 박스 삽입
         weekList.add(ControllerDayState.Default())
-        weekList.add(ControllerDayState.Default("월"))
+        weekList.add(ControllerDayState.Default("화"))
         weekList.add(ControllerDayState.Default())
-        weekList.add(ControllerDayState.Default("수"))
+        weekList.add(ControllerDayState.Default("목"))
         weekList.add(ControllerDayState.Default())
-        weekList.add(ControllerDayState.Default("금"))
+        weekList.add(ControllerDayState.Default("토"))
         weekList.add(ControllerDayState.Default())
         resultList.add(ControllerWeek(month = null, controllerDayList = weekList.toList()))
 
@@ -65,14 +64,15 @@ object HistoryUtil {
             }
 
             if (weekList.size == 7) {
-                val firstDayMonth = currentDay.minusDays(6).month.value
+                val monthByFirstDayOfWeek = currentDay.minusDays(6).month.value
+                val controllerFirstMonth = if(monthByFirstDayOfWeek == 12) 1 else monthByFirstDayOfWeek
                 resultList.add(
                     ControllerWeek(
-                        month = if (currentMonth == firstDayMonth) null else currentDay.month.value,
+                        month = if (currentMonth == controllerFirstMonth) null else currentDay.month.value,
                         controllerDayList = weekList.toList()
                     )
                 )
-                currentMonth = firstDayMonth
+                currentMonth = controllerFirstMonth
                 weekList.clear()
             }
             currentDay = currentDay.plusDays(1)
