@@ -25,6 +25,9 @@ interface TodoDao {
     @Query("SELECT max(todo.date)  FROM todo WHERE is_del=0")
     fun getTodoMaxYear(): Flow<LocalDate?>
 
+    @Query("SELECT COUNT(DISTINCT strftime('%Y-%M-%d',date)) FROM todo")
+    fun getUniqueTodoCountByDate(): Flow<Int>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodo(todo: TodoEntity)
 

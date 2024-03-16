@@ -14,8 +14,7 @@ object HistoryUtil {
         val today = LocalDate.now()
         var currentDay = startDay
         val startDayOfWeek = startDay.dayOfWeek.value
-        var currentMonth: Int = 0
-
+        var currentMonth= 0
 
         // 요일 텍스트 박스 삽입
         weekList.add(ControllerDayState.Default())

@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetYearlyExistTodoDateUseCase
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.GetTodoYearRangeUseCase
+import com.coldblue.domain.todo.GetUniqueTodoCountByDateUseCase
 import com.coldblue.history.util.HistoryUtil
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +26,8 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(
     getTodoUseCase: GetTodoUseCase,
     getYearlyExistTodoDateUseCase: GetYearlyExistTodoDateUseCase,
-    getTodoYearRangeUseCase: GetTodoYearRangeUseCase
+    getTodoYearRangeUseCase: GetTodoYearRangeUseCase,
+    getUniqueTodoCountByDateUseCase: GetUniqueTodoCountByDateUseCase
 ) : ViewModel() {
 
     private val _yearSate = MutableStateFlow<Int>(LocalDate.now().year)
@@ -37,13 +40,13 @@ class HistoryViewModel @Inject constructor(
 
     private val yearlyExistDateFlow = yearSate.flatMapLatest { getYearlyExistTodoDateUseCase(it) }
 
-
-    val historyUiState: StateFlow<HistoryUiState> = combine(yearlyExistDateFlow, getTodoYearRangeUseCase(), todoFlow) { dateList, yearList, todoList ->
+    val historyUiState: StateFlow<HistoryUiState> = combine(todoFlow, getUniqueTodoCountByDateUseCase(), yearlyExistDateFlow, getTodoYearRangeUseCase()) { todoList, uniqueTodoCnt, dateList, yearList ->
         HistoryUiState.Success(
+            todoList = todoList,
+            allTodoDayCnt = uniqueTodoCnt,
             controllerList = HistoryUtil.controllerListMaker(yearSate.value, dateList),
             todoYearList = yearList,
-            today = dateSate.value,
-            todoList = todoList
+            today = dateSate.value
         )
     }.catch {
         HistoryUiState.Error(it.message ?: "Error")

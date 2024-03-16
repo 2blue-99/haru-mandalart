@@ -54,6 +54,10 @@ class TodoRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getUniqueTodoCountByDate(): Flow<Int> {
+        return todoDao.getUniqueTodoCountByDate()
+    }
+
     override suspend fun delTodo(todoId: Int) {
         todoDao.deleteTodo(todoId)
     }

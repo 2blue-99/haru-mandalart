@@ -9,9 +9,10 @@ sealed interface HistoryUiState {
     data class Error(val msg: String) : HistoryUiState
 
     data class Success(
+        val today: LocalDate,
+        val allTodoDayCnt: Int,
         val controllerList: List<ControllerWeek>,
         val todoYearList: List<Int>,
-        val today: LocalDate,
         val todoList: List<Todo>,
     ) : HistoryUiState
 
