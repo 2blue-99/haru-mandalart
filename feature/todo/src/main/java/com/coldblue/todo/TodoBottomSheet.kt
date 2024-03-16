@@ -53,8 +53,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.coldblue.data.util.asMyTime
 import com.coldblue.data.util.getAmPmHour
-import com.coldblue.data.util.isAm
 import com.coldblue.data.util.padTwoSpace
 import com.coldblue.data.util.padTwoZero
 import com.coldblue.designsystem.component.HMButton
@@ -62,12 +62,15 @@ import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
+import com.coldblue.model.MyTime
 import com.coldblue.model.Todo
 import com.coldblue.model.ToggleInfo
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,11 +83,10 @@ fun TodoBottomSheet(
     currentGroupList: List<CurrentGroup>,
 ) {
     var onSwitch by remember { mutableStateOf(false) }
-    var time: LocalTime by remember { mutableStateOf(todo.time ?: LocalTime.now()) }
-    var timeString: String by remember { mutableStateOf("") }
+    var myTime by remember { mutableStateOf(todo.time?.asMyTime() ?: LocalTime.now().asMyTime()) }
 
     LaunchedEffect(Unit) {
-        timeString = if (time.isAm()) "오전" else "오후"
+        onSwitch = todo.time != null
     }
 
     var onDetail by remember { mutableStateOf(false) }
@@ -143,18 +145,16 @@ fun TodoBottomSheet(
             }
             item {
                 HMTimePicker(
+                    myTime = myTime,
                     onSwitch = onSwitch,
                     onCheckedChange = {
                         onSwitch = !onSwitch
                     },
-                    time = time,
                     onHourChange = { hour ->
-                        time = time.withHour(hour)
+                        myTime = myTime.copy(hour = hour)
                     },
-//                    onHourChange = { hour -> time = if(hour<12) time.withHour(hour) else time.withHour(hour+12)   },
-                    onMinuteChange = { minute -> time = time.withMinute(minute) },
-                    onAmPmChange = { amPm -> timeString = amPm },
-                    timeString = timeString
+                    onMinuteChange = { minute -> myTime = myTime.copy(minute = minute) },
+                    onAmPmChange = { ampm -> myTime = myTime.copy(ampm = ampm) },
                 )
             }
             if (!onDetail) {
@@ -208,13 +208,11 @@ fun TodoBottomSheet(
                         }
                     }
                     if (dateButtons.last().isChecked) {
-
                         HMDatePicker(
                             date,
                             onYearChange = { year -> date = date.withYear(year) },
                             onMonthChange = { month -> date = date.withMonth(month) },
                             onDayChange = { day -> date = date.withDayOfMonth(day) })
-
                     }
                 }
                 item {
@@ -266,7 +264,7 @@ fun TodoBottomSheet(
                             todo.copy(
                                 title = titleText,
                                 content = contentText,
-                                time = if (onSwitch) time.getAmPmHour(timeString) else null,
+                                time = if (onSwitch) myTime.getAmPmHour() else null,
                                 todoGroupId = currentTodoGroupId,
                                 date = date
                             )
@@ -280,7 +278,7 @@ fun TodoBottomSheet(
                         todo.copy(
                             title = titleText,
                             content = contentText,
-                            time = if (onSwitch) time.getAmPmHour(timeString) else null,
+                            time = if (onSwitch) myTime.getAmPmHour() else null,
                             todoGroupId = currentTodoGroupId,
                             date = date
                         )
@@ -312,9 +310,9 @@ fun HMDatePicker(
             textColor = HMColor.SubText,
             selectedTextColor = HMColor.Text,
             onItemSelected = { a, year -> onYearChange(year.dropLast(1).toInt()) },
-            scrollState = rememberLazyListState(0)
+            scrollState = rememberLazyListState(date.year - 2000)
         )
-        InfiniteCircularList(
+        CircularList(
             itemHeight = 40.dp,
             textStyle = HmStyle.text16,
             items = List(12) { "${it + 1}월" },
@@ -325,10 +323,9 @@ fun HMDatePicker(
             textColor = HMColor.SubText,
             selectedTextColor = HMColor.Text,
             onItemSelected = { a, month -> onMonthChange(month.dropLast(1).toInt()) },
-            scrollState = rememberLazyListState(0)
-
+            scrollState = rememberLazyListState(date.month.value - 1)
         )
-        InfiniteCircularList(
+        CircularList(
             itemHeight = 40.dp,
             textStyle = HmStyle.text16,
             items = List(date.lengthOfMonth()) { "${it + 1}일" },
@@ -336,8 +333,7 @@ fun HMDatePicker(
             textColor = HMColor.SubText,
             selectedTextColor = HMColor.Text,
             onItemSelected = { a, day -> onDayChange(day.dropLast(1).toInt()) },
-            scrollState = rememberLazyListState(0)
-
+            scrollState = rememberLazyListState(date.dayOfMonth - 1)
         )
     }
 }
@@ -386,21 +382,21 @@ fun GroupPicker(
 
 }
 
+
 @Composable
 fun HMTimePicker(
     onSwitch: Boolean,
+    myTime: MyTime,
     onCheckedChange: () -> Unit,
-    time: LocalTime,
-    timeString: String,
     onAmPmChange: (String) -> Unit,
     onHourChange: (Int) -> Unit,
     onMinuteChange: (Int) -> Unit
 ) {
-    val amScrollState = rememberLazyListState(0)
-    var lastHour by remember { mutableIntStateOf(time.hour) }
+    val amScrollState = rememberLazyListState(if (myTime.ampm == "오전") 0 else 1)
+    var lastHour by remember { mutableIntStateOf(myTime.hour) }
 
-    val hourScrollState = rememberLazyListState(0)
-    val minScrollState = rememberLazyListState(0)
+    val hourScrollState = rememberLazyListState(myTime.hour - 1)
+    val minScrollState = rememberLazyListState(myTime.minute - 1)
 
     val coroutineState = rememberCoroutineScope()
 
@@ -417,7 +413,7 @@ fun HMTimePicker(
             .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = if (onSwitch) "${timeString}${time.hour.padTwoSpace()}:${time.minute.padTwoZero()}" else "시간없음"
+            text = if (onSwitch) "${myTime.ampm}${myTime.hour.padTwoSpace()}:${myTime.minute.padTwoZero()}" else "시간없음"
         )
         HMSwitch(onSwitch) {
             onCheckedChange()
@@ -434,10 +430,12 @@ fun HMTimePicker(
                 itemHeight = 40.dp,
                 textStyle = HmStyle.text16,
                 items = listOf("오전", "오후"),
-                initialItem = timeString,
+                initialItem = myTime.ampm,
                 textColor = HMColor.SubText,
                 selectedTextColor = HMColor.Text,
-                onItemSelected = { _, _ -> },
+                onItemSelected = { _, item ->
+                    onAmPmChange(item)
+                },
                 scrollState = amScrollState
             )
 
@@ -445,7 +443,7 @@ fun HMTimePicker(
                 itemHeight = 40.dp,
                 textStyle = HmStyle.text16,
                 items = List(12) { it + 1 },
-                initialItem = time.hour % 12,
+                initialItem = myTime.hour,
                 textColor = HMColor.SubText,
                 selectedTextColor = HMColor.Text,
                 onItemSelected = { index, item ->
@@ -479,7 +477,7 @@ fun HMTimePicker(
                 itemHeight = 40.dp,
                 textStyle = HmStyle.text16,
                 items = List(60) { it.padTwoZero() },
-                initialItem = time.minute.padTwoZero(),
+                initialItem = myTime.minute.padTwoZero(),
                 textColor = HMColor.SubText,
                 selectedTextColor = HMColor.Text,
                 onItemSelected = { index, item ->
@@ -501,12 +499,10 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: () -> Unit) {
         shape = RoundedCornerShape(5.dp),
         border = BorderStroke(1.dp, HMColor.Primary),
         modifier = Modifier
-            .padding(8.dp)
+            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
             .clickable {
                 onClick()
-
             }
-
     ) {
         Text(
             modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
@@ -533,14 +529,13 @@ fun <T> InfiniteCircularList(
     val itemHalfHeight = LocalDensity.current.run { itemHeight.toPx() / 2f }
     var lastSelectedIndex by remember { mutableIntStateOf(0) }
     val coroutineState = rememberCoroutineScope()
+    var check by remember { mutableStateOf(true) }
 
     LaunchedEffect(items) {
         var targetIndex = items.indexOf(initialItem) - 1
         targetIndex += ((Int.MAX_VALUE / 2) / items.size) * items.size
         lastSelectedIndex = targetIndex
         scrollState.scrollToItem(lastSelectedIndex, 0)
-
-//        scrollState.animateScrollToItem(lastSelectedIndex, 0)
     }
     LazyColumn(
         modifier = Modifier
@@ -566,7 +561,7 @@ fun <T> InfiniteCircularList(
                             val isSelected =
                                 (y > parentHalfHeight - itemHalfHeight && y < parentHalfHeight + itemHalfHeight)
                             val index = i - 1
-                            if (isSelected && lastSelectedIndex != index) {
+                            if (isSelected && check && lastSelectedIndex != index) {
                                 onItemSelected(index % items.size, items[index % items.size])
                                 lastSelectedIndex = index
                             }
@@ -591,13 +586,14 @@ fun <T> InfiniteCircularList(
                         onClick = {
                             if (lastSelectedIndex != i) {
                                 val index = i - 1
-                                onItemSelected(index % items.size, item)
                                 lastSelectedIndex = index
                                 coroutineState.launch {
+                                    check = false
                                     scrollState.animateScrollToItem(lastSelectedIndex, 0)
+                                    onItemSelected(index % items.size, item)
+                                    check = true
                                 }
                             }
-
                         },
                     )
                 }
@@ -623,15 +619,11 @@ fun <T> CircularList(
     val itemHalfHeight = LocalDensity.current.run { itemHeight.toPx() / 2f }
     val coroutineState = rememberCoroutineScope()
 
-    var lastSelectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+    var check by remember { mutableStateOf(true) }
+    var lastSelectedIndex by remember { mutableIntStateOf(items.indexOf(initialItem)) }
 
-    LaunchedEffect(items) {
-        val targetIndex = items.indexOf(initialItem)
-        lastSelectedIndex = targetIndex
-        scrollState.scrollToItem(lastSelectedIndex, 0)
-    }
+
+
     LazyColumn(
         modifier = Modifier
             .width(itemHeight * 2.5f)
@@ -656,7 +648,8 @@ fun <T> CircularList(
                         .onGloballyPositioned { coordinates ->
                             val y = coordinates.positionInParent().y - itemHalfHeight
                             val isSelected = y == itemHalfHeight
-                            if (isSelected) {
+                            val index = i
+                            if (isSelected && check && lastSelectedIndex != index) {
                                 onItemSelected(i, item)
                                 lastSelectedIndex = i
                             }
@@ -678,10 +671,13 @@ fun <T> CircularList(
                             },
                         ),
                         onClick = {
+                            Logger.i(item.toString())
                             onItemSelected(i, item)
                             lastSelectedIndex = i
                             coroutineState.launch {
+                                check = false
                                 scrollState.animateScrollToItem(lastSelectedIndex, 0)
+                                check = true
                             }
                         },
                     )

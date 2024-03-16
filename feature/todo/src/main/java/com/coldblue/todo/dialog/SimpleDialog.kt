@@ -1,6 +1,7 @@
 package com.coldblue.todo.dialog
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -120,10 +121,12 @@ fun CurrentGroupDialog(
 
 @Composable
 fun TodoGroupDialog(
+    todoGroupList: List<TodoGroup>,
     onDismissRequest: () -> Unit,
     onConfirmation: (TodoGroup) -> Unit,
 ) {
     var inputText by remember { mutableStateOf("") }
+    var isSame by remember { mutableStateOf(false) }
     AlertDialog(
         shape = RoundedCornerShape(10.dp),
         containerColor = HMColor.Background,
@@ -135,13 +138,19 @@ fun TodoGroupDialog(
             )
         },
         text = {
-            HMTextField(
-                inputText = inputText,
-                maxLen = 12,
-                onChangeText = {
-                    inputText = it
+            Column {
+                HMTextField(
+                    inputText = inputText,
+                    maxLen = 12,
+                    onChangeText = {
+                        if (isSame) isSame = false
+                        inputText = it
+                    }
+                )
+                if (isSame) {
+                    Text(text = "${inputText}는 이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
                 }
-            )
+            }
         }, onDismissRequest = {
             onDismissRequest()
         }, confirmButton = {
@@ -154,7 +163,11 @@ fun TodoGroupDialog(
                     disabledContentColor = HMColor.Gray
                 ),
                 onClick = {
-                    onConfirmation(TodoGroup(inputText))
+                    if (todoGroupList.map { it.name }.contains(inputText)) {
+                        isSame = true
+                    } else {
+                        onConfirmation(TodoGroup(inputText))
+                    }
                 }) {
                 Text(
                     text = "저장",

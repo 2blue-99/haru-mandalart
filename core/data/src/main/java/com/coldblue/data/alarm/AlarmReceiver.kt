@@ -14,16 +14,12 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var todoNotificationService: TodoNotificationService
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val message = intent?.getStringExtra(TODO_TITLE) ?: return
-        Log.e("TAG", "알림 받음: $message")
-        showNotification( message)
-
+        val text = intent?.getStringExtra(TODO_TITLE) ?: return
+        showNotification( text)
     }
-
-    fun showNotification(message: String) {
-        todoNotificationService.showNotification(message)
+    private fun showNotification(text: String) {
+        todoNotificationService.showNotification(text)
     }
-
 }
 
 internal const val TODO_TITLE = "TODO_TITLE"
