@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.data.util.formatToDot
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.TitleText
 import com.coldblue.designsystem.theme.HMColor
@@ -76,7 +77,7 @@ fun HistoryContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "65개의 \n 하루, 만다라트",
+                text = "65개의\n하루, 만다라트",
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
@@ -93,7 +94,7 @@ fun HistoryContent(
         )
 
         Column {
-            Text(text = historyUiState.today.toString(), style = HmStyle.text20, color = HMColor.Primary)
+            Text(text = "${historyUiState.today.formatToDot()} ${historyUiState.today.dayOfWeek}요일", style = HmStyle.text20, color = HMColor.Primary)
             TitleText(text = "기록")
         }
 
