@@ -94,7 +94,6 @@ class TodoRepositoryImpl @Inject constructor(
             alarmScheduler.cancel(AlarmItem(id = id))
             return
         }
-        Logger.d(LocalDateTime.of(date, time))
         if (date.isNotToday()) return
         if (isDel or isDone) {
             alarmScheduler.cancel(AlarmItem(LocalDateTime.of(date, time), title, id))

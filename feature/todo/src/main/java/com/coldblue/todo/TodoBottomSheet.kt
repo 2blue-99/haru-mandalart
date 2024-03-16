@@ -392,8 +392,7 @@ fun HMTimePicker(
     onHourChange: (Int) -> Unit,
     onMinuteChange: (Int) -> Unit
 ) {
-    val amScrollState =
-        rememberLazyListState(if (myTime.ampm == "오전") 0 else 1).apply { Logger.d(this.firstVisibleItemIndex) }
+    val amScrollState = rememberLazyListState(if (myTime.ampm == "오전") 0 else 1)
     var lastHour by remember { mutableIntStateOf(myTime.hour) }
 
     val hourScrollState = rememberLazyListState(myTime.hour - 1)
