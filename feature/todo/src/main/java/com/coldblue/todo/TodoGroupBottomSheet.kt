@@ -43,7 +43,8 @@ import com.coldblue.todo.dialog.TodoGroupDialog
 @Composable
 fun TodoGroupBottomSheet(
     currentGroup: CurrentGroup,
-    todoGroupList: List<TodoGroup>,
+    todoGroupList:List<TodoGroup>,
+    unSelectedTodoGroupList: List<TodoGroup>,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     onDismissRequest: () -> Unit,
@@ -57,11 +58,12 @@ fun TodoGroupBottomSheet(
 
     if (openTodoGroupDialog) {
         TodoGroupDialog(
+            todoGroupList = todoGroupList,
             onConfirmation = { todoGroup ->
                 upsertTodoGroup(todoGroup)
                 openTodoGroupDialog = false
             },
-            onDismissRequest = { openTodoGroupDialog = false }
+            onDismissRequest = { openTodoGroupDialog = false },
         )
     }
 
@@ -91,7 +93,7 @@ fun TodoGroupBottomSheet(
                 .fillMaxWidth()
                 .fillMaxHeight(0.1f),
         ) {
-            items(todoGroupList) { todoGroup ->
+            items(unSelectedTodoGroupList) { todoGroup ->
                 Surface(
                     color = HMColor.Background,
                     contentColor = HMColor.Primary,
@@ -99,7 +101,7 @@ fun TodoGroupBottomSheet(
                     border = BorderStroke(1.dp, HMColor.Primary),
                     modifier = Modifier
                         .fillMaxHeight(0.7f)
-                        .padding(8.dp)
+                        .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
                         .combinedClickable(
                             enabled = true,
                             onClick = {
@@ -130,13 +132,11 @@ fun TodoGroupBottomSheet(
             }
             item {
                 OutlinedButton(
-                    contentPadding = PaddingValues(
-                        0.dp
-                    ),
+                    contentPadding = PaddingValues(0.dp),
                     modifier = Modifier
                         .fillMaxHeight(0.7f)
                         .aspectRatio(1.1f)
-                        .padding(8.dp)
+                        .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
                         .border(
                             width = 1.dp,
                             color = HMColor.Primary,

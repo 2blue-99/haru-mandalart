@@ -246,14 +246,29 @@ private fun TodoContent(
         item {
             TitleText("오늘 할 일")
         }
-        items(todoList.filter { !it.isDone }) { todo ->
-            TodoItem(todo, onTodoToggle, showSheet)
-        }
-        item {
-            Text(text = "완료됨")
-        }
-        items(todoList.filter { it.isDone }) { todo ->
-            TodoItem(todo, onTodoToggle, showSheet)
+        if (todoList.isEmpty()) {
+            item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp),
+                    textAlign = TextAlign.Center,
+                    text = "오늘 할일을 추가해주세요",
+                    style = HmStyle.text20,
+                    color = HMColor.SubText
+                )
+            }
+
+        } else {
+            items(todoList.filter { !it.isDone }) { todo ->
+                TodoItem(todo, onTodoToggle, showSheet)
+            }
+            item {
+                Text(text = "완료됨")
+            }
+            items(todoList.filter { it.isDone }) { todo ->
+                TodoItem(todo, onTodoToggle, showSheet)
+            }
         }
     }
 }
@@ -371,6 +386,7 @@ fun GroupBottomSheet(
                         todoGroupList.filter { !currentTodoGroupIds.contains(it.id) }
                     TodoGroupBottomSheet(
                         content.currentGroup.currentGroup,
+                        todoGroupList,
                         unSelectedTodoGroup,
                         upsertCurrentGroup,
                         upsertTodoGroup,
@@ -618,10 +634,10 @@ fun TodoContentPreView() {
         },
         listOf(CurrentGroup(1, "", false, 1, LocalDate.now())),
         listOf(
-            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
-            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
-            Todo("DB설계", "", todoGroupId = -1),
-            Todo("디자인 3페이지", "", groupName = "", todoGroupId = -1)
+//            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
+//            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
+//            Todo("DB설계", "", todoGroupId = -1),
+//            Todo("디자인 3페이지", "", groupName = "", todoGroupId = -1)
         ),
         emptyList(),
         {},

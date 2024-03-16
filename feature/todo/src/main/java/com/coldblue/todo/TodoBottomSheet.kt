@@ -151,9 +151,7 @@ fun TodoBottomSheet(
                     },
                     onHourChange = { hour ->
                         myTime = myTime.copy(hour = hour)
-//                        time = time.withHour(hour)
                     },
-//                    onHourChange = { hour -> time = if(hour<12) time.withHour(hour) else time.withHour(hour+12)   },
                     onMinuteChange = { minute -> myTime = myTime.copy(minute = minute) },
                     onAmPmChange = { ampm -> myTime = myTime.copy(ampm = ampm) },
                     myTime = myTime
@@ -210,13 +208,11 @@ fun TodoBottomSheet(
                         }
                     }
                     if (dateButtons.last().isChecked) {
-
                         HMDatePicker(
                             date,
                             onYearChange = { year -> date = date.withYear(year) },
                             onMonthChange = { month -> date = date.withMonth(month) },
                             onDayChange = { day -> date = date.withDayOfMonth(day) })
-
                     }
                 }
                 item {
@@ -282,7 +278,7 @@ fun TodoBottomSheet(
                         todo.copy(
                             title = titleText,
                             content = contentText,
-                            time = if (onSwitch) myTime.getAmPmHour()  else null,
+                            time = if (onSwitch) myTime.getAmPmHour() else null,
                             todoGroupId = currentTodoGroupId,
                             date = date
                         )
@@ -437,7 +433,9 @@ fun HMTimePicker(
                 initialItem = myTime.ampm,
                 textColor = HMColor.SubText,
                 selectedTextColor = HMColor.Text,
-                onItemSelected = { _, item -> onAmPmChange(item)},
+                onItemSelected = { _, item ->
+                    onAmPmChange(item)
+                },
                 scrollState = amScrollState
             )
 
@@ -501,12 +499,10 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: () -> Unit) {
         shape = RoundedCornerShape(5.dp),
         border = BorderStroke(1.dp, HMColor.Primary),
         modifier = Modifier
-            .padding(8.dp)
+            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
             .clickable {
                 onClick()
-
             }
-
     ) {
         Text(
             modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
@@ -565,7 +561,7 @@ fun <T> InfiniteCircularList(
                             val isSelected =
                                 (y > parentHalfHeight - itemHalfHeight && y < parentHalfHeight + itemHalfHeight)
                             val index = i - 1
-                            if (isSelected && check && lastSelectedIndex != index ) {
+                            if (isSelected && check && lastSelectedIndex != index) {
                                 onItemSelected(index % items.size, items[index % items.size])
                                 lastSelectedIndex = index
                             }
@@ -625,11 +621,9 @@ fun <T> CircularList(
 
     var check by remember { mutableStateOf(true) }
     var lastSelectedIndex by remember { mutableIntStateOf(items.indexOf(initialItem)) }
-//    LaunchedEffect(items) {
-//        val targetIndex = items.indexOf(initialItem)
-//        lastSelectedIndex = targetIndex
-//        scrollState.scrollToItem(lastSelectedIndex, 0)
-//    }
+
+
+
     LazyColumn(
         modifier = Modifier
             .width(itemHeight * 2.5f)
@@ -655,7 +649,7 @@ fun <T> CircularList(
                             val y = coordinates.positionInParent().y - itemHalfHeight
                             val isSelected = y == itemHalfHeight
                             val index = i
-                            if (isSelected && check && lastSelectedIndex != index ) {
+                            if (isSelected && check && lastSelectedIndex != index) {
                                 onItemSelected(i, item)
                                 lastSelectedIndex = i
                             }
@@ -678,7 +672,6 @@ fun <T> CircularList(
                         ),
                         onClick = {
                             Logger.i(item.toString())
-
                             onItemSelected(i, item)
                             lastSelectedIndex = i
                             coroutineState.launch {
