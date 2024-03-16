@@ -1,5 +1,6 @@
 package com.coldblue.data.util
 
+import com.coldblue.model.MyTime
 import com.orhanobut.logger.Logger
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,20 +34,33 @@ fun LocalTime.getDisplayName(): String {
     }
 }
 
-fun LocalTime.getAmPmHour(timeString: String): LocalTime {
-    return if (timeString == "오전") {
+fun LocalTime.getAmPmHour(amPm: String): LocalTime {
+    return if (amPm == "오전") {
         withHour(hour.toAm())
     } else {
         withHour(hour.toPm())
     }
 }
 
+fun MyTime.getAmPmHour(): LocalTime {
+    val ampmHour = if (ampm == "오전") hour.toAm() else hour.toPm()
+    return LocalTime.now().withHour(ampmHour).withMinute(minute)
+}
+
+fun LocalTime.asMyTime(): MyTime {
+    return MyTime(
+        ampm = if (isAm()) "오전" else "오후",
+        hour = if (isAm()) hour.getAm() else hour.getPm(),
+        minute = minute
+    )
+}
+
 fun Int.getAm(): Int {
-    return if (this == 23) 12 else this
+    return if (this == 0) 12 else this
 }
 
 fun Int.getPm(): Int {
-    return if (this == 11) 12 else this - 12
+    return if (this == 12) 12 else this - 12
 }
 
 
@@ -55,7 +69,7 @@ fun Int.toAm(): Int {
 }
 
 fun Int.toPm(): Int {
-    return if (this == 12) 23 else this + 12
+    return if (this == 12) 12 else this + 12
 }
 
 fun Int.padTwoZero(): String {
@@ -80,7 +94,7 @@ fun LocalDate.formatToDot(): String {
 
 fun LocalTime.isAm(): Boolean {
     return when (hour) {
-        23, in 0..10 -> true
+        in 0..11 -> true
         else -> false
     }
 }
