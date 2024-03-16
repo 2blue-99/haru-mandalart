@@ -74,13 +74,17 @@ fun MandaBottomSheet(
     val mandaUI = contentType.mandaUI
 
     var inputText by remember { mutableStateOf(mandaUI.name) }
+    var keyNameText by remember { mutableStateOf("") }
+
     var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.darkColor)) }
-    var buttonClickableState by remember { mutableStateOf(mandaBottomSheetContentState is MandaBottomSheetContentState.Update) }
+
+    var buttonClickableState by remember { mutableStateOf(mandaUI.name.isNotBlank()) }
     var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
     var dialogState by remember { mutableStateOf(false) }
 
     if (dialogState) {
         MandaKeyDialog(
+            name = keyNameText,
             onDisMiss = {
                 dialogState = false
                 onDisMiss()
@@ -109,13 +113,18 @@ fun MandaBottomSheet(
                 text = contentType.title,
                 style = HmStyle.text16,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
             )
 
             Column(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
-                Text(text = contentType.title + " 이름", style = HmStyle.text16)
+                Text(
+                    text = contentType.title + " 이름",
+                    style = HmStyle.text16,
+                    fontWeight = FontWeight.Bold
+                )
                 HMTextField(inputText = inputText, maxLen = contentType.maxLen) {
                     inputText = it
                     buttonClickableState = inputText.isNotBlank()
@@ -134,9 +143,17 @@ fun MandaBottomSheet(
             }
 
             when (mandaBottomSheetContentState) {
+
                 is MandaBottomSheetContentState.Insert -> {
                     HMButton(text = "저장", clickableState = buttonClickableState) {
                         when (contentType) {
+
+                            is MandaBottomSheetContentType.MandaFinal ->
+                                upsertMandaFinal(inputText)
+
+                            is MandaBottomSheetContentType.MandaKey ->
+                                upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+
                             is MandaBottomSheetContentType.MandaDetail ->
                                 upsertMandaDetail(
                                     mandaUI.asMandaDetail(
@@ -146,8 +163,6 @@ fun MandaBottomSheet(
                                     )
                                 )
 
-                            else ->
-                                upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
                         }
                         onDisMiss()
                     }
@@ -162,7 +177,7 @@ fun MandaBottomSheet(
                                 .padding(end = 5.dp)
                                 .height(50.dp)
                                 .weight(1f),
-                            colors = ButtonDefaults.buttonColors(containerColor = HMColor.SubText),
+                            colors = ButtonDefaults.buttonColors(containerColor = HMColor.Gray),
                             shape = RoundedCornerShape(10.dp),
                             onClick = {
                                 when (contentType) {
@@ -172,6 +187,7 @@ fun MandaBottomSheet(
                                     }
 
                                     is MandaBottomSheetContentType.MandaKey -> {
+                                        keyNameText = mandaUI.name
                                         dialogState = true
                                     }
 
@@ -194,13 +210,10 @@ fun MandaBottomSheet(
                                 .weight(1f),
                         ) {
                             when (contentType) {
-                                is MandaBottomSheetContentType.MandaFinal ->
-                                    upsertMandaFinal(inputText)
-
                                 is MandaBottomSheetContentType.MandaKey ->
                                     upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
 
-                                is MandaBottomSheetContentType.MandaDetail ->
+                                else ->
                                     upsertMandaDetail(
                                         mandaUI.asMandaDetail(
                                             inputText,
@@ -248,24 +261,29 @@ fun MandaBottomSheetColor(
             text = "색상",
             modifier = Modifier.fillMaxWidth(),
             style = HmStyle.text16,
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
+            fontWeight = FontWeight.Bold
         )
         LazyColumn {
-            item {
-                FlowRow {
-                    repeat(colorInfoListState.size) { index ->
+            items(colorInfoListState.size / 4) {column ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    repeat(4) { row ->
+                        val btnIndex = row + column * 4
                         Box(
                             modifier = Modifier
                                 .width((screenWidth / 7).dp)
                                 .aspectRatio(1f)
                                 .padding(5.dp)
                         ) {
-                            RoundButton(colorInfoListState[index]) {
-                                onClick(index)
+                            RoundButton(colorInfoListState[btnIndex]) {
+                                onClick(btnIndex)
                                 colorInfoListState.forEachIndexed { colorIndex, colorInfo ->
-                                    if (colorIndex == index)
-                                        colorInfoListState[index] =
-                                            colorInfoListState[index].copy(isChecked = true)
+                                    if (colorIndex == btnIndex)
+                                        colorInfoListState[btnIndex] =
+                                            colorInfoListState[btnIndex].copy(isChecked = true)
                                     else
                                         colorInfo.isChecked = false
                                 }
@@ -307,21 +325,28 @@ fun RoundButton(
 
 @Composable
 fun MandaKeyDialog(
+    name: String,
     onDisMiss: () -> Unit,
     onDelete: () -> Unit
 ) {
     AlertDialog(
+        containerColor = HMColor.Background,
         onDismissRequest = { onDisMiss() },
         text = {
             Text(
-                text = "핵심목표를 삭제하면 포함된 세부목표가 전부 삭제됩니다.",
+                text = "핵심목표 \"$name\" 을(를) 삭제하면 포함된 세부목표가 전부 삭제됩니다.",
                 style = HmStyle.text16,
                 color = HMColor.Text
             )
         },
         dismissButton = {
             TextButton(onClick = { onDisMiss() }) {
-                Text(text = "취소", style = HmStyle.text16, color = HMColor.Text)
+                Text(
+                    text = "취소",
+                    style = HmStyle.text16,
+                    color = HMColor.Text,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         confirmButton = {
@@ -329,7 +354,12 @@ fun MandaKeyDialog(
                 onDelete()
                 onDisMiss()
             }) {
-                Text(text = "삭제", style = HmStyle.text16, color = HMColor.NegativeText)
+                Text(
+                    text = "삭제",
+                    style = HmStyle.text16,
+                    color = HMColor.NegativeText,
+                    fontWeight = FontWeight.Bold
+                )
             }
         },
         shape = RoundedCornerShape(8.dp)
@@ -341,14 +371,26 @@ fun MandaBottomSheetDone(
     checkedState: Boolean,
     onClick: (Boolean) -> Unit
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(text = "달성")
-        HMSwitch(checked = checkedState) {
-            onClick(!checkedState)
+    Column {
+        Text(
+            text = "달성 상태",
+            style = HmStyle.text16,
+            color = HMColor.Text,
+            fontWeight = FontWeight.Bold
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = if (checkedState) "달성" else "미달성",
+                style = HmStyle.text12,
+                color = HMColor.Text,
+            )
+            HMSwitch(checked = checkedState) {
+                onClick(!checkedState)
+            }
         }
     }
 }

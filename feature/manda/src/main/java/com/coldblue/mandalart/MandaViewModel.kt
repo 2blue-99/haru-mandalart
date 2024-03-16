@@ -19,6 +19,7 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,17 +34,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MandaViewModel @Inject constructor(
-    private val getMandaInitStateUseCase: GetMandaInitStateUseCase,
+    getMandaInitStateUseCase: GetMandaInitStateUseCase,
     private val updateMandaInitStateUseCase: UpdateMandaInitStateUseCase,
-
-    private val getKeyMandaUseCase: GetKeyMandaUseCase,
+    getKeyMandaUseCase: GetKeyMandaUseCase,
     private val upsertMandaKeyUseCase: UpsertMandaKeyUseCase,
     private val deleteMandaKeyUseCase: DeleteMandaKeyUseCase,
-
-    private val getDetailMandaUseCase: GetDetailMandaUseCase,
+    getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
-
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase
 ) : ViewModel() {
 
@@ -57,7 +55,7 @@ class MandaViewModel @Inject constructor(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
                         donePercentage = (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f,
-                        finalName = mandaKeys.last().name,
+                        finalName = mandaKeys.first { it.id == 5 }.name,
                         mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
                     )
                 }.catch {
@@ -90,6 +88,7 @@ class MandaViewModel @Inject constructor(
     }
 
     fun upsertMandaFinal(text: String) {
+        Logger.d(text)
         Log.e("TAG", "upsertMandaFinal: $text")
         viewModelScope.launch {
             upsertMandaKeyUseCase(MandaKey(id = 5, name = text))

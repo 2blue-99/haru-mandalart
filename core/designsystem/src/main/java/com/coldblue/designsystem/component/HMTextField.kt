@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.orhanobut.logger.Logger
 
 @Composable
 fun HMTextField(
@@ -27,9 +29,12 @@ fun HMTextField(
     maxLen: Int,
     onChangeText: (String) -> Unit = {}
 ) {
-    var text by remember { mutableStateOf(inputText) }
+    var text by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(inputText){ text = inputText }
+
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = text,

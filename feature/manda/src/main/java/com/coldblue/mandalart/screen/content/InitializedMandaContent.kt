@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,6 +60,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTitleComponent
+import com.coldblue.designsystem.iconpack.History
+import com.coldblue.designsystem.iconpack.Manda
 import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.iconpack.ZoomIn
 import com.coldblue.designsystem.iconpack.ZoomOut
@@ -74,7 +77,6 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -133,7 +135,7 @@ fun InitializedMandaContent(
         ) {
             changeBottomSheet(
                 true,
-                MandaBottomSheetContentState.Update(MandaBottomSheetContentType.MandaFinal(mandaUI = it))
+                MandaBottomSheetContentState.Insert(MandaBottomSheetContentType.MandaFinal(mandaUI = it))
             )
         }
 
@@ -153,10 +155,9 @@ fun MandaStatus(
     animateDonePercentage: Float,
     onClickTitle: (MandaUI) -> Unit
 ) {
-
-
     Column(
         modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -184,23 +185,24 @@ fun MandaStatus(
                 )
             }
         }
-        Text(
-            text = "달성률 ${(donePercentage * 100).roundToInt()} %",
-            style = HmStyle.text12,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.End
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-
-        LinearProgressIndicator(
-            progress = { animateDonePercentage },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(10.dp)
-                .clip(RoundedCornerShape(2.dp)),
-            color = HMColor.Primary,
-            trackColor = HMColor.Gray
-        )
+        Column {
+            Text(
+                text = "달성률 ${(donePercentage * 100).roundToInt()} %",
+                style = HmStyle.text12,
+                color = HMColor.Primary,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End
+            )
+            LinearProgressIndicator(
+                progress = { animateDonePercentage },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp)
+                    .clip(RoundedCornerShape(2.dp)),
+                color = HMColor.Primary,
+                trackColor = HMColor.Gray
+            )
+        }
     }
 }
 
@@ -410,12 +412,15 @@ fun Mandalart(
                     Column(
                         modifier = Modifier
                             .graphicsLayer(
-                                transformOrigin = TransformOrigin(if(isGesture) animatedPivotX else pivotX, if(isGesture) animatedPivotY else pivotY),
+                                transformOrigin = TransformOrigin(
+                                    if (isGesture) animatedPivotX else pivotX,
+                                    if (isGesture) animatedPivotY else pivotY
+                                ),
                                 scaleX = animatedScaleX,
                                 scaleY = animatedScaleY,
                             )
                             .pointerInput(isZoom) {
-                                if(isZoom)
+                                if (isZoom)
                                     detectDragGestures(
                                         onDrag = { change, dragAmount ->
                                             change.consume()
@@ -517,18 +522,18 @@ fun Mandalart(
                                                                                     )
                                                                                 changeBottomSheet(
                                                                                     true,
-                                                                                    MandaBottomSheetContentState.Update(
-                                                                                        if (bigBox.id == 5 && smallBoxData.id == 5) {
-                                                                                            MandaBottomSheetContentType.MandaFinal(
-                                                                                                smallBoxData
-                                                                                            )
-                                                                                        } else {
+                                                                                    if (bigBox.id == 5 && smallBoxData.id == 5) {
+                                                                                        MandaBottomSheetContentState.Insert(
+                                                                                            MandaBottomSheetContentType.MandaFinal(smallBoxData)
+                                                                                        )
+                                                                                    }else{
+                                                                                        MandaBottomSheetContentState.Update(
                                                                                             MandaBottomSheetContentType.MandaKey(
                                                                                                 smallBoxData,
                                                                                                 smallBox.groupIdList
                                                                                             )
-                                                                                        }
-                                                                                    )
+                                                                                        )
+                                                                                    }
                                                                                 )
                                                                             }
                                                                         }
