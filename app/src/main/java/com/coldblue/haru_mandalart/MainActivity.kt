@@ -24,14 +24,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
+import com.coldblue.data.util.PermissionHelper
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.login.LoginScreen
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,6 +45,10 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var syncHelper: SyncHelper
+
+    @Inject
+    lateinit var permissionHelper: PermissionHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -63,12 +71,18 @@ class MainActivity : ComponentActivity() {
                 val permissionLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission(),
                     onResult = { isGranted ->
+                        Logger.d(isGranted)
                         hasNotificationPermission = isGranted
+                        lifecycleScope.launch {
+                            permissionHelper.updateNoticePermissionState(isGranted)
+                            Logger.d(permissionHelper.noticePermissionRejectState.first())
+                        }
                     }
                 )
 
                 LaunchedEffect(permissionLauncher) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Logger.d(permissionHelper.noticePermissionRejectState.first())
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionHelper.noticePermissionRejectState.first()) {
                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
                 }
