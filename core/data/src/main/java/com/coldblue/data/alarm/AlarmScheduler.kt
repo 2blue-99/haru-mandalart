@@ -8,5 +8,5 @@ interface AlarmScheduler {
 
     fun cancel(id: Int)
 
-    fun reset()
+    fun cancelAll()
 }

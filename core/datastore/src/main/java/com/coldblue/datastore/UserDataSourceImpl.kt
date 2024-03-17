@@ -27,7 +27,7 @@ class UserDataSourceImpl @Inject constructor(
     override val isTutorial: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
     override val isAlarm: Flow<Boolean> =
-        dataStore.data.map { preferences -> preferences[alarmKey] ?: false }
+        dataStore.data.map { preferences -> preferences[alarmKey] ?: true }
     override val isInit: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[initKey] ?: false }
 

@@ -10,6 +10,7 @@ import com.coldblue.data.util.isPassed
 import com.coldblue.data.util.toFirstLocalDate
 import com.coldblue.data.util.toLastLocalDate
 import com.coldblue.data.util.toSoredIntList
+import com.coldblue.database.dao.AlarmDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
@@ -29,6 +30,7 @@ class TodoRepositoryImpl @Inject constructor(
     private val todoDataSource: TodoDataSource,
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
+    private val alarmDao: AlarmDao
 ) : TodoRepository {
 
     override suspend fun upsertTodo(todo: Todo) {

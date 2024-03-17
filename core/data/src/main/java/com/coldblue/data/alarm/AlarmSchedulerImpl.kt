@@ -4,19 +4,15 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
+import com.coldblue.data.mapper.AlarmMapper.asEntity
 import com.coldblue.data.util.toMillis
 import com.coldblue.database.dao.AlarmDao
-import com.coldblue.database.entity.AlarmEntity
 import com.coldblue.model.AlarmItem
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class AlarmSchedulerImpl @Inject constructor(
@@ -24,6 +20,7 @@ class AlarmSchedulerImpl @Inject constructor(
     private val alarmManager: AlarmManager,
     private val alarmDao: AlarmDao
 ) : AlarmScheduler {
+
     override fun add(item: AlarmItem) {
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
@@ -43,7 +40,7 @@ class AlarmSchedulerImpl @Inject constructor(
             )
 
             CoroutineScope(Dispatchers.IO).launch {
-                alarmDao.addAlarmId(AlarmEntity(item.id))
+                alarmDao.addAlarm(item.asEntity())
             }
         } catch (e: Exception) {
             Log.e("TAG", "schedule: ${e.message}")
@@ -60,15 +57,15 @@ class AlarmSchedulerImpl @Inject constructor(
             )
         )
         CoroutineScope(Dispatchers.IO).launch {
-            alarmDao.deleteAlarmId(AlarmEntity(id))
+            alarmDao.deleteAlarm(id)
         }
     }
 
-    override fun reset() {
+    override fun cancelAll() {
         CoroutineScope(Dispatchers.IO).launch {
-            alarmDao.getAllAlarmId().forEach {
+            alarmDao.getAllAlarm().forEach {
                 Logger.d(it)
-                cancel(it)
+                cancel(it.id)
             }
         }
     }

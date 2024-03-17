@@ -40,7 +40,7 @@ class LoginHelperImpl @Inject constructor(
 
     override suspend fun setLogout() {
         client.auth.clearSession()
-        alarmScheduler.reset()
+        alarmScheduler.cancelAll()
         userDataSource.reset()
         updateTimeDataSource.reset()
         appDao.reset()
