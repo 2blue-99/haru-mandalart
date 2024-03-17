@@ -101,7 +101,8 @@ fun MandaBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = { onDisMiss() },
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = HMColor.Background
     ) {
         Column(
             modifier = Modifier
