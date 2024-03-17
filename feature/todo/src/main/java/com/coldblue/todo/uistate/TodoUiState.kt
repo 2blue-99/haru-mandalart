@@ -1,4 +1,4 @@
-package com.coldblue.todo
+package com.coldblue.todo.uistate
 
 import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor

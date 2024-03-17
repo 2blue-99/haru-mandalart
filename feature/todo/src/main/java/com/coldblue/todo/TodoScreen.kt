@@ -63,16 +63,20 @@ import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 import com.coldblue.todo.dialog.CurrentGroupDialog
-import com.orhanobut.logger.Logger
+import com.coldblue.todo.uistate.BottomSheetUiState
+import com.coldblue.todo.uistate.ContentState
+import com.coldblue.todo.uistate.CurrentGroupState
+import com.coldblue.todo.uistate.DEFAULT_TODO
+import com.coldblue.todo.uistate.TodoUiState
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
 fun TodoScreen(
     todoViewModel: TodoViewModel = hiltViewModel(),
+    navigateToTodoEdit:  (Int,String,String) -> Unit
 ) {
     val todoUiState by todoViewModel.todoUiState.collectAsStateWithLifecycle()
     val bottomSheetUiSate by todoViewModel.bottomSheetUiSate.collectAsStateWithLifecycle()
@@ -86,7 +90,10 @@ fun TodoScreen(
                 containerColor = HMColor.Primary,
                 contentColor = HMColor.Background,
                 shape = CircleShape,
-                onClick = { todoViewModel.showSheet(ContentState.Todo(todo = Todo(""))) },
+                onClick = {
+//                    navigateToTodoEdit(DEFAULT_TODO)
+                    todoViewModel.showSheet(ContentState.Todo(todo = Todo("")))
+                },
                 content = {
                     Icon(
                         imageVector = Icons.Default.Create,
@@ -120,7 +127,8 @@ fun TodoScreen(
                 },
                 date = dateState,
                 selectDate = { date -> todoViewModel.selectDate(date) },
-                deleteTodoGroup = { id -> todoViewModel.deleteTodoGroup(id) }
+                deleteTodoGroup = { id -> todoViewModel.deleteTodoGroup(id) },
+                navigateToTodoEdit={id,title,time ->navigateToTodoEdit(id,title,time)}
 
             )
         }
@@ -141,7 +149,9 @@ private fun TodoContentWithState(
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
-    deleteTodoGroup: (Int) -> Unit
+    deleteTodoGroup: (Int) -> Unit,
+    navigateToTodoEdit:  (Int,String,String) -> Unit
+
 
 ) {
     when (uiState) {
@@ -164,7 +174,8 @@ private fun TodoContentWithState(
                 deleteCurrentGroup,
                 date,
                 selectDate,
-                deleteTodoGroup
+                deleteTodoGroup,
+                navigateToTodoEdit
             )
     }
 }
@@ -187,18 +198,16 @@ private fun TodoContent(
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
-    deleteTodoGroup: (Int) -> Unit
+    deleteTodoGroup: (Int) -> Unit,
+    navigateToTodoEdit:  (Int,String,String) -> Unit
 
 
 ) {
     val sheetState = rememberModalBottomSheetState()
-//    val coroutineState = rememberCoroutineScope()
     LaunchedEffect(bottomSheetUiSate) {
         when (bottomSheetUiSate) {
             is BottomSheetUiState.Up -> {
-//                sheetState.show()
                 sheetState.expand()
-
             }
 
             is BottomSheetUiState.Down -> {
@@ -219,8 +228,8 @@ private fun TodoContent(
             upsertCurrentGroup = upsertCurrentGroup,
             upsertTodoGroup = upsertTodoGroup,
             upsertTodo = upsertTodo,
-            date = date,
-            deleteTodoGroup = deleteTodoGroup
+            deleteTodoGroup = deleteTodoGroup,
+            navigateToTodoEdit = navigateToTodoEdit
         )
     }
     LazyColumn(
@@ -355,8 +364,8 @@ fun GroupBottomSheet(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     upsertTodo: (Todo) -> Unit,
-    date: LocalDate,
-    deleteTodoGroup: (Int) -> Unit
+    deleteTodoGroup: (Int) -> Unit,
+    navigateToTodoEdit:  (Int,String,String) -> Unit
 
 
 ) {
@@ -388,7 +397,7 @@ fun GroupBottomSheet(
                         upsertCurrentGroup,
                         upsertTodoGroup,
                         onDismissRequest,
-                        deleteTodoGroup
+                        deleteTodoGroup,
                     )
                 }
 
@@ -397,9 +406,8 @@ fun GroupBottomSheet(
                         content.todo,
                         upsertTodo,
                         onDismissRequest,
-                        date,
                         sheetState,
-                        currentGroupList
+                        navigateToTodoEdit
                     )
 
                 }
@@ -640,6 +648,6 @@ fun TodoContentPreView() {
         {},
         {}, { a, b -> },
         LocalDate.now(),
-        {}, {}
+        {}, {},{a,b,c->}
     )
 }

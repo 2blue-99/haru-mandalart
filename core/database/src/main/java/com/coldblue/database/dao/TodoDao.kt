@@ -16,6 +16,9 @@ interface TodoDao {
     @Query("SELECT todo.*, IFNULL(todo_group.name, '') AS groupName FROM todo LEFT JOIN todo_group ON todo.todo_group_id = todo_group.id WHERE date=:date AND todo.is_del=0")
     fun getTodo(date: LocalDate): Flow<List<TodoWithGroupName>>
 
+    @Query("SELECT todo.*, IFNULL(todo_group.name, '') AS groupName FROM todo LEFT JOIN todo_group ON todo.todo_group_id = todo_group.id WHERE todo.id=:todoId AND todo.is_del=0")
+    fun getTodo(todoId: Int): Flow<TodoWithGroupName>
+
     @Query("SELECT DISTINCT(todo.date) FROM todo WHERE date >= :startDate AND date <= :endDate AND is_del=0")
     fun getYearlyExistTodoDate(startDate: LocalDate, endDate: LocalDate): Flow<List<LocalDate>>
 
@@ -43,6 +46,7 @@ interface TodoDao {
 
     @Query("SELECT * FROM todo WHERE update_time > :updateTime AND is_sync=0")
     fun getToWriteTodos(updateTime: String): List<TodoEntity>
+
     @Transaction
     fun getTodoIdByOriginIds(originIds: List<Int>): List<Int?> {
         return originIds.map { originId ->

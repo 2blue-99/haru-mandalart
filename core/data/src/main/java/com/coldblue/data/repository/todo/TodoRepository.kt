@@ -9,6 +9,7 @@ interface TodoRepository: Syncable {
     suspend fun upsertTodo(todo: Todo)
 
     fun getTodo(date: LocalDate): Flow<List<Todo>>
+    fun getTodo(todoId: Int): Flow<Todo>
 
     fun getYearlyExistTodoDate(year: Int): Flow<List<LocalDate>>
 

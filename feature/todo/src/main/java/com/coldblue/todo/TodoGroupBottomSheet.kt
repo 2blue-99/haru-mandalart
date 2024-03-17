@@ -48,8 +48,7 @@ fun TodoGroupBottomSheet(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     onDismissRequest: () -> Unit,
-    deleteTodoGroup: (Int) -> Unit
-
+    deleteTodoGroup: (Int) -> Unit,
 ) {
     var openTodoGroupDialog by remember { mutableStateOf(false) }
     var openDeleteDialog by remember { mutableStateOf(false) }

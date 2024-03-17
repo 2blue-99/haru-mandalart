@@ -6,9 +6,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.coldblue.database.entity.CurrentGroupEntity
+import com.coldblue.database.entity.CurrentGroupWithName
 import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
+import com.coldblue.database.entity.TodoWithGroupName
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -52,8 +54,12 @@ interface CurrentGroupDao {
     @Query("SELECT id FROM current_group WHERE origin_id = :originId")
     fun getCurrentGroupIdByOriginId(originId: Int): Int?
 
-    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0")
-    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
+//    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0")
+//    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
+
+    @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON current_group.todo_group_id = todo_group.id WHERE current_group.date=:date AND current_group.is_del=0")
+    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupWithName>>
+
 
     @Query("SELECT COUNT(*) FROM current_group WHERE date = :date")
     suspend fun getCurrentGroupCount(date: LocalDate): Int
