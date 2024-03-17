@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.coldblue.database.entity.AlarmEntity
 
 @Dao
 interface AlarmDao {
@@ -12,8 +13,8 @@ interface AlarmDao {
     suspend fun getAllAlarmId(): List<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAlarmId(id: Int)
+    suspend fun addAlarmId(alarm: AlarmEntity)
 
     @Delete
-    suspend fun deleteAlarmId(id: Int)
+    suspend fun deleteAlarmId(alarm: AlarmEntity)
 }

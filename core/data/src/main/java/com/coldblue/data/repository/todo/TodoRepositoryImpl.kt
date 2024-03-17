@@ -10,7 +10,6 @@ import com.coldblue.data.util.isPassed
 import com.coldblue.data.util.toFirstLocalDate
 import com.coldblue.data.util.toLastLocalDate
 import com.coldblue.data.util.toSoredIntList
-import com.coldblue.database.dao.AlarmDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
@@ -26,7 +25,6 @@ import javax.inject.Inject
 
 class TodoRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
-    private val alarmDao: AlarmDao,
     private val alarmScheduler: AlarmScheduler,
     private val todoDataSource: TodoDataSource,
     private val syncHelper: SyncHelper,

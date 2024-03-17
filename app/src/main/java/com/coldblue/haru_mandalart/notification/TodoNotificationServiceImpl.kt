@@ -26,6 +26,7 @@ class TodoNotificationServiceImpl @Inject constructor(
     override fun showNotification(text: String) {
 
         val activityIntent = Intent(context, MainActivity::class.java)
+
         val activityPendingIntent = PendingIntent.getActivity(
             context,
             1,

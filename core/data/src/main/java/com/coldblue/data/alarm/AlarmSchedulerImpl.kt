@@ -9,7 +9,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.coldblue.data.util.toMillis
 import com.coldblue.database.dao.AlarmDao
+import com.coldblue.database.entity.AlarmEntity
 import com.coldblue.model.AlarmItem
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,14 +25,13 @@ class AlarmSchedulerImpl @Inject constructor(
     private val alarmDao: AlarmDao
 ) : AlarmScheduler {
     override fun add(item: AlarmItem) {
-        if (item.time == null) return
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(TODO_TITLE, item.title)
         }
         try {
             alarmManager.setExactAndAllowWhileIdle(
-                // TODO  ELAPSED_REALTIME_WAKEUP -> 나라별 시간 기준으로 알람을 울리는거라는데
+                // TODO  ELAPSED_REALTIME_WAKEUP -> 나라별 시간 기준으로 알람을 울리는거라는데 바꿀까
                 AlarmManager.RTC_WAKEUP,
                 item.time!!.toMillis(),
                 PendingIntent.getBroadcast(
@@ -40,8 +41,9 @@ class AlarmSchedulerImpl @Inject constructor(
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
+
             CoroutineScope(Dispatchers.IO).launch {
-                alarmDao.addAlarmId(item.id)
+                alarmDao.addAlarmId(AlarmEntity(item.id))
             }
         } catch (e: Exception) {
             Log.e("TAG", "schedule: ${e.message}")
@@ -58,13 +60,16 @@ class AlarmSchedulerImpl @Inject constructor(
             )
         )
         CoroutineScope(Dispatchers.IO).launch {
-            alarmDao.deleteAlarmId(id)
+            alarmDao.deleteAlarmId(AlarmEntity(id))
         }
     }
 
     override fun reset() {
         CoroutineScope(Dispatchers.IO).launch {
-            alarmDao.getAllAlarmId().forEach { cancel(it) }
+            alarmDao.getAllAlarmId().forEach {
+                Logger.d(it)
+                cancel(it)
+            }
         }
     }
 
