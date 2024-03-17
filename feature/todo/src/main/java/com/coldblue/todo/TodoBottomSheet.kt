@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.asMyTime
 import com.coldblue.data.util.getAmPmHour
 import com.coldblue.designsystem.component.HMButton
+import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Todo
@@ -44,6 +45,7 @@ import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.google.gson.Gson
 import java.time.LocalDate
 import java.time.LocalTime
+import kotlin.math.sin
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +80,7 @@ fun TodoBottomSheet(
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titleText,
-                    maxLines = 1,
+                    singleLine = true,
                     onValueChange = {
                         titleText = it
                     },
@@ -116,7 +118,11 @@ fun TodoBottomSheet(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     text = AnnotatedString("세부 항목 >"),
-                    style = HmStyle.text16.copy(color = HMColor.SubText, textAlign = TextAlign.End, fontWeight = FontWeight.Bold),
+                    style = HmStyle.text16.copy(
+                        color = HMColor.SubText,
+                        textAlign = TextAlign.End,
+                        fontWeight = FontWeight.Bold
+                    ),
                     onClick = {
                         onDismissRequest()
                         navigateToTodoEdit(
