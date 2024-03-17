@@ -64,15 +64,17 @@ interface CurrentGroupDao {
     @Query("SELECT COUNT(*) FROM current_group WHERE date = :date")
     suspend fun getCurrentGroupCount(date: LocalDate): Int
 
-    @Query("SELECT * FROM current_group WHERE is_del=0 AND date = (SELECT MAX(date) FROM current_group)")
-    suspend fun getLatestCurrentGroups(): List<CurrentGroupEntity>
+//    @Query("SELECT * FROM current_group WHERE is_del=0 AND date = (SELECT MAX(date) FROM current_group)")
+//    suspend fun getLatestCurrentGroups(): List<CurrentGroupEntity>
+    @Query("SELECT * FROM current_group WHERE is_del=0 AND date < :date ORDER BY date DESC LIMIT 1")
+    suspend fun getLatestCurrentGroups(date: LocalDate): List<CurrentGroupEntity>
 
 
     @Transaction
     suspend fun setCurrentGroup(date: LocalDate) {
         val groupCount = getCurrentGroupCount(date)
         if (groupCount == 0) {
-            val latestGroups = getLatestCurrentGroups()
+            val latestGroups = getLatestCurrentGroups(date)
             val updatedGroups = latestGroups.map { it.copy(date = date, id = 0) }
             upsertCurrentGroup(updatedGroups)
         }
