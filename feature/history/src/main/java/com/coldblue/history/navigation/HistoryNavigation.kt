@@ -8,6 +8,7 @@ import com.coldblue.history.HistoryScreen
 
 const val historyRoute = "History"
 fun NavController.navigateToHistory(navOptions: NavOptions? = null) {
+    this.popBackStack()
     this.navigate(historyRoute, navOptions)
 }
 
