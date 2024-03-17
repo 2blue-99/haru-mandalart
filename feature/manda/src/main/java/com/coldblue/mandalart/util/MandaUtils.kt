@@ -18,6 +18,10 @@ object MandaUtils {
     fun getTagList(): List<String> =
         stringArrayResource(id = R.array.tags).toList()
 
+    fun calculateDonePercentage(mandaDetails: List<MandaDetail>): Float {
+        return (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
+    }
+
     fun transformToMandaList(
         keys: List<MandaKey>,
         details: List<MandaDetail>
@@ -46,6 +50,8 @@ object MandaUtils {
                 val (darkColor, lightColor) = indexToDarkLightColor(key.colorIndex)
                 val groupIdList = mutableListOf<Int>()
                 var isDone = true
+                // 디테일 만다라트가 하나라도 done이 아닐경우 false
+                // 디테일 만다라트가 하나도 없을 경우 false
 
                 for (id in 1..9) {
 
@@ -84,7 +90,7 @@ object MandaUtils {
                         id = keyId,
                         name = key.name,
                         darkColor = if (keyId == 5) HMColor.Primary else darkColor,
-                        isDone = isDone
+                        isDone = if(groupIdList.isEmpty() && keyId != 5) false else isDone
                     ),
                     groupIdList = groupIdList
                 )

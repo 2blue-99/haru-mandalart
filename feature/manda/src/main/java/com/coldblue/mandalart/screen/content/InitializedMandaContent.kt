@@ -608,7 +608,7 @@ fun MandaKeyBox(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1F)
-            .border(BorderStroke(2.dp, color), RoundedCornerShape(8.dp))
+            .border(BorderStroke(1.5.dp, color), RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
             .background(if (isDone) color else HMColor.Background)
             .clickable { onClick() }
