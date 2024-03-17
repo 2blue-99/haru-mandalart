@@ -36,7 +36,7 @@ class TodoNotificationServiceImpl @Inject constructor(
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(com.coldblue.data.R.drawable.notification_icon)
             .setContentTitle("Todo 알림")
-            .setColor(0xFF432ED1.toInt()) // HM Primary 색
+//            .setColor(0xFF432ED1.toInt()) // HM Primary 색
 //            .setColor(ContextCompat.getColor(context, R.color.purple_500)) // 아이콘 배경 색
             .setContentText(text)
             .setContentIntent(activityPendingIntent)
