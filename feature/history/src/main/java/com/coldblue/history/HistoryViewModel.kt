@@ -31,9 +31,9 @@ class HistoryViewModel @Inject constructor(
     getTodoYearRangeUseCase: GetTodoYearRangeUseCase,
     getUniqueTodoCountByDateUseCase: GetUniqueTodoCountByDateUseCase,
     private val toggleTodoUseCase: ToggleTodoUseCase,
-    ) : ViewModel() {
+) : ViewModel() {
 
-    private val _yearSate = MutableStateFlow<Int>(LocalDate.now().year)
+    private val _yearSate = MutableStateFlow(LocalDate.now().year)
     val yearSate: StateFlow<Int> = _yearSate
 
     private val _dateSate = MutableStateFlow<LocalDate>(LocalDate.now())
@@ -43,13 +43,18 @@ class HistoryViewModel @Inject constructor(
 
     private val yearlyExistDateFlow = yearSate.flatMapLatest { getYearlyExistTodoDateUseCase(it) }
 
-    val historyUiState: StateFlow<HistoryUiState> = combine(todoFlow, getUniqueTodoCountByDateUseCase(), yearlyExistDateFlow, getTodoYearRangeUseCase()) { todoList, uniqueTodoCnt, dateList, yearList ->
+    val historyUiState: StateFlow<HistoryUiState> = combine(
+        todoFlow,
+        getUniqueTodoCountByDateUseCase(),
+        yearlyExistDateFlow,
+        getTodoYearRangeUseCase()
+    ) { todoList, uniqueTodoCnt, dateList, yearList ->
         HistoryUiState.Success(
-            todoList = todoList,
             allTodoDayCnt = uniqueTodoCnt,
             controllerList = HistoryUtil.controllerListMaker(yearSate.value, dateList),
             todoYearList = yearList,
-            today = dateSate.value
+            today = dateSate.value,
+            todoList = todoList
         )
     }.catch {
         HistoryUiState.Error(it.message ?: "Error")
@@ -64,6 +69,7 @@ class HistoryViewModel @Inject constructor(
             _dateSate.value = date
         }
     }
+
     fun toggleTodo(todo: Todo) {
         viewModelScope.launch {
             toggleTodoUseCase(todo)

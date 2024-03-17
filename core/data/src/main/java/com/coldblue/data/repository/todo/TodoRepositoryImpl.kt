@@ -8,8 +8,8 @@ import com.coldblue.data.mapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.isPassed
 import com.coldblue.data.util.toFirstLocalDate
+import com.coldblue.data.util.toHistoryList
 import com.coldblue.data.util.toLastLocalDate
-import com.coldblue.data.util.toSoredIntList
 import com.coldblue.database.dao.AlarmDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
@@ -54,7 +54,7 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     override fun getTodoYearList(): Flow<List<Int>> {
-        return todoDao.getUniqueTodoYear().map { it.toSoredIntList() }
+        return todoDao.getUniqueTodoYear().map { it.toHistoryList() }
     }
 
     override fun getUniqueTodoCountByDate(): Flow<Int> {

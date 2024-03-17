@@ -71,17 +71,14 @@ class MainActivity : ComponentActivity() {
                 val permissionLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission(),
                     onResult = { isGranted ->
-                        Logger.d(isGranted)
                         hasNotificationPermission = isGranted
                         lifecycleScope.launch {
                             permissionHelper.updateNoticePermissionState(isGranted)
-                            Logger.d(permissionHelper.noticePermissionRejectState.first())
                         }
                     }
                 )
 
                 LaunchedEffect(permissionLauncher) {
-                    Logger.d(permissionHelper.noticePermissionRejectState.first())
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionHelper.noticePermissionRejectState.first()) {
                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
