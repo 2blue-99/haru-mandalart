@@ -12,8 +12,10 @@ import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.repository.todo.TodoRepositoryImpl
 import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.data.repository.user.UserRepositoryImpl
+import com.coldblue.data.util.ConnectivityManagerNetworkHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginHelperImpl
+import com.coldblue.data.util.NetworkHelper
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -55,5 +57,10 @@ interface RepositoryModule {
     fun bindLoginHelperRepo(
         loginHelper: LoginHelperImpl
     ): LoginHelper
+
+    @Binds
+    fun bindsNetworkMonitor(
+        networkMonitor: ConnectivityManagerNetworkHelper
+    ): NetworkHelper
 
 }

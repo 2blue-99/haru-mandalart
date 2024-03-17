@@ -41,6 +41,7 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
+    val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
 
     when (val state = loginUiState) {
         is LoginUiState.Fail -> Toast.makeText(
@@ -84,8 +85,17 @@ fun LoginScreen(
             }
         }
         Box(modifier = Modifier.weight(1f)) {
-            LoginButton { authState.startFlow() }
-
+            LoginButton {
+                if (networkState) {
+                    authState.startFlow()
+                } else {
+                    Toast.makeText(
+                        context,
+                        " 인터넷 연결을 확인하세요",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 }

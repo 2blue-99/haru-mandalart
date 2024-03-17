@@ -16,6 +16,8 @@ fun SettingScreen(
     val email by settingViewModel.email.collectAsStateWithLifecycle()
     val alarm by settingViewModel.alarm.collectAsStateWithLifecycle()
 
+    val networkState by settingViewModel.isOnline.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -29,7 +31,8 @@ fun SettingScreen(
             deleteUser = settingViewModel::deleteUser,
             onChangeAlarm = settingViewModel::updateAlarmState,
             email = email,
-            alarm = alarm
+            alarm = alarm,
+            networkState = networkState
         )
     }
 }
@@ -44,7 +47,8 @@ fun SettingContentWithState(
     deleteUser: () -> Unit,
     onChangeAlarm: (Boolean) -> Unit,
     email: String,
-    alarm: Boolean
+    alarm: Boolean,
+    networkState:Boolean
 ) {
 
     SettingContent(
@@ -56,6 +60,7 @@ fun SettingContentWithState(
         deleteUser,
         onChangeAlarm,
         email,
-        alarm
+        alarm,
+        networkState
     )
 }

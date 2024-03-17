@@ -21,7 +21,7 @@ class LoginHelperImpl @Inject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val appDao: AppDao,
     private val syncHelper: SyncHelper,
-    private val supabaseDataSource: SupabaseDataSource
+    private val supabaseDataSource: SupabaseDataSource,
 ) : LoginHelper {
     override val isLogin: Flow<LoginState> =
         userDataSource.token.map {

@@ -1,5 +1,6 @@
 package com.coldblue.setting.content
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.DeleteDialog
@@ -41,11 +43,15 @@ fun SettingContent(
     deleteUser: () -> Unit,
     onChangeAlarm: (Boolean) -> Unit,
     email: String,
-    alarm: Boolean
+    alarm: Boolean,
+    networkState:Boolean
+
 ) {
     var openDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     if (openDialog) {
+
         DeleteDialog(
             targetText = "",
             text = "탈퇴하면 모든 데이터가 완전히 삭제됩니다.",
@@ -99,7 +105,17 @@ fun SettingContent(
                 title = "탈퇴",
                 isLast = true,
                 isClickable = true,
-                onClick = { openDialog = true }) {
+                onClick = {
+                    if (networkState){
+                        openDialog = true
+                    }else{
+                        Toast.makeText(
+                            context,
+                            " 인터넷 연결을 확인하세요",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "탈퇴"
@@ -145,7 +161,7 @@ fun SettingItem(
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent({}, {}, {}, "1.0", {}, {},{}, "hno05039@naver.com" , false)
+    SettingContent({}, {}, {}, "1.0", {}, {},{}, "hno05039@naver.com" , false,false)
 
 }
 
