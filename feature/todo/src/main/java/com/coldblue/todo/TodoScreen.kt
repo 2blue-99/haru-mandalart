@@ -81,7 +81,7 @@ import java.util.Locale
 @Composable
 fun TodoScreen(
     todoViewModel: TodoViewModel = hiltViewModel(),
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
 ) {
     val todoUiState by todoViewModel.todoUiState.collectAsStateWithLifecycle()
     val bottomSheetUiSate by todoViewModel.bottomSheetUiSate.collectAsStateWithLifecycle()
@@ -133,7 +133,14 @@ fun TodoScreen(
                 date = dateState,
                 selectDate = { date -> todoViewModel.selectDate(date) },
                 deleteTodoGroup = { id -> todoViewModel.deleteTodoGroup(id) },
-                navigateToTodoEdit = { id, title, time -> navigateToTodoEdit(id, title, time) }
+                navigateToTodoEdit = { id, title, time, date ->
+                    navigateToTodoEdit(
+                        id,
+                        title,
+                        time,
+                        date
+                    )
+                }
 
             )
         }
@@ -155,7 +162,7 @@ private fun TodoContentWithState(
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
 
 
 ) {
@@ -204,7 +211,7 @@ private fun TodoContent(
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
 
 
 ) {
@@ -377,7 +384,8 @@ fun GroupBottomSheet(
     upsertTodoGroup: (TodoGroup) -> Unit,
     upsertTodo: (Todo) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit,
+    navigateToTodoEdit: (Int, String, String, String) -> Unit,
+
     date: LocalDate,
 
 
@@ -597,8 +605,8 @@ fun TodoItem(
     todo: Todo,
     onTodoToggle: (Todo) -> Unit,
     showSheet: (ContentState) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit = { _, _, _ -> }
-
+    navigateToTodoEdit: (Int, String, String, String) -> Unit = { _, _, _, _ -> },
+    date: LocalDate = LocalDate.now()
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -620,7 +628,8 @@ fun TodoItem(
             navigateToTodoEdit(
                 if (todo.id == 0) DEFAULT_TODO else todo.id,
                 todo.title.ifEmpty { DEFAULT_TODO.toString() },
-                Uri.encode(Gson().toJson(myTime))
+                Uri.encode(Gson().toJson(myTime)),
+                date.toString()
             )
         }
     )
@@ -646,11 +655,19 @@ fun TodoItem(
                         style = HmStyle.text12,
                         color = HMColor.Primary
                     )
-                    Text(text = todo.time?.getDisplayName() ?: "", style = HmStyle.text12)
+                    if (todo.time != null) {
+                        Text(
+                            text = todo.time!!.getDisplayName(),
+                            style = HmStyle.text12,
+                            color = if (!todo.isDone && todo.time!!.isBefore(LocalTime.now())) HMColor.Dark.Red else HMColor.Text
+                        )
+                    }
                 }
+
             }
         }
     }
+
 }
 
 
@@ -681,6 +698,6 @@ fun TodoContentPreView() {
         {},
         {}, { a, b -> },
         LocalDate.now(),
-        {}, {}, { a, b, c -> }
+        {}, {}, { a, b, c, d -> }
     )
 }

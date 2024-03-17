@@ -216,7 +216,12 @@ fun TodoEditContent(
                 Row {
                     dateButtons.forEach { button ->
                         SelectButton(button) {
-                            date = today.plusDays(button.plus)
+                            if (button.text=="직접입력") {
+                                date = todo.date
+                            }else{
+                                date = today.plusDays(button.plus)
+
+                            }
                             dateButtons.replaceAll {
                                 it.copy(isChecked = it.text == button.text)
                             }

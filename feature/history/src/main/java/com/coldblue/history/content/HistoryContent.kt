@@ -62,7 +62,9 @@ fun HistoryContent(
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit,
     toggleTodo: (Todo) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String,String) -> Unit,
+    date : LocalDate,
+
 ) {
 
     var clickedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -126,7 +128,8 @@ fun HistoryContent(
                     todo = it,
                     onTodoToggle = toggleTodo,
                     showSheet = {},
-                    navigateToTodoEdit = navigateToTodoEdit
+                    navigateToTodoEdit = navigateToTodoEdit,
+                    date = date
                 )
             }
         }

@@ -4,11 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.data.util.getAmPmHour
+import com.coldblue.data.util.toDate
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.UpsertTodoUseCase
 import com.coldblue.domain.todogroup.GetCurrentGroupWithName
 import com.coldblue.model.MyTime
 import com.coldblue.model.Todo
+import com.coldblue.todo.uistate.DATE
 import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.coldblue.todo.uistate.MY_TIME
 import com.coldblue.todo.uistate.TITLE
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,6 +41,7 @@ class TodoEditViewModel @Inject constructor(
     private val todoId: Int? = savedStateHandle.get<Int>(TODO_ID)
     private val titleTmp: String? = savedStateHandle.get<String>(TITLE)
     private val myTime: String? = savedStateHandle.get<String>(MY_TIME)
+    private val date: String? = savedStateHandle.get<String>(DATE)
 
     val todoFlow = getTodoUseCase(todoId, default = DEFAULT_TODO)
     val currentGroupFlow = todoFlow.flatMapLatest { getCurrentGroupWithName(it.date) }
@@ -50,7 +54,8 @@ class TodoEditViewModel @Inject constructor(
             TodoEditUiState.Success(
                 todo = todo.copy(
                     title = title,
-                    time = if (time.isEdit) time.getAmPmHour() else null
+                    time = if (time.isEdit) time.getAmPmHour() else null,
+                    date = date?.toDate()?: LocalDate.now()
                 ),
                 today = todo.date,
                 currentGroup = groupList

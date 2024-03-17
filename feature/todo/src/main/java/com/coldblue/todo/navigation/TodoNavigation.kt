@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.coldblue.model.MyTime
 import com.coldblue.todo.TodoEditScreen
 import com.coldblue.todo.TodoScreen
+import com.coldblue.todo.uistate.DATE
 import com.coldblue.todo.uistate.MY_TIME
 import com.coldblue.todo.uistate.TITLE
 import com.coldblue.todo.uistate.TODO_ID
@@ -24,13 +25,14 @@ fun NavController.navigateToTodoEdit(
     todoId: Int,
     title: String,
     myTime: String,
+    date: String,
     navOptions: NavOptions? = null
 ) {
-    this.navigate("$todoEditRoute/$todoId/$title/$myTime", navOptions)
+    this.navigate("$todoEditRoute/$todoId/$title/$myTime/$date", navOptions)
 }
 
 
-fun NavGraphBuilder.todoScreen(navigateToTodoEdit: (Int, String, String) -> Unit) {
+fun NavGraphBuilder.todoScreen(navigateToTodoEdit: (Int, String, String,String) -> Unit) {
     composable(route = todoRoute) {
         TodoScreen(navigateToTodoEdit = navigateToTodoEdit)
     }
@@ -38,11 +40,12 @@ fun NavGraphBuilder.todoScreen(navigateToTodoEdit: (Int, String, String) -> Unit
 
 fun NavGraphBuilder.todoEditScreen(onDismissRequest: () -> Unit) {
     composable(
-        route = "$todoEditRoute/{$TODO_ID}/{$TITLE}/{$MY_TIME}",
+        route = "$todoEditRoute/{$TODO_ID}/{$TITLE}/{$MY_TIME}/{$DATE}",
         arguments = listOf(
             navArgument(TODO_ID) { type = NavType.IntType },
             navArgument(TITLE) { type = NavType.StringType },
             navArgument(MY_TIME) { type = NavType.StringType },
+            navArgument(DATE) { type = NavType.StringType },
         )
     ) { backStackEntry ->
 //        val todoId = backStackEntry.arguments?.getInt("todoId")

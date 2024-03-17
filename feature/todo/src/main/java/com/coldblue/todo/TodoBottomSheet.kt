@@ -56,7 +56,8 @@ fun TodoBottomSheet(
     onDismissRequest: () -> Unit,
     sheetState: SheetState,
     today: LocalDate,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
+
 
 ) {
     var onSwitch by remember { mutableStateOf(false) }
@@ -128,7 +129,8 @@ fun TodoBottomSheet(
                         navigateToTodoEdit(
                             if (todo.id == 0) DEFAULT_TODO else todo.id,
                             titleText.ifEmpty { DEFAULT_TODO.toString() },
-                            Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch)))
+                            Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch))),
+                            today.toString()
                         )
                     })
             }
