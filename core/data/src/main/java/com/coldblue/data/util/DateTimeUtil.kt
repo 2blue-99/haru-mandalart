@@ -2,12 +2,15 @@ package com.coldblue.data.util
 
 import com.coldblue.model.MyTime
 import com.orhanobut.logger.Logger
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 fun getUpdateTime(): String {
     return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli().toString()
@@ -31,14 +34,6 @@ fun LocalTime.getDisplayName(): String {
         "오전 ${hour.getAm()}:${minute.padTwoZero()}"
     } else {
         "오후 ${hour.getPm()}:${minute.padTwoZero()}"
-    }
-}
-
-fun LocalTime.getAmPmHour(amPm: String): LocalTime {
-    return if (amPm == "오전") {
-        withHour(hour.toAm())
-    } else {
-        withHour(hour.toPm())
     }
 }
 
@@ -92,6 +87,12 @@ fun LocalDate.formatToDot(): String {
     return this.toString().replace("-", ".")
 }
 
+fun LocalDate.getDisplayShort(): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    val dayOfWeek = this.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREA)
+    return "${this.format(formatter)}(${dayOfWeek})까지"
+}
+
 fun LocalDate.toDayOfWeekString(): String {
     return when (this.dayOfWeek.value) {
         1 -> "월요일"
@@ -123,4 +124,15 @@ fun List<String>?.toSoredIntList(): List<Int> {
     return if (this.isNullOrEmpty()) emptyList()
     else this.map { it.toInt() }.sorted()
 
+}
+
+fun LocalDate.isMatch(plusDay: Long): Boolean {
+    return this == LocalDate.now().plusDays(plusDay)
+}
+
+fun LocalDate.isNotMatch(): Boolean {
+    if (this.isMatch(0)) return false
+    if (this.isMatch(1)) return false
+    if (this.isMatch(7)) return false
+    return true
 }

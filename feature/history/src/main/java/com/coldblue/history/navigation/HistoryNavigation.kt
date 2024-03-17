@@ -7,12 +7,18 @@ import androidx.navigation.compose.composable
 import com.coldblue.history.HistoryScreen
 
 const val historyRoute = "History"
-fun NavController.navigateToHistory(navOptions: NavOptions? = null){
+fun NavController.navigateToHistory(navOptions: NavOptions? = null) {
     this.navigate(historyRoute, navOptions)
 }
 
-fun NavGraphBuilder.historyScreen(navigateToSetting: () -> Unit){
-    composable(route = historyRoute){
-        HistoryScreen{navigateToSetting()}
+fun NavGraphBuilder.historyScreen(
+    navigateToSetting: () -> Unit,
+    navigateToTodoEdit: (Int, String, String) -> Unit
+) {
+    composable(route = historyRoute) {
+        HistoryScreen(
+            navigateToSetting = navigateToSetting,
+            navigateToTodoEdit = navigateToTodoEdit
+        )
     }
 }

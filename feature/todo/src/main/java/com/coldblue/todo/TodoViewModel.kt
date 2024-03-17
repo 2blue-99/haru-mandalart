@@ -13,7 +13,10 @@ import com.coldblue.domain.todogroup.UpsertTodoGroupUseCase
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
-import com.orhanobut.logger.Logger
+import com.coldblue.todo.uistate.BottomSheetUiState
+import com.coldblue.todo.uistate.ContentState
+import com.coldblue.todo.uistate.CurrentGroupState
+import com.coldblue.todo.uistate.TodoUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -73,12 +76,12 @@ class TodoViewModel @Inject constructor(
                 today = dateSate.value,
                 todoList = todoList,
                 todoGroupList = todoGroupList,
-                currentGroup = group.currentGroupList.map { cur -> cur.copy(name = todoGroupList.first { it.id == cur.todoGroupId }.name) },
+                currentGroup = group.currentGroupList,
                 haruMandaList = List(9) { it ->
                     val index = it + 1
                     if (currentGroupList.keys.contains(index)) {
                         val currentGroup = currentGroupList[index]!!.first()
-                        val name = todoGroupList.first { it.id == currentGroup.todoGroupId }.name
+                        val name = currentGroup.name
                         val currentTodos =
                             todoList.filter { it.todoGroupId == currentGroup.todoGroupId }
                         val isDoing = currentTodos.all { it.isDone }

@@ -11,6 +11,8 @@ import com.coldblue.mandalart.navigation.navigateToManda
 import com.coldblue.setting.navigation.navigateToSetting
 import com.coldblue.setting.navigation.settingScreen
 import com.coldblue.todo.navigation.navigateToTodo
+import com.coldblue.todo.navigation.navigateToTodoEdit
+import com.coldblue.todo.navigation.todoEditScreen
 import com.coldblue.todo.navigation.todoRoute
 import com.coldblue.todo.navigation.todoScreen
 import com.coldblue.tutorial.navigation.tutorialScreen
@@ -29,10 +31,14 @@ fun HMNavHost(
         modifier = modifier
     ) {
         loginScreen(navigateToTodo = navController::navigateToTodo)
-        todoScreen()
+        todoScreen(navigateToTodoEdit = navController::navigateToTodoEdit)
+        todoEditScreen(onDismissRequest = navController::popBackStack)
         tutorialScreen(navigateToManda = navController::navigateToManda)
         mandaScreen()
-        historyScreen(navigateToSetting = navController::navigateToSetting)
+        historyScreen(
+            navigateToSetting = navController::navigateToSetting,
+            navigateToTodoEdit = navController::navigateToTodoEdit
+        )
         settingScreen()
     }
 }

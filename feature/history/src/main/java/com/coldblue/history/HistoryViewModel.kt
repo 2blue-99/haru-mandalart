@@ -7,7 +7,9 @@ import com.coldblue.domain.todo.GetYearlyExistTodoDateUseCase
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.GetTodoYearRangeUseCase
 import com.coldblue.domain.todo.GetUniqueTodoCountByDateUseCase
+import com.coldblue.domain.todo.ToggleTodoUseCase
 import com.coldblue.history.util.HistoryUtil
+import com.coldblue.model.Todo
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +29,9 @@ class HistoryViewModel @Inject constructor(
     getTodoUseCase: GetTodoUseCase,
     getYearlyExistTodoDateUseCase: GetYearlyExistTodoDateUseCase,
     getTodoYearRangeUseCase: GetTodoYearRangeUseCase,
-    getUniqueTodoCountByDateUseCase: GetUniqueTodoCountByDateUseCase
-) : ViewModel() {
+    getUniqueTodoCountByDateUseCase: GetUniqueTodoCountByDateUseCase,
+    private val toggleTodoUseCase: ToggleTodoUseCase,
+    ) : ViewModel() {
 
     private val _yearSate = MutableStateFlow<Int>(LocalDate.now().year)
     val yearSate: StateFlow<Int> = _yearSate
@@ -50,7 +53,6 @@ class HistoryViewModel @Inject constructor(
         )
     }.catch {
         HistoryUiState.Error(it.message ?: "Error")
-        Log.e("TAG", "Error: ${it.message}")
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -60,6 +62,11 @@ class HistoryViewModel @Inject constructor(
     fun selectDate(date: LocalDate) {
         viewModelScope.launch {
             _dateSate.value = date
+        }
+    }
+    fun toggleTodo(todo: Todo) {
+        viewModelScope.launch {
+            toggleTodoUseCase(todo)
         }
     }
 

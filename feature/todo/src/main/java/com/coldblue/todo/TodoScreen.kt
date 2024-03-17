@@ -1,5 +1,6 @@
 package com.coldblue.todo
 
+import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -51,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.data.util.asMyTime
 import com.coldblue.data.util.getDisplayName
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.CenterTitleText
@@ -63,6 +65,12 @@ import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.TodoGroup
 import com.coldblue.todo.dialog.CurrentGroupDialog
+import com.coldblue.todo.uistate.BottomSheetUiState
+import com.coldblue.todo.uistate.ContentState
+import com.coldblue.todo.uistate.CurrentGroupState
+import com.coldblue.todo.uistate.DEFAULT_TODO
+import com.coldblue.todo.uistate.TodoUiState
+import com.google.gson.Gson
 import com.orhanobut.logger.Logger
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -73,6 +81,7 @@ import java.util.Locale
 @Composable
 fun TodoScreen(
     todoViewModel: TodoViewModel = hiltViewModel(),
+    navigateToTodoEdit: (Int, String, String) -> Unit
 ) {
     val todoUiState by todoViewModel.todoUiState.collectAsStateWithLifecycle()
     val bottomSheetUiSate by todoViewModel.bottomSheetUiSate.collectAsStateWithLifecycle()
@@ -86,7 +95,10 @@ fun TodoScreen(
                 containerColor = HMColor.Primary,
                 contentColor = HMColor.Background,
                 shape = CircleShape,
-                onClick = { todoViewModel.showSheet(ContentState.Todo(todo = Todo(""))) },
+                onClick = {
+//                    navigateToTodoEdit(DEFAULT_TODO)
+                    todoViewModel.showSheet(ContentState.Todo(todo = Todo("")))
+                },
                 content = {
                     Icon(
                         imageVector = Icons.Default.Create,
@@ -120,7 +132,8 @@ fun TodoScreen(
                 },
                 date = dateState,
                 selectDate = { date -> todoViewModel.selectDate(date) },
-                deleteTodoGroup = { id -> todoViewModel.deleteTodoGroup(id) }
+                deleteTodoGroup = { id -> todoViewModel.deleteTodoGroup(id) },
+                navigateToTodoEdit = { id, title, time -> navigateToTodoEdit(id, title, time) }
 
             )
         }
@@ -141,7 +154,9 @@ private fun TodoContentWithState(
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
-    deleteTodoGroup: (Int) -> Unit
+    deleteTodoGroup: (Int) -> Unit,
+    navigateToTodoEdit: (Int, String, String) -> Unit
+
 
 ) {
     when (uiState) {
@@ -164,7 +179,8 @@ private fun TodoContentWithState(
                 deleteCurrentGroup,
                 date,
                 selectDate,
-                deleteTodoGroup
+                deleteTodoGroup,
+                navigateToTodoEdit
             )
     }
 }
@@ -187,18 +203,16 @@ private fun TodoContent(
     deleteCurrentGroup: (Int, Int) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
-    deleteTodoGroup: (Int) -> Unit
+    deleteTodoGroup: (Int) -> Unit,
+    navigateToTodoEdit: (Int, String, String) -> Unit
 
 
 ) {
     val sheetState = rememberModalBottomSheetState()
-//    val coroutineState = rememberCoroutineScope()
     LaunchedEffect(bottomSheetUiSate) {
         when (bottomSheetUiSate) {
             is BottomSheetUiState.Up -> {
-//                sheetState.show()
                 sheetState.expand()
-
             }
 
             is BottomSheetUiState.Down -> {
@@ -219,8 +233,9 @@ private fun TodoContent(
             upsertCurrentGroup = upsertCurrentGroup,
             upsertTodoGroup = upsertTodoGroup,
             upsertTodo = upsertTodo,
+            deleteTodoGroup = deleteTodoGroup,
+            navigateToTodoEdit = navigateToTodoEdit,
             date = date,
-            deleteTodoGroup = deleteTodoGroup
         )
     }
     LazyColumn(
@@ -355,11 +370,12 @@ fun GroupBottomSheet(
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
     upsertTodo: (Todo) -> Unit,
+    deleteTodoGroup: (Int) -> Unit,
+    navigateToTodoEdit: (Int, String, String) -> Unit,
     date: LocalDate,
-    deleteTodoGroup: (Int) -> Unit
 
 
-) {
+    ) {
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = { onDismissRequest() },
@@ -388,7 +404,7 @@ fun GroupBottomSheet(
                         upsertCurrentGroup,
                         upsertTodoGroup,
                         onDismissRequest,
-                        deleteTodoGroup
+                        deleteTodoGroup,
                     )
                 }
 
@@ -397,9 +413,9 @@ fun GroupBottomSheet(
                         content.todo,
                         upsertTodo,
                         onDismissRequest,
-                        date,
                         sheetState,
-                        currentGroupList
+                        date,
+                        navigateToTodoEdit,
                     )
 
                 }
@@ -573,6 +589,8 @@ fun TodoItem(
     todo: Todo,
     onTodoToggle: (Todo) -> Unit,
     showSheet: (ContentState) -> Unit,
+    navigateToTodoEdit: (Int, String, String) -> Unit = { _, _, _ -> }
+
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -580,7 +598,22 @@ fun TodoItem(
         .border(width = 1.5.dp, color = HMColor.Primary, shape = RoundedCornerShape(10.dp))
         .background(HMColor.Box)
         .clickable {
+            val time = todo.time
+            val myTime = if (time == null) {
+                LocalTime
+                    .now()
+                    .asMyTime()
+            } else {
+                todo.time!!
+                    .asMyTime()
+                    .copy(isEdit = true)
+            }
             showSheet(ContentState.Todo(todo = todo))
+            navigateToTodoEdit(
+                if (todo.id == 0) DEFAULT_TODO else todo.id,
+                todo.title.ifEmpty { DEFAULT_TODO.toString() },
+                Uri.encode(Gson().toJson(myTime))
+            )
         }
     )
     {
@@ -640,6 +673,6 @@ fun TodoContentPreView() {
         {},
         {}, { a, b -> },
         LocalDate.now(),
-        {}, {}
+        {}, {}, { a, b, c -> }
     )
 }

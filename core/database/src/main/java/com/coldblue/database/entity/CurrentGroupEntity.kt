@@ -1,6 +1,7 @@
 package com.coldblue.database.entity
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.time.LocalDate
@@ -16,3 +17,9 @@ data class CurrentGroupEntity(
     @ColumnInfo(name = "origin_id") override val originId: Int,
     @PrimaryKey(autoGenerate = true) override val id: Int = 0,
 ):SyncableEntity
+
+data class CurrentGroupWithName(
+    @Embedded val currentGroup: CurrentGroupEntity,
+    @ColumnInfo(name = "groupName") val groupName: String
+)
+

@@ -2,6 +2,7 @@ package com.coldblue.data.mapper
 
 import com.coldblue.data.util.toDate
 import com.coldblue.database.entity.CurrentGroupEntity
+import com.coldblue.database.entity.CurrentGroupWithName
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.CurrentGroup
 import com.coldblue.network.model.NetWorkTodoGroup
@@ -85,7 +86,10 @@ object CurrentGroupMapper {
             )
         }
     }
+
+
 }
+
 
 fun List<CurrentGroup>.asEntity(): List<CurrentGroupEntity> {
     return CurrentGroupMapper.asEntity(this)
