@@ -107,6 +107,7 @@ fun InitializedMandaContent(
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
             sheetState = sheetState,
+            mandaKeyList = uiState.mandaKeyList,
             upsertMandaFinal = upsertMandaFinal,
             upsertMandaKey = upsertMandaKey,
             upsertMandaDetail = upsertMandaDetail,

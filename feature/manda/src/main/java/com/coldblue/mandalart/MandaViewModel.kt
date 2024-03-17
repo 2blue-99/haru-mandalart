@@ -56,6 +56,7 @@ class MandaViewModel @Inject constructor(
                         donePercentage = (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f,
                         finalName = mandaKeys.first { it.id == 5 }.name,
                         mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
+                        mandaKeyList = mandaKeys.map { it.name }
                     )
                 }.catch {
                     Log.e("TAG", "${it}: ")
