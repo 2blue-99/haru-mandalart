@@ -124,7 +124,7 @@ fun MandaBottomSheet(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
                 Text(
-                    text = contentType.title + " 이름",
+                    text = "이름",
                     style = HmStyle.text16,
                     fontWeight = FontWeight.Bold
                 )
