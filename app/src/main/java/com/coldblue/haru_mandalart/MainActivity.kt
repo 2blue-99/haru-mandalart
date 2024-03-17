@@ -28,9 +28,9 @@ import androidx.lifecycle.lifecycleScope
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
-import com.coldblue.data.util.PermissionHelper
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
+import com.coldblue.haru_mandalart.permission.PermissionImpl
 import com.coldblue.login.LoginScreen
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,46 +46,56 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var syncHelper: SyncHelper
 
+//    @Inject
+//    lateinit var permissionHelper: PermissionHelper
+
     @Inject
-    lateinit var permissionHelper: PermissionHelper
+    lateinit var permissionImpl: PermissionImpl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         setContent {
-            HarumandalartTheme {
-                val context = LocalContext.current
-                var hasNotificationPermission by remember {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        mutableStateOf(
-                            ContextCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.POST_NOTIFICATIONS
-                            ) == PackageManager.PERMISSION_GRANTED
-                        )
-                    } else {
-                        mutableStateOf(true)
-                    }
-                }
-                val permissionLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission(),
-                    onResult = { isGranted ->
-                        Logger.d(isGranted)
-                        hasNotificationPermission = isGranted
-                        lifecycleScope.launch {
-                            permissionHelper.updateNoticePermissionState(isGranted)
-                            Logger.d(permissionHelper.noticePermissionRejectState.first())
-                        }
-                    }
-                )
 
-                LaunchedEffect(permissionLauncher) {
-                    Logger.d(permissionHelper.noticePermissionRejectState.first())
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && permissionHelper.noticePermissionRejectState.first()) {
-                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
+            HarumandalartTheme {
+
+                val context = LocalContext.current
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Logger.d("들어옹ㅇㅇㅇ")
+                    permissionImpl.GetPermission(context)
                 }
+
+//                var hasNotificationPermission by remember {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                        mutableStateOf(
+//                            ContextCompat.checkSelfPermission(
+//                                context,
+//                                Manifest.permission.POST_NOTIFICATIONS
+//                            ) == PackageManager.PERMISSION_GRANTED
+//                        )
+//                    } else {
+//                        mutableStateOf(true)
+//                    }
+//                }
+//                val permissionLauncher = rememberLauncherForActivityResult(
+//                    contract = ActivityResultContracts.RequestPermission(),
+//                    onResult = { isGranted ->
+//                        hasNotificationPermission = isGranted
+//                        lifecycleScope.launch {
+//                            permissionHelper.updateInitPermissionState(true)
+//                            permissionHelper.updateNoticePermissionState(isGranted)
+//                        }
+//                    }
+//                )
+//
+//                LaunchedEffect(permissionLauncher) {
+//                    Logger.d("들어옴1")
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                        Logger.d("들어옴2")
+//                        if(ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
+//                            Logger.d("들어옴3")
+//                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+//                    }
+//                }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),

@@ -8,11 +8,16 @@ class PermissionHelperImpl @Inject constructor(
     private val userDataSource: UserDataSource,
 ) : PermissionHelper {
 
-    override val noticePermissionRejectState: Flow<Boolean> = userDataSource.noticePermissionState
+    override val noticePermissionState: Flow<Boolean> = userDataSource.noticePermissionState
+    override val initPermissionState: Flow<Boolean> = userDataSource.initPermissionState
 
 
     override suspend fun updateNoticePermissionState(state: Boolean) {
         userDataSource.updateNoticePermissionState(state)
     }
+    override suspend fun updateInitPermissionState(state: Boolean) {
+        userDataSource.updateInitPermissionState(state)
+    }
+
 
 }
