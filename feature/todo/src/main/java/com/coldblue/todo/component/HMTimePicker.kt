@@ -51,7 +51,8 @@ fun HMTimePicker(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
+            .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = if (onSwitch) "${myTime.ampm}${myTime.hour.padTwoSpace()}:${myTime.minute.padTwoZero()}" else "시간없음"

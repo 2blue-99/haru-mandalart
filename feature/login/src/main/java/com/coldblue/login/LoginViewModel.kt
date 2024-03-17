@@ -6,6 +6,7 @@ import com.coldblue.data.util.LoginHelper
 import com.coldblue.login.exception.exceptionHandler
 import com.coldblue.login.state.LoginExceptionState
 import com.coldblue.login.state.LoginUiState
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
@@ -31,7 +32,10 @@ class LoginViewModel @Inject constructor(
                     loginHelper.setLoginSucceeded()
                 }
             }
+
             is NativeSignInResult.Error -> {
+                Logger.e("실패임 ")
+                Logger.e(result.message)
                 when (result.message.exceptionHandler()) {
                     is LoginExceptionState.Waiting -> _loginState.value =
                         LoginUiState.Fail(LoginExceptionState.Waiting())
