@@ -17,10 +17,10 @@ import java.time.LocalDate
 fun HistoryScreen(
     historyViewModel: HistoryViewModel = hiltViewModel(),
     navigateToSetting: () -> Unit,
+    navigateToTodoEdit: (Int, String, String) -> Unit
+
 ) {
-
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +31,8 @@ fun HistoryScreen(
             navigateToSetting = navigateToSetting,
             selectYear = historyViewModel::selectYear,
             selectDate = historyViewModel::selectDate,
-            toggleTodo = historyViewModel::toggleTodo
+            toggleTodo = historyViewModel::toggleTodo,
+            navigateToTodoEdit = navigateToTodoEdit
         )
     }
 }
@@ -43,8 +44,9 @@ fun HistoryContentWithState(
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit,
     toggleTodo: (Todo) -> Unit,
+    navigateToTodoEdit: (Int, String, String) -> Unit
 
-    ) {
+) {
     when (uiState) {
         is HistoryUiState.Loading -> Text(text = "로딩")
         is HistoryUiState.Error -> Text(text = uiState.msg)
@@ -54,7 +56,8 @@ fun HistoryContentWithState(
                 navigateToSetting = navigateToSetting,
                 selectYear = selectYear,
                 selectDate = selectDate,
-                toggleTodo = toggleTodo
+                toggleTodo = toggleTodo,
+                navigateToTodoEdit = navigateToTodoEdit
             )
     }
 

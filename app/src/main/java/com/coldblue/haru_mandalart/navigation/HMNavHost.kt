@@ -31,11 +31,14 @@ fun HMNavHost(
         modifier = modifier
     ) {
         loginScreen(navigateToTodo = navController::navigateToTodo)
-        todoScreen(navigateToTodoEdit = { todoId,title,time -> navController.navigateToTodoEdit(todoId,title,time) })
+        todoScreen(navigateToTodoEdit = navController::navigateToTodoEdit)
         todoEditScreen(onDismissRequest = navController::popBackStack)
         tutorialScreen(navigateToManda = navController::navigateToManda)
         mandaScreen()
-        historyScreen(navigateToSetting = navController::navigateToSetting)
+        historyScreen(
+            navigateToSetting = navController::navigateToSetting,
+            navigateToTodoEdit = navController::navigateToTodoEdit
+        )
         settingScreen()
     }
 }

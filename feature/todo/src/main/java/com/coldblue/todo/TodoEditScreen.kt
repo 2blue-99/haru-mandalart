@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -33,16 +32,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.util.asMyTime
 import com.coldblue.data.util.getAmPmHour
+import com.coldblue.data.util.getDisplayShort
+import com.coldblue.data.util.isMatch
+import com.coldblue.data.util.isNotMatch
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -97,7 +96,7 @@ fun TodoEditContentWithState(
     TodoEditContent(
         todo = uiState.todo,
         upsertTodo = upsertTodo,
-        today = uiState.today,
+        todoDate = uiState.today,
         currentGroupList = uiState.currentGroup,
         onDismissRequest = onDismissRequest,
     )
@@ -108,7 +107,7 @@ fun TodoEditContentWithState(
 fun TodoEditContent(
     todo: Todo,
     upsertTodo: (Todo) -> Unit,
-    today: LocalDate,
+    todoDate: LocalDate,
     currentGroupList: List<CurrentGroup>,
     onDismissRequest: () -> Unit,
 
@@ -116,6 +115,7 @@ fun TodoEditContent(
     var onSwitch by remember { mutableStateOf(false) }
     var myTime by remember { mutableStateOf(todo.time?.asMyTime() ?: LocalTime.now().asMyTime()) }
 
+    val today = LocalDate.now()
     LaunchedEffect(Unit) {
         onSwitch = todo.time != null
     }
@@ -127,14 +127,14 @@ fun TodoEditContent(
 
     val dateButtons = remember {
         mutableStateListOf(
-            ToggleInfo(true, "오늘", plus = 0),
-            ToggleInfo(false, "내일", plus = 1),
-            ToggleInfo(false, "다음주", plus = 7),
-            ToggleInfo(false, "직접입력"),
+            ToggleInfo(todoDate.isMatch(0), "오늘", plus = 0),
+            ToggleInfo(todoDate.isMatch(1), "내일", plus = 1),
+            ToggleInfo(todoDate.isMatch(7), "다음주", plus = 7),
+            ToggleInfo(todoDate.isNotMatch(), "직접입력"),
         )
     }
     val keyboardController = LocalSoftwareKeyboardController.current
-    var date by remember { mutableStateOf(today) }
+    var date by remember { mutableStateOf(todoDate) }
 
 
     Box() {
@@ -211,7 +211,7 @@ fun TodoEditContent(
                     style = HmStyle.text16,
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = date.toString())
+                Text(text = date.getDisplayShort())
 
                 Row {
                     dateButtons.forEach { button ->
@@ -305,4 +305,5 @@ fun TodoEditContent(
     }
 
 }
+
 

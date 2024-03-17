@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -98,7 +97,6 @@ fun <T> CircularList(
                             },
                         ),
                         onClick = {
-                            Logger.i(item.toString())
                             onItemSelected(i, item)
                             lastSelectedIndex = i
                             coroutineState.launch {

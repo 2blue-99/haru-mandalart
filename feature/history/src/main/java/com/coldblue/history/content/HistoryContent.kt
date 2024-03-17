@@ -62,8 +62,8 @@ fun HistoryContent(
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit,
     toggleTodo: (Todo) -> Unit,
-
-    ) {
+    navigateToTodoEdit: (Int, String, String) -> Unit
+) {
 
     var clickedDate by remember { mutableStateOf(LocalDate.now()) }
     var isClicked by remember { mutableStateOf(true) }
@@ -72,7 +72,7 @@ fun HistoryContent(
         modifier = Modifier
             .fillMaxSize()
             .background(HMColor.Background)
-            .padding(16.dp),
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
         Row(
@@ -122,7 +122,12 @@ fun HistoryContent(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(historyUiState.todoList) {
-                TodoItem(todo = it, onTodoToggle = toggleTodo, showSheet = {})
+                TodoItem(
+                    todo = it,
+                    onTodoToggle = toggleTodo,
+                    showSheet = {},
+                    navigateToTodoEdit = navigateToTodoEdit
+                )
             }
         }
     }

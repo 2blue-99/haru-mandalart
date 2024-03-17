@@ -5,8 +5,6 @@ sealed interface BottomSheetUiState {
     data object Down : BottomSheetUiState
     data class Up(val content: ContentState) : BottomSheetUiState
 }
-
-
 sealed interface ContentState {
     val title: String
     data class Todo(

@@ -43,6 +43,7 @@ import com.coldblue.model.Todo
 import com.coldblue.todo.component.HMTimePicker
 import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.google.gson.Gson
+import java.time.LocalDate
 import java.time.LocalTime
 
 
@@ -53,6 +54,7 @@ fun TodoBottomSheet(
     upsertTodo: (Todo) -> Unit,
     onDismissRequest: () -> Unit,
     sheetState: SheetState,
+    today: LocalDate,
     navigateToTodoEdit: (Int, String, String) -> Unit
 
 ) {
@@ -169,6 +171,7 @@ fun TodoBottomSheet(
                             todo.copy(
                                 title = titleText,
                                 time = if (onSwitch) myTime.getAmPmHour() else null,
+                                date = today
                             )
                         )
                         onDismissRequest()
@@ -180,6 +183,7 @@ fun TodoBottomSheet(
                         todo.copy(
                             title = titleText,
                             time = if (onSwitch) myTime.getAmPmHour() else null,
+                            date = today
                         )
                     )
                     onDismissRequest()
