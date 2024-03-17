@@ -19,10 +19,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,10 @@ import com.coldblue.model.Todo
 import com.coldblue.todo.component.HMTimePicker
 import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.google.gson.Gson
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 import kotlin.math.sin
@@ -63,6 +70,8 @@ fun TodoBottomSheet(
     var onSwitch by remember { mutableStateOf(false) }
     var myTime by remember { mutableStateOf(todo.time?.asMyTime() ?: LocalTime.now().asMyTime()) }
 
+    var toEdit by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         onSwitch = todo.time != null
     }
@@ -70,10 +79,27 @@ fun TodoBottomSheet(
     var titleText by remember { mutableStateOf(todo.title) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
-
     LaunchedEffect(onSwitch) {
         sheetState.expand()
     }
+
+
+    DisposableEffect(toEdit) {
+
+        onDispose {
+            if (toEdit) {
+                navigateToTodoEdit(
+                    if (todo.id == 0) DEFAULT_TODO else todo.id,
+                    titleText.ifEmpty { DEFAULT_TODO.toString() },
+                    Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch))),
+                    today.toString()
+                )
+            }
+        }
+
+    }
+
+
     Box() {
         LazyColumn(Modifier.padding(bottom = 60.dp)) {
             item {
@@ -126,12 +152,8 @@ fun TodoBottomSheet(
                     ),
                     onClick = {
                         onDismissRequest()
-                        navigateToTodoEdit(
-                            if (todo.id == 0) DEFAULT_TODO else todo.id,
-                            titleText.ifEmpty { DEFAULT_TODO.toString() },
-                            Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch))),
-                            today.toString()
-                        )
+                        toEdit= true
+
                     })
             }
 

@@ -72,6 +72,7 @@ import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.coldblue.todo.uistate.TodoUiState
 import com.google.gson.Gson
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.delay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -124,23 +125,11 @@ fun TodoScreen(
                 upsertTodoGroupById = { id, name -> todoViewModel.upsertTodoGroup(id, name) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
-                deleteCurrentGroup = { current, group ->
-                    todoViewModel.deleteCurrentGroup(
-                        current,
-                        group
-                    )
-                },
+                deleteCurrentGroup = todoViewModel::deleteCurrentGroup,
                 date = dateState,
                 selectDate = { date -> todoViewModel.selectDate(date) },
                 deleteTodoGroup = { id -> todoViewModel.deleteTodoGroup(id) },
-                navigateToTodoEdit = { id, title, time, date ->
-                    navigateToTodoEdit(
-                        id,
-                        title,
-                        time,
-                        date
-                    )
-                }
+                navigateToTodoEdit = navigateToTodoEdit
 
             )
         }
@@ -216,6 +205,7 @@ private fun TodoContent(
 
 ) {
     val sheetState = rememberModalBottomSheetState()
+
     LaunchedEffect(bottomSheetUiSate) {
         when (bottomSheetUiSate) {
             is BottomSheetUiState.Up -> {
@@ -224,6 +214,7 @@ private fun TodoContent(
 
             is BottomSheetUiState.Down -> {
                 sheetState.hide()
+                Logger.d("내려가긴함")
             }
         }
 
@@ -234,7 +225,9 @@ private fun TodoContent(
         GroupBottomSheet(
             content = bottomSheetUiSate.content,
             sheetState = sheetState,
-            onDismissRequest = { hideSheet() },
+            onDismissRequest = {
+                hideSheet()
+                               },
             todoGroupList = todoGroupList,
             currentGroupList = currentGroupList,
             upsertCurrentGroup = upsertCurrentGroup,
