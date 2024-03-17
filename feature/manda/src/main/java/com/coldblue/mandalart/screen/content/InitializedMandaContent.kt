@@ -656,7 +656,7 @@ fun MandaEmptyBox(
     onClick: () -> Unit
 ) {
     val stroke = Stroke(
-        width = 10f,
+        width = 6f,
         pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
     )
     Box(
