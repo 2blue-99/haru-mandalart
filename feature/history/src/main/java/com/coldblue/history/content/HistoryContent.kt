@@ -51,7 +51,8 @@ import com.coldblue.history.ControllerDayState
 import com.coldblue.history.ControllerTimeState
 import com.coldblue.history.ControllerWeek
 import com.coldblue.history.HistoryUiState
-import com.orhanobut.logger.Logger
+import com.coldblue.model.Todo
+import com.coldblue.todo.TodoItem
 import java.time.LocalDate
 
 @Composable
@@ -59,8 +60,10 @@ fun HistoryContent(
     historyUiState: HistoryUiState.Success,
     navigateToSetting: () -> Unit,
     selectYear: (Int) -> Unit,
-    selectDate: (LocalDate) -> Unit
-) {
+    selectDate: (LocalDate) -> Unit,
+    toggleTodo: (Todo) -> Unit,
+
+    ) {
 
     var clickedDate by remember { mutableStateOf(LocalDate.now()) }
     var isClicked by remember { mutableStateOf(true) }
@@ -98,14 +101,14 @@ fun HistoryContent(
             selectDate = {
                 selectDate(it)
                 clickedDate = it
-                         },
+            },
             onClick = { isClicked = it }
         )
 
         Column {
             val clickedDate = "${clickedDate.formatToDot()} ${clickedDate.toDayOfWeekString()}"
             Text(
-                text = if(isClicked) clickedDate else "",
+                text = if (isClicked) clickedDate else "",
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
@@ -119,7 +122,7 @@ fun HistoryContent(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(historyUiState.todoList) {
-//            TodoItem(todo = it, onTodoToggle = {}, showSheet = {})
+                TodoItem(todo = it, onTodoToggle = toggleTodo, showSheet = {})
             }
         }
     }
@@ -144,13 +147,16 @@ fun HistoryController(
         remember { mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) } }
 
     var beforeBoxIndex by remember { mutableIntStateOf(0) }
-    var beforeYearIndex by remember { mutableIntStateOf(todoYearList.indices.filter { todoYearList[it] == presentLocalYear }.firstOrNull()?:0) }
+    var beforeYearIndex by remember {
+        mutableIntStateOf(todoYearList.indices.filter { todoYearList[it] == presentLocalYear }
+            .firstOrNull() ?: 0)
+    }
 
     var initPickIndex by remember { mutableIntStateOf(0) }
     var pickYear by remember { mutableIntStateOf(presentLocalYear) }
 
-    LaunchedEffect(todoYearList){
-        if(todoYearList.size != yearClickStateList.size){
+    LaunchedEffect(todoYearList) {
+        if (todoYearList.size != yearClickStateList.size) {
             yearClickStateList.clear()
             yearClickStateList.addAll(mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) })
         }

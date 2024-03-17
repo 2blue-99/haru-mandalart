@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.history.content.HistoryContent
+import com.coldblue.model.Todo
 import java.time.LocalDate
 
 @Composable
@@ -19,7 +20,7 @@ fun HistoryScreen(
 ) {
 
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -29,7 +30,8 @@ fun HistoryScreen(
             uiState = historyUiState,
             navigateToSetting = navigateToSetting,
             selectYear = historyViewModel::selectYear,
-            selectDate = historyViewModel::selectDate
+            selectDate = historyViewModel::selectDate,
+            toggleTodo = historyViewModel::toggleTodo
         )
     }
 }
@@ -39,8 +41,10 @@ fun HistoryContentWithState(
     uiState: HistoryUiState,
     navigateToSetting: () -> Unit,
     selectYear: (Int) -> Unit,
-    selectDate: (LocalDate) -> Unit
-) {
+    selectDate: (LocalDate) -> Unit,
+    toggleTodo: (Todo) -> Unit,
+
+    ) {
     when (uiState) {
         is HistoryUiState.Loading -> Text(text = "로딩")
         is HistoryUiState.Error -> Text(text = uiState.msg)
@@ -49,7 +53,8 @@ fun HistoryContentWithState(
                 historyUiState = uiState,
                 navigateToSetting = navigateToSetting,
                 selectYear = selectYear,
-                selectDate = selectDate
+                selectDate = selectDate,
+                toggleTodo = toggleTodo
             )
     }
 
