@@ -14,6 +14,7 @@ fun SettingScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
 ) {
     val email by settingViewModel.email.collectAsStateWithLifecycle()
+    val alarm by settingViewModel.alarm.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -26,7 +27,9 @@ fun SettingScreen(
             versionName = settingViewModel.versionName,
             logout = settingViewModel::logout,
             deleteUser = settingViewModel::deleteUser,
-            email = email
+            onChangeAlarm = settingViewModel::updateAlarmState,
+            email = email,
+            alarm = alarm
         )
     }
 }
@@ -39,9 +42,20 @@ fun SettingContentWithState(
     versionName: String,
     logout: () -> Unit,
     deleteUser: () -> Unit,
-    email: String
+    onChangeAlarm: (Boolean) -> Unit,
+    email: String,
+    alarm: Boolean
 ) {
 
-    SettingContent(showOss, showPlayStore, showContact, versionName, logout, deleteUser, email)
-
+    SettingContent(
+        showOss,
+        showPlayStore,
+        showContact,
+        versionName,
+        logout,
+        deleteUser,
+        onChangeAlarm,
+        email,
+        alarm
+    )
 }

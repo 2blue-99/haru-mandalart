@@ -1,10 +1,9 @@
 package com.coldblue.data.repository.manda
 
+import com.coldblue.data.mapper.MandaKeyMapper.asDomain
 import com.coldblue.data.mapper.MandaKeyMapper.asEntity
 import com.coldblue.data.mapper.MandaKeyMapper.asNetworkModel
 import com.coldblue.data.mapper.MandaKeyMapper.asSyncedEntity
-import com.coldblue.data.mapper.Mapper.asEntity
-import com.coldblue.data.mapper.Mapper.asDomain
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.datastore.UpdateTimeDataSource
@@ -14,7 +13,6 @@ import com.coldblue.network.datasource.MandaKeyDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -23,8 +21,6 @@ class MandaKeyRepositoryImpl @Inject constructor(
     private val mandaKeyDataSource: MandaKeyDataSource,
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
-    private val userDataSource: UserDataSource,
-
     ) : MandaKeyRepository {
     override fun getMandaKeys(): Flow<List<MandaKey>> =
         mandaKeyDao.getMandaKeys().map { it.filter { !it.isDel }.map { it.asDomain() } }

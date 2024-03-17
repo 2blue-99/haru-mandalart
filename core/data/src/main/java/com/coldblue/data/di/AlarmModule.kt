@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.content.Context
 import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.alarm.AlarmSchedulerImpl
+import com.coldblue.database.dao.AlarmDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,8 +24,9 @@ object AlarmModule {
     @Provides
     fun provideAlarmScheduler(
         @ApplicationContext context: Context,
-        alarmManager: AlarmManager
-    ): AlarmScheduler = AlarmSchedulerImpl(context, alarmManager)
+        alarmManager: AlarmManager,
+        alarmDao: AlarmDao
+    ): AlarmScheduler = AlarmSchedulerImpl(context, alarmManager, alarmDao)
 
 
 }

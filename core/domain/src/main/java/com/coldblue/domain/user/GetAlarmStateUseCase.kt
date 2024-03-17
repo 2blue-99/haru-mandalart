@@ -1,12 +1,12 @@
 package com.coldblue.domain.user
 
 import com.coldblue.data.repository.user.UserRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class UpdateMandaInitStateUseCase @Inject constructor(
+class GetAlarmStateUseCase @Inject constructor(
     private val userRepository: UserRepository
-) {
-    suspend operator fun invoke(state: Boolean){
-        userRepository.updateInit(state)
-    }
+){
+    operator fun invoke(): Flow<Boolean> =
+        userRepository.isAlarm
 }

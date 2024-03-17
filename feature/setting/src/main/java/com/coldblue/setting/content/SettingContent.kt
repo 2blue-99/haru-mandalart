@@ -41,9 +41,9 @@ fun SettingContent(
     versionName: String,
     logout: () -> Unit,
     deleteUser: () -> Unit,
-    email: String
-
-
+    onChangeAlarm: (Boolean) -> Unit,
+    email: String,
+    alarm: Boolean
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
@@ -68,8 +68,8 @@ fun SettingContent(
     ) {
         Column {
             SettingItem(title = "알림") {
-                HMSwitch(checked = true) {
-
+                HMSwitch(checked = alarm) {
+                    onChangeAlarm(!alarm)
                 }
             }
             SettingItem(title = "현재계정") {
@@ -146,7 +146,7 @@ fun SettingItem(
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent({}, {}, {}, "1.0", {}, {}, "hno05039@naver.com")
+    SettingContent({}, {}, {}, "1.0", {}, {},{}, "hno05039@naver.com" , false)
 
 }
 

@@ -79,6 +79,10 @@ fun LocalDate.isNotToday(): Boolean {
     return this != LocalDate.now()
 }
 
+fun LocalDateTime.isPassed(): Boolean {
+    return this.isBefore(LocalDateTime.now())
+}
+
 fun LocalDateTime.toMillis(): Long {
     return truncatedTo(ChronoUnit.MINUTES).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
 }

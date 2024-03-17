@@ -10,10 +10,10 @@ class LocalDateConvert {
     @TypeConverter
     fun localDateToString(localDate: LocalDate): String =
         localDate.format(formatter)
+
     @TypeConverter
     fun stringToLocalDate(date: String?): LocalDate? {
-        return if (date == null) null
+        return if (date.isNullOrBlank()) null
         else LocalDate.parse(date, formatter)
-
     }
 }
