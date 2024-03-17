@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.DeleteDialog
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.component.HMTextField
@@ -83,20 +84,21 @@ fun MandaBottomSheet(
     var dialogState by remember { mutableStateOf(false) }
 
     if (dialogState) {
-        MandaKeyDialog(
-            name = keyNameText,
-            onDisMiss = {
+        DeleteDialog(
+            targetText = keyNameText,
+            text = "이(가) 포함된 세부목표는 전부 삭제됩니다.",
+            deleteConfirmText = "삭제",
+            onDismissRequest = {
                 dialogState = false
                 onDisMiss()
-            },
-            onDelete = {
+            }, onConfirmation = {
                 deleteMandaKey(
                     mandaUI.id,
                     (contentType as MandaBottomSheetContentType.MandaKey).groupIdList ?: emptyList()
                 )
                 onDisMiss()
-            }
-        )
+            })
+      
     }
 
     ModalBottomSheet(
@@ -265,7 +267,7 @@ fun MandaBottomSheetColor(
             fontWeight = FontWeight.Bold
         )
         LazyColumn {
-            items(colorInfoListState.size / 4) {column ->
+            items(colorInfoListState.size / 4) { column ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center

@@ -64,6 +64,8 @@ class TodoEditViewModel @Inject constructor(
         )
 
     fun upsertTodo(todo: Todo) {
+
+        Logger.d(todo)
         viewModelScope.launch {
             upsertTodoUseCase(todo)
         }

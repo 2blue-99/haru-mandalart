@@ -153,7 +153,7 @@ fun TodoEditContent(
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titleText,
-                    maxLines = 1,
+                    singleLine = true,
                     onValueChange = {
                         titleText = it
                     },

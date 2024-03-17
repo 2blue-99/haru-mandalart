@@ -68,7 +68,8 @@ fun TodoGroupBottomSheet(
 
     if (openDeleteDialog) {
         DeleteDialog(
-            text = "${selectTodoGroup}이 포함한 모든 할 일은 그룹없음 상태가 됩니다.",
+            targetText = selectTodoGroup,
+            text = "이(가) 포함한 모든 할 일은 그룹없음 상태가 됩니다.",
             deleteConfirmText = "삭제",
             onDismissRequest = {
                 openDeleteDialog = false
@@ -76,7 +77,6 @@ fun TodoGroupBottomSheet(
             onConfirmation = {
                 deleteTodoGroup(selectTodoGroupId)
                 openDeleteDialog = false
-                onDismissRequest()
             },
         )
     }

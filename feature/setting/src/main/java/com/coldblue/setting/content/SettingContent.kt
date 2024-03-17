@@ -16,7 +16,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.DeleteDialog
@@ -49,6 +47,7 @@ fun SettingContent(
 
     if (openDialog) {
         DeleteDialog(
+            targetText = "",
             text = "탈퇴하면 모든 데이터가 완전히 삭제됩니다.",
             deleteConfirmText = "탈퇴",
             onDismissRequest = {

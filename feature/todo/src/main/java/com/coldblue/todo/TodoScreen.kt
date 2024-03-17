@@ -253,7 +253,13 @@ private fun TodoContent(
         }
         item {
 
-            HaruManda(currentGroupStateList, showSheet, deleteCurrentGroup, upsertTodoGroupById)
+            HaruManda(
+                currentGroupStateList,
+                showSheet,
+                todoGroupList,
+                deleteCurrentGroup,
+                upsertTodoGroupById
+            )
         }
         item {
             TitleText("오늘 할 일")
@@ -428,6 +434,7 @@ fun GroupBottomSheet(
 fun HaruManda(
     currentGroupList: List<CurrentGroupState>,
     showSheet: (ContentState) -> Unit,
+    todoGroupList: List<TodoGroup>,
     deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int) -> Unit,
     upsertTodoGroupById: (Int, String) -> Unit,
 ) {
@@ -444,6 +451,7 @@ fun HaruManda(
         CurrentGroupDialog(
             text = name,
             groupName = name,
+            todoGroupList = todoGroupList,
             onDismissRequest = {
                 openDialog = false
             },

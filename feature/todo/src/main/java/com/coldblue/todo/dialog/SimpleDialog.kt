@@ -35,6 +35,7 @@ import com.orhanobut.logger.Logger
 fun CurrentGroupDialog(
     text: String,
     groupName: String,
+    todoGroupList: List<TodoGroup>,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     currentGroup: CurrentGroup,
@@ -45,7 +46,8 @@ fun CurrentGroupDialog(
 
     if (openDeleteDialog) {
         DeleteDialog(
-            text = "${groupName}의 오늘 할 일은 그룹없음 상태가 됩니다.",
+            targetText = groupName,
+            text = "이(가) 포함된 오늘 할 일은 그룹없음 상태가 됩니다.",
             deleteConfirmText = "삭제",
             onDismissRequest = {
                 openDeleteDialog = false
@@ -57,6 +59,8 @@ fun CurrentGroupDialog(
             },
         )
     }
+
+    var isSame by remember { mutableStateOf(false) }
 
     var inputText by remember { mutableStateOf(text) }
 
@@ -80,13 +84,18 @@ fun CurrentGroupDialog(
             }
         },
         text = {
-            HMTextField(
-                inputText = text,
-                maxLen = 12,
-                onChangeText = {
-                    inputText = it
+            Column {
+                HMTextField(
+                    inputText = text,
+                    maxLen = 12,
+                    onChangeText = {
+                        inputText = it
+                    }
+                )
+                if (isSame) {
+                    Text(text = "이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
                 }
-            )
+            }
         }, onDismissRequest = {
             onDismissRequest()
         }, confirmButton = {
@@ -99,11 +108,16 @@ fun CurrentGroupDialog(
                     disabledContentColor = HMColor.Gray
                 ),
                 onClick = {
-                    upsertTodoGroupById(
-                        currentGroup.todoGroupId,
-                        inputText
-                    )
-                    onConfirmation()
+                    if (todoGroupList.map { it.name }.contains(inputText)) {
+                        isSame = true
+                    } else {
+                        upsertTodoGroupById(
+                            currentGroup.todoGroupId,
+                            inputText
+                        )
+                        onConfirmation()
+                    }
+
                 }) {
                 Text(
                     text = "수정",
@@ -148,7 +162,7 @@ fun TodoGroupDialog(
                     }
                 )
                 if (isSame) {
-                    Text(text = "${inputText}는 이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
+                    Text(text = "이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
                 }
             }
         }, onDismissRequest = {
