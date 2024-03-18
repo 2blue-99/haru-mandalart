@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class NetworkCurrentGroup(
     override val id: Int = 0,
     val todo_group_id: Int,
+    val orgin_group_id: Int,
     val index: Int,
     val date: String,
     val update_time: String,

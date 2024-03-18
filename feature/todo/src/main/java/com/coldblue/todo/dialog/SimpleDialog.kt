@@ -182,7 +182,7 @@ fun TodoGroupDialog(
                     if (todoGroupList.map { it.name }.contains(inputText)) {
                         isSame = true
                     } else {
-                        onConfirmation(TodoGroup(inputText))
+                        onConfirmation(TodoGroup(inputText, originId = 0))
                     }
                 }) {
                 Text(

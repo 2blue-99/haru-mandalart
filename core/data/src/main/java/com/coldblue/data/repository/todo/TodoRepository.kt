@@ -16,6 +16,4 @@ interface TodoRepository: Syncable {
     fun getTodoYearList(): Flow<List<Int>>
 
     fun getUniqueTodoCountByDate(): Flow<Int>
-
-    suspend fun delTodo(todoId: Int)
 }

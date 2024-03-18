@@ -14,6 +14,7 @@ import com.coldblue.data.repository.manda.MandaKeyRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepository
 import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoRepository
+import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
@@ -21,6 +22,7 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
+import dagger.assisted.Assisted
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -45,8 +47,8 @@ class HMApplication : Application(), Configuration.Provider {
         private val todoGroupRepository: TodoGroupRepository,
         private val currentGroupRepository: CurrentGroupRepository,
         private val mandaKeyRepository: MandaKeyRepository,
-        private val mandaDetailRepository: MandaDetailRepository
-
+        private val mandaDetailRepository: MandaDetailRepository,
+        private val userRepository: UserRepository,
     ) : WorkerFactory() {
         override fun createWorker(
             appContext: Context,
@@ -61,7 +63,8 @@ class HMApplication : Application(), Configuration.Provider {
                     todoGroupRepository,
                     currentGroupRepository,
                     mandaKeyRepository,
-                    mandaDetailRepository
+                    mandaDetailRepository,
+                    userRepository
                 )
 
                 SyncWriteWorker::class.java.name -> SyncWriteWorker(
@@ -71,7 +74,8 @@ class HMApplication : Application(), Configuration.Provider {
                     todoGroupRepository,
                     currentGroupRepository,
                     mandaKeyRepository,
-                    mandaDetailRepository
+                    mandaDetailRepository,
+                    userRepository
                 )
 
                 else -> null

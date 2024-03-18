@@ -8,6 +8,8 @@ data class CurrentGroup(
     val isDel: Boolean = false,
     val index: Int,
     val date: LocalDate,
+    val originId:Int,
+    val originGroupId:Int,
     val id: Int=0,
 )
 

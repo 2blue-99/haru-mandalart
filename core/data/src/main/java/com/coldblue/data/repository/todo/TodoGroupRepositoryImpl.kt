@@ -40,6 +40,7 @@ class TodoGroupRepositoryImpl @Inject constructor(
 
     override suspend fun delTodoGroup(todoGroupId: Int) {
         todoGroupDao.deleteTodoGroupAndRelated(todoGroupId, getUpdateTime())
+        syncHelper.syncWrite()
     }
 
     override suspend fun syncRead(): Boolean {
@@ -49,7 +50,7 @@ class TodoGroupRepositoryImpl @Inject constructor(
             val originIds = remoteNew.map { it.id }
             val todoGroupIds = todoGroupDao.getTodoGroupIdByOriginIds(originIds)
             val toUpsertTodoGroups = remoteNew.asEntity(todoGroupIds)
-            todoGroupDao.upsertTodoGroup(toUpsertTodoGroups)
+            todoGroupDao.syncWriteTodoGroup(toUpsertTodoGroups)
             syncHelper.setMaxUpdateTime(
                 toUpsertTodoGroups,
                 updateTimeDataSource::setTodoGroupUpdateTime
@@ -67,7 +68,7 @@ class TodoGroupRepositoryImpl @Inject constructor(
                 todoGroupDao.getToWriteTodoGroups(updateTimeDataSource.todoGroupUpdateTime.first())
             val originIds = todoGroupDataSource.upsertTodoGroup(localNew.asNetworkModel())
             val toUpsertTodoGroups = localNew.asSyncedEntity(originIds)
-            todoGroupDao.upsertTodoGroup(toUpsertTodoGroups)
+            todoGroupDao.syncWriteTodoGroup(toUpsertTodoGroups)
             syncHelper.setMaxUpdateTime(toUpsertTodoGroups, updateTimeDataSource::setTodoGroupUpdateTime)
             return true
         } catch (e: Exception) {

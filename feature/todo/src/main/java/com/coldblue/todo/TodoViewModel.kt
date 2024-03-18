@@ -110,7 +110,7 @@ class TodoViewModel @Inject constructor(
                         CurrentGroupState.Center(
                             totTodo = todoList.size.toString(),
                             doneTodo = todoList.filter { it.isDone }.size.toString(),
-                            currentGroup = CurrentGroup(-1, index = 5, date = dateSate.value)
+                            currentGroup = CurrentGroup(-1, index = 5, date = dateSate.value, originId = 0, originGroupId = 0)
                         )
                     } else {
                         CurrentGroupState.Empty(
@@ -118,6 +118,8 @@ class TodoViewModel @Inject constructor(
                                 todoGroupId = -1,
                                 index = index,
                                 date = dateSate.value,
+                                originId = 0,
+                                originGroupId = 0
                             )
                         )
                     }

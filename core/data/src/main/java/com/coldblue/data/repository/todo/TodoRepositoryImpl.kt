@@ -61,9 +61,7 @@ class TodoRepositoryImpl @Inject constructor(
         return todoDao.getUniqueTodoCountByDate()
     }
 
-    override suspend fun delTodo(todoId: Int) {
-        todoDao.deleteTodo(todoId)
-    }
+
 
     override suspend fun syncRead(): Boolean {
         try {
