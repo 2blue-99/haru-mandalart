@@ -17,6 +17,7 @@ import com.coldblue.todo.uistate.BottomSheetUiState
 import com.coldblue.todo.uistate.ContentState
 import com.coldblue.todo.uistate.CurrentGroupState
 import com.coldblue.todo.uistate.TodoUiState
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,8 +48,14 @@ class TodoViewModel @Inject constructor(
     private val _dateSate = MutableStateFlow<LocalDate>(LocalDate.now())
     val dateSate: StateFlow<LocalDate> = _dateSate
 
-    private val groupFlow = dateSate.flatMapLatest { getGroupWithCurrentUseCase(it) }
-    private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }
+    private val groupFlow = dateSate.flatMapLatest {
+        getGroupWithCurrentUseCase(it)
+    }.catch {
+        Logger.d("${it.message}")
+    }
+    private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }.catch {
+        Logger.d("${it.message}")
+    }
 
     fun selectDate(date: LocalDate) {
         viewModelScope.launch {
