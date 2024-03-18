@@ -33,7 +33,6 @@ class CurrentGroupRepositoryImpl @Inject constructor(
     override suspend fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>> {
         currentGroupDao.setCurrentGroup(date, getUpdateTime())
         val d =currentGroupDao.getCurrentGroup(date)
-        Logger.d(d.first())
         return currentGroupDao.getCurrentGroup(date).map { it.asDomain() }
     }
 

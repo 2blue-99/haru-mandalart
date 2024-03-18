@@ -26,14 +26,16 @@ import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMChip
 import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.mandaFinalMaxLen
 import com.coldblue.mandalart.util.MandaUtils.getTagList
+import com.coldblue.model.MandaKey
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 fun UnInitializedMandaContent(
     updateInitState: (Boolean) -> Unit,
-    insertFinalManda: (String) -> Unit
+    insertFinalManda: (MandaKey) -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
     var buttonClickableState by remember { mutableStateOf(false) }
@@ -77,7 +79,7 @@ fun UnInitializedMandaContent(
         }
         HMButton(text = "목표 구체화 하기", modifier = Modifier.weight(0.1f), clickableState = buttonClickableState) {
             updateInitState(true)
-            insertFinalManda(inputText)
+            insertFinalManda(MandaKey(id = 5 , name = inputText))
         }
     }
 }

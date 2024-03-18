@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NetworkMandaKey(
     override val id: Int = 0,
+    val manda_index: Int,
     val name: String,
     val color_index: Int,
     val is_del: Boolean,

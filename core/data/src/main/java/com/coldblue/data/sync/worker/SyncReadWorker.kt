@@ -33,6 +33,7 @@ class SyncReadWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
+            Logger.d("READ")
             val syncedSucceed = awaitAll(
                 async { todoRepository.syncRead() },
                 async { todoGroupRepository.syncRead() },

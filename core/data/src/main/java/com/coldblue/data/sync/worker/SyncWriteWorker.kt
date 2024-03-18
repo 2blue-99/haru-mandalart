@@ -29,6 +29,7 @@ class SyncWriteWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
+            Logger.d("Write")
             val writeSucceed = awaitAll(
                 async { todoRepository.syncWrite() },
                 async { todoGroupRepository.syncWrite() },

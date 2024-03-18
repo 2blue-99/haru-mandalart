@@ -26,6 +26,4 @@ class MandaKeyDataSourceImpl @Inject constructor(
             }.decodeList<NetworkId>()
         return result.map { it.id }
     }
-
-
 }

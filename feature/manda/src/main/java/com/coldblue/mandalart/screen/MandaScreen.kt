@@ -59,7 +59,7 @@ fun MandaContentWithState(
     mandaUIState: MandaUIState,
     mandaBottomSheetUiState: MandaBottomSheetUIState,
     updateInitState: (Boolean) -> Unit,
-    upsertFinalManda: (String) -> Unit,
+    upsertFinalManda: (MandaKey) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
     deleteMandaKey: (Int, List<Int>) -> Unit,

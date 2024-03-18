@@ -34,16 +34,16 @@ interface MandaKeyDao {
     suspend fun upsertMandaKeys(mandaEntities: List<MandaKeyEntity>)
 
     @Transaction
-    suspend fun deleteMandaKeyAndDetail(keyIdList: List<Int>, detailIdList: List<Int>){
-        deleteMandaKeys(keyIdList)
-        deleteMandaDetails(detailIdList)
+    suspend fun deleteMandaKeyAndDetail(date: String, keyIdList: List<Int>, detailIdList: List<Int>){
+        deleteMandaKeys(date, keyIdList)
+        deleteMandaDetails(date, detailIdList)
     }
 
-    @Query("Update manda_key Set is_del = 1 Where id in (:idList)")
-    suspend fun deleteMandaKeys(idList: List<Int>)
+    @Query("Update manda_key Set is_del = 1, is_Sync = 0, update_time = :date Where id in (:idList)")
+    suspend fun deleteMandaKeys(date: String, idList: List<Int>)
 
-    @Query("Update manda_detail Set is_del = 1 Where id in (:idList)")
-    suspend fun deleteMandaDetails(idList: List<Int>)
+    @Query("Update manda_detail Set is_del = 1, is_Sync = 0, update_time = :date Where id in (:idList)")
+    suspend fun deleteMandaDetails(date: String, idList: List<Int>)
 
     @Query("Update manda_key Set is_del = 1")
     suspend fun deleteAllMandaKey()

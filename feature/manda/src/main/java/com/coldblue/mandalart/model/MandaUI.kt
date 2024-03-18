@@ -10,31 +10,35 @@ data class MandaUI(
     var darkColor: Color = HMColor.SubText,
     var lightColor: Color = HMColor.SubText,
     var isDone: Boolean = false,
+    var originId: Int = 0,
     val id: Int
 )
 
 fun MandaKey.asMandaUI(colors: Pair<Color,Color>, isDone: Boolean): MandaUI =
     MandaUI(
-        name = this.name,
+        name = name,
         darkColor = colors.first,
         lightColor = colors.second,
         isDone = isDone,
-        id = this.id
+        originId = originId,
+        id = id
     )
 
 fun MandaDetail.asMandaUI(colors: Pair<Color,Color>, isDone: Boolean): MandaUI =
     MandaUI(
-        name = this.name,
+        name = name,
         darkColor = colors.first,
         lightColor = colors.second,
         isDone = isDone,
-        id = this.id
+        originId = originId,
+        id = id
     )
 
 fun MandaUI.asMandaKey(name: String, colorIndex: Int): MandaKey =
     MandaKey(
         name = name,
         colorIndex = colorIndex,
+        originId = originId,
         id = id
     )
 
@@ -43,6 +47,7 @@ fun MandaUI.asMandaDetail(name: String, isDone: Boolean, colorIndex: Int): Manda
         name = name,
         isDone = isDone,
         colorIndex = colorIndex,
+        originId = originId,
         id = id
     )
 

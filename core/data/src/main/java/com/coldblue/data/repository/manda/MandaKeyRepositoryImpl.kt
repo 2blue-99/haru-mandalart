@@ -5,9 +5,9 @@ import com.coldblue.data.mapper.MandaKeyMapper.asEntity
 import com.coldblue.data.mapper.MandaKeyMapper.asNetworkModel
 import com.coldblue.data.mapper.MandaKeyMapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.datastore.UpdateTimeDataSource
-import com.coldblue.datastore.UserDataSource
 import com.coldblue.model.MandaKey
 import com.coldblue.network.datasource.MandaKeyDataSource
 import com.orhanobut.logger.Logger
@@ -31,8 +31,8 @@ class MandaKeyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteMandaKeys(keyIdList: List<Int>, detailIdList: List<Int>) {
-        Logger.d("$keyIdList\n$detailIdList")
-        mandaKeyDao.deleteMandaKeyAndDetail(keyIdList, detailIdList)
+        mandaKeyDao.deleteMandaKeyAndDetail(getUpdateTime(), keyIdList, detailIdList)
+        syncHelper.syncWrite()
     }
 
     override suspend fun deleteAllMandaDetail() {
@@ -45,20 +45,17 @@ class MandaKeyRepositoryImpl @Inject constructor(
 
     override suspend fun syncRead(): Boolean {
         try {
+            Logger.d("getMandaKeys : ${mandaKeyDao.getMandaKeys().first()}")
             val remoteNew =
                 mandaKeyDataSource.getMandaKey(updateTimeDataSource.mandaKeyUpdateTime.first())
             val originIds = remoteNew.map { it.id }
-            // TODO 이름 바꿔야 함
-            val todoIds = mandaKeyDao.getMandaKeyIdByOriginIds(originIds)
 
-            val toUpsertMandaKeys = remoteNew.asEntity(todoIds)
+            val mandaKeyIds = mandaKeyDao.getMandaKeyIdByOriginIds(originIds)
+
+            val toUpsertMandaKeys = remoteNew.asEntity(mandaKeyIds)
 
             mandaKeyDao.upsertMandaKeys(toUpsertMandaKeys)
 
-            Logger.d("originIds : $originIds")
-            Logger.d("getMandaKeys : ${mandaKeyDao.getMandaKeys().first()}")
-            Logger.d("todoIds : $todoIds")
-            Logger.d("toUpsertMandaKeys : $toUpsertMandaKeys")
             Logger.d("getMandaKeys : ${mandaKeyDao.getMandaKeys().first()}")
 
             syncHelper.setMaxUpdateTime(
@@ -74,8 +71,9 @@ class MandaKeyRepositoryImpl @Inject constructor(
 
     override suspend fun syncWrite(): Boolean {
         try {
-            val localNew =
-                mandaKeyDao.getToWriteMandaKeys(updateTimeDataSource.mandaKeyUpdateTime.first())
+            val localNew = mandaKeyDao.getToWriteMandaKeys(updateTimeDataSource.mandaKeyUpdateTime.first())
+
+            Logger.d(localNew)
 
             val originIds = mandaKeyDataSource.upsertMandaKey(localNew.asNetworkModel())
 
