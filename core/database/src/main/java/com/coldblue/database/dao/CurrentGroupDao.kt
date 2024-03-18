@@ -40,10 +40,10 @@ interface CurrentGroupDao {
         deleteTodoByCurrentGroup(todoGroupId, updateTime, date)
     }
 
-    @Query("UPDATE current_group SET is_del=1, update_time=:updateTime WHERE current_group.id = :currentGroupId")
+    @Query("UPDATE current_group SET is_del=1, update_time=:updateTime ,is_sync = 0 WHERE current_group.id = :currentGroupId")
     suspend fun deleteCurrentGroup(currentGroupId: Int, updateTime: String)
 
-    @Query("UPDATE todo SET todo_group_id=null,update_time=:updateTime WHERE todo_group_id = :todoGroupId AND todo.date = :date")
+    @Query("UPDATE todo SET todo_group_id=null,update_time=:updateTime ,is_sync = 0 WHERE todo_group_id = :todoGroupId AND todo.date = :date")
     suspend fun deleteTodoByCurrentGroup(todoGroupId: Int, updateTime: String, date: LocalDate)
 
 

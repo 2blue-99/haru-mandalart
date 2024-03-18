@@ -40,6 +40,7 @@ class TodoGroupRepositoryImpl @Inject constructor(
 
     override suspend fun delTodoGroup(todoGroupId: Int) {
         todoGroupDao.deleteTodoGroupAndRelated(todoGroupId, getUpdateTime())
+        syncHelper.syncWrite()
     }
 
     override suspend fun syncRead(): Boolean {

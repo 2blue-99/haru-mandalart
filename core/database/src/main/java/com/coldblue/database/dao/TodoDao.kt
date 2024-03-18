@@ -40,10 +40,6 @@ interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodo(todos: List<TodoEntity>)
 
-    @Query("Delete From todo WHERE id = :todoId")
-    suspend fun deleteTodo(todoId: Int)
-
-
     @Query("SELECT * FROM todo WHERE update_time > :updateTime AND is_sync=0")
     fun getToWriteTodos(updateTime: String): List<TodoEntity>
 

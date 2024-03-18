@@ -32,15 +32,13 @@ class CurrentGroupRepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>> {
         currentGroupDao.setCurrentGroup(date, getUpdateTime())
-        val d =currentGroupDao.getCurrentGroup(date)
-        Logger.d(d.first())
+        syncHelper.syncWrite()
         return currentGroupDao.getCurrentGroup(date).map { it.asDomain() }
     }
 
     override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int,date: LocalDate) {
-        Logger.d("삭제를 요청하는가")
-        Logger.d("커런트 아디 $currentGroupId || 그룹아디$todoGroupId")
         currentGroupDao.deleteCurrentGroupWithTodo(currentGroupId, todoGroupId, getUpdateTime(),date)
+        syncHelper.syncWrite()
     }
 
     override suspend fun syncRead(): Boolean {
