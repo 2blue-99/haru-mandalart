@@ -9,6 +9,7 @@ import java.time.LocalDate
 @Entity(tableName = "current_group")
 data class CurrentGroupEntity(
     @ColumnInfo(name = "todo_group_id") val todoGroupId: Int,
+    @ColumnInfo(name = "origin_group_id") val originGroupId: Int,
     @ColumnInfo(name = "index") val index: Int,
     @ColumnInfo(name = "date") val date: LocalDate,
     @ColumnInfo(name = "is_sync") override val isSync: Boolean,

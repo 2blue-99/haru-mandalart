@@ -21,7 +21,8 @@ object CurrentGroupMapper {
             todoGroupId = domain.todoGroupId,
             date = domain.date,
             index = domain.index,
-            originId = 0,
+            originId = domain.originId,
+            originGroupId = domain.originGroupId,
             id = domain.id,
         )
     }
@@ -41,6 +42,8 @@ object CurrentGroupMapper {
             id = entity.id,
             index = entity.index,
             date = entity.date,
+            originGroupId = entity.originGroupId,
+            originId = entity.originId,
             todoGroupId = entity.todoGroupId,
         )
     }
@@ -49,6 +52,7 @@ object CurrentGroupMapper {
         return this.mapIndexed { index, networkCurrentGroup ->
             CurrentGroupEntity(
                 originId = networkCurrentGroup.id,
+                originGroupId = networkCurrentGroup.orgin_group_id,
                 date = networkCurrentGroup.date.toDate(),
                 isSync = true,
                 isDel = networkCurrentGroup.is_del,
@@ -68,7 +72,8 @@ object CurrentGroupMapper {
                 todo_group_id = it.todoGroupId,
                 update_time = it.updateTime,
                 is_del = it.isDel,
-                id = it.originId
+                id = it.originId,
+                orgin_group_id = it.originGroupId
             )
         }
     }
@@ -83,6 +88,7 @@ object CurrentGroupMapper {
                 date = entity.date,
                 index = entity.index,
                 todoGroupId = entity.todoGroupId,
+                originGroupId = entity.originGroupId,
                 id = entity.id,
             )
         }

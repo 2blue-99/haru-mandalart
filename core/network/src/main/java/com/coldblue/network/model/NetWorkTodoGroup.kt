@@ -6,8 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NetWorkTodoGroup(
     override val id: Int = 0,
-    val name: String,
-    val update_time: String,
     val is_del: Boolean,
-    val user_id: String? = null,
+    val update_time: String,
+    val name: String,
+    val user_id: String="",
 ) : NetworkModel
+

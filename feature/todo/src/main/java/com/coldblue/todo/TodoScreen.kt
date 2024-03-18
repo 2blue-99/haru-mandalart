@@ -679,14 +679,11 @@ fun TodoContentPreView() {
         List<CurrentGroupState>(9) {
             CurrentGroupState.Done(
                 "안드로이드",
-                CurrentGroup(1, id = 2, date = LocalDate.now(), index = 2, name = "")
+                CurrentGroup(1, id = 2, date = LocalDate.now(), index = 2, name = "", originGroupId = 0, originId =0)
             )
         },
-        listOf(CurrentGroup(1, "", false, 1, LocalDate.now())),
+        listOf(CurrentGroup(1, "", false, 1, LocalDate.now(),0,0)),
         listOf(
-//            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
-//            Todo("Sync 블로그 글쓰기", "", groupName = "안드로이드", todoGroupId = -1),
-//            Todo("DB설계", "", todoGroupId = -1),
 //            Todo("디자인 3페이지", "", groupName = "", todoGroupId = -1)
         ),
         emptyList(),

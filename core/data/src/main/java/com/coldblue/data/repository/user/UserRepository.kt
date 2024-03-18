@@ -15,4 +15,5 @@ interface UserRepository {
     suspend fun updateTutorial(state: Boolean)
     suspend fun updateAlarm(state: Boolean)
     suspend fun updateMandaInitState(state: Boolean)
+    suspend fun refresh()
 }

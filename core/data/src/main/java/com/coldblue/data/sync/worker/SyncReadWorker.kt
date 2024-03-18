@@ -7,16 +7,14 @@ import androidx.work.WorkerParameters
 import com.coldblue.data.repository.manda.MandaDetailRepository
 import com.coldblue.data.repository.manda.MandaKeyRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepository
-import com.coldblue.data.repository.todo.CurrentGroupRepositoryImpl
 import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoRepository
-import com.orhanobut.logger.Logger
+import com.coldblue.data.repository.user.UserRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 
 
@@ -28,12 +26,12 @@ class SyncReadWorker @AssistedInject constructor(
     @Assisted private val todoGroupRepository: TodoGroupRepository,
     @Assisted private val currentGroupRepository: CurrentGroupRepository,
     @Assisted private val mandaKeyRepository: MandaKeyRepository,
-    @Assisted private val mandaDetailRepository: MandaDetailRepository
-
+    @Assisted private val mandaDetailRepository: MandaDetailRepository,
+    @Assisted private val userRepository: UserRepository,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            Logger.d("READ")
+            userRepository.refresh()
             val syncedSucceed = awaitAll(
                 async { todoRepository.syncRead() },
                 async { todoGroupRepository.syncRead() },

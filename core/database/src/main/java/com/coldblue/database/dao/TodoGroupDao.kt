@@ -13,14 +13,14 @@ interface TodoGroupDao {
     @Query("Select * From todo_group WHERE is_del=0")
     fun getTodoGroup(): Flow<List<TodoGroupEntity>>
 
-    @Query("UPDATE todo_group SET name = :name , update_time = :updateTime WHERE id = :todoGroupId")
+    @Query("UPDATE todo_group SET name = :name , update_time = :updateTime,is_sync=0 WHERE id = :todoGroupId")
     suspend fun upsertTodoGroup(todoGroupId: Int, name: String, updateTime: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodoGroup(todoGroup: TodoGroupEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertTodoGroup(todoGroups: List<TodoGroupEntity>)
+    suspend fun syncWriteTodoGroup(todoGroups: List<TodoGroupEntity>)
 
     @Transaction
     suspend fun deleteTodoGroupAndRelated(todoGroupId: Int, updateTime: String) {
@@ -29,13 +29,13 @@ interface TodoGroupDao {
         setOffTodo(todoGroupId, updateTime)
     }
 
-    @Query("UPDATE todo_group SET is_del = 1 , update_time = :updateTime WHERE id = :todoGroupId")
+    @Query("UPDATE todo_group SET is_del = 1 , update_time = :updateTime,is_sync = 0 WHERE id = :todoGroupId")
     suspend fun deleteTodoGroup(todoGroupId: Int, updateTime: String)
 
-    @Query("UPDATE current_group SET is_del = 1  , update_time = :updateTime WHERE todo_group_id = :todoGroupId")
+    @Query("UPDATE current_group SET is_del = 1  , update_time = :updateTime ,is_sync = 0 WHERE todo_group_id = :todoGroupId")
     suspend fun deleteCurrentGroup(todoGroupId: Int, updateTime: String)
 
-    @Query("UPDATE todo SET todo_group_id = NULL , update_time = :updateTime WHERE todo_group_id = :todoGroupId")
+    @Query("UPDATE todo SET todo_group_id = NULL , update_time = :updateTime ,is_sync = 0 WHERE todo_group_id = :todoGroupId")
     suspend fun setOffTodo(todoGroupId: Int, updateTime: String)
 
 

@@ -9,7 +9,7 @@ import com.coldblue.data.repository.manda.MandaKeyRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepository
 import com.coldblue.data.repository.todo.TodoGroupRepository
 import com.coldblue.data.repository.todo.TodoRepository
-import com.orhanobut.logger.Logger
+import com.coldblue.data.repository.user.UserRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -25,11 +25,12 @@ class SyncWriteWorker @AssistedInject constructor(
     @Assisted private val todoGroupRepository: TodoGroupRepository,
     @Assisted private val currentGroupRepository: CurrentGroupRepository,
     @Assisted private val mandaKeyRepository: MandaKeyRepository,
-    @Assisted private val mandaDetailRepository: MandaDetailRepository
+    @Assisted private val mandaDetailRepository: MandaDetailRepository,
+    @Assisted private val userRepository: UserRepository,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            Logger.d("Write")
+            userRepository.refresh()
             val writeSucceed = awaitAll(
                 async { todoRepository.syncWrite() },
                 async { todoGroupRepository.syncWrite() },

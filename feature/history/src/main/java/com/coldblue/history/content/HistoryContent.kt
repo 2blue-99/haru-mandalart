@@ -165,7 +165,6 @@ fun HistoryController(
 
     val yearClickStateList =
         remember { mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) } }
-
     var clickedState by remember { mutableStateOf(true) }
     var beforeDateIndex by remember { mutableIntStateOf(0) }
     var beforeYearIndex by remember { mutableIntStateOf(-1) }
