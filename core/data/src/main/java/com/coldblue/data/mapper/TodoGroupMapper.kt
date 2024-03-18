@@ -14,7 +14,7 @@ object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
 
     override fun asEntity(domain: TodoGroup): TodoGroupEntity {
         return TodoGroupEntity(
-            originId = 0,
+            originId = domain.originId,
             isSync = false,
             isDel = domain.isDel,
             updateTime = getUpdateTime(),
