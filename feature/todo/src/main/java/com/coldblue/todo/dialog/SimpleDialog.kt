@@ -49,7 +49,7 @@ fun CurrentGroupDialog(
     if (openDeleteDialog) {
         DeleteDialog(
             targetText = groupName,
-            text = "이(가) 포함된 오늘 할 일은 그룹없음 상태가 됩니다.",
+            text = " 이(가) 포함된 오늘 할 일은 그룹없음 상태가 돼요.",
             deleteConfirmText = "삭제",
             onDismissRequest = {
                 openDeleteDialog = false
@@ -95,7 +95,7 @@ fun CurrentGroupDialog(
                     }
                 )
                 if (isSame) {
-                    Text(text = "이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
+                    Text(text = "이미 존재하는 그룹이에요.", color = HMColor.Dark.Red)
                 }
             }
         }, onDismissRequest = {
@@ -164,7 +164,7 @@ fun TodoGroupDialog(
                     }
                 )
                 if (isSame) {
-                    Text(text = "이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
+                    Text(text = "이미 존재하는 그룹이에요.", color = HMColor.Dark.Red)
                 }
             }
         }, onDismissRequest = {

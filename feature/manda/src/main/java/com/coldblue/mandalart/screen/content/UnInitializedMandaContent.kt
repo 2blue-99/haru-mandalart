@@ -45,7 +45,7 @@ fun UnInitializedMandaContent(
     ){
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "당신의 최종 목표는 \n무엇인가요?",
+            text = "지금 당신은,\n무엇을 이루고 싶으신가요?",
             style = HmStyle.text24,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left

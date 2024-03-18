@@ -271,7 +271,7 @@ private fun TodoContent(
                         .fillMaxWidth()
                         .padding(top = 40.dp),
                     textAlign = TextAlign.Center,
-                    text = "오늘 할일을 추가해주세요",
+                    text = "할 일을 추가해 주세요!",
                     style = HmStyle.text20,
                     color = HMColor.SubText
                 )
