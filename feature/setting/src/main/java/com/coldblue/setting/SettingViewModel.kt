@@ -3,6 +3,7 @@ package com.coldblue.setting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.data.util.LoginHelper
+import com.coldblue.data.util.PermissionHelper
 import com.coldblue.data.util.SettingHelper
 import com.coldblue.domain.user.GetAlarmStateUseCase
 import com.coldblue.domain.user.GetEmailUseCase
@@ -22,6 +23,7 @@ class SettingViewModel @Inject constructor(
     private val updateAlarmStateUseCase: UpdateAlarmStateUseCase
 ) : ViewModel() {
     val versionName = settingHelper.versionName
+
     val email = getEmailUseCase().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -64,4 +66,9 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+//    fun updateNoticePermission(state: Boolean){
+//        viewModelScope.launch {
+//            permissionHelper.updateNoticePermissionState(state)
+//        }
+//    }
 }

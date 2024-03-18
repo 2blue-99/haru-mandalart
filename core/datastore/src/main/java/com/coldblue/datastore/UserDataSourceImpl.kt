@@ -19,7 +19,6 @@ class UserDataSourceImpl @Inject constructor(
     private val tutorialKey = booleanPreferencesKey("tutorial")
     private val alarmKey = booleanPreferencesKey("alarm")
     private val initKey = booleanPreferencesKey("initManda")
-    private val noticePermissionKey = booleanPreferencesKey("noticePermission")
     private val initPermissionKey = booleanPreferencesKey("initPermission")
 
     override val token: Flow<String> =
@@ -32,8 +31,6 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.data.map { preferences -> preferences[alarmKey] ?: true }
     override val isInit: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[initKey] ?: false }
-    override val noticePermissionState: Flow<Boolean> =
-        dataStore.data.map { preferences -> preferences[noticePermissionKey] ?: true }
     override val initPermissionState: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[initPermissionKey] ?: false }
 
@@ -82,11 +79,6 @@ class UserDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateNoticePermissionState(state: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[noticePermissionKey] = state
-        }
-    }
     override suspend fun updateInitPermissionState(state: Boolean) {
         dataStore.edit { preferences ->
             preferences[initPermissionKey] = state
