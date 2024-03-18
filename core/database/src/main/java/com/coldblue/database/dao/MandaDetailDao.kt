@@ -21,9 +21,9 @@ interface MandaDetailDao {
     @Query("Update manda_detail Set is_del = 1  ,is_sync = 0, update_time = :updateTime Where id in (:id)")
     suspend fun deleteMandaDetails(id: List<Int>, updateTime: String)
 
-    @Query("Update manda_detail Set is_del = 1 ,is_sync = 0,update_time = :updateTime")
-    suspend fun deleteAllMandaDetail(updateTime: String)
 
+    @Query("Update manda_detail Set is_del = 1, is_Sync = 0, update_time = :date")
+    suspend fun deleteAllMandaDetail(date: String)
     @Query("SELECT * FROM manda_detail WHERE update_time > :updateTime AND is_sync=0")
     fun getToWriteMandaDetail(updateTime: String): List<MandaDetailEntity>
 
@@ -37,12 +37,10 @@ interface MandaDetailDao {
     @Query("SELECT id FROM manda_detail WHERE origin_id = :originId")
     fun getMandaDetailIdByOriginId(originId: Int): Int?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertMandaDetails(mandaDetailEntity: List<MandaDetailEntity>)
+
 
     @Query("Update manda_detail Set is_del = 1, is_Sync = 0, update_time = :date Where id in (:id)")
     suspend fun deleteMandaDetails(date: String, id: List<Int>)
 
-    @Query("Update manda_detail Set is_del = 1, is_Sync = 0, update_time = :date")
-    suspend fun deleteAllMandaDetail(date: String)
+
 }
