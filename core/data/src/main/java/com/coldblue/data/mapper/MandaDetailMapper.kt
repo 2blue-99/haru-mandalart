@@ -11,6 +11,7 @@ object MandaDetailMapper {
         name = name,
         isDone = isDone,
         colorIndex = colorIndex,
+        originId = originId,
         id = id
     )
 
@@ -18,10 +19,10 @@ object MandaDetailMapper {
         name = name,
         isDone = isDone,
         colorIndex = colorIndex,
-        originId = 0,
         isSync = false,
         isDel = false,
         updateTime = getUpdateTime(),
+        originId = originId,
         id = id,
     )
 
@@ -35,7 +36,7 @@ object MandaDetailMapper {
                 colorIndex = mandaDetail.color_index,
                 isDone = mandaDetail.is_done,
                 name = mandaDetail.name,
-                id = mandaDetailIds[index] ?: 0,
+                id = mandaDetailIds[index] ?: mandaDetail.manda_index,
             )
         }
     }
@@ -48,6 +49,7 @@ object MandaDetailMapper {
                 is_done = it.isDone,
                 update_time = it.updateTime,
                 is_del = it.isDel,
+                manda_index = it.id,
                 id = it.originId
             )
         }

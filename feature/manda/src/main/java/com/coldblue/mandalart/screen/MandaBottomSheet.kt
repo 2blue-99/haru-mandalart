@@ -65,7 +65,7 @@ fun MandaBottomSheet(
     mandaBottomSheetContentState: MandaBottomSheetContentState,
     sheetState: SheetState,
     mandaKeyList: List<String>,
-    upsertMandaFinal: (String) -> Unit,
+    upsertMandaFinal: (MandaKey) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
     deleteMandaKey: (Int, List<Int>) -> Unit,
@@ -160,7 +160,7 @@ fun MandaBottomSheet(
                                 if(mandaKeyList.contains(inputText))
                                     duplicatedState = true
                                 else {
-                                    upsertMandaFinal(inputText)
+                                    upsertMandaFinal(mandaUI.asMandaKey(inputText, colorIndex))
                                     onDisMiss()
                                 }
 

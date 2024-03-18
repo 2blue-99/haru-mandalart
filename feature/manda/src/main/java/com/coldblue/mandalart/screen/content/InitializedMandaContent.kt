@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,8 +59,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTitleComponent
-import com.coldblue.designsystem.iconpack.History
-import com.coldblue.designsystem.iconpack.Manda
 import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.iconpack.ZoomIn
 import com.coldblue.designsystem.iconpack.ZoomOut
@@ -88,7 +85,7 @@ const val MAX_MANDA_DETAIL_SIZE = 64
 fun InitializedMandaContent(
     uiState: MandaUIState.InitializedSuccess,
     mandaBottomSheetUIState: MandaBottomSheetUIState,
-    upsertMandaFinal: (String) -> Unit,
+    upsertMandaFinal: (MandaKey) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
     deleteMandaKey: (Int, List<Int>) -> Unit,
@@ -128,7 +125,7 @@ fun InitializedMandaContent(
         HMTitleComponent()
 
         MandaStatus(
-            finalName = uiState.finalName,
+            finalName = uiState.finalManda.name,
             keyMandaCnt = uiState.keyMandaCnt,
             detailMandaCnt = uiState.detailMandaCnt,
             donePercentage = uiState.donePercentage,
@@ -136,7 +133,7 @@ fun InitializedMandaContent(
         ) {
             changeBottomSheet(
                 true,
-                MandaBottomSheetContentState.Insert(MandaBottomSheetContentType.MandaFinal(mandaUI = it))
+                MandaBottomSheetContentState.Insert(MandaBottomSheetContentType.MandaFinal(mandaUI = uiState.finalManda))
             )
         }
 
@@ -154,7 +151,7 @@ fun MandaStatus(
     detailMandaCnt: Int,
     donePercentage: Float,
     animateDonePercentage: Float,
-    onClickTitle: (MandaUI) -> Unit
+    onClickTitle: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -164,7 +161,7 @@ fun MandaStatus(
 
         ClickableText(
             text = AnnotatedString("\" $finalName \""),
-            onClick = { onClickTitle(MandaUI(id = 4, name = finalName)) },
+            onClick = { onClickTitle() },
             style = HmStyle.text24,
         )
         Row(

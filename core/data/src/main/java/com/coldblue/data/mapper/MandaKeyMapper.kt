@@ -8,22 +8,23 @@ import com.coldblue.network.model.NetworkMandaKey
 object MandaKeyMapper {
 
     fun MandaKeyEntity.asDomain(): MandaKey = MandaKey(
-        id = id,
         name = name,
-        colorIndex = colorIndex
+        colorIndex = colorIndex,
+        originId = originId,
+        id = id
     )
 
     fun MandaKey.asEntity(): MandaKeyEntity = MandaKeyEntity(
         name = name,
         colorIndex = colorIndex,
-        originId = 0,
         isSync = false,
         isDel = false,
         updateTime = getUpdateTime(),
+        originId = originId,
         id = id,
     )
 
-    fun List<NetworkMandaKey>.asEntity(mandaDetailIds: List<Int?>): List<MandaKeyEntity> {
+    fun List<NetworkMandaKey>.asEntity(mandaKeyIds: List<Int?>): List<MandaKeyEntity> {
         return this.mapIndexed { index, mandaKey ->
             MandaKeyEntity(
                 originId = mandaKey.id,
@@ -32,7 +33,7 @@ object MandaKeyMapper {
                 updateTime = mandaKey.update_time,
                 colorIndex = mandaKey.color_index,
                 name = mandaKey.name,
-                id = mandaDetailIds[index] ?: 0,
+                id = mandaKeyIds[index] ?: mandaKey.manda_index,
             )
         }
     }
@@ -43,6 +44,7 @@ object MandaKeyMapper {
                 name = it.name,
                 update_time = it.updateTime,
                 is_del = it.isDel,
+                manda_index = it.id,
                 id = it.originId
             )
         }

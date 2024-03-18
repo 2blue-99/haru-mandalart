@@ -3,6 +3,7 @@ package com.coldblue.mandalart
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coldblue.data.mapper.MandaKeyMapper.asEntity
 import com.coldblue.domain.manda.DeleteMandaAllUseCase
 import com.coldblue.domain.manda.DeleteMandaDetailUseCase
 import com.coldblue.domain.manda.DeleteMandaKeyUseCase
@@ -12,8 +13,10 @@ import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
+import com.coldblue.mandalart.model.asMandaUI
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
+import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
@@ -48,12 +51,14 @@ class MandaViewModel @Inject constructor(
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
                 getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
+                    Logger.d(mandaKeys)
+                    val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
                         donePercentage = MandaUtils.calculateDonePercentage(mandaDetails),
-                        finalName = mandaKeys.first { it.id == 5 }.name,
-                        mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails),
+                        finalManda = (mandaStateList[4] as MandaState.Exist).mandaUIList[4].mandaUI,
+                        mandaStateList = mandaStateList,
                         mandaKeyList = mandaKeys.map { it.name }
                     )
                 }.catch {
@@ -85,11 +90,10 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun upsertMandaFinal(text: String) {
-        Logger.d(text)
-        Log.e("TAG", "upsertMandaFinal: $text")
+    fun upsertMandaFinal(mandaKey: MandaKey) {
+        Log.e("TAG", "upsertMandaFinal: $mandaKey")
         viewModelScope.launch {
-            upsertMandaKeyUseCase(MandaKey(id = 5, name = text))
+            upsertMandaKeyUseCase(mandaKey.copy(id = 5))
         }
     }
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MandaDetailDao {
-    @Query("Select * From manda_detail")
+    @Query("Select * From manda_detail Where is_del = 0")
     fun getMandaDetails(): Flow<List<MandaDetailEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,7 +23,6 @@ interface MandaDetailDao {
 
     @Query("Update manda_detail Set is_del = 1 ,is_sync = 0,update_time = :updateTime")
     suspend fun deleteAllMandaDetail(updateTime: String)
-
 
     @Query("SELECT * FROM manda_detail WHERE update_time > :updateTime AND is_sync=0")
     fun getToWriteMandaDetail(updateTime: String): List<MandaDetailEntity>
@@ -37,4 +36,13 @@ interface MandaDetailDao {
 
     @Query("SELECT id FROM manda_detail WHERE origin_id = :originId")
     fun getMandaDetailIdByOriginId(originId: Int): Int?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertMandaDetails(mandaDetailEntity: List<MandaDetailEntity>)
+
+    @Query("Update manda_detail Set is_del = 1, is_Sync = 0, update_time = :date Where id in (:id)")
+    suspend fun deleteMandaDetails(date: String, id: List<Int>)
+
+    @Query("Update manda_detail Set is_del = 1, is_Sync = 0, update_time = :date")
+    suspend fun deleteAllMandaDetail(date: String)
 }

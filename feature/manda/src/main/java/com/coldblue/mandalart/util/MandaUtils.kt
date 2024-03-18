@@ -68,6 +68,7 @@ object MandaUtils {
                                     name = detail.name,
                                     darkColor = darkColor,
                                     lightColor = lightColor,
+                                    originId = detail.originId,
                                     isDone = detail.isDone
                                 )
                             )
@@ -87,10 +88,11 @@ object MandaUtils {
 
                 val keyType = MandaType.Key(
                     mandaUI = MandaUI(
-                        id = keyId,
                         name = key.name,
                         darkColor = if (keyId == 5) HMColor.Primary else darkColor,
-                        isDone = if(groupIdList.isEmpty() && keyId != 5) false else isDone
+                        isDone = if(groupIdList.isEmpty() && keyId != 5) false else isDone,
+                        originId = key.originId,
+                        id = keyId
                     ),
                     groupIdList = groupIdList
                 )
@@ -114,6 +116,7 @@ object MandaUtils {
             mandaUIList = centerList.toList()
         )
         return bigList
+
     }
 
     private fun indexToDarkLightColor(index: Int): Pair<Color, Color> {

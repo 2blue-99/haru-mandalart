@@ -1,6 +1,7 @@
 package com.coldblue.mandalart.state
 
 import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.model.MandaKey
 
 sealed interface MandaUIState {
     data object Loading : MandaUIState
@@ -10,7 +11,7 @@ sealed interface MandaUIState {
         val keyMandaCnt: Int,
         val detailMandaCnt: Int,
         val donePercentage: Float,
-        val finalName: String,
+        val finalManda: MandaUI,
         val mandaStateList: List<MandaState>,
         val mandaKeyList: List<String>
     ) : MandaUIState
