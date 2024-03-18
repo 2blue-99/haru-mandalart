@@ -6,6 +6,7 @@ import com.coldblue.data.mapper.TodoGroupMapper.asSyncedEntity
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.dao.TodoGroupDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.TodoGroup
@@ -29,7 +30,7 @@ class TodoGroupRepositoryImpl @Inject constructor(
     }
 
     override suspend fun upsertTodoGroup(todoGroupId: Int, name: String) {
-        todoGroupDao.upsertTodoGroup(todoGroupId, name)
+        todoGroupDao.upsertTodoGroup(todoGroupId, name, getUpdateTime())
         syncHelper.syncWrite()
     }
 
@@ -38,7 +39,7 @@ class TodoGroupRepositoryImpl @Inject constructor(
     }
 
     override suspend fun delTodoGroup(todoGroupId: Int) {
-        todoGroupDao.deleteTodoGroupAndRelated(todoGroupId)
+        todoGroupDao.deleteTodoGroupAndRelated(todoGroupId, getUpdateTime())
     }
 
     override suspend fun syncRead(): Boolean {
@@ -67,7 +68,7 @@ class TodoGroupRepositoryImpl @Inject constructor(
             val originIds = todoGroupDataSource.upsertTodoGroup(localNew.asNetworkModel())
             val toUpsertTodoGroups = localNew.asSyncedEntity(originIds)
             todoGroupDao.upsertTodoGroup(toUpsertTodoGroups)
-            syncHelper.setMaxUpdateTime(toUpsertTodoGroups, updateTimeDataSource::setTodoUpdateTime)
+            syncHelper.setMaxUpdateTime(toUpsertTodoGroups, updateTimeDataSource::setTodoGroupUpdateTime)
             return true
         } catch (e: Exception) {
             Logger.e("${e.message}")

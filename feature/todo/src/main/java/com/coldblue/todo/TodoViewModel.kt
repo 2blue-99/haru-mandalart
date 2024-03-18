@@ -154,9 +154,9 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    fun deleteCurrentGroup(currentGroupId: Int, todoGroupId: Int) {
+    fun deleteCurrentGroup(currentGroupId: Int, todoGroupId: Int,date:LocalDate) {
         viewModelScope.launch {
-            deleteCurrentGroupUseCase(currentGroupId, todoGroupId)
+            deleteCurrentGroupUseCase(currentGroupId, todoGroupId,date)
         }
     }
 

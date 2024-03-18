@@ -147,7 +147,7 @@ private fun TodoContentWithState(
     upsertTodoGroupById: (Int, String) -> Unit,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    deleteCurrentGroup: (Int, Int) -> Unit,
+    deleteCurrentGroup: (Int, Int,LocalDate) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
@@ -196,7 +196,7 @@ private fun TodoContent(
     todoGroupList: List<TodoGroup>,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    deleteCurrentGroup: (Int, Int) -> Unit,
+    deleteCurrentGroup: (Int, Int,LocalDate) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
@@ -214,7 +214,6 @@ private fun TodoContent(
 
             is BottomSheetUiState.Down -> {
                 sheetState.hide()
-                Logger.d("내려가긴함")
             }
         }
 
@@ -258,7 +257,8 @@ private fun TodoContent(
                 showSheet,
                 todoGroupList,
                 deleteCurrentGroup,
-                upsertTodoGroupById
+                upsertTodoGroupById,
+                date
             )
         }
         item {
@@ -436,8 +436,9 @@ fun HaruManda(
     currentGroupList: List<CurrentGroupState>,
     showSheet: (ContentState) -> Unit,
     todoGroupList: List<TodoGroup>,
-    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int) -> Unit,
+    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int,date:LocalDate) -> Unit,
     upsertTodoGroupById: (Int, String) -> Unit,
+    date:LocalDate
 ) {
     var openDialog by remember { mutableStateOf(false) }
     var selectIndex by remember { mutableStateOf(0) }
@@ -462,6 +463,7 @@ fun HaruManda(
             currentGroup = current.currentGroup,
             upsertTodoGroupById,
             deleteCurrentGroup,
+            date
         )
     }
 
@@ -689,7 +691,7 @@ fun TodoContentPreView() {
         ),
         emptyList(),
         {},
-        {}, { a, b -> },
+        {}, { a, b ,c-> },
         LocalDate.now(),
         {}, {}, { a, b, c, d -> }
     )

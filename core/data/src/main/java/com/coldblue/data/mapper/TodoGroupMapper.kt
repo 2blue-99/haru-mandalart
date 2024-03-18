@@ -1,5 +1,6 @@
 package com.coldblue.data.mapper
 
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.toDate
 import com.coldblue.data.util.toTime
 import com.coldblue.database.entity.TodoEntity
@@ -16,7 +17,7 @@ object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
             originId = 0,
             isSync = false,
             isDel = domain.isDel,
-            updateTime = LocalDate.now().toString(),
+            updateTime = getUpdateTime(),
             name = domain.name,
             id = domain.id,
         )

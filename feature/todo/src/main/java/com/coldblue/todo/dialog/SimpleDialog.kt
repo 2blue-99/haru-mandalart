@@ -30,6 +30,7 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.TodoGroup
 import com.orhanobut.logger.Logger
+import java.time.LocalDate
 
 @Composable
 fun CurrentGroupDialog(
@@ -40,7 +41,8 @@ fun CurrentGroupDialog(
     onConfirmation: () -> Unit,
     currentGroup: CurrentGroup,
     upsertTodoGroupById: (Int, String) -> Unit,
-    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int) -> Unit,
+    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int,date:LocalDate) -> Unit,
+    date:LocalDate
 ) {
     var openDeleteDialog by remember { mutableStateOf(false) }
 
@@ -53,7 +55,7 @@ fun CurrentGroupDialog(
                 openDeleteDialog = false
             },
             onConfirmation = {
-                deleteCurrentGroup(currentGroup.id, currentGroup.todoGroupId)
+                deleteCurrentGroup(currentGroup.id, currentGroup.todoGroupId,date)
                 openDeleteDialog = false
                 onDismissRequest()
             },
