@@ -7,8 +7,8 @@ interface UserDataSource {
     val email: Flow<String>
     val isTutorial: Flow<Boolean>
     val isAlarm: Flow<Boolean>
-    val isInit: Flow<Boolean>
-    val initPermissionState: Flow<Boolean>
+    val mandaInitState: Flow<Boolean>
+    val permissionInitState: Flow<Boolean>
 
 
 
@@ -16,7 +16,7 @@ interface UserDataSource {
     suspend fun updateEmail(email: String)
     suspend fun updateTutorial(state: Boolean)
     suspend fun updateAlarm(state: Boolean)
-    suspend fun updateInit(state: Boolean)
-    suspend fun updateInitPermissionState(state: Boolean)
+    suspend fun updateMandaInitState(state: Boolean)
+    suspend fun updatePermissionInitState(state: Boolean)
     suspend fun reset()
 }

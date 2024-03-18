@@ -18,8 +18,8 @@ class UserDataSourceImpl @Inject constructor(
     private val emailKey = stringPreferencesKey("email")
     private val tutorialKey = booleanPreferencesKey("tutorial")
     private val alarmKey = booleanPreferencesKey("alarm")
-    private val initKey = booleanPreferencesKey("initManda")
-    private val initPermissionKey = booleanPreferencesKey("initPermission")
+    private val mandaInitStateKey = booleanPreferencesKey("initManda")
+    private val permissionInitStateKey = booleanPreferencesKey("initPermission")
 
     override val token: Flow<String> =
         dataStore.data.map { preferences -> preferences[tokenKey] ?: "" }
@@ -29,24 +29,16 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
     override val isAlarm: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[alarmKey] ?: true }
-    override val isInit: Flow<Boolean> =
-        dataStore.data.map { preferences -> preferences[initKey] ?: false }
-    override val initPermissionState: Flow<Boolean> =
-        dataStore.data.map { preferences -> preferences[initPermissionKey] ?: false }
+    override val mandaInitState: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[mandaInitStateKey] ?: false }
+    override val permissionInitState: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[permissionInitStateKey] ?: false }
 
     override suspend fun reset() {
-        dataStore.edit { preferences ->
-            preferences[tokenKey] = ""
-        }
-        dataStore.edit { preferences ->
-            preferences[tutorialKey] = false
-        }
-        dataStore.edit { preferences ->
-            preferences[emailKey] = ""
-        }
-//        dataStore.edit { preferences ->
-//            preferences[initKey] = false
-//        }
+        dataStore.edit { preferences -> preferences[tokenKey] = "" }
+        dataStore.edit { preferences -> preferences[tutorialKey] = false }
+        dataStore.edit { preferences -> preferences[emailKey] = "" }
+        dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
     }
 
     override suspend fun updateToken(token: String) {
@@ -73,15 +65,15 @@ class UserDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateInit(state: Boolean) {
+    override suspend fun updateMandaInitState(state: Boolean) {
         dataStore.edit { preferences ->
-            preferences[initKey] = state
+            preferences[mandaInitStateKey] = state
         }
     }
 
-    override suspend fun updateInitPermissionState(state: Boolean) {
+    override suspend fun updatePermissionInitState(state: Boolean) {
         dataStore.edit { preferences ->
-            preferences[initPermissionKey] = state
+            preferences[permissionInitStateKey] = state
         }
     }
 

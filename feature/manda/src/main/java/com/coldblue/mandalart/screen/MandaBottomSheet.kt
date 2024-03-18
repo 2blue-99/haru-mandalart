@@ -88,7 +88,7 @@ fun MandaBottomSheet(
     if (dialogState) {
         DeleteDialog(
             targetText = keyNameText,
-            text = "이(가) 포함된 세부목표는 전부 삭제됩니다.",
+            text = " 이(가) 포함된 세부목표는 전부 삭제돼요.",
             deleteConfirmText = "삭제",
             onDismissRequest = {
                 dialogState = false
@@ -136,7 +136,7 @@ fun MandaBottomSheet(
                     duplicatedState = false
                 }
                 if(duplicatedState)
-                    Text(text = "이미 존재하는 목표입니다.", style = HmStyle.text12, color = HMColor.NegativeText)
+                    Text(text = "이미 존재하는 목표에요.", style = HmStyle.text12, color = HMColor.NegativeText)
             }
 
             when (contentType) {
@@ -228,10 +228,16 @@ fun MandaBottomSheet(
                                 .weight(1f),
                         ) {
                             when (contentType) {
-                                is MandaBottomSheetContentType.MandaKey ->
-                                    upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                                is MandaBottomSheetContentType.MandaKey ->{
+                                    if(mandaKeyList.contains(inputText))
+                                        duplicatedState = true
+                                    else {
+                                        upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                                        onDisMiss()
+                                    }
+                                }
 
-                                else ->
+                                else -> {
                                     upsertMandaDetail(
                                         mandaUI.asMandaDetail(
                                             inputText,
@@ -239,8 +245,9 @@ fun MandaBottomSheet(
                                             colorIndex
                                         )
                                     )
+                                    onDisMiss()
+                                }
                             }
-                            onDisMiss()
                         }
                     }
                 }
@@ -352,7 +359,7 @@ fun MandaKeyDialog(
         onDismissRequest = { onDisMiss() },
         text = {
             Text(
-                text = "핵심목표 \"$name\" 을(를) 삭제하면 포함된 세부목표가 전부 삭제됩니다.",
+                text = "핵심목표 \"$name\" 을(를) 삭제하면 포함된 세부목표가 전부 삭제돼요.",
                 style = HmStyle.text16,
                 color = HMColor.Text
             )

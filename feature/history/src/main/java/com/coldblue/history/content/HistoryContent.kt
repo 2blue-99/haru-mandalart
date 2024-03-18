@@ -63,10 +63,10 @@ fun HistoryContent(
     selectYear: (Int) -> Unit,
     selectDate: (LocalDate) -> Unit,
     toggleTodo: (Todo) -> Unit,
-    navigateToTodoEdit: (Int, String, String,String) -> Unit,
-    date : LocalDate,
+    navigateToTodoEdit: (Int, String, String, String) -> Unit,
+    date: LocalDate,
 
-) {
+    ) {
 
     var dateShowState by remember { mutableStateOf(true) }
 
@@ -107,30 +107,43 @@ fun HistoryContent(
         )
 
         Column {
-            val clickedDate = "${historyUiState.today.formatToDot()} ${historyUiState.today.toDayOfWeekString()}"
+            val clickedDate =
+                "${historyUiState.today.formatToDot()} ${historyUiState.today.toDayOfWeekString()}"
             Text(
                 text = if (dateShowState) clickedDate else "",
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
-            TitleText(text = "기록")
-        }
 
-        LazyColumn(
-            Modifier
-                .fillMaxSize()
-                .background(HMColor.Background),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(historyUiState.todoList) {
-                TodoItem(
-                    todo = it,
-                    onTodoToggle = toggleTodo,
-                    showSheet = {},
-                    navigateToTodoEdit = navigateToTodoEdit,
-                    date = date
+            TitleText(text = "기록")
+
+            if (historyUiState.todoList.isEmpty())
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp),
+                    textAlign = TextAlign.Center,
+                    text = "기록이 비었어요.",
+                    style = HmStyle.text20,
+                    color = HMColor.SubText
                 )
-            }
+            else
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .background(HMColor.Background),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(historyUiState.todoList) {
+                        TodoItem(
+                            todo = it,
+                            onTodoToggle = toggleTodo,
+                            showSheet = {},
+                            navigateToTodoEdit = navigateToTodoEdit,
+                            date = date
+                        )
+                    }
+                }
         }
     }
 }
@@ -156,7 +169,10 @@ fun HistoryController(
     var beforeDateIndex by remember { mutableIntStateOf(0) }
     var beforeYearIndex by remember { mutableIntStateOf(-1) }
     var pickedDateIndex by remember { mutableIntStateOf(0) }
-    var pickedYearIndex by remember { mutableIntStateOf(todoYearList.indices.firstOrNull { todoYearList[it] == presentLocalYear } ?: 0) }
+    var pickedYearIndex by remember {
+        mutableIntStateOf(todoYearList.indices.firstOrNull { todoYearList[it] == presentLocalYear }
+            ?: 0)
+    }
 
     // Init Clicked Controller
     LaunchedEffect(controllerList) {
@@ -172,7 +188,7 @@ fun HistoryController(
         }
     }
 
-    LaunchedEffect(clickedState){
+    LaunchedEffect(clickedState) {
         dateShowState(clickedState)
     }
 
