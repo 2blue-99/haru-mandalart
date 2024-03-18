@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MandaDetailDao {
-    @Query("Select * From manda_detail")
+    @Query("Select * From manda_detail Where is_del = 0")
     fun getMandaDetails(): Flow<List<MandaDetailEntity>>
 
     @Query("SELECT * FROM manda_detail WHERE update_time > :updateTime AND is_sync=0")

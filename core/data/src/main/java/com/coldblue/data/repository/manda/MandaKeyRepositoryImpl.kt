@@ -1,5 +1,6 @@
 package com.coldblue.data.repository.manda
 
+import android.service.autofill.UserData
 import com.coldblue.data.mapper.MandaKeyMapper.asDomain
 import com.coldblue.data.mapper.MandaKeyMapper.asEntity
 import com.coldblue.data.mapper.MandaKeyMapper.asNetworkModel
@@ -8,6 +9,7 @@ import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.datastore.UpdateTimeDataSource
+import com.coldblue.datastore.UserDataSource
 import com.coldblue.model.MandaKey
 import com.coldblue.network.datasource.MandaKeyDataSource
 import com.orhanobut.logger.Logger
@@ -17,13 +19,14 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MandaKeyRepositoryImpl @Inject constructor(
+    private val syncHelper: SyncHelper,
+    private val userDataSource: UserDataSource,
     private val mandaKeyDao: MandaKeyDao,
     private val mandaKeyDataSource: MandaKeyDataSource,
-    private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
     ) : MandaKeyRepository {
     override fun getMandaKeys(): Flow<List<MandaKey>> =
-        mandaKeyDao.getMandaKeys().map { it.filter { !it.isDel }.map { it.asDomain() } }
+        mandaKeyDao.getMandaKeys().map { it.map { it.asDomain() } }
 
     override suspend fun upsertMandaKeys(mandaKeys: List<MandaKey>) {
         mandaKeyDao.upsertMandaKeys(mandaKeys.map { it.asEntity() })
@@ -45,7 +48,6 @@ class MandaKeyRepositoryImpl @Inject constructor(
 
     override suspend fun syncRead(): Boolean {
         try {
-            Logger.d("getMandaKeys : ${mandaKeyDao.getMandaKeys().first()}")
             val remoteNew =
                 mandaKeyDataSource.getMandaKey(updateTimeDataSource.mandaKeyUpdateTime.first())
             val originIds = remoteNew.map { it.id }
@@ -54,9 +56,10 @@ class MandaKeyRepositoryImpl @Inject constructor(
 
             val toUpsertMandaKeys = remoteNew.asEntity(mandaKeyIds)
 
-            mandaKeyDao.upsertMandaKeys(toUpsertMandaKeys)
+            if(toUpsertMandaKeys.map { it.id }.contains(5))
+                userDataSource.updateMandaInitState(true)
 
-            Logger.d("getMandaKeys : ${mandaKeyDao.getMandaKeys().first()}")
+            mandaKeyDao.upsertMandaKeys(toUpsertMandaKeys)
 
             syncHelper.setMaxUpdateTime(
                 toUpsertMandaKeys,

@@ -11,8 +11,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MandaKeyDao {
-    @Query("Select * From manda_key")
+    @Query("Select * From manda_key Where is_del = 0")
     fun getMandaKeys(): Flow<List<MandaKeyEntity>>
+
+    @Query("SELECT * FROM manda_key WHERE id = 5 AND is_del = 0")
+    fun getFinalManda(): Flow<MandaKeyEntity?>
 
     @Query("SELECT * FROM manda_key WHERE update_time > :updateTime AND is_sync=0")
     fun getToWriteMandaKeys(updateTime: String): List<MandaKeyEntity>
@@ -26,9 +29,6 @@ interface MandaKeyDao {
 
     @Query("SELECT id FROM manda_key WHERE origin_id = :originId")
     fun getMandaKeyIdByOriginId(originId: Int): Int?
-
-    @Query("SELECT * FROM manda_key WHERE id = 5 AND is_del = 0")
-    fun getFinalManda(): Flow<MandaKeyEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMandaKeys(mandaEntities: List<MandaKeyEntity>)

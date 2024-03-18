@@ -23,7 +23,7 @@ class MandaDetailRepositoryImpl @Inject constructor(
     private val updateTimeDataSource: UpdateTimeDataSource,
 ) : MandaDetailRepository {
     override fun getMandaDetails(): Flow<List<MandaDetail>> =
-        mandaDetailDao.getMandaDetails().map { it.filter { !it.isDel }.map { it.asDomain() } }
+        mandaDetailDao.getMandaDetails().map { it.map { it.asDomain() } }
 
     override suspend fun upsertMandaDetails(mandaDetails: List<MandaDetail>) {
         mandaDetailDao.upsertMandaDetails(mandaDetails.map { it.asEntity() })
@@ -41,8 +41,8 @@ class MandaDetailRepositoryImpl @Inject constructor(
 
     override suspend fun syncRead(): Boolean {
         try {
-            val remoteNew =
-                mandaDetailDataSource.getMandaDetail(updateTimeDataSource.mandaDetailUpdateTime.first())
+            val remoteNew = mandaDetailDataSource.getMandaDetail(updateTimeDataSource.mandaDetailUpdateTime.first())
+
             val originIds = remoteNew.map { it.id }
 
             val todoIds = mandaDetailDao.getMandaDetailIdByOriginIds(originIds)
