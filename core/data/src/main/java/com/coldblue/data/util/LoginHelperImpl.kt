@@ -30,6 +30,7 @@ class LoginHelperImpl @Inject constructor(
             else
                 LoginState.Login
         }
+    override val initPermissionState: Flow<Boolean> = userDataSource.permissionInitState
 
     override fun getComposeAuth(): ComposeAuth = client.composeAuth
 
@@ -50,5 +51,9 @@ class LoginHelperImpl @Inject constructor(
     override suspend fun deleteUser() {
         supabaseDataSource.deleteUser()
         setLogout()
+    }
+
+    override suspend fun updatePermissionInitState(state: Boolean) {
+        userDataSource.updatePermissionInitState(state)
     }
 }

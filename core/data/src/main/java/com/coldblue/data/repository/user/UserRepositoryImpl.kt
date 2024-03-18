@@ -11,7 +11,7 @@ class UserRepositoryImpl @Inject constructor(
     override val email: Flow<String> = userDataSource.email
     override val isTutorial: Flow<Boolean> = userDataSource.isTutorial
     override val isAlarm: Flow<Boolean> = userDataSource.isAlarm
-    override val isInit: Flow<Boolean> = userDataSource.isInit
+    override val isInit: Flow<Boolean> = userDataSource.mandaInitState
 
     override suspend fun updateToken(token: String) {
         userDataSource.updateToken(token)
@@ -29,8 +29,8 @@ class UserRepositoryImpl @Inject constructor(
         userDataSource.updateAlarm(state)
     }
 
-    override suspend fun updateInit(state: Boolean) {
-        userDataSource.updateInit(state)
+    override suspend fun updateMandaInitState(state: Boolean) {
+        userDataSource.updateMandaInitState(state)
     }
 
 }

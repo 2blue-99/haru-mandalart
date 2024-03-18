@@ -14,5 +14,5 @@ interface UserRepository {
     suspend fun updateEmail(email: String)
     suspend fun updateTutorial(state: Boolean)
     suspend fun updateAlarm(state: Boolean)
-    suspend fun updateInit(state: Boolean)
+    suspend fun updateMandaInitState(state: Boolean)
 }

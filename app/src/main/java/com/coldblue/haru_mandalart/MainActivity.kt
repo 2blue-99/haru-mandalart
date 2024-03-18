@@ -27,7 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
-import com.coldblue.data.util.PermissionHelper
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.login.LoginScreen
@@ -46,43 +45,10 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var syncHelper: SyncHelper
 
-    @Inject
-    lateinit var permissionHelper: PermissionHelper
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             HarumandalartTheme {
-
-                val context = LocalContext.current
-
-                val permissionLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission(),
-                    onResult = { isGranted ->
-                        if (!isGranted)
-                            Toast.makeText(context, "알림 권한은 앱 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT)
-                                .show()
-                        CoroutineScope(Dispatchers.IO).launch {
-                            permissionHelper.updateInitPermissionState(true)
-                        }
-                    }
-
-                )
-
-                LaunchedEffect(permissionLauncher) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        if (ContextCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.POST_NOTIFICATIONS
-                            ) == PackageManager.PERMISSION_DENIED
-                        ) {
-                            if (!permissionHelper.initPermissionState.first()) {
-                                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            }
-                        }
-                    }
-                }
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -90,18 +56,45 @@ class MainActivity : ComponentActivity() {
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
-                            LoginState.Logout -> LoginScreen()
+                            LoginState.Logout -> {
+                                CheckPermission()
+                                LoginScreen()
+                            }
                             LoginState.Login -> {
                                 syncHelper.initialize()
                                 HMApp()
                             }
-
                             else -> {}
                         }
                     }
                 }
             }
         }
+    }
+    @Composable
+    fun CheckPermission(){
+        val context = LocalContext.current
+        val permissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                if (!isGranted)
+                    Toast.makeText(context, "알림 권한은 앱 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT)
+                        .show()
+                CoroutineScope(Dispatchers.IO).launch {
+                    loginHelper.updatePermissionInitState(true)
+                }
+            }
+        )
+        LaunchedEffect(permissionLauncher) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+                    if (!loginHelper.initPermissionState.first()) {
+                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                }
+            }
+        }
+
     }
 
     @Composable

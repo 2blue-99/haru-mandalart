@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.NetworkHelper
-import com.coldblue.data.util.PermissionHelper
 import com.coldblue.data.util.SettingHelper
 import com.coldblue.domain.user.GetAlarmStateUseCase
 import com.coldblue.domain.user.GetEmailUseCase

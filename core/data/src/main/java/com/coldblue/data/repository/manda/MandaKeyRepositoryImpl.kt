@@ -48,12 +48,19 @@ class MandaKeyRepositoryImpl @Inject constructor(
             val remoteNew =
                 mandaKeyDataSource.getMandaKey(updateTimeDataSource.mandaKeyUpdateTime.first())
             val originIds = remoteNew.map { it.id }
-
+            // TODO 이름 바꿔야 함
             val todoIds = mandaKeyDao.getMandaKeyIdByOriginIds(originIds)
 
             val toUpsertMandaKeys = remoteNew.asEntity(todoIds)
 
             mandaKeyDao.upsertMandaKeys(toUpsertMandaKeys)
+
+            Logger.d("originIds : $originIds")
+            Logger.d("getMandaKeys : ${mandaKeyDao.getMandaKeys().first()}")
+            Logger.d("todoIds : $todoIds")
+            Logger.d("toUpsertMandaKeys : $toUpsertMandaKeys")
+            Logger.d("getMandaKeys : ${mandaKeyDao.getMandaKeys().first()}")
+
             syncHelper.setMaxUpdateTime(
                 toUpsertMandaKeys,
                 updateTimeDataSource::setMandaKeyUpdateTime
@@ -69,7 +76,9 @@ class MandaKeyRepositoryImpl @Inject constructor(
         try {
             val localNew =
                 mandaKeyDao.getToWriteMandaKeys(updateTimeDataSource.mandaKeyUpdateTime.first())
+
             val originIds = mandaKeyDataSource.upsertMandaKey(localNew.asNetworkModel())
+
             val toUpsertMandaKeys = localNew.asSyncedEntity(originIds)
             mandaKeyDao.upsertMandaKeys(toUpsertMandaKeys)
 

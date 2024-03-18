@@ -48,8 +48,6 @@ class MandaViewModel @Inject constructor(
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
                 getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
-                    Log.e("TAG", "mandaKeys : $mandaKeys")
-                    Log.e("TAG", "mandaDetails : $mandaDetails")
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
