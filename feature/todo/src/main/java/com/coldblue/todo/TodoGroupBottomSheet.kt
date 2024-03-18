@@ -110,7 +110,9 @@ fun TodoGroupBottomSheet(
                                         index = currentGroup.index,
                                         name = todoGroup.name,
                                         date = currentGroup.date,
-                                        todoGroupId = todoGroup.id
+                                        todoGroupId = todoGroup.id,
+                                        originId = currentGroup.originId,
+                                        originGroupId = currentGroup.originGroupId
                                     )
                                 )
                                 onDismissRequest()

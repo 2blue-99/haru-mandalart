@@ -7,13 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.CurrentGroupWithName
-import com.coldblue.database.entity.MandaKeyEntity
-import com.coldblue.database.entity.TodoEntity
-import com.coldblue.database.entity.TodoGroupEntity
-import com.coldblue.database.entity.TodoWithGroupName
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
 @Dao
@@ -40,10 +34,10 @@ interface CurrentGroupDao {
         deleteTodoByCurrentGroup(todoGroupId, updateTime, date)
     }
 
-    @Query("UPDATE current_group SET is_del=1, update_time=:updateTime WHERE current_group.id = :currentGroupId")
+    @Query("UPDATE current_group SET is_del=1, update_time=:updateTime ,is_sync = 0 WHERE current_group.id = :currentGroupId")
     suspend fun deleteCurrentGroup(currentGroupId: Int, updateTime: String)
 
-    @Query("UPDATE todo SET todo_group_id=null,update_time=:updateTime WHERE todo_group_id = :todoGroupId AND todo.date = :date")
+    @Query("UPDATE todo SET todo_group_id=null,update_time=:updateTime ,is_sync = 0 WHERE todo_group_id = :todoGroupId AND todo.date = :date")
     suspend fun deleteTodoByCurrentGroup(todoGroupId: Int, updateTime: String, date: LocalDate)
 
 
@@ -60,8 +54,7 @@ interface CurrentGroupDao {
     @Query("SELECT id FROM current_group WHERE origin_id = :originId")
     fun getCurrentGroupIdByOriginId(originId: Int): Int?
 
-//    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0")
-//    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
+
 
     @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON current_group.todo_group_id = todo_group.id WHERE current_group.date=:date AND current_group.is_del=0")
     fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupWithName>>
@@ -97,10 +90,11 @@ interface CurrentGroupDao {
                     date = date,
                     updateTime = updateTime,
                     isDel = it.isDel,
-                    isSync = it.isSync,
+                    isSync = false,
                     index = it.index,
-                    originId = it.originId,
-                    todoGroupId = it.todoGroupId
+                    originId = 0,
+                    todoGroupId = it.todoGroupId,
+                    originGroupId = it.originGroupId
                 )
             }
         upsertCurrentGroup(updatedGroups)

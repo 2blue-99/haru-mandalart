@@ -5,6 +5,7 @@ import com.coldblue.data.mapper.MandaDetailMapper.asEntity
 import com.coldblue.data.mapper.MandaDetailMapper.asNetworkModel
 import com.coldblue.data.mapper.MandaDetailMapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.MandaDetail
@@ -30,11 +31,11 @@ class MandaDetailRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteMandaDetail(idList: List<Int>) {
-        mandaDetailDao.deleteMandaDetails(idList)
+        mandaDetailDao.deleteMandaDetails(idList, getUpdateTime())
     }
 
     override suspend fun deleteAllMandaDetail() {
-        mandaDetailDao.deleteAllMandaDetail()
+        mandaDetailDao.deleteAllMandaDetail(getUpdateTime())
     }
 
     override suspend fun syncRead(): Boolean {

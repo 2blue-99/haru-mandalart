@@ -11,11 +11,7 @@ import androidx.work.WorkManager
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.database.entity.SyncableEntity
-import com.coldblue.datastore.UpdateTimeDataSource
-import com.coldblue.datastore.UserDataSource
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class SyncHelperImpl @Inject constructor(
@@ -41,7 +37,7 @@ class SyncHelperImpl @Inject constructor(
             .build()
     }
 
-    private fun startUpSyncWork():OneTimeWorkRequest {
+    private fun startUpSyncWork(): OneTimeWorkRequest {
         return OneTimeWorkRequestBuilder<SyncReadWorker>().addTag(SYNC_READ)
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setConstraints(syncConstraints)

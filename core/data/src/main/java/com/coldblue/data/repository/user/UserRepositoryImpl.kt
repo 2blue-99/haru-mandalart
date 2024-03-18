@@ -1,11 +1,14 @@
 package com.coldblue.data.repository.user
 
 import com.coldblue.datastore.UserDataSource
+import com.coldblue.network.SupabaseDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
+    private val supabaseDataSource: SupabaseDataSource,
 ) : UserRepository {
     override val token: Flow<String> = userDataSource.token
     override val email: Flow<String> = userDataSource.email
@@ -31,6 +34,12 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun updateInit(state: Boolean) {
         userDataSource.updateInit(state)
+    }
+
+    override suspend fun refresh(){
+        userDataSource.token.flatMapLatest {
+            supabaseDataSource.refresh(it)
+        }
     }
 
 }

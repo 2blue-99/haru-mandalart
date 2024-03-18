@@ -3,6 +3,8 @@ package com.coldblue.data.di
 import android.content.Context
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.sync.SyncHelperImpl
+import com.coldblue.datastore.UserDataSource
+import com.coldblue.network.SupabaseDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +17,11 @@ import javax.inject.Singleton
 object SyncModule {
     @Provides
     @Singleton
-    fun provideSyncWriteHelper(@ApplicationContext appContext: Context): SyncHelper {
+    fun provideSyncWriteHelper(
+        @ApplicationContext appContext: Context,
+    ): SyncHelper {
         return SyncHelperImpl(appContext)
     }
+
+
 }

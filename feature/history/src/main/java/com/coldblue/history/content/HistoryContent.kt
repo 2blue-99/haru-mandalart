@@ -150,11 +150,8 @@ fun HistoryController(
     val boxClickStateList =
         remember { mutableStateListOf<Boolean>().apply { addAll(List(controllerList.size * 7) { false }) } }
 
-    com.orhanobut.logger.Logger.d(todoYearList.size)
     val yearClickStateList =
         remember { mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) } }
-    com.orhanobut.logger.Logger.d(yearClickStateList.size)
-
     var clickedState by remember { mutableStateOf(true) }
     var beforeDateIndex by remember { mutableIntStateOf(0) }
     var beforeYearIndex by remember { mutableIntStateOf(-1) }

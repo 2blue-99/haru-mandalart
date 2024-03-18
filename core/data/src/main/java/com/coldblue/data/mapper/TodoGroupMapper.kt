@@ -1,20 +1,16 @@
 package com.coldblue.data.mapper
 
 import com.coldblue.data.util.getUpdateTime
-import com.coldblue.data.util.toDate
-import com.coldblue.data.util.toTime
-import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.TodoGroup
 import com.coldblue.network.model.NetWorkTodoGroup
-import com.coldblue.network.model.NetworkTodo
-import java.time.LocalDate
+import com.orhanobut.logger.Logger
 
 object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
 
     override fun asEntity(domain: TodoGroup): TodoGroupEntity {
         return TodoGroupEntity(
-            originId = 0,
+            originId = domain.originId,
             isSync = false,
             isDel = domain.isDel,
             updateTime = getUpdateTime(),
@@ -48,10 +44,10 @@ object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
         return this.mapIndexed { index, netWorkTodoGroup ->
             TodoGroupEntity(
                 originId = netWorkTodoGroup.id,
-                name = netWorkTodoGroup.name,
+                name = netWorkTodoGroup.name?:"",
                 isSync = true,
                 isDel = netWorkTodoGroup.is_del,
-                updateTime = netWorkTodoGroup.update_time,
+                updateTime = netWorkTodoGroup.update_time?:"",
                 id = todoGroupIds[index] ?: 0,
             )
         }
