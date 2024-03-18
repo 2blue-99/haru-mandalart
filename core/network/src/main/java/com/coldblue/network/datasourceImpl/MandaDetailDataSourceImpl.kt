@@ -12,7 +12,7 @@ class MandaDetailDataSourceImpl @Inject constructor(
     private val client: SupabaseClient
 ) : MandaDetailDataSource {
     override suspend fun getMandaDetail(update: String): List<NetworkMandaDetail> {
-        return client.postgrest["mandaDetail"].select {
+        return client.postgrest["mandadetail"].select {
             filter {
                 NetworkMandaDetail::update_time gt update
             }
@@ -21,7 +21,7 @@ class MandaDetailDataSourceImpl @Inject constructor(
 
     override suspend fun upsertMandaDetail(mandaDetails: List<NetworkMandaDetail>): List<Int> {
         val result =
-            client.postgrest["mandaDetail"].upsert(mandaDetails, onConflict = "id") {
+            client.postgrest["mandadetail"].upsert(mandaDetails, onConflict = "id") {
                 select(Columns.list("id"))
             }.decodeList<NetworkId>()
         return result.map { it.id }

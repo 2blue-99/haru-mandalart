@@ -24,7 +24,7 @@ class SupabaseDataSourceImpl @Inject constructor(
                     NetworkTodo::user_id eq user.id
                 }
             }
-            client.postgrest["todog"].delete {
+            client.postgrest["todogroup"].delete {
                 filter {
                     NetWorkTodoGroup::user_id eq user.id
                 }
@@ -39,7 +39,7 @@ class SupabaseDataSourceImpl @Inject constructor(
                     NetworkMandaKey::user_id eq user.id
                 }
             }
-            client.postgrest["mandaDetail"].delete {
+            client.postgrest["mandadetail"].delete {
                 filter {
                     NetworkMandaDetail::user_id eq user.id
                 }
