@@ -11,12 +11,3 @@ data class NetWorkTodoGroup(
     val name: String,
     val user_id: String="",
 ) : NetworkModel
-
-@Serializable
-data class NetWorkTodoGroup2(
-    val id: Int = 0,
-    val is_del: Boolean,
-    val update_time: String,
-    val name: String,
-    val user_id: String="",
-)

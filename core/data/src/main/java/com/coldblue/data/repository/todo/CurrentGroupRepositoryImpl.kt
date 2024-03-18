@@ -65,6 +65,7 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         try {
             val localNew =
                 currentGroupDao.getToWriteCurrentGroup(updateTimeDataSource.currentGroupUpdateTime.first())
+            Logger.d(localNew)
             val originIds = currentGroupDataSource.upsertCurrentGroup(localNew.asNetworkModel())
             val toUpsertCurrentGroups = localNew.asSyncedEntity(originIds)
             currentGroupDao.upsertCurrentGroup(toUpsertCurrentGroups)

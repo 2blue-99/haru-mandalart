@@ -13,14 +13,14 @@ interface TodoGroupDao {
     @Query("Select * From todo_group WHERE is_del=0")
     fun getTodoGroup(): Flow<List<TodoGroupEntity>>
 
-    @Query("UPDATE todo_group SET name = :name , update_time = :updateTime WHERE id = :todoGroupId")
+    @Query("UPDATE todo_group SET name = :name , update_time = :updateTime,is_sync=0 WHERE id = :todoGroupId")
     suspend fun upsertTodoGroup(todoGroupId: Int, name: String, updateTime: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodoGroup(todoGroup: TodoGroupEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertTodoGroup(todoGroups: List<TodoGroupEntity>)
+    suspend fun syncWriteTodoGroup(todoGroups: List<TodoGroupEntity>)
 
     @Transaction
     suspend fun deleteTodoGroupAndRelated(todoGroupId: Int, updateTime: String) {

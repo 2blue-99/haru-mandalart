@@ -1,14 +1,10 @@
 package com.coldblue.data.mapper
 
 import com.coldblue.data.util.getUpdateTime
-import com.coldblue.data.util.toDate
-import com.coldblue.data.util.toTime
-import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.TodoGroup
 import com.coldblue.network.model.NetWorkTodoGroup
-import com.coldblue.network.model.NetworkTodo
-import java.time.LocalDate
+import com.orhanobut.logger.Logger
 
 object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
 
