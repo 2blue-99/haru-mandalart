@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="tags">
-        <item>1</item>
-        <item>22</item>
-        <item>333</item>
-        <item>4444</item>
-        <item>5</item>
-        <item>666666</item>
-        <item>777</item>
-        <item>8888888888</item>
-        <item>9999</item>
-        <item>10</item>
+        <item>최고의 앱 개발자</item>
+        <item>국가대표 축구선수</item>
+        <item>베스트셀러 작가</item>
+        <item>신라호텔 요리사</item>
+        <item>네이버 웹툰 연재</item>
+        <item>천만 관객 배우</item>
+        <item>LCK 대회 출전</item>
+        <item>의대 입학</item>
+        <item>경찰공무원 시험 합격</item>
+        <item>임용고시 합격</item>
+        <item>우리반 성적 1등</item>
+        <item>인서울 입학</item>
+        <item>학점 4.2 이상</item>
+        <item>토익 900점</item>
+        <item>연봉 1억</item>
+        <item>대기업 입사</item>
+        <item>내 집 마련</item>
+        <item>웨이트 3대 500</item>
+        <item>20kg 다이어트</item>
+        <item>이번 여름 바디 프로필</item>
     </string-array>
 </resources>

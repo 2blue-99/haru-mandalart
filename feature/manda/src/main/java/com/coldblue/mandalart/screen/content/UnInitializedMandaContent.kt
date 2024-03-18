@@ -1,9 +1,11 @@
 package com.coldblue.mandalart.screen.content
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMChip
@@ -35,48 +38,55 @@ fun UnInitializedMandaContent(
     var inputText by remember { mutableStateOf("") }
     var buttonClickableState by remember { mutableStateOf(false) }
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        item {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "당신의 최종 목표는 \n무엇인가요?",
-                style = HmStyle.text24,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Left
-            )
+    Column(
+        modifier = Modifier.fillMaxSize().padding(top = 40.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+
+    ){
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "당신의 최종 목표는 \n무엇인가요?",
+            style = HmStyle.text24,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Left
+        )
+        HMTextField(inputText, maxLen = mandaFinalMaxLen) {
+            inputText = it
+            buttonClickableState = it.isNotBlank()
         }
-        item {
-            HMTextField(inputText, maxLen = mandaFinalMaxLen) {
-                inputText = it
-                buttonClickableState = it.isNotBlank()
-            }
-        }
-        item {
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(15.dp),
-            ) {
-                getTagList().forEach {
-                    HMChip(it) {
-                        inputText = it
-                        buttonClickableState = true
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.9f)
+        ) {
+            item {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp),
+                ) {
+                    getTagList().forEach {
+                        HMChip(it) {
+                            inputText = it
+                            buttonClickableState = true
+                        }
                     }
                 }
             }
         }
-        item { Spacer(modifier = Modifier.height(10.dp)) }
-
-        item {
-            HMButton(text = "목표 구체화 하기", buttonClickableState) {
-                updateInitState(true)
-                insertFinalManda(inputText)
-            }
+        HMButton(text = "목표 구체화 하기", modifier = Modifier.weight(0.1f), clickableState = buttonClickableState) {
+            updateInitState(true)
+            insertFinalManda(inputText)
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewUnInit(){
+    UnInitializedMandaContent(
+        updateInitState = {},
+        insertFinalManda =  {}
+    )
 }

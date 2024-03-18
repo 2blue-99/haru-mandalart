@@ -61,11 +61,10 @@ class MainActivity : ComponentActivity() {
                     onResult = { isGranted ->
                         if(!isGranted)
                             Toast.makeText(context, "알림 권한은 앱 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT).show()
-
-                        CoroutineScope(Dispatchers.IO).launch {
+                           CoroutineScope(Dispatchers.IO).launch {
                             permissionHelper.updateInitPermissionState(true)
                         }
-                    }
+
                 )
 
                 LaunchedEffect(permissionLauncher){

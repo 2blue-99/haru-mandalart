@@ -107,6 +107,7 @@ fun InitializedMandaContent(
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
             sheetState = sheetState,
+            mandaKeyList = uiState.mandaKeyList,
             upsertMandaFinal = upsertMandaFinal,
             upsertMandaKey = upsertMandaKey,
             upsertMandaDetail = upsertMandaDetail,
@@ -607,7 +608,7 @@ fun MandaKeyBox(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1F)
-            .border(BorderStroke(2.dp, color), RoundedCornerShape(8.dp))
+            .border(BorderStroke(1.5.dp, color), RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp))
             .background(if (isDone) color else HMColor.Background)
             .clickable { onClick() }
@@ -655,7 +656,7 @@ fun MandaEmptyBox(
     onClick: () -> Unit
 ) {
     val stroke = Stroke(
-        width = 10f,
+        width = 6f,
         pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
     )
     Box(
