@@ -30,33 +30,39 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.TodoGroup
 import com.orhanobut.logger.Logger
+import java.time.LocalDate
 
 @Composable
 fun CurrentGroupDialog(
     text: String,
     groupName: String,
+    todoGroupList: List<TodoGroup>,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     currentGroup: CurrentGroup,
     upsertTodoGroupById: (Int, String) -> Unit,
-    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int) -> Unit,
+    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int,date:LocalDate) -> Unit,
+    date:LocalDate
 ) {
     var openDeleteDialog by remember { mutableStateOf(false) }
 
     if (openDeleteDialog) {
         DeleteDialog(
-            text = "${groupName}의 오늘 할 일은 그룹없음 상태가 됩니다.",
+            targetText = groupName,
+            text = "이(가) 포함된 오늘 할 일은 그룹없음 상태가 됩니다.",
             deleteConfirmText = "삭제",
             onDismissRequest = {
                 openDeleteDialog = false
             },
             onConfirmation = {
-                deleteCurrentGroup(currentGroup.id, currentGroup.todoGroupId)
+                deleteCurrentGroup(currentGroup.id, currentGroup.todoGroupId,date)
                 openDeleteDialog = false
                 onDismissRequest()
             },
         )
     }
+
+    var isSame by remember { mutableStateOf(false) }
 
     var inputText by remember { mutableStateOf(text) }
 
@@ -80,13 +86,18 @@ fun CurrentGroupDialog(
             }
         },
         text = {
-            HMTextField(
-                inputText = text,
-                maxLen = 12,
-                onChangeText = {
-                    inputText = it
+            Column {
+                HMTextField(
+                    inputText = text,
+                    maxLen = 12,
+                    onChangeText = {
+                        inputText = it
+                    }
+                )
+                if (isSame) {
+                    Text(text = "이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
                 }
-            )
+            }
         }, onDismissRequest = {
             onDismissRequest()
         }, confirmButton = {
@@ -99,11 +110,16 @@ fun CurrentGroupDialog(
                     disabledContentColor = HMColor.Gray
                 ),
                 onClick = {
-                    upsertTodoGroupById(
-                        currentGroup.todoGroupId,
-                        inputText
-                    )
-                    onConfirmation()
+                    if (todoGroupList.map { it.name }.contains(inputText)) {
+                        isSame = true
+                    } else {
+                        upsertTodoGroupById(
+                            currentGroup.todoGroupId,
+                            inputText
+                        )
+                        onConfirmation()
+                    }
+
                 }) {
                 Text(
                     text = "수정",
@@ -148,7 +164,7 @@ fun TodoGroupDialog(
                     }
                 )
                 if (isSame) {
-                    Text(text = "${inputText}는 이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
+                    Text(text = "이미 존재하는 그룹입니다.", color = HMColor.Dark.Red)
                 }
             }
         }, onDismissRequest = {

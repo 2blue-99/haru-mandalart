@@ -72,6 +72,7 @@ import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.coldblue.todo.uistate.TodoUiState
 import com.google.gson.Gson
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.delay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -81,7 +82,7 @@ import java.util.Locale
 @Composable
 fun TodoScreen(
     todoViewModel: TodoViewModel = hiltViewModel(),
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
 ) {
     val todoUiState by todoViewModel.todoUiState.collectAsStateWithLifecycle()
     val bottomSheetUiSate by todoViewModel.bottomSheetUiSate.collectAsStateWithLifecycle()
@@ -124,16 +125,11 @@ fun TodoScreen(
                 upsertTodoGroupById = { id, name -> todoViewModel.upsertTodoGroup(id, name) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
-                deleteCurrentGroup = { current, group ->
-                    todoViewModel.deleteCurrentGroup(
-                        current,
-                        group
-                    )
-                },
+                deleteCurrentGroup = todoViewModel::deleteCurrentGroup,
                 date = dateState,
                 selectDate = { date -> todoViewModel.selectDate(date) },
                 deleteTodoGroup = { id -> todoViewModel.deleteTodoGroup(id) },
-                navigateToTodoEdit = { id, title, time -> navigateToTodoEdit(id, title, time) }
+                navigateToTodoEdit = navigateToTodoEdit
 
             )
         }
@@ -151,11 +147,11 @@ private fun TodoContentWithState(
     upsertTodoGroupById: (Int, String) -> Unit,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    deleteCurrentGroup: (Int, Int) -> Unit,
+    deleteCurrentGroup: (Int, Int,LocalDate) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
 
 
 ) {
@@ -200,15 +196,16 @@ private fun TodoContent(
     todoGroupList: List<TodoGroup>,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    deleteCurrentGroup: (Int, Int) -> Unit,
+    deleteCurrentGroup: (Int, Int,LocalDate) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
 
 
 ) {
     val sheetState = rememberModalBottomSheetState()
+
     LaunchedEffect(bottomSheetUiSate) {
         when (bottomSheetUiSate) {
             is BottomSheetUiState.Up -> {
@@ -227,7 +224,9 @@ private fun TodoContent(
         GroupBottomSheet(
             content = bottomSheetUiSate.content,
             sheetState = sheetState,
-            onDismissRequest = { hideSheet() },
+            onDismissRequest = {
+                hideSheet()
+                               },
             todoGroupList = todoGroupList,
             currentGroupList = currentGroupList,
             upsertCurrentGroup = upsertCurrentGroup,
@@ -253,7 +252,14 @@ private fun TodoContent(
         }
         item {
 
-            HaruManda(currentGroupStateList, showSheet, deleteCurrentGroup, upsertTodoGroupById)
+            HaruManda(
+                currentGroupStateList,
+                showSheet,
+                todoGroupList,
+                deleteCurrentGroup,
+                upsertTodoGroupById,
+                date
+            )
         }
         item {
             TitleText("오늘 할 일")
@@ -371,7 +377,8 @@ fun GroupBottomSheet(
     upsertTodoGroup: (TodoGroup) -> Unit,
     upsertTodo: (Todo) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit,
+    navigateToTodoEdit: (Int, String, String, String) -> Unit,
+
     date: LocalDate,
 
 
@@ -428,8 +435,10 @@ fun GroupBottomSheet(
 fun HaruManda(
     currentGroupList: List<CurrentGroupState>,
     showSheet: (ContentState) -> Unit,
-    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int) -> Unit,
+    todoGroupList: List<TodoGroup>,
+    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int,date:LocalDate) -> Unit,
     upsertTodoGroupById: (Int, String) -> Unit,
+    date:LocalDate
 ) {
     var openDialog by remember { mutableStateOf(false) }
     var selectIndex by remember { mutableStateOf(0) }
@@ -444,6 +453,7 @@ fun HaruManda(
         CurrentGroupDialog(
             text = name,
             groupName = name,
+            todoGroupList = todoGroupList,
             onDismissRequest = {
                 openDialog = false
             },
@@ -453,6 +463,7 @@ fun HaruManda(
             currentGroup = current.currentGroup,
             upsertTodoGroupById,
             deleteCurrentGroup,
+            date
         )
     }
 
@@ -589,8 +600,8 @@ fun TodoItem(
     todo: Todo,
     onTodoToggle: (Todo) -> Unit,
     showSheet: (ContentState) -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit = { _, _, _ -> }
-
+    navigateToTodoEdit: (Int, String, String, String) -> Unit = { _, _, _, _ -> },
+    date: LocalDate = LocalDate.now()
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -612,7 +623,8 @@ fun TodoItem(
             navigateToTodoEdit(
                 if (todo.id == 0) DEFAULT_TODO else todo.id,
                 todo.title.ifEmpty { DEFAULT_TODO.toString() },
-                Uri.encode(Gson().toJson(myTime))
+                Uri.encode(Gson().toJson(myTime)),
+                date.toString()
             )
         }
     )
@@ -638,11 +650,19 @@ fun TodoItem(
                         style = HmStyle.text12,
                         color = HMColor.Primary
                     )
-                    Text(text = todo.time?.getDisplayName() ?: "", style = HmStyle.text12)
+                    if (todo.time != null) {
+                        Text(
+                            text = todo.time!!.getDisplayName(),
+                            style = HmStyle.text12,
+                            color = if (!todo.isDone && todo.time!!.isBefore(LocalTime.now())) HMColor.Dark.Red else HMColor.Text
+                        )
+                    }
                 }
+
             }
         }
     }
+
 }
 
 
@@ -671,8 +691,8 @@ fun TodoContentPreView() {
         ),
         emptyList(),
         {},
-        {}, { a, b -> },
+        {}, { a, b ,c-> },
         LocalDate.now(),
-        {}, {}, { a, b, c -> }
+        {}, {}, { a, b, c, d -> }
     )
 }

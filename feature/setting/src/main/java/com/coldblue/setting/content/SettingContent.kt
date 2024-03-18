@@ -1,5 +1,6 @@
 package com.coldblue.setting.content
 
+import android.widget.Toast
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -51,12 +53,17 @@ fun SettingContent(
     deleteUser: () -> Unit,
     onChangeAlarmState: (Boolean) -> Unit,
     email: String,
-    alarm: Boolean
+    alarm: Boolean,
+    networkState:Boolean
+
 ) {
     var openDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     if (openDialog) {
+
         DeleteDialog(
+            targetText = "",
             text = "탈퇴하면 모든 데이터가 완전히 삭제됩니다.",
             deleteConfirmText = "탈퇴",
             onDismissRequest = {
@@ -109,7 +116,17 @@ fun SettingContent(
                 title = "탈퇴",
                 isLast = true,
                 isClickable = true,
-                onClick = { openDialog = true }) {
+                onClick = {
+                    if (networkState){
+                        openDialog = true
+                    }else{
+                        Toast.makeText(
+                            context,
+                            " 인터넷 연결을 확인하세요",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "탈퇴"
@@ -180,8 +197,7 @@ fun PermissionCheck(context: Context, onChangeNotice: (Boolean) -> Unit) {
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent({}, {}, {}, "1.0", {}, {}, {},"hno05039@naver.com", false)
-
+    SettingContent({}, {}, {}, "1.0", {}, {},{}, "hno05039@naver.com" , false,false)
 }
 
 

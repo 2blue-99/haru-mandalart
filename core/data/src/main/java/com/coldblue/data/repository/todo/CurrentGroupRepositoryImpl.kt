@@ -7,6 +7,7 @@ import com.coldblue.data.mapper.CurrentGroupMapper.asSyncedEntity
 import com.coldblue.data.mapper.asDomain
 import com.coldblue.data.mapper.asEntity
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.dao.CurrentGroupDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.CurrentGroup
@@ -30,12 +31,16 @@ class CurrentGroupRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>> {
-        currentGroupDao.setCurrentGroup(date)
+        currentGroupDao.setCurrentGroup(date, getUpdateTime())
+        val d =currentGroupDao.getCurrentGroup(date)
+        Logger.d(d.first())
         return currentGroupDao.getCurrentGroup(date).map { it.asDomain() }
     }
 
-    override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int) {
-        currentGroupDao.deleteCurrentGroupWithTodo(currentGroupId, todoGroupId)
+    override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int,date: LocalDate) {
+        Logger.d("삭제를 요청하는가")
+        Logger.d("커런트 아디 $currentGroupId || 그룹아디$todoGroupId")
+        currentGroupDao.deleteCurrentGroupWithTodo(currentGroupId, todoGroupId, getUpdateTime(),date)
     }
 
     override suspend fun syncRead(): Boolean {
@@ -65,10 +70,7 @@ class CurrentGroupRepositoryImpl @Inject constructor(
             val originIds = currentGroupDataSource.upsertCurrentGroup(localNew.asNetworkModel())
             val toUpsertCurrentGroups = localNew.asSyncedEntity(originIds)
             currentGroupDao.upsertCurrentGroup(toUpsertCurrentGroups)
-            syncHelper.setMaxUpdateTime(
-                toUpsertCurrentGroups,
-                updateTimeDataSource::setCurrentGroupUpdateTime
-            )
+            syncHelper.setMaxUpdateTime(toUpsertCurrentGroups, updateTimeDataSource::setCurrentGroupUpdateTime)
             return true
         } catch (e: Exception) {
             Logger.e("${e.message}")

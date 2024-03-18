@@ -10,5 +10,5 @@ interface CurrentGroupRepository : Syncable {
 
     suspend fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>>
 
-    suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int)
+    suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int,date: LocalDate)
 }

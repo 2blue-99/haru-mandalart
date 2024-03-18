@@ -19,17 +19,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -37,14 +39,20 @@ import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.asMyTime
 import com.coldblue.data.util.getAmPmHour
 import com.coldblue.designsystem.component.HMButton
+import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Todo
 import com.coldblue.todo.component.HMTimePicker
 import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.google.gson.Gson
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
+import kotlin.math.sin
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,11 +63,14 @@ fun TodoBottomSheet(
     onDismissRequest: () -> Unit,
     sheetState: SheetState,
     today: LocalDate,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String, String) -> Unit
+
 
 ) {
     var onSwitch by remember { mutableStateOf(false) }
     var myTime by remember { mutableStateOf(todo.time?.asMyTime() ?: LocalTime.now().asMyTime()) }
+
+    var toEdit by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         onSwitch = todo.time != null
@@ -68,10 +79,27 @@ fun TodoBottomSheet(
     var titleText by remember { mutableStateOf(todo.title) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
-
     LaunchedEffect(onSwitch) {
         sheetState.expand()
     }
+
+
+    DisposableEffect(toEdit) {
+
+        onDispose {
+            if (toEdit) {
+                navigateToTodoEdit(
+                    if (todo.id == 0) DEFAULT_TODO else todo.id,
+                    titleText.ifEmpty { DEFAULT_TODO.toString() },
+                    Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch))),
+                    today.toString()
+                )
+            }
+        }
+
+    }
+
+
     Box() {
         LazyColumn(Modifier.padding(bottom = 60.dp)) {
             item {
@@ -79,7 +107,7 @@ fun TodoBottomSheet(
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titleText,
-                    maxLines = 1,
+                    singleLine = true,
                     onValueChange = {
                         titleText = it
                     },
@@ -117,14 +145,15 @@ fun TodoBottomSheet(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     text = AnnotatedString("세부 항목 >"),
-                    style = HmStyle.text16.copy(color = HMColor.SubText, textAlign = TextAlign.End, fontWeight = FontWeight.Bold),
+                    style = HmStyle.text16.copy(
+                        color = HMColor.SubText,
+                        textAlign = TextAlign.End,
+                        fontWeight = FontWeight.Bold
+                    ),
                     onClick = {
                         onDismissRequest()
-                        navigateToTodoEdit(
-                            if (todo.id == 0) DEFAULT_TODO else todo.id,
-                            titleText.ifEmpty { DEFAULT_TODO.toString() },
-                            Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch)))
-                        )
+                        toEdit= true
+
                     })
             }
 

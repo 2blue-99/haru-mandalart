@@ -14,7 +14,7 @@ fun NavController.navigateToHistory(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.historyScreen(
     navigateToSetting: () -> Unit,
-    navigateToTodoEdit: (Int, String, String) -> Unit
+    navigateToTodoEdit: (Int, String, String,String) -> Unit
 ) {
     composable(route = historyRoute) {
         HistoryScreen(

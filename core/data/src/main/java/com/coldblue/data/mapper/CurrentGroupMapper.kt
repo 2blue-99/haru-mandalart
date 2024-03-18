@@ -1,5 +1,6 @@
 package com.coldblue.data.mapper
 
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.toDate
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.CurrentGroupWithName
@@ -16,7 +17,7 @@ object CurrentGroupMapper {
         return CurrentGroupEntity(
             isSync = false,
             isDel = domain.isDel,
-            updateTime = LocalDate.now().toString(),
+            updateTime = getUpdateTime(),
             todoGroupId = domain.todoGroupId,
             date = domain.date,
             index = domain.index,

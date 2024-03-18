@@ -1,17 +1,23 @@
 package com.coldblue.todo
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -137,23 +143,45 @@ fun TodoEditContent(
     var date by remember { mutableStateOf(todoDate) }
 
 
-    Box() {
+    Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(Modifier.padding(bottom = 60.dp)) {
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = "할 일", style = HmStyle.text16, fontWeight = FontWeight.Bold)
-                    IconButton(onClick = { onDismissRequest() }) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "작성 종료")
-                    }
+               Box(modifier = Modifier.fillMaxWidth()){
+                   Row(
+                       Modifier
+                           .fillMaxWidth()
+                           .height(30.dp)
+                           .background(HMColor.Background),
+                       verticalAlignment = Alignment.CenterVertically,
+                       horizontalArrangement = Arrangement.Absolute.Center
+                   ) {
+                       Text(
+                           text = "세부 항목", style = HmStyle.text16, fontWeight = FontWeight.Bold
+                       )
+                   }
+                   Row(
+                       Modifier
+                           .fillMaxWidth()
+                           .height(30.dp),
+                       verticalAlignment = Alignment.CenterVertically,
+                       horizontalArrangement = Arrangement.End
+                   ) {
+                       IconButton(onClick = { onDismissRequest() }) {
+                           Icon(
+                               imageVector = Icons.Default.Close,
+                               contentDescription = "작성 종료"
+                           )
+                       }
+                   }
+               }
 
-                }
+            }
+            item {
+                Text(text = "할 일", style = HmStyle.text16, fontWeight = FontWeight.Bold)
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titleText,
-                    maxLines = 1,
+                    singleLine = true,
                     onValueChange = {
                         titleText = it
                     },
@@ -172,6 +200,7 @@ fun TodoEditContent(
                 )
             }
             item {
+                Spacer(modifier = Modifier.size(16.dp))
                 HMTimePicker(
                     myTime = myTime,
                     onSwitch = onSwitch,
@@ -186,6 +215,8 @@ fun TodoEditContent(
                 )
             }
             item {
+                Spacer(modifier = Modifier.size(16.dp))
+
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     text = "설명",
@@ -205,6 +236,8 @@ fun TodoEditContent(
                 )
             }
             item {
+                Spacer(modifier = Modifier.size(16.dp))
+
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     text = "날짜",
@@ -216,7 +249,12 @@ fun TodoEditContent(
                 Row {
                     dateButtons.forEach { button ->
                         SelectButton(button) {
-                            date = today.plusDays(button.plus)
+                            if (button.text=="직접입력") {
+                                date = todo.date
+                            }else{
+                                date = today.plusDays(button.plus)
+
+                            }
                             dateButtons.replaceAll {
                                 it.copy(isChecked = it.text == button.text)
                             }
@@ -237,6 +275,8 @@ fun TodoEditContent(
                 }
             }
         }
+
+
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             if (todo.id != 0) {
                 Row(Modifier.fillMaxWidth()) {

@@ -13,8 +13,8 @@ interface TodoGroupDao {
     @Query("Select * From todo_group WHERE is_del=0")
     fun getTodoGroup(): Flow<List<TodoGroupEntity>>
 
-    @Query("UPDATE todo_group SET name = :name WHERE id = :todoGroupId")
-    suspend fun upsertTodoGroup(todoGroupId: Int, name: String)
+    @Query("UPDATE todo_group SET name = :name , update_time = :updateTime WHERE id = :todoGroupId")
+    suspend fun upsertTodoGroup(todoGroupId: Int, name: String, updateTime: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodoGroup(todoGroup: TodoGroupEntity)
@@ -23,20 +23,20 @@ interface TodoGroupDao {
     suspend fun upsertTodoGroup(todoGroups: List<TodoGroupEntity>)
 
     @Transaction
-    suspend fun deleteTodoGroupAndRelated(todoGroupId: Int) {
-        deleteTodoGroup(todoGroupId)
-        deleteCurrentGroup(todoGroupId)
-        setOffTodo(todoGroupId)
+    suspend fun deleteTodoGroupAndRelated(todoGroupId: Int, updateTime: String) {
+        deleteTodoGroup(todoGroupId, updateTime)
+        deleteCurrentGroup(todoGroupId, updateTime)
+        setOffTodo(todoGroupId, updateTime)
     }
 
-    @Query("UPDATE todo_group SET is_del = 1 WHERE id = :todoGroupId")
-    suspend fun deleteTodoGroup(todoGroupId: Int)
+    @Query("UPDATE todo_group SET is_del = 1 , update_time = :updateTime WHERE id = :todoGroupId")
+    suspend fun deleteTodoGroup(todoGroupId: Int, updateTime: String)
 
-    @Query("UPDATE current_group SET is_del = 1 WHERE todo_group_id = :todoGroupId")
-    suspend fun deleteCurrentGroup(todoGroupId: Int)
+    @Query("UPDATE current_group SET is_del = 1  , update_time = :updateTime WHERE todo_group_id = :todoGroupId")
+    suspend fun deleteCurrentGroup(todoGroupId: Int, updateTime: String)
 
-    @Query("UPDATE todo SET todo_group_id = NULL WHERE todo_group_id = :todoGroupId")
-    suspend fun setOffTodo(todoGroupId: Int)
+    @Query("UPDATE todo SET todo_group_id = NULL , update_time = :updateTime WHERE todo_group_id = :todoGroupId")
+    suspend fun setOffTodo(todoGroupId: Int, updateTime: String)
 
 
     @Query("SELECT * FROM todo_group WHERE update_time > :updateTime AND is_sync=0")

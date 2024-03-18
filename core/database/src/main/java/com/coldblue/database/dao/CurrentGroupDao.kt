@@ -13,6 +13,7 @@ import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.database.entity.TodoWithGroupName
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
 @Dao
@@ -29,16 +30,21 @@ interface CurrentGroupDao {
     suspend fun upsertCurrentGroup(currentGroups: List<CurrentGroupEntity>)
 
     @Transaction
-    suspend fun deleteCurrentGroupWithTodo(currentGroupId: Int, todoGroupId: Int) {
-        deleteCurrentGroup(currentGroupId)
-        deleteTodoByCurrentGroup(todoGroupId)
+    suspend fun deleteCurrentGroupWithTodo(
+        currentGroupId: Int,
+        todoGroupId: Int,
+        updateTime: String,
+        date: LocalDate,
+    ) {
+        deleteCurrentGroup(currentGroupId, updateTime)
+        deleteTodoByCurrentGroup(todoGroupId, updateTime, date)
     }
 
-    @Query("UPDATE current_group SET is_del=1 WHERE id = :currentGroupId")
-    suspend fun deleteCurrentGroup(currentGroupId: Int)
+    @Query("UPDATE current_group SET is_del=1, update_time=:updateTime WHERE current_group.id = :currentGroupId")
+    suspend fun deleteCurrentGroup(currentGroupId: Int, updateTime: String)
 
-    @Query("UPDATE todo SET todo_group_id=null WHERE todo_group_id = :todoGroupId")
-    suspend fun deleteTodoByCurrentGroup(todoGroupId: Int)
+    @Query("UPDATE todo SET todo_group_id=null,update_time=:updateTime WHERE todo_group_id = :todoGroupId AND todo.date = :date")
+    suspend fun deleteTodoByCurrentGroup(todoGroupId: Int, updateTime: String, date: LocalDate)
 
 
     @Query("SELECT * FROM current_group WHERE update_time > :updateTime AND is_sync=0")
@@ -64,17 +70,39 @@ interface CurrentGroupDao {
     @Query("SELECT COUNT(*) FROM current_group WHERE date = :date")
     suspend fun getCurrentGroupCount(date: LocalDate): Int
 
-    @Query("SELECT * FROM current_group WHERE is_del=0 AND date = (SELECT MAX(date) FROM current_group)")
-    suspend fun getLatestCurrentGroups(): List<CurrentGroupEntity>
+    //    @Query("SELECT * FROM current_group WHERE is_del=0 AND date = (SELECT MAX(date) FROM current_group)")
+//    suspend fun getLatestCurrentGroups(): List<CurrentGroupEntity>
+    @Query("SELECT * FROM current_group WHERE is_del=0 AND date =:date")
+    suspend fun getLatestCurrentGroups(date: LocalDate): List<CurrentGroupEntity>
+
+    @Query("SELECT date FROM current_group WHERE is_del=0 AND date < :date ORDER BY date DESC LIMIT 1")
+    suspend fun getCurrentGroupByDate(date: LocalDate): LocalDate?
+
+//    @Query("SELECT * FROM current_group WHERE is_del=0 AND date < :date ORDER BY date DESC LIMIT 1")
+//    suspend fun getLatestCurrentGroups(date: LocalDate): List<CurrentGroupEntity>
 
 
     @Transaction
-    suspend fun setCurrentGroup(date: LocalDate) {
+    suspend fun setCurrentGroup(date: LocalDate, updateTime: String) {
         val groupCount = getCurrentGroupCount(date)
-        if (groupCount == 0) {
-            val latestGroups = getLatestCurrentGroups()
-            val updatedGroups = latestGroups.map { it.copy(date = date, id = 0) }
-            upsertCurrentGroup(updatedGroups)
-        }
+        if (groupCount > 0) return
+
+        val latestDate = getCurrentGroupByDate(date)
+        if (latestDate == null) return
+
+        val latestGroups = getLatestCurrentGroups(latestDate)
+        val updatedGroups =
+            latestGroups.map {
+                CurrentGroupEntity(
+                    date = date,
+                    updateTime = updateTime,
+                    isDel = it.isDel,
+                    isSync = it.isSync,
+                    index = it.index,
+                    originId = it.originId,
+                    todoGroupId = it.todoGroupId
+                )
+            }
+        upsertCurrentGroup(updatedGroups)
     }
 }

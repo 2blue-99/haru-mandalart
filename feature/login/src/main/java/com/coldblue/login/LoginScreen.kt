@@ -6,18 +6,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,10 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.R
+import com.coldblue.designsystem.theme.HMColor
+import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.login.state.LoginUiState
 import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
@@ -38,80 +40,98 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
+    val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
 
     when (val state = loginUiState) {
-        is LoginUiState.Fail -> {
-            Toast.makeText(context, "실패 : ${state.loginException.msg}", Toast.LENGTH_SHORT).show()
-//            when(state.loginException){
-//                is LoginExceptionState.Waiting->  Toast.makeText(context, "실패 : ${state.loginException.msg}", Toast.LENGTH_SHORT).show()
-//                is LoginExceptionState.Unknown->  Toast.makeText(context, "실패 : ${state.loginException.msg}", Toast.LENGTH_SHORT).show()
-//                is LoginExceptionState.DropDown->  {}
-//            }
-        }
+        is LoginUiState.Fail -> Toast.makeText(
+            context,
+            "실패 : ${state.loginException.msg}",
+            Toast.LENGTH_SHORT
+        ).show()
 
         else -> {}
     }
-
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(
         onResult = { result -> loginViewModel.checkLoginState(result) },
         fallback = { }
     )
 
-    Surface(
-        color = Color.White,
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(Color.White)
+            .padding(20.dp),
     ) {
-        Box(
-            modifier = Modifier.padding(bottom = 80.dp, start = 20.dp, end = 20.dp),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier
+                .weight(7f)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.pupple_icon),
-                tint = Color(0xFF432ED1),
-                modifier = Modifier.size(200.dp, 200.dp),
-                contentDescription = null
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .aspectRatio(1f),
+                painter = painterResource(id = com.coldblue.login.R.drawable.app_icon),
+                contentDescription = "앱 아이콘"
             )
+            Column(
+                Modifier.fillMaxWidth(0.4f)
+            ) {
+                Text(text = "하루,", style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = "만다라트", style = HmStyle.text30, color = HMColor.Primary)
+            }
         }
-        Box(
-            modifier = Modifier.padding(bottom = 80.dp, start = 20.dp, end = 20.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            LoginButton { authState.startFlow() }
+        Box(modifier = Modifier.weight(1f)) {
+            LoginButton {
+                if (networkState) {
+                    authState.startFlow()
+                } else {
+                    Toast.makeText(
+                        context,
+                        " 인터넷 연결을 확인하세요",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 }
 
+
 @Composable
 fun LoginButton(
-    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     Button(
-        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, Color.DarkGray),
+        border = BorderStroke(1.dp, HMColor.Gray),
         onClick = { onClick() },
         shape = RoundedCornerShape(5.dp),
-        modifier = modifier
-            .fillMaxWidth()
-            .height(60.dp)
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = HMColor.Background,
+            contentColor = HMColor.Text
+        ),
     ) {
         Row(
+            modifier = Modifier.padding(vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
+
         ) {
             Image(
-                modifier = modifier.size(22.dp, 22.dp),
+                modifier = Modifier.size(22.dp),
                 painter = painterResource(id = R.drawable.google_icon),
                 contentDescription = null
             )
-            Spacer(modifier = Modifier.padding(start = 10.dp))
             Text(
-                color = Color.DarkGray,
-                text = "Google 계정으로 시작하기"
+                modifier = Modifier.padding(start = 8.dp),
+                color = HMColor.Text,
+                text = "Google로 시작하기",
+                style = TextStyle.Default,
+                fontWeight = FontWeight.Medium
             )
         }
     }

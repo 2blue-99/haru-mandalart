@@ -39,7 +39,7 @@ fun GroupPicker(
                 ToggleInfo(
                     isChecked = currentTodoGroupId == group.todoGroupId,
                     text = group.name,
-                    currentGroupId = group.id
+                    groupId = group.todoGroupId
                 )
             })
         }
@@ -54,7 +54,7 @@ fun GroupPicker(
         LazyRow(modifier = Modifier.fillMaxWidth()) {
             items(groupButtons) { group ->
                 SelectButton(group) {
-                    onClick(group.currentGroupId)
+                    onClick(group.groupId)
                     groupButtons.replaceAll {
                         it.copy(isChecked = it.text == group.text)
                     }
