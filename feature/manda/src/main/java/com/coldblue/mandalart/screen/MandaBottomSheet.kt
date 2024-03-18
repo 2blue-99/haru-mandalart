@@ -64,6 +64,7 @@ import com.coldblue.model.MandaKey
 fun MandaBottomSheet(
     mandaBottomSheetContentState: MandaBottomSheetContentState,
     sheetState: SheetState,
+    mandaKeyList: List<String>,
     upsertMandaFinal: (String) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
@@ -82,6 +83,7 @@ fun MandaBottomSheet(
     var buttonClickableState by remember { mutableStateOf(mandaUI.name.isNotBlank()) }
     var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
     var dialogState by remember { mutableStateOf(false) }
+    var duplicatedState by remember { mutableStateOf(false) }
 
     if (dialogState) {
         DeleteDialog(
@@ -103,7 +105,8 @@ fun MandaBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = { onDisMiss() },
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = HMColor.Background
     ) {
         Column(
             modifier = Modifier
@@ -123,14 +126,17 @@ fun MandaBottomSheet(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
                 Text(
-                    text = contentType.title + " 이름",
+                    text = "이름",
                     style = HmStyle.text16,
                     fontWeight = FontWeight.Bold
                 )
                 HMTextField(inputText = inputText, maxLen = contentType.maxLen) {
                     inputText = it
                     buttonClickableState = inputText.isNotBlank()
+                    duplicatedState = false
                 }
+                if(duplicatedState)
+                    Text(text = "이미 존재하는 목표입니다.", style = HmStyle.text12, color = HMColor.NegativeText)
             }
 
             when (contentType) {
@@ -151,12 +157,22 @@ fun MandaBottomSheet(
                         when (contentType) {
 
                             is MandaBottomSheetContentType.MandaFinal ->
-                                upsertMandaFinal(inputText)
+                                if(mandaKeyList.contains(inputText))
+                                    duplicatedState = true
+                                else {
+                                    upsertMandaFinal(inputText)
+                                    onDisMiss()
+                                }
 
                             is MandaBottomSheetContentType.MandaKey ->
-                                upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                                if(mandaKeyList.contains(inputText))
+                                    duplicatedState = true
+                                else {
+                                    upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                                    onDisMiss()
+                                }
 
-                            is MandaBottomSheetContentType.MandaDetail ->
+                            is MandaBottomSheetContentType.MandaDetail -> {
                                 upsertMandaDetail(
                                     mandaUI.asMandaDetail(
                                         inputText,
@@ -164,9 +180,9 @@ fun MandaBottomSheet(
                                         colorIndex
                                     )
                                 )
-
+                                onDisMiss()
+                            }
                         }
-                        onDisMiss()
                     }
                 }
 

@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface PermissionHelper {
 
-    val noticePermissionRejectState: Flow<Boolean>
-
-    suspend fun updateNoticePermissionState(state: Boolean)
+    val initPermissionState: Flow<Boolean>
+    suspend fun updateInitPermissionState(state: Boolean)
 }

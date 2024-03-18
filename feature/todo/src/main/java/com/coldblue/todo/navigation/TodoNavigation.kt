@@ -6,18 +6,17 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.coldblue.model.MyTime
 import com.coldblue.todo.TodoEditScreen
 import com.coldblue.todo.TodoScreen
 import com.coldblue.todo.uistate.DATE
 import com.coldblue.todo.uistate.MY_TIME
 import com.coldblue.todo.uistate.TITLE
 import com.coldblue.todo.uistate.TODO_ID
-import com.google.gson.Gson
 
 const val todoRoute = "Todo"
 const val todoEditRoute = "TodoEdit"
 fun NavController.navigateToTodo(navOptions: NavOptions? = null) {
+    this.popBackStack()
     this.navigate(todoRoute, navOptions)
 }
 

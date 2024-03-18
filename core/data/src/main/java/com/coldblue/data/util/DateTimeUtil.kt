@@ -124,11 +124,15 @@ fun Int.toLastLocalDate(): LocalDate {
     return LocalDate.parse("$this-12-31")
 }
 
-fun List<String>?.toSoredIntList(): List<Int> {
-    return if (this.isNullOrEmpty()) emptyList()
-    else this.map { it.toInt() }.sorted()
-
+fun List<String>?.toHistoryList(): List<Int> {
+    val localYear = LocalDate.now().year
+    val list = this ?: emptyList()
+    return (list.map { it.toInt() } + listOf(localYear)).sorted()
 }
+
+//fun List<Int>.toSoredIntList(): List<Int> {
+//    return this.map { it.toInt() }.sorted()
+//}
 
 fun LocalDate.isMatch(plusDay: Long): Boolean {
     return this == LocalDate.now().plusDays(plusDay)

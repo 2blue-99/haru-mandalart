@@ -54,6 +54,7 @@ import com.coldblue.history.HistoryUiState
 import com.coldblue.model.Todo
 import com.coldblue.todo.TodoItem
 import java.time.LocalDate
+import java.util.logging.Logger
 
 @Composable
 fun HistoryContent(
@@ -67,8 +68,8 @@ fun HistoryContent(
 
 ) {
 
-    var clickedDate by remember { mutableStateOf(LocalDate.now()) }
-    var isClicked by remember { mutableStateOf(true) }
+    var dateShowState by remember { mutableStateOf(true) }
+
 
     Column(
         modifier = Modifier
@@ -97,20 +98,18 @@ fun HistoryContent(
         }
 
         HistoryController(
+            today = historyUiState.today,
             controllerList = historyUiState.controllerList,
             todoYearList = historyUiState.todoYearList,
             selectYear = selectYear,
-            selectDate = {
-                selectDate(it)
-                clickedDate = it
-            },
-            onClick = { isClicked = it }
+            selectDate = { selectDate(it) },
+            dateShowState = { dateShowState = it }
         )
 
         Column {
-            val clickedDate = "${clickedDate.formatToDot()} ${clickedDate.toDayOfWeekString()}"
+            val clickedDate = "${historyUiState.today.formatToDot()} ${historyUiState.today.toDayOfWeekString()}"
             Text(
-                text = if (isClicked) clickedDate else "",
+                text = if (dateShowState) clickedDate else "",
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
@@ -138,66 +137,61 @@ fun HistoryContent(
 
 @Composable
 fun HistoryController(
+    today: LocalDate,
     controllerList: List<ControllerWeek>,
     todoYearList: List<Int>,
     selectDate: (LocalDate) -> Unit,
     selectYear: (Int) -> Unit,
-    onClick: (Boolean) -> Unit
+    dateShowState: (Boolean) -> Unit
 ) {
-
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val presentLocalYear = LocalDate.now().year
 
     val boxClickStateList =
         remember { mutableStateListOf<Boolean>().apply { addAll(List(controllerList.size * 7) { false }) } }
 
+    com.orhanobut.logger.Logger.d(todoYearList.size)
     val yearClickStateList =
         remember { mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) } }
+    com.orhanobut.logger.Logger.d(yearClickStateList.size)
 
-    var beforeBoxIndex by remember { mutableIntStateOf(0) }
-    var beforeYearIndex by remember {
-        mutableIntStateOf(todoYearList.indices.filter { todoYearList[it] == presentLocalYear }
-            .firstOrNull() ?: 0)
-    }
+    var clickedState by remember { mutableStateOf(true) }
+    var beforeDateIndex by remember { mutableIntStateOf(0) }
+    var beforeYearIndex by remember { mutableIntStateOf(-1) }
+    var pickedDateIndex by remember { mutableIntStateOf(0) }
+    var pickedYearIndex by remember { mutableIntStateOf(todoYearList.indices.firstOrNull { todoYearList[it] == presentLocalYear } ?: 0) }
 
-    var initPickIndex by remember { mutableIntStateOf(0) }
-    var pickYear by remember { mutableIntStateOf(presentLocalYear) }
-
-    LaunchedEffect(todoYearList) {
-        if (todoYearList.size != yearClickStateList.size) {
-            yearClickStateList.clear()
-            yearClickStateList.addAll(mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) })
-        }
-    }
-
-    // Init & Click Box Pick Controller
-    LaunchedEffect(initPickIndex, pickYear) {
-        if (pickYear == presentLocalYear) {
-            onClick(true)
-            selectDate(LocalDate.now())
-            boxClickStateList[beforeBoxIndex] = false
-            boxClickStateList[initPickIndex] = true
-            beforeBoxIndex = initPickIndex
+    // Init Clicked Controller
+    LaunchedEffect(controllerList) {
+        if (todoYearList[pickedYearIndex] == presentLocalYear && beforeYearIndex != pickedYearIndex) {
+            boxClickStateList[beforeDateIndex] = false
+            boxClickStateList[pickedDateIndex] = true
+            beforeDateIndex = pickedDateIndex
+            beforeYearIndex = pickedYearIndex
+            clickedState = true
         } else {
-            boxClickStateList[beforeBoxIndex] = false
+            boxClickStateList[beforeDateIndex] = false
+            clickedState = false
         }
     }
 
-    fun boxController(presentIndex: Int, date: LocalDate) {
-
-        boxClickStateList[beforeBoxIndex] = false
-        boxClickStateList[presentIndex] = true
-        beforeBoxIndex = presentIndex
-        selectDate(date)
-        onClick(true)
+    LaunchedEffect(clickedState){
+        dateShowState(clickedState)
     }
 
-    fun yearController(presentIndex: Int, year: Int) {
-        pickYear = year
-        yearClickStateList[beforeYearIndex] = false
+    fun boxController(presentIndex: Int) {
+        boxClickStateList[beforeDateIndex] = false
+        boxClickStateList[presentIndex] = true
+        beforeDateIndex = presentIndex
+        pickedDateIndex = presentIndex
+        clickedState = true
+    }
+
+    fun yearController(presentIndex: Int) {
+        yearClickStateList.indices.forEach { yearClickStateList[it] = false }
         yearClickStateList[presentIndex] = true
-        beforeYearIndex = presentIndex
-        onClick(false)
+        beforeYearIndex = pickedYearIndex
+        pickedYearIndex = presentIndex
     }
 
     Column {
@@ -257,18 +251,20 @@ fun HistoryController(
                                                 tintColor = HMColor.Gray,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxController(stateIndex, timeState.date)
+                                                selectDate(timeState.date)
+                                                boxController(stateIndex)
                                             }
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            initPickIndex = stateIndex
+                                            pickedDateIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Gray,
                                                 tintColor = HMColor.Gray,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxController(stateIndex, timeState.date)
+                                                selectDate(timeState.date)
+                                                boxController(stateIndex)
                                             }
                                         }
 
@@ -278,7 +274,8 @@ fun HistoryController(
                                                 tintColor = HMColor.Box,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxController(stateIndex, timeState.date)
+                                                selectDate(timeState.date)
+                                                boxController(stateIndex)
                                             }
                                         }
                                     }
@@ -294,19 +291,21 @@ fun HistoryController(
                                                 isExistTodo = true,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxController(stateIndex, timeState.date)
+                                                selectDate(timeState.date)
+                                                boxController(stateIndex)
                                             }
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            initPickIndex = stateIndex
+                                            pickedDateIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Box,
                                                 tintColor = HMColor.Primary,
                                                 isExistTodo = true,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxController(stateIndex, timeState.date)
+                                                selectDate(timeState.date)
+                                                boxController(stateIndex)
                                             }
                                         }
 
@@ -317,7 +316,8 @@ fun HistoryController(
                                                 isExistTodo = true,
                                                 isClicked = boxClickStateList[stateIndex]
                                             ) {
-                                                boxController(stateIndex, timeState.date)
+                                                selectDate(timeState.date)
+                                                boxController(stateIndex)
                                             }
                                         }
                                     }
@@ -340,7 +340,8 @@ fun HistoryController(
                     isChecked = yearClickStateList[index],
                 ) {
                     selectYear(year)
-                    yearController(index, year)
+                    selectDate(LocalDate.now())
+                    yearController(index)
                 }
             }
         }
@@ -452,145 +453,3 @@ fun ControllerYearButtonPreview() {
 
     }
 }
-
-//@Composable
-//@Preview
-//fun HistoryControllerPreview() {
-//    HistoryController(
-//        controllerList = listOf(
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ),
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ),
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ),
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ),
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ),
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ),
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ),
-//            ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ), ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ), ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            ), ControllerWeek(
-//                month = 3,
-//                controllerDayList = listOf(
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                    ControllerDayState.Empty(ControllerTimeState.Past(LocalDate.now())),
-//                )
-//            )
-//        ),
-//        todoYearList = listOf(2024, 2025),
-//    ) {
-//
-//    }
-//}
-
