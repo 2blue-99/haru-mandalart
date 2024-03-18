@@ -44,10 +44,10 @@ object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
         return this.mapIndexed { index, netWorkTodoGroup ->
             TodoGroupEntity(
                 originId = netWorkTodoGroup.id,
-                name = netWorkTodoGroup.name,
+                name = netWorkTodoGroup.name?:"",
                 isSync = true,
                 isDel = netWorkTodoGroup.is_del,
-                updateTime = netWorkTodoGroup.update_time,
+                updateTime = netWorkTodoGroup.update_time?:"",
                 id = todoGroupIds[index] ?: 0,
             )
         }

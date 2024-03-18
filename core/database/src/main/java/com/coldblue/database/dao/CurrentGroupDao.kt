@@ -90,9 +90,9 @@ interface CurrentGroupDao {
                     date = date,
                     updateTime = updateTime,
                     isDel = it.isDel,
-                    isSync = it.isSync,
+                    isSync = false,
                     index = it.index,
-                    originId = it.originId,
+                    originId = 0,
                     todoGroupId = it.todoGroupId,
                     originGroupId = it.originGroupId
                 )

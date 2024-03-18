@@ -36,8 +36,13 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         return currentGroupDao.getCurrentGroup(date).map { it.asDomain() }
     }
 
-    override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int,date: LocalDate) {
-        currentGroupDao.deleteCurrentGroupWithTodo(currentGroupId, todoGroupId, getUpdateTime(),date)
+    override suspend fun delCurrentGroup(currentGroupId: Int, todoGroupId: Int, date: LocalDate) {
+        currentGroupDao.deleteCurrentGroupWithTodo(
+            currentGroupId,
+            todoGroupId,
+            getUpdateTime(),
+            date
+        )
         syncHelper.syncWrite()
     }
 
@@ -65,11 +70,15 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         try {
             val localNew =
                 currentGroupDao.getToWriteCurrentGroup(updateTimeDataSource.currentGroupUpdateTime.first())
+
             Logger.d(localNew)
             val originIds = currentGroupDataSource.upsertCurrentGroup(localNew.asNetworkModel())
             val toUpsertCurrentGroups = localNew.asSyncedEntity(originIds)
             currentGroupDao.upsertCurrentGroup(toUpsertCurrentGroups)
-            syncHelper.setMaxUpdateTime(toUpsertCurrentGroups, updateTimeDataSource::setCurrentGroupUpdateTime)
+            syncHelper.setMaxUpdateTime(
+                toUpsertCurrentGroups,
+                updateTimeDataSource::setCurrentGroupUpdateTime
+            )
             return true
         } catch (e: Exception) {
             Logger.e("${e.message}")
