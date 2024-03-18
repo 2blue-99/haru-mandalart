@@ -59,18 +59,24 @@ class MainActivity : ComponentActivity() {
                 val permissionLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission(),
                     onResult = { isGranted ->
-                        if(!isGranted)
-                            Toast.makeText(context, "알림 권한은 앱 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT).show()
-                           CoroutineScope(Dispatchers.IO).launch {
+                        if (!isGranted)
+                            Toast.makeText(context, "알림 권한은 앱 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT)
+                                .show()
+                        CoroutineScope(Dispatchers.IO).launch {
                             permissionHelper.updateInitPermissionState(true)
                         }
+                    }
 
                 )
 
-                LaunchedEffect(permissionLauncher){
+                LaunchedEffect(permissionLauncher) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED){
-                            if(!permissionHelper.initPermissionState.first()){
+                        if (ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.POST_NOTIFICATIONS
+                            ) == PackageManager.PERMISSION_DENIED
+                        ) {
+                            if (!permissionHelper.initPermissionState.first()) {
                                 permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                             }
                         }

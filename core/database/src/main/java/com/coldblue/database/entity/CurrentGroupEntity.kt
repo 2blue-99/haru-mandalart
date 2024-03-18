@@ -20,6 +20,6 @@ data class CurrentGroupEntity(
 
 data class CurrentGroupWithName(
     @Embedded val currentGroup: CurrentGroupEntity,
-    @ColumnInfo(name = "groupName") val groupName: String
+    @ColumnInfo(name = "groupName") val groupName: String?
 )
 

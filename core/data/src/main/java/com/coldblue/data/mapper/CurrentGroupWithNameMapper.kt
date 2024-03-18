@@ -15,7 +15,7 @@ fun List<CurrentGroupWithName>.asDomain(): List<CurrentGroup> {
             index = entity.currentGroup.index,
             todoGroupId = entity.currentGroup.todoGroupId,
             id = entity.currentGroup.id,
-            name = entity.groupName
+            name = entity.groupName?:"외래키가 안맞음"
         )
     }
 }
