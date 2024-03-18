@@ -30,8 +30,9 @@ class MandaKeyRepositoryImpl @Inject constructor(
         syncHelper.syncWrite()
     }
 
-    override suspend fun deleteMandaKeys(idList: List<Int>) {
-        mandaKeyDao.deleteMandaKeys(idList)
+    override suspend fun deleteMandaKeys(keyIdList: List<Int>, detailIdList: List<Int>) {
+        Logger.d("$keyIdList\n$detailIdList")
+        mandaKeyDao.deleteMandaKeyAndDetail(keyIdList, detailIdList)
     }
 
     override suspend fun deleteAllMandaDetail() {

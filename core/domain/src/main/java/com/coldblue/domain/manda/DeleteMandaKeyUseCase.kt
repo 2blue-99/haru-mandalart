@@ -8,10 +8,7 @@ class DeleteMandaKeyUseCase @Inject constructor(
     private val mandaKeyRepository: MandaKeyRepository,
     private val mandaDetailRepository: MandaDetailRepository
 ) {
-    suspend operator fun invoke(id: Int, detailIdList: List<Int>){
-        mandaKeyRepository.deleteMandaKeys(listOf(id))
-
-        if(detailIdList.isNotEmpty())
-            mandaDetailRepository.deleteMandaDetail(detailIdList)
+    suspend operator fun invoke(keyId: Int, detailIdList: List<Int>){
+        mandaKeyRepository.deleteMandaKeys(listOf(keyId), detailIdList)
     }
 }

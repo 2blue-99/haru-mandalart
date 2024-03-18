@@ -14,16 +14,6 @@ interface MandaKeyDao {
     @Query("Select * From manda_key")
     fun getMandaKeys(): Flow<List<MandaKeyEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertMandaKeys(mandaEntities: List<MandaKeyEntity>)
-
-    @Query("Update manda_key Set is_del = 1 Where id = :idList")
-    suspend fun deleteMandaKeys(idList: List<Int>)
-
-    @Query("Update manda_key Set is_del = 1")
-    suspend fun deleteAllMandaKey()
-
-
     @Query("SELECT * FROM manda_key WHERE update_time > :updateTime AND is_sync=0")
     fun getToWriteMandaKeys(updateTime: String): List<MandaKeyEntity>
 
@@ -39,4 +29,22 @@ interface MandaKeyDao {
 
     @Query("SELECT * FROM manda_key WHERE id = 5 AND is_del = 0")
     fun getFinalManda(): Flow<MandaKeyEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertMandaKeys(mandaEntities: List<MandaKeyEntity>)
+
+    @Transaction
+    suspend fun deleteMandaKeyAndDetail(keyIdList: List<Int>, detailIdList: List<Int>){
+        deleteMandaKeys(keyIdList)
+        deleteMandaDetails(detailIdList)
+    }
+
+    @Query("Update manda_key Set is_del = 1 Where id in (:idList)")
+    suspend fun deleteMandaKeys(idList: List<Int>)
+
+    @Query("Update manda_detail Set is_del = 1 Where id in (:idList)")
+    suspend fun deleteMandaDetails(idList: List<Int>)
+
+    @Query("Update manda_key Set is_del = 1")
+    suspend fun deleteAllMandaKey()
 }
