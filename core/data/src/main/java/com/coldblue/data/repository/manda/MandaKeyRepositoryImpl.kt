@@ -75,9 +75,6 @@ class MandaKeyRepositoryImpl @Inject constructor(
     override suspend fun syncWrite(): Boolean {
         try {
             val localNew = mandaKeyDao.getToWriteMandaKeys(updateTimeDataSource.mandaKeyUpdateTime.first())
-
-            Logger.d(localNew)
-
             val originIds = mandaKeyDataSource.upsertMandaKey(localNew.asNetworkModel())
 
             val toUpsertMandaKeys = localNew.asSyncedEntity(originIds)

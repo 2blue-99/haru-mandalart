@@ -1,6 +1,5 @@
 package com.coldblue.data.repository.todo
 
-import com.coldblue.data.mapper.CurrentGroupMapper.asDomain
 import com.coldblue.data.mapper.CurrentGroupMapper.asEntity
 import com.coldblue.data.mapper.CurrentGroupMapper.asNetworkModel
 import com.coldblue.data.mapper.CurrentGroupMapper.asSyncedEntity
@@ -26,13 +25,11 @@ class CurrentGroupRepositoryImpl @Inject constructor(
     private val syncHelper: SyncHelper,
 ) : CurrentGroupRepository {
     override suspend fun upsertCurrentGroup(currentGroup: CurrentGroup) {
-        currentGroupDao.upsertCurrentGroup(currentGroup.asEntity())
+        currentGroupDao.upsertCurrentGroupOne(currentGroup.asEntity())
         syncHelper.syncWrite()
     }
 
     override suspend fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroup>> {
-        currentGroupDao.setCurrentGroup(date, getUpdateTime())
-        syncHelper.syncWrite()
         return currentGroupDao.getCurrentGroup(date).map { it.asDomain() }
     }
 
@@ -54,7 +51,7 @@ class CurrentGroupRepositoryImpl @Inject constructor(
             val todoGroupIds = currentGroupDao.getCurrentGroupIdByOriginIds(originIds)
             val toUpsertCurrentGroups = remoteNew.asEntity(todoGroupIds)
 
-            currentGroupDao.upsertCurrentGroup(toUpsertCurrentGroups)
+            currentGroupDao.syncWriteCurrentTGroup(toUpsertCurrentGroups)
             syncHelper.setMaxUpdateTime(
                 toUpsertCurrentGroups,
                 updateTimeDataSource::setCurrentGroupUpdateTime
@@ -70,11 +67,9 @@ class CurrentGroupRepositoryImpl @Inject constructor(
         try {
             val localNew =
                 currentGroupDao.getToWriteCurrentGroup(updateTimeDataSource.currentGroupUpdateTime.first())
-
-            Logger.d(localNew)
             val originIds = currentGroupDataSource.upsertCurrentGroup(localNew.asNetworkModel())
             val toUpsertCurrentGroups = localNew.asSyncedEntity(originIds)
-            currentGroupDao.upsertCurrentGroup(toUpsertCurrentGroups)
+            currentGroupDao.syncWriteCurrentTGroup(toUpsertCurrentGroups)
             syncHelper.setMaxUpdateTime(
                 toUpsertCurrentGroups,
                 updateTimeDataSource::setCurrentGroupUpdateTime

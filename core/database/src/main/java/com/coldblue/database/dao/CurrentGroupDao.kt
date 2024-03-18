@@ -5,23 +5,48 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.CurrentGroupWithName
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 @Dao
 interface CurrentGroupDao {
-    //    @Query("Select * From current_group")
-//    fun getCurrentGroup(date:LocalDate): Flow<List<CurrentGroupEntity>>
-//    @Query("SELECT * FROM current_group WHERE date = :date AND is_del=0 OR date = (SELECT MAX(date) FROM current_group WHERE date < :date AND is_del=0)")
-//    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupEntity>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCurrentGroup(currentGroup: CurrentGroupEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertCurrentGroup(currentGroups: List<CurrentGroupEntity>)
+    @Transaction
+    suspend fun syncWriteCurrentTGroup(groups: List<CurrentGroupEntity>) {
+        groups.forEach { group ->
+            upsertCurrentGroupOneSync(group)
+        }
+    }
+
+    @Query("SELECT * FROM current_group WHERE date = :date AND current_group.`index` = :index")
+    suspend fun getGroupByDateAndIndex(date: LocalDate, index: Int): CurrentGroupEntity?
+
+    @Transaction
+    suspend fun upsertCurrentGroupOne(currentGroup: CurrentGroupEntity) {
+        val existingGroup = getGroupByDateAndIndex(currentGroup.date, currentGroup.index)
+        if (existingGroup != null) {
+            upsertCurrentGroup(currentGroup.copy(id = existingGroup.id, originId = existingGroup.originId))
+        } else {
+            upsertCurrentGroup(currentGroup)
+        }
+    }
+
+    @Transaction
+    suspend fun upsertCurrentGroupOneSync(currentGroup: CurrentGroupEntity) {
+        val existingGroup = getGroupByDateAndIndex(currentGroup.date, currentGroup.index)
+        if (existingGroup != null) {
+            upsertCurrentGroup(currentGroup.copy(id = existingGroup.id))
+        } else {
+            upsertCurrentGroup(currentGroup)
+        }
+
+    }
 
     @Transaction
     suspend fun deleteCurrentGroupWithTodo(
@@ -55,48 +80,7 @@ interface CurrentGroupDao {
     fun getCurrentGroupIdByOriginId(originId: Int): Int?
 
 
-
     @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON current_group.todo_group_id = todo_group.id WHERE current_group.date=:date AND current_group.is_del=0")
     fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupWithName>>
 
-
-    @Query("SELECT COUNT(*) FROM current_group WHERE date = :date")
-    suspend fun getCurrentGroupCount(date: LocalDate): Int
-
-    //    @Query("SELECT * FROM current_group WHERE is_del=0 AND date = (SELECT MAX(date) FROM current_group)")
-//    suspend fun getLatestCurrentGroups(): List<CurrentGroupEntity>
-    @Query("SELECT * FROM current_group WHERE is_del=0 AND date =:date")
-    suspend fun getLatestCurrentGroups(date: LocalDate): List<CurrentGroupEntity>
-
-    @Query("SELECT date FROM current_group WHERE is_del=0 AND date < :date ORDER BY date DESC LIMIT 1")
-    suspend fun getCurrentGroupByDate(date: LocalDate): LocalDate?
-
-//    @Query("SELECT * FROM current_group WHERE is_del=0 AND date < :date ORDER BY date DESC LIMIT 1")
-//    suspend fun getLatestCurrentGroups(date: LocalDate): List<CurrentGroupEntity>
-
-
-    @Transaction
-    suspend fun setCurrentGroup(date: LocalDate, updateTime: String) {
-        val groupCount = getCurrentGroupCount(date)
-        if (groupCount > 0) return
-
-        val latestDate = getCurrentGroupByDate(date)
-        if (latestDate == null) return
-
-        val latestGroups = getLatestCurrentGroups(latestDate)
-        val updatedGroups =
-            latestGroups.map {
-                CurrentGroupEntity(
-                    date = date,
-                    updateTime = updateTime,
-                    isDel = it.isDel,
-                    isSync = false,
-                    index = it.index,
-                    originId = 0,
-                    todoGroupId = it.todoGroupId,
-                    originGroupId = it.originGroupId
-                )
-            }
-        upsertCurrentGroup(updatedGroups)
-    }
 }
