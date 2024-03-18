@@ -88,7 +88,7 @@ fun MandaBottomSheet(
     if (dialogState) {
         DeleteDialog(
             targetText = keyNameText,
-            text = "이(가) 포함된 세부목표는 전부 삭제됩니다.",
+            text = " 이(가) 포함된 세부목표는 전부 삭제됩니다.",
             deleteConfirmText = "삭제",
             onDismissRequest = {
                 dialogState = false
@@ -228,10 +228,16 @@ fun MandaBottomSheet(
                                 .weight(1f),
                         ) {
                             when (contentType) {
-                                is MandaBottomSheetContentType.MandaKey ->
-                                    upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                                is MandaBottomSheetContentType.MandaKey ->{
+                                    if(mandaKeyList.contains(inputText))
+                                        duplicatedState = true
+                                    else {
+                                        upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                                        onDisMiss()
+                                    }
+                                }
 
-                                else ->
+                                else -> {
                                     upsertMandaDetail(
                                         mandaUI.asMandaDetail(
                                             inputText,
@@ -239,8 +245,9 @@ fun MandaBottomSheet(
                                             colorIndex
                                         )
                                     )
+                                    onDisMiss()
+                                }
                             }
-                            onDisMiss()
                         }
                     }
                 }
