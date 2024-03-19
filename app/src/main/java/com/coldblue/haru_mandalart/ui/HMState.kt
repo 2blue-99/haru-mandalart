@@ -60,17 +60,19 @@ class HMAppState(
     fun popBackStack(){ navController.popBackStack() }
 
     fun navigateToTopLevelDestination(route: String) {
-        val navOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
+        if(navController.currentDestination?.route != route){
+            val navOptions = navOptions {
+                popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
             }
-            launchSingleTop = true
-            restoreState = true
-        }
-        when (route) {
-            historyRoute -> navController.navigateToHistory(navOptions)
-            mandaRoute -> navController.navigateToManda(navOptions)
-            todoRoute -> navController.navigateToTodo(navOptions)
+            when (route) {
+                historyRoute -> navController.navigateToHistory(navOptions)
+                mandaRoute -> navController.navigateToManda(navOptions)
+                todoRoute -> navController.navigateToTodo(navOptions)
+            }
         }
     }
 }
