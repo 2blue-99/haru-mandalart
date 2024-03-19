@@ -25,8 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,7 +40,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.formatToDot
-import com.coldblue.data.util.toDayOfWeekString
 import com.coldblue.designsystem.component.TitleText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -53,6 +50,8 @@ import com.coldblue.history.HistoryUiState
 import com.coldblue.model.Todo
 import com.coldblue.todo.TodoItem
 import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
 fun HistoryContent(
@@ -103,7 +102,11 @@ fun HistoryContent(
         Column {
             val pickedDate =
                 if (historyUiState.today == LocalDate.MIN) ""
-                else "${historyUiState.today.formatToDot()} ${historyUiState.today.toDayOfWeekString()}"
+                else "${historyUiState.today.formatToDot()} ${
+                    historyUiState.today.dayOfWeek.getDisplayName(
+                        TextStyle.FULL, Locale.KOREA
+                    )
+                }"
             Text(
                 text = pickedDate,
                 style = HmStyle.text20,

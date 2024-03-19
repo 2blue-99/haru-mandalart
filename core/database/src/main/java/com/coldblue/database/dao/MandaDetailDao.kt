@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.coldblue.database.entity.MandaDetailEntity
-import com.coldblue.database.entity.MandaKeyEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

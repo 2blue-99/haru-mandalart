@@ -17,7 +17,6 @@ import com.coldblue.todo.uistate.BottomSheetUiState
 import com.coldblue.todo.uistate.ContentState
 import com.coldblue.todo.uistate.CurrentGroupState
 import com.coldblue.todo.uistate.TodoUiState
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

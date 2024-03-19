@@ -41,13 +41,8 @@ interface TodoDao {
 
     @Transaction
     suspend fun upsertTodo2(todo: TodoEntity) {
-
-        Logger.d(todo)
         val dd = getOriginGroupId(todo.todoGroupId)
-        Logger.d(dd)
         val originGroupId = if (todo.originGroupId == 0) getOriginGroupId(todo.todoGroupId)?:0 else todo.originGroupId
-        Logger.d(originGroupId)
-
         upsertTodo(todo.copy(originGroupId = originGroupId))
     }
 

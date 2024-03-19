@@ -4,8 +4,6 @@ import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.TodoGroup
 import com.coldblue.network.model.NetWorkTodoGroup
-import com.orhanobut.logger.Logger
-
 object TodoGroupMapper : EntityMapper<TodoGroup, TodoGroupEntity> {
 
     override fun asEntity(domain: TodoGroup): TodoGroupEntity {

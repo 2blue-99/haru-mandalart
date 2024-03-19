@@ -72,12 +72,5 @@ class SyncHelperImpl @Inject constructor(
         WorkManager.getInstance(context).cancelAllWork()
     }
 
-//    override suspend fun <T> toSyncData(
-//        getToSyncData: suspend (String) -> List<T>,
-//        updateTime: String
-//    ): List<T> {
-//        return getToSyncData(updateTime)
-//    }
-
 
 }

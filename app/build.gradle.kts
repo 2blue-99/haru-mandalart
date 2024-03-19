@@ -20,7 +20,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -58,8 +59,5 @@ dependencies {
     implementation(libs.androidx.work.ktx)
 
     implementation (libs.play.services.oss.licenses)
-
-//    implementation (libs.logger)
-
 
 }

@@ -89,7 +89,7 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
 
-    private fun Todo.syncAlarm() {
+    private suspend fun Todo.syncAlarm() {
         // 시간 null 체크
         if (time == null) {
             alarmScheduler.cancel(id)

@@ -1,8 +1,6 @@
 package com.coldblue.data.util
 
 import com.coldblue.model.MyTime
-import com.orhanobut.logger.Logger
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -95,18 +93,6 @@ fun LocalDate.getDisplayShort(): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
     val dayOfWeek = this.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREA)
     return "${this.format(formatter)}(${dayOfWeek})까지"
-}
-
-fun LocalDate.toDayOfWeekString(): String {
-    return when (this.dayOfWeek.value) {
-        1 -> "월요일"
-        2 -> "화요일"
-        3 -> "수요일"
-        4 -> "목요일"
-        5 -> "금요일"
-        6 -> "토요일"
-        else -> "일요일"
-    }
 }
 
 fun LocalTime.isAm(): Boolean {

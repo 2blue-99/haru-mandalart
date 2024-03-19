@@ -1,9 +1,7 @@
 package com.coldblue.database.convert
 
 import androidx.room.TypeConverter
-import com.orhanobut.logger.Logger
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class LocalDateTimeConverter {

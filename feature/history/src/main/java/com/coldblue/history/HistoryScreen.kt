@@ -2,7 +2,6 @@ package com.coldblue.history
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,7 +10,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.history.content.HistoryContent
 import com.coldblue.model.Todo
-import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
 @Composable

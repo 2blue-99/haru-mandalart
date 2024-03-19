@@ -1,7 +1,6 @@
 package com.coldblue.todo
 
 import android.net.Uri
-import androidx.collection.emptyLongSet
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -72,8 +71,6 @@ import com.coldblue.todo.uistate.CurrentGroupState
 import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.coldblue.todo.uistate.TodoUiState
 import com.google.gson.Gson
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.delay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -98,7 +95,6 @@ fun TodoScreen(
                 contentColor = HMColor.Background,
                 shape = CircleShape,
                 onClick = {
-//                    navigateToTodoEdit(DEFAULT_TODO)
                     todoViewModel.showSheet(ContentState.Todo(todo = Todo("", originGroupId = 0)))
                 },
                 content = {

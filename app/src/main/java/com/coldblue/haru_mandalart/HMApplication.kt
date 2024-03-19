@@ -22,7 +22,6 @@ import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
-import dagger.assisted.Assisted
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 

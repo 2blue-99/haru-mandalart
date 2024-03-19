@@ -1,6 +1,5 @@
 package com.coldblue.data.mapper
 
-import com.coldblue.data.mapper.AlarmMapper.asDomain
 import com.coldblue.database.entity.AlarmEntity
 import com.coldblue.model.AlarmItem
 

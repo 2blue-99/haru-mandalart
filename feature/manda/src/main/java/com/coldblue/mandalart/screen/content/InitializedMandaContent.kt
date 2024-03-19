@@ -1,6 +1,5 @@
 package com.coldblue.mandalart.screen.content
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -74,9 +73,6 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -524,11 +520,6 @@ fun Mandalart(
                                                                                 color = smallBoxData.darkColor,
                                                                                 isDone = smallBoxData.isDone
                                                                             ) {
-                                                                                Log.e(
-                                                                                    "TAG",
-                                                                                    "Mandalart: $smallBoxData",
-
-                                                                                    )
                                                                                 changeBottomSheet(
                                                                                     true,
                                                                                     if (bigBox.id == 5 && smallBoxData.id == 5) {
