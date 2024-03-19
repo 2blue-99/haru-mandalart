@@ -57,8 +57,6 @@ interface TodoGroupDao {
     @Query("UPDATE todo SET is_sync=0, update_time=:updateTime, origin_group_id = :originId WHERE todo_group_id = :todoGroupId")
     suspend fun updateTodoGroupId(originId: Int, todoGroupId: Int, updateTime: String): Int
 
-    @Query("Select * From current_group")
-    fun getcg(): List<CurrentGroupEntity>
 
     @Transaction
     suspend fun deleteTodoGroupAndRelated(todoGroupId: Int, updateTime: String) {

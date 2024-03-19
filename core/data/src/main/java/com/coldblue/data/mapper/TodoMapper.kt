@@ -42,7 +42,7 @@ object TodoEntityMapper {
             todoGroupId = entity.todo.todoGroupId,
             isDel = entity.todo.isDel,
             originId = entity.todo.originId,
-            groupName = entity.groupName ?: "외래키 에러임",
+            groupName = entity.groupName ?: "",
             id = entity.todo.id,
             originGroupId = entity.todo.originGroupId
         )

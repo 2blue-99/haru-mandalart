@@ -26,11 +26,6 @@ interface TodoDao {
     @Query("SELECT DISTINCT(todo.date) FROM todo WHERE date >= :startDate AND date <= :endDate AND is_del=0")
     fun getYearlyExistTodoDate(startDate: LocalDate, endDate: LocalDate): Flow<List<LocalDate>>
 
-//    @Query("SELECT min(todo.date)  FROM todo WHERE is_del=0")
-//    fun getTodoMinYear(): Flow<LocalDate?>
-//
-//    @Query("SELECT max(todo.date)  FROM todo WHERE is_del=0")
-//    fun getTodoMaxYear(): Flow<LocalDate?>
 
     @Query("SELECT DISTINCT strftime('%Y',date) FROM todo WHERE is_del=0")
     fun getUniqueTodoYear(): Flow<List<String>?>
@@ -41,14 +36,16 @@ interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodo(todo: TodoEntity)
 
-    @Query("SELECT todo_group.origin_id FROM todo_group WHERE todo_group.origin_id=:todoGroupId")
-    fun getOriginGroupId(todoGroupId: Int): Int?
+    @Query("SELECT todo_group.origin_id FROM todo_group WHERE todo_group.id=:todoGroupId")
+    fun getOriginGroupId(todoGroupId: Int?): Int?
 
     @Transaction
     suspend fun upsertTodo2(todo: TodoEntity) {
-        Logger.d(todo)
 
-        val originGroupId = getOriginGroupId(todo.originGroupId) ?: 0
+        Logger.d(todo)
+        val dd = getOriginGroupId(todo.todoGroupId)
+        Logger.d(dd)
+        val originGroupId = if (todo.originGroupId == 0) getOriginGroupId(todo.todoGroupId)?:0 else todo.originGroupId
         Logger.d(originGroupId)
 
         upsertTodo(todo.copy(originGroupId = originGroupId))
