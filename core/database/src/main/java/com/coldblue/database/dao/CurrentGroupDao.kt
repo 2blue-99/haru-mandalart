@@ -33,7 +33,8 @@ interface CurrentGroupDao {
     @Transaction
     suspend fun upsertCurrentGroupOne(currentGroup: CurrentGroupEntity) {
         val existingGroup = getGroupByDateAndIndex(currentGroup.date, currentGroup.index)
-        val originGroupId = if (currentGroup.originGroupId == 0) getOriginGroupId(currentGroup.todoGroupId) else currentGroup.originGroupId
+        val originGroupId =
+            if (currentGroup.originGroupId == 0) getOriginGroupId(currentGroup.todoGroupId) else currentGroup.originGroupId
 //        val originGroupId = getOriginGroupId(if (currentGroup.originGroupId == 0) currentGroup.todoGroupId else currentGroup.originGroupId)
         if (existingGroup != null) {
             upsertCurrentGroup(
@@ -75,15 +76,14 @@ interface CurrentGroupDao {
         updateTime: String,
         date: LocalDate,
     ) {
-        val originGroupId = getOriginGroupId(todoGroupId)
-        deleteCurrentGroup(currentGroupId, updateTime, originGroupId)
+        deleteCurrentGroup(currentGroupId, updateTime)
         deleteTodoByCurrentGroup(todoGroupId, updateTime, date)
     }
 
-    @Query("UPDATE current_group SET origin_group_id=:originGroupId, is_del=1, update_time=:updateTime ,is_sync = 0 WHERE current_group.id = :currentGroupId")
-    suspend fun deleteCurrentGroup(currentGroupId: Int, updateTime: String, originGroupId: Int)
+    @Query("UPDATE current_group SET  is_del=1, update_time=:updateTime ,is_sync = 0 WHERE current_group.id = :currentGroupId")
+    suspend fun deleteCurrentGroup(currentGroupId: Int, updateTime: String)
 
-    @Query("UPDATE todo SET todo_group_id=null,update_time=:updateTime ,is_sync = 0 WHERE todo_group_id = :todoGroupId AND todo.date = :date")
+    @Query("UPDATE todo SET origin_group_id=0, todo_group_id=null,update_time=:updateTime ,is_sync = 0 WHERE todo_group_id = :todoGroupId AND todo.date = :date")
     suspend fun deleteTodoByCurrentGroup(todoGroupId: Int, updateTime: String, date: LocalDate)
 
 
