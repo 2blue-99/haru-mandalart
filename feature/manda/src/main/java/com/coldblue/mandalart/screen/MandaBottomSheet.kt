@@ -239,6 +239,7 @@ fun MandaBottomSheet(
                                         duplicatedState = true
                                     else {
                                         upsertMandaKey(mandaUI.asMandaKey(inputText, colorIndex))
+                                        onDisMiss()
                                     }
                                 }
 
