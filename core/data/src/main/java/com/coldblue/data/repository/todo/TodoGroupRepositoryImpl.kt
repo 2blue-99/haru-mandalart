@@ -50,7 +50,15 @@ class TodoGroupRepositoryImpl @Inject constructor(
             val originIds = remoteNew.map { it.id }
             val todoGroupIds = todoGroupDao.getTodoGroupIdByOriginIds(originIds)
             val toUpsertTodoGroups = remoteNew.asEntity(todoGroupIds)
-            todoGroupDao.syncWriteTodoGroup(toUpsertTodoGroups)
+
+
+            val currentGroupUpdateTime = getUpdateTime()
+            val currentGroupUpdated =
+                todoGroupDao.syncWriteTodoGroup(toUpsertTodoGroups, currentGroupUpdateTime)
+            if (currentGroupUpdated){
+                syncHelper.syncWrite()
+            }
+
             syncHelper.setMaxUpdateTime(
                 toUpsertTodoGroups,
                 updateTimeDataSource::setTodoGroupUpdateTime
@@ -68,8 +76,16 @@ class TodoGroupRepositoryImpl @Inject constructor(
                 todoGroupDao.getToWriteTodoGroups(updateTimeDataSource.todoGroupUpdateTime.first())
             val originIds = todoGroupDataSource.upsertTodoGroup(localNew.asNetworkModel())
             val toUpsertTodoGroups = localNew.asSyncedEntity(originIds)
-            todoGroupDao.syncWriteTodoGroup(toUpsertTodoGroups)
-            syncHelper.setMaxUpdateTime(toUpsertTodoGroups, updateTimeDataSource::setTodoGroupUpdateTime)
+            val currentGroupUpdateTime = getUpdateTime()
+            val currentGroupUpdated =
+                todoGroupDao.syncWriteTodoGroup(toUpsertTodoGroups, currentGroupUpdateTime)
+            if (currentGroupUpdated) {
+                syncHelper.syncWrite()
+            }
+            syncHelper.setMaxUpdateTime(
+                toUpsertTodoGroups,
+                updateTimeDataSource::setTodoGroupUpdateTime
+            )
             return true
         } catch (e: Exception) {
             Logger.e("${e.message}")

@@ -5,7 +5,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.TodoGroupEntity
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,7 +22,26 @@ interface TodoGroupDao {
     suspend fun upsertTodoGroup(todoGroup: TodoGroupEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun syncWriteTodoGroup(todoGroups: List<TodoGroupEntity>)
+    suspend fun upsertTodoGroupList(todoGroups: List<TodoGroupEntity>)
+
+    @Transaction
+    suspend fun syncWriteTodoGroup(
+        todoGroups: List<TodoGroupEntity>,
+        currentGroupUpdateTime: String
+    ): Boolean {
+        upsertTodoGroupList(todoGroups)
+        var rowsAffected = 0
+        todoGroups.forEach {
+            rowsAffected += updateOriginGroupId(it.originId, it.id, currentGroupUpdateTime)
+        }
+        return rowsAffected > 0
+    }
+
+    @Query("UPDATE current_group SET is_sync=0, update_time=:updateTime, origin_group_id = :originId WHERE todo_group_id = :todoGroupId")
+    suspend fun updateOriginGroupId(originId: Int, todoGroupId: Int, updateTime: String): Int
+
+    @Query("Select * From current_group")
+    fun getcg(): List<CurrentGroupEntity>
 
     @Transaction
     suspend fun deleteTodoGroupAndRelated(todoGroupId: Int, updateTime: String) {

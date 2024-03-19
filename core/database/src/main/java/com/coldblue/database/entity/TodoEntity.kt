@@ -24,5 +24,5 @@ data class TodoEntity(
 
 data class TodoWithGroupName(
     @Embedded val todo: TodoEntity,
-    @ColumnInfo(name = "groupName") val groupName: String
+    @ColumnInfo(name = "groupName") val groupName: String?
 )

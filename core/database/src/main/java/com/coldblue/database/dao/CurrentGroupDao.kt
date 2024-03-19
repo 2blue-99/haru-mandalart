@@ -27,13 +27,23 @@ interface CurrentGroupDao {
     @Query("SELECT * FROM current_group WHERE date = :date AND current_group.`index` = :index")
     suspend fun getGroupByDateAndIndex(date: LocalDate, index: Int): CurrentGroupEntity?
 
+    @Query("SELECT todo_group.origin_id FROM todo_group WHERE todo_group.id=:todoGroupId")
+    fun getOriginGroupId(todoGroupId: Int): Int
+
     @Transaction
     suspend fun upsertCurrentGroupOne(currentGroup: CurrentGroupEntity) {
         val existingGroup = getGroupByDateAndIndex(currentGroup.date, currentGroup.index)
+        val originGroupId = getOriginGroupId(currentGroup.todoGroupId)
         if (existingGroup != null) {
-            upsertCurrentGroup(currentGroup.copy(id = existingGroup.id, originId = existingGroup.originId))
+            upsertCurrentGroup(
+                currentGroup.copy(
+                    id = existingGroup.id,
+                    originId = existingGroup.originId,
+                    originGroupId = originGroupId,
+                )
+            )
         } else {
-            upsertCurrentGroup(currentGroup)
+            upsertCurrentGroup(currentGroup.copy(originGroupId = originGroupId))
         }
     }
 
@@ -41,7 +51,16 @@ interface CurrentGroupDao {
     suspend fun upsertCurrentGroupOneSync(currentGroup: CurrentGroupEntity) {
         val existingGroup = getGroupByDateAndIndex(currentGroup.date, currentGroup.index)
         if (existingGroup != null) {
-            upsertCurrentGroup(currentGroup.copy(id = existingGroup.id))
+            if (existingGroup.originGroupId == 0) {
+                upsertCurrentGroup(currentGroup.copy(id = existingGroup.id))
+            } else {
+                upsertCurrentGroup(
+                    currentGroup.copy(
+                        id = existingGroup.id,
+                        originGroupId = existingGroup.originGroupId
+                    )
+                )
+            }
         } else {
             upsertCurrentGroup(currentGroup)
         }
@@ -55,12 +74,13 @@ interface CurrentGroupDao {
         updateTime: String,
         date: LocalDate,
     ) {
-        deleteCurrentGroup(currentGroupId, updateTime)
+        val originGroupId = getOriginGroupId(todoGroupId)
+        deleteCurrentGroup(currentGroupId, updateTime, originGroupId)
         deleteTodoByCurrentGroup(todoGroupId, updateTime, date)
     }
 
-    @Query("UPDATE current_group SET is_del=1, update_time=:updateTime ,is_sync = 0 WHERE current_group.id = :currentGroupId")
-    suspend fun deleteCurrentGroup(currentGroupId: Int, updateTime: String)
+    @Query("UPDATE current_group SET origin_group_id=:originGroupId, is_del=1, update_time=:updateTime ,is_sync = 0 WHERE current_group.id = :currentGroupId")
+    suspend fun deleteCurrentGroup(currentGroupId: Int, updateTime: String, originGroupId: Int)
 
     @Query("UPDATE todo SET todo_group_id=null,update_time=:updateTime ,is_sync = 0 WHERE todo_group_id = :todoGroupId AND todo.date = :date")
     suspend fun deleteTodoByCurrentGroup(todoGroupId: Int, updateTime: String, date: LocalDate)
@@ -80,7 +100,9 @@ interface CurrentGroupDao {
     fun getCurrentGroupIdByOriginId(originId: Int): Int?
 
 
-    @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON current_group.todo_group_id = todo_group.id WHERE current_group.date=:date AND current_group.is_del=0")
+    @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON CASE WHEN current_group.origin_group_id != 0 THEN current_group.origin_group_id = todo_group.origin_id ELSE current_group.todo_group_id = todo_group.id END WHERE current_group.date=:date AND current_group.is_del=0")
     fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupWithName>>
+//    @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON current_group.todo_group_id = todo_group.id WHERE current_group.date=:date AND current_group.is_del=0")
+//    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupWithName>>
 
 }
