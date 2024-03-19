@@ -35,7 +35,6 @@ interface CurrentGroupDao {
         val existingGroup = getGroupByDateAndIndex(currentGroup.date, currentGroup.index)
         val originGroupId =
             if (currentGroup.originGroupId == 0) getOriginGroupId(currentGroup.todoGroupId) else currentGroup.originGroupId
-//        val originGroupId = getOriginGroupId(if (currentGroup.originGroupId == 0) currentGroup.todoGroupId else currentGroup.originGroupId)
         if (existingGroup != null) {
             upsertCurrentGroup(
                 currentGroup.copy(
