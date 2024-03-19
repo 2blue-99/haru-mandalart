@@ -8,7 +8,6 @@ import com.coldblue.mandalart.screen.MandaScreen
 
 const val mandaRoute = "Manda"
 fun NavController.navigateToManda(navOptions: NavOptions? = null){
-    this.popBackStack()
     this.navigate(mandaRoute, navOptions)
 }
 

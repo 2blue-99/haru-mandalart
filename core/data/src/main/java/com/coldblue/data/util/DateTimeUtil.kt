@@ -131,9 +131,9 @@ fun List<String>?.toHistoryList(): List<Int> {
     else {
         val list: List<Int> = this.map { it.toInt() }
         if (!list.contains(localYear))
-            list + listOf(localYear)
+            (list + listOf(localYear)).sorted()
         else
-            list
+            list.sorted()
     }
 
 }

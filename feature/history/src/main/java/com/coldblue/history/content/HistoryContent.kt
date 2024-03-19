@@ -67,9 +67,7 @@ fun HistoryContent(
     date: LocalDate,
 
     ) {
-
     var dateShowState by remember { mutableStateOf(true) }
-
 
     Column(
         modifier = Modifier
@@ -157,6 +155,8 @@ fun HistoryController(
     selectYear: (Int) -> Unit,
     dateShowState: (Boolean) -> Unit
 ) {
+    com.orhanobut.logger.Logger.d("$today")
+
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val presentLocalYear = LocalDate.now().year
 
@@ -169,10 +169,7 @@ fun HistoryController(
     var beforeDateIndex by remember { mutableIntStateOf(0) }
     var beforeYearIndex by remember { mutableIntStateOf(-1) }
     var pickedDateIndex by remember { mutableIntStateOf(0) }
-    var pickedYearIndex by remember {
-        mutableIntStateOf(todoYearList.indices.firstOrNull { todoYearList[it] == presentLocalYear }
-            ?: 0)
-    }
+    var pickedYearIndex by remember { mutableIntStateOf(todoYearList.indices.firstOrNull { todoYearList[it] == presentLocalYear } ?: 0) }
 
     // Init Clicked Controller
     LaunchedEffect(controllerList) {

@@ -49,6 +49,9 @@ class HistoryViewModel @Inject constructor(
         yearlyExistDateFlow,
         getTodoYearRangeUseCase()
     ) { todoList, uniqueTodoCnt, dateList, yearList ->
+
+        Logger.d("Coom")
+
         HistoryUiState.Success(
             allTodoDayCnt = uniqueTodoCnt,
             controllerList = HistoryUtil.controllerListMaker(yearSate.value, dateList),
