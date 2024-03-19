@@ -74,6 +74,9 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -110,7 +113,9 @@ fun InitializedMandaContent(
             upsertMandaDetail = upsertMandaDetail,
             deleteMandaKey = deleteMandaKey,
             deleteMandaDetail = deleteMandaDetail
-        ) { changeBottomSheet(false, null) }
+        ) {
+            changeBottomSheet(false, null)
+        }
     }
 
     LaunchedEffect(uiState.donePercentage) { percentage = uiState.donePercentage }
@@ -120,7 +125,7 @@ fun InitializedMandaContent(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
         HMTitleComponent()
 
@@ -372,7 +377,12 @@ fun Mandalart(
         floatingActionButton = {
             FloatingActionButton(
                 shape = CircleShape,
-                containerColor = HMColor.Primary,
+                containerColor = if (isZoom) HMColor.Background else HMColor.Primary,
+                modifier = Modifier.border(
+                    if (isZoom) 2.5.dp else 0.dp,
+                    HMColor.Primary,
+                    CircleShape
+                ),
                 onClick = {
                     if (isZoom)
                         zoomInAndOut(-1)
@@ -382,7 +392,7 @@ fun Mandalart(
                 if (isZoom)
                     Icon(
                         imageVector = IconPack.ZoomOut,
-                        tint = HMColor.Background,
+                        tint = HMColor.Primary,
                         contentDescription = ""
                     )
                 else
@@ -405,6 +415,7 @@ fun Mandalart(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
+                    .border(0.1.dp, HMColor.Primary, shape = RoundedCornerShape(8.dp))
             ) {
                 item {
                     Column(
@@ -522,9 +533,11 @@ fun Mandalart(
                                                                                     true,
                                                                                     if (bigBox.id == 5 && smallBoxData.id == 5) {
                                                                                         MandaBottomSheetContentState.Insert(
-                                                                                            MandaBottomSheetContentType.MandaFinal(smallBoxData)
+                                                                                            MandaBottomSheetContentType.MandaFinal(
+                                                                                                smallBoxData
+                                                                                            )
                                                                                         )
-                                                                                    }else{
+                                                                                    } else {
                                                                                         MandaBottomSheetContentState.Update(
                                                                                             MandaBottomSheetContentType.MandaKey(
                                                                                                 smallBoxData,

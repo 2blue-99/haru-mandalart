@@ -99,11 +99,11 @@ fun TodoBottomSheet(
 
     }
 
-
     Box() {
         LazyColumn(Modifier.padding(bottom = 60.dp)) {
             item {
-                Text(text = "할 일", style = HmStyle.text16, fontWeight = FontWeight.Bold)
+                // 할 일
+                Text(text = "이름", style = HmStyle.text16, fontWeight = FontWeight.Bold)
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titleText,
