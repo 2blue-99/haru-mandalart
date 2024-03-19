@@ -16,7 +16,6 @@ import com.coldblue.todo.uistate.TODO_ID
 const val todoRoute = "Todo"
 const val todoEditRoute = "TodoEdit"
 fun NavController.navigateToTodo(navOptions: NavOptions? = null) {
-    this.popBackStack()
     this.navigate(todoRoute, navOptions)
 }
 

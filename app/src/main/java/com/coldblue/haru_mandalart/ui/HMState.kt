@@ -61,6 +61,7 @@ class HMAppState(
 
     fun navigateToTopLevelDestination(route: String) {
         if(navController.currentDestination?.route != route){
+            navController.popBackStack()
             val navOptions = navOptions {
                 popUpTo(navController.graph.findStartDestination().id) {
                     saveState = true

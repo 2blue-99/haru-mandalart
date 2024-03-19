@@ -26,7 +26,9 @@ fun HMApp(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             if (navController.checkTopBar())
-                HMTopBar { navController.popBackStack() }
+                HMTopBar {
+                    navController.popBackStack()
+                }
         },
         bottomBar = {
             if (navController.checkBottomNavBar())

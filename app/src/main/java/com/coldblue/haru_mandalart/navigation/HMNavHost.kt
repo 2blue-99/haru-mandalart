@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.coldblue.haru_mandalart.ui.HMAppState
 import com.coldblue.history.navigation.historyScreen
+import com.coldblue.login.navigation.loginRoute
 import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaScreen
 import com.coldblue.mandalart.navigation.navigateToManda
@@ -23,7 +24,6 @@ fun HMNavHost(
     appState: HMAppState,
     startDestination: String = todoRoute
 ) {
-
     val navController = appState.navController
     NavHost(
         navController = navController,

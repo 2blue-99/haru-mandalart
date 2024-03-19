@@ -11,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.history.content.HistoryContent
 import com.coldblue.model.Todo
+import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
 @Composable
@@ -18,8 +19,6 @@ fun HistoryScreen(
     historyViewModel: HistoryViewModel = hiltViewModel(),
     navigateToSetting: () -> Unit,
     navigateToTodoEdit: (Int, String, String,String) -> Unit
-
-
 ) {
     val historyUiState by historyViewModel.historyUiState.collectAsStateWithLifecycle()
     val dateState by historyViewModel.dateSate.collectAsStateWithLifecycle()
@@ -49,10 +48,6 @@ fun HistoryContentWithState(
     toggleTodo: (Todo) -> Unit,
     navigateToTodoEdit: (Int, String, String,String) -> Unit,
     date : LocalDate,
-
-
-
-
 ) {
     when (uiState) {
         is HistoryUiState.Loading -> Text(text = "로딩")
