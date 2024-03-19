@@ -3,12 +3,8 @@ package com.coldblue.data.mapper
 import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.toDate
 import com.coldblue.database.entity.CurrentGroupEntity
-import com.coldblue.database.entity.CurrentGroupWithName
-import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.model.CurrentGroup
-import com.coldblue.network.model.NetWorkTodoGroup
 import com.coldblue.network.model.NetworkCurrentGroup
-import java.time.LocalDate
 
 
 object CurrentGroupMapper {

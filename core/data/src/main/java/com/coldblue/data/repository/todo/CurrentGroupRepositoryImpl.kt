@@ -80,6 +80,4 @@ class CurrentGroupRepositoryImpl @Inject constructor(
             return false
         }
     }
-
-
 }

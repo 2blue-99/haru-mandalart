@@ -32,14 +32,14 @@ class SyncReadWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             userRepository.refresh()
+            val todoGroupResult = async { todoGroupRepository.syncRead() }.await()
             val syncedSucceed = awaitAll(
                 async { todoRepository.syncRead() },
-                async { todoGroupRepository.syncRead() },
                 async { currentGroupRepository.syncRead() },
                 async { mandaKeyRepository.syncRead() },
                 async { mandaDetailRepository.syncRead() },
                 ).all { it }
-            if (syncedSucceed) {
+            if (syncedSucceed && todoGroupResult) {
                 Result.success()
             } else {
 

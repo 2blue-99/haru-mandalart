@@ -7,7 +7,6 @@ import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoWithGroupName
 import com.coldblue.model.Todo
 import com.coldblue.network.model.NetworkTodo
-import com.orhanobut.logger.Logger
 
 object TodoEntityMapper {
     fun asEntity(domain: Todo): TodoEntity {
@@ -42,7 +41,7 @@ object TodoEntityMapper {
             todoGroupId = entity.todo.todoGroupId,
             isDel = entity.todo.isDel,
             originId = entity.todo.originId,
-            groupName = entity.groupName,
+            groupName = entity.groupName?:"",
             id = entity.todo.id,
         )
     }

@@ -31,15 +31,16 @@ class SyncWriteWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             userRepository.refresh()
+            val todoGroupResult = async { todoGroupRepository.syncWrite() }.await()
+
             val writeSucceed = awaitAll(
                 async { todoRepository.syncWrite() },
-                async { todoGroupRepository.syncWrite() },
                 async { currentGroupRepository.syncWrite() },
                 async { mandaKeyRepository.syncWrite() },
                 async { mandaDetailRepository.syncWrite() },
             ).all { it }
 
-            if (writeSucceed) {
+            if (writeSucceed && todoGroupResult) {
                 Result.success()
             } else {
                 Result.retry()
