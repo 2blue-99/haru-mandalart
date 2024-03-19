@@ -5,6 +5,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
@@ -33,21 +34,31 @@ fun HMButton(
     )
 
     Button(
-        modifier = modifier.fillMaxWidth().height(50.dp),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        border = AssistChipDefaults.assistChipBorder(enabled = true, borderColor = Color.Transparent),
+        border = AssistChipDefaults.assistChipBorder(
+            enabled = true,
+            borderColor = Color.Transparent
+        ),
         colors = ButtonDefaults.buttonColors(
             contentColor = animatedButtonColor.value,
             disabledContainerColor = animatedButtonColor.value
         ),
         onClick = { onClick() },
         enabled = clickableState
-    ){
-        Text(text = text, color = HMColor.Background ,style = HmStyle.text16, fontWeight = FontWeight.Bold)
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 4.dp),
+            text = text,
+            color = HMColor.Background,
+            style = HmStyle.text16,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
+
 @Preview
 @Composable
-fun HMButtonPreview(){
-    HMButton("hello", false){}
+fun HMButtonPreview() {
+    HMButton("hello", false) {}
 }

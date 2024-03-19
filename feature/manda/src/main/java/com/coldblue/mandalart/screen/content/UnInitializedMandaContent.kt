@@ -41,7 +41,7 @@ fun UnInitializedMandaContent(
     var buttonClickableState by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(top = 40.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+        modifier = Modifier.fillMaxSize().padding(top = 40.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
 
     ){
