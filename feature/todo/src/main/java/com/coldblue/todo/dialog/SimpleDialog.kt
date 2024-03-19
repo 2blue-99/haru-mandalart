@@ -40,7 +40,8 @@ fun CurrentGroupDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     currentGroup: CurrentGroup,
-    upsertTodoGroupById: (Int, String) -> Unit,
+    upsertTodoGroupById: (Int,Int, String) -> Unit,
+
     deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int,date:LocalDate) -> Unit,
     date:LocalDate
 ) {
@@ -114,6 +115,7 @@ fun CurrentGroupDialog(
                         isSame = true
                     } else {
                         upsertTodoGroupById(
+                            currentGroup.originGroupId,
                             currentGroup.todoGroupId,
                             inputText
                         )

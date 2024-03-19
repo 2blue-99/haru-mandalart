@@ -77,7 +77,6 @@ class TodoRepositoryImpl @Inject constructor(
     override suspend fun syncWrite(): Boolean {
         try {
             val localNew = todoDao.getToWriteTodos(updateTimeDataSource.todoUpdateTime.first())
-
             val originIds = todoDataSource.upsertTodo(localNew.asNetworkModel())
             val toUpsertTodos = localNew.asSyncedEntity(originIds)
             todoDao.upsertTodo(toUpsertTodos)
