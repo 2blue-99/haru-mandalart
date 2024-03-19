@@ -81,7 +81,8 @@ fun TodoEditScreen(
                 TodoEditContentWithState(
                     uiState = todoEditUiState as TodoEditUiState.Success,
                     upsertTodo = todoEditViewModel::upsertTodo,
-                    onDismissRequest = onDismissRequest
+                    onDismissRequest = onDismissRequest,
+                    selectDate = { date -> todoEditViewModel.selectDate(date) },
                 )
             }
 
@@ -100,14 +101,16 @@ fun TodoEditContentWithState(
     uiState: TodoEditUiState.Success,
     upsertTodo: (Todo) -> Unit,
     onDismissRequest: () -> Unit,
-
+    selectDate: (LocalDate) -> Unit,
     ) {
     TodoEditContent(
         todo = uiState.todo,
         upsertTodo = upsertTodo,
         todoDate = uiState.today,
+        currentDay = uiState.currentDay,
         currentGroupList = uiState.currentGroup,
         onDismissRequest = onDismissRequest,
+        selectDate = selectDate
     )
 }
 
@@ -117,8 +120,10 @@ fun TodoEditContent(
     todo: Todo,
     upsertTodo: (Todo) -> Unit,
     todoDate: LocalDate,
+    currentDay: LocalDate,
     currentGroupList: List<CurrentGroup>,
     onDismissRequest: () -> Unit,
+    selectDate: (LocalDate) -> Unit,
 
     ) {
     var onSwitch by remember { mutableStateOf(false) }
@@ -128,6 +133,10 @@ fun TodoEditContent(
     LaunchedEffect(Unit) {
         onSwitch = todo.time != null
     }
+
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var date by remember { mutableStateOf(todoDate) }
 
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content ?: "") }
@@ -148,8 +157,10 @@ fun TodoEditContent(
             ToggleInfo(todoDate.isNotMatch(), "직접입력"),
         )
     }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var date by remember { mutableStateOf(todoDate) }
+
+    LaunchedEffect(date) {
+        selectDate(date)
+    }
 
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -262,7 +273,6 @@ fun TodoEditContent(
                                 date = todo.date
                             } else {
                                 date = today.plusDays(button.plus)
-
                             }
                             dateButtons.replaceAll {
                                 it.copy(isChecked = it.text == button.text)

@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.ToggleInfo
+import com.orhanobut.logger.Logger
 
 @Composable
 fun GroupPicker(
@@ -28,7 +30,6 @@ fun GroupPicker(
     currentOriginGroupId: Int,
     onClick: (Int?, Int) -> Unit
 ) {
-
 
     val groupButtons = remember {
         mutableStateListOf<ToggleInfo>().apply {
@@ -47,6 +48,26 @@ fun GroupPicker(
                 )
             })
         }
+    }
+    LaunchedEffect(currentGroupList){
+        groupButtons.clear()
+        groupButtons.apply {
+            add(
+                ToggleInfo(
+                    isChecked = currentTodoGroupId == null,
+                    text = "그룸없음",
+                )
+            )
+            addAll(currentGroupList.map { group ->
+                ToggleInfo(
+                    isChecked = if (currentOriginGroupId == 0) currentTodoGroupId == group.todoGroupId else currentOriginGroupId == group.originGroupId,
+                    text = group.name,
+                    groupId = group.todoGroupId,
+                    originId = group.originGroupId
+                )
+            })
+        }
+
     }
 
 

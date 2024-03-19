@@ -13,6 +13,7 @@ sealed interface TodoEditUiState {
     data class Success(
         val today: LocalDate,
         val todo: Todo,
+        val currentDay :LocalDate,
         val currentGroup: List<CurrentGroup>
     ) : TodoEditUiState
 }

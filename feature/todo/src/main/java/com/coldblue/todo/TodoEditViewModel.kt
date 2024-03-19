@@ -19,6 +19,7 @@ import com.coldblue.todo.uistate.TodoEditUiState
 import com.google.gson.Gson
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -43,8 +44,11 @@ class TodoEditViewModel @Inject constructor(
     private val myTime: String? = savedStateHandle.get<String>(MY_TIME)
     private val date: String? = savedStateHandle.get<String>(DATE)
 
+    private val _dateSate = MutableStateFlow<LocalDate>(date?.toDate() ?: LocalDate.now())
+    val dateSate: StateFlow<LocalDate> = _dateSate
+
     val todoFlow = getTodoUseCase(todoId, default = DEFAULT_TODO)
-    val currentGroupFlow = todoFlow.flatMapLatest { getCurrentGroupWithName(it.date) }
+    val currentGroupFlow = dateSate.flatMapLatest { getCurrentGroupWithName(it) }
 
 
     val todoEditUiState: StateFlow<TodoEditUiState> =
@@ -55,10 +59,11 @@ class TodoEditViewModel @Inject constructor(
                 todo = todo.copy(
                     title = title,
                     time = if (time.isEdit) time.getAmPmHour() else null,
-                    date = date?.toDate()?: LocalDate.now()
+                    date = date?.toDate() ?: LocalDate.now(),
                 ),
                 today = todo.date,
-                currentGroup = groupList
+                currentGroup = groupList,
+                currentDay = dateSate.value
             )
         }.catch {
             TodoEditUiState.Error("${it.message}")
@@ -73,6 +78,13 @@ class TodoEditViewModel @Inject constructor(
             upsertTodoUseCase(todo)
         }
     }
+
+    fun selectDate(date: LocalDate) {
+        viewModelScope.launch {
+            _dateSate.value = date
+        }
+    }
+
 
 }
 

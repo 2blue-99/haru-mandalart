@@ -48,14 +48,8 @@ class TodoViewModel @Inject constructor(
     private val _dateSate = MutableStateFlow<LocalDate>(LocalDate.now())
     val dateSate: StateFlow<LocalDate> = _dateSate
 
-    private val groupFlow = dateSate.flatMapLatest {
-        getGroupWithCurrentUseCase(it)
-    }.catch {
-        Logger.d("${it.message}")
-    }
-    private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }.catch {
-        Logger.d("${it.message}")
-    }
+    private val groupFlow = dateSate.flatMapLatest { getGroupWithCurrentUseCase(it) }
+    private val todoFlow = dateSate.flatMapLatest { getTodoUseCase(it) }
 
     fun selectDate(date: LocalDate) {
         viewModelScope.launch {
@@ -157,9 +151,9 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    fun upsertTodoGroup(originGroupId:Int,todoGroupId: Int, name: String) {
+    fun upsertTodoGroup(originGroupId: Int, todoGroupId: Int, name: String) {
         viewModelScope.launch {
-            upsertTodoGroupUseCase(originGroupId,todoGroupId, name)
+            upsertTodoGroupUseCase(originGroupId, todoGroupId, name)
         }
     }
 
