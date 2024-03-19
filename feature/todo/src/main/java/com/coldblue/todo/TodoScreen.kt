@@ -1,6 +1,7 @@
 package com.coldblue.todo
 
 import android.net.Uri
+import androidx.collection.emptyLongSet
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -122,7 +123,7 @@ fun TodoScreen(
                 hideSheet = { todoViewModel.hideSheet() },
                 upsertTodo = { todo -> todoViewModel.upsertTodo(todo) },
                 upsertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
-                upsertTodoGroupById = { id, name -> todoViewModel.upsertTodoGroup(id, name) },
+                upsertTodoGroupById = { oid,id, name -> todoViewModel.upsertTodoGroup(oid,id, name) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
                 deleteCurrentGroup = todoViewModel::deleteCurrentGroup,
@@ -144,10 +145,10 @@ private fun TodoContentWithState(
     hideSheet: () -> Unit,
     upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
-    upsertTodoGroupById: (Int, String) -> Unit,
+    upsertTodoGroupById: (Int,Int, String) -> Unit,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    deleteCurrentGroup: (Int, Int,LocalDate) -> Unit,
+    deleteCurrentGroup: (Int, Int, LocalDate) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
@@ -189,14 +190,14 @@ private fun TodoContent(
     hideSheet: () -> Unit,
     upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
-    upsertTodoGroupById: (Int, String) -> Unit,
+    upsertTodoGroupById: (Int,Int, String) -> Unit,
     currentGroupStateList: List<CurrentGroupState>,
     currentGroupList: List<CurrentGroup>,
     todoList: List<Todo>,
     todoGroupList: List<TodoGroup>,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
-    deleteCurrentGroup: (Int, Int,LocalDate) -> Unit,
+    deleteCurrentGroup: (Int, Int, LocalDate) -> Unit,
     date: LocalDate,
     selectDate: (LocalDate) -> Unit,
     deleteTodoGroup: (Int) -> Unit,
@@ -226,7 +227,7 @@ private fun TodoContent(
             sheetState = sheetState,
             onDismissRequest = {
                 hideSheet()
-                               },
+            },
             todoGroupList = todoGroupList,
             currentGroupList = currentGroupList,
             upsertCurrentGroup = upsertCurrentGroup,
@@ -401,9 +402,18 @@ fun GroupBottomSheet(
             )
             when (content) {
                 is ContentState.Group -> {
-                    val currentTodoGroupIds = currentGroupList.map { it.todoGroupId }
+                    val isOrigin = todoGroupList.map { it.originId != 0 }
+                    val currentTodoGroupIds =
+                        currentGroupList.map { it.originGroupId to it.todoGroupId }
                     val unSelectedTodoGroup =
-                        todoGroupList.filter { !currentTodoGroupIds.contains(it.id) }
+                        todoGroupList.filterIndexed { index, it ->
+                            if (isOrigin[index]) {
+                                !currentTodoGroupIds.map { it.first }.contains(it.originId)
+
+                            } else {
+                                !currentTodoGroupIds.map { it.second }.contains(it.id)
+                            }
+                        }
                     TodoGroupBottomSheet(
                         content.currentGroup.currentGroup,
                         todoGroupList,
@@ -436,9 +446,9 @@ fun HaruManda(
     currentGroupList: List<CurrentGroupState>,
     showSheet: (ContentState) -> Unit,
     todoGroupList: List<TodoGroup>,
-    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int,date:LocalDate) -> Unit,
-    upsertTodoGroupById: (Int, String) -> Unit,
-    date:LocalDate
+    deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int, date: LocalDate) -> Unit,
+    upsertTodoGroupById: (Int,Int, String) -> Unit,
+    date: LocalDate
 ) {
     var openDialog by remember { mutableStateOf(false) }
     var selectIndex by remember { mutableStateOf(0) }
@@ -675,20 +685,28 @@ fun TodoContentPreView() {
         {},
         {},
         {},
-        { a, b -> },
+        { a, b ,d-> },
         List<CurrentGroupState>(9) {
             CurrentGroupState.Done(
                 "안드로이드",
-                CurrentGroup(1, id = 2, date = LocalDate.now(), index = 2, name = "", originGroupId = 0, originId =0)
+                CurrentGroup(
+                    1,
+                    id = 2,
+                    date = LocalDate.now(),
+                    index = 2,
+                    name = "",
+                    originGroupId = 0,
+                    originId = 0
+                )
             )
         },
-        listOf(CurrentGroup(1, "", false, 1, LocalDate.now(),0,0)),
+        listOf(CurrentGroup(1, "", false, 1, LocalDate.now(), 0, 0)),
         listOf(
 //            Todo("디자인 3페이지", "", groupName = "", todoGroupId = -1)
         ),
         emptyList(),
         {},
-        {}, { a, b ,c-> },
+        {}, { a, b, c -> },
         LocalDate.now(),
         {}, {}, { a, b, c, d -> }
     )
