@@ -59,6 +59,7 @@ import com.coldblue.todo.component.HMDatePicker
 import com.coldblue.todo.component.HMTimePicker
 import com.coldblue.todo.component.SelectButton
 import com.coldblue.todo.uistate.TodoEditUiState
+import com.orhanobut.logger.Logger
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -314,6 +315,8 @@ fun TodoEditContent(
                         clickableState = titleText.isNotEmpty(),
                         modifier = Modifier.weight(1F)
                     ) {
+                        Logger.d(myTime.getAmPmHour())
+                        Logger.d(date)
                         upsertTodo(
                             todo.copy(
                                 title = titleText,

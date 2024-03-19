@@ -21,7 +21,6 @@ class BootCompletedReceiver : BroadcastReceiver() {
     lateinit var alarmDao: AlarmDao
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Logger.d("BootCompletedReceiver : $intent")
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
             addAllAlarm()
         }

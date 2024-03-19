@@ -12,6 +12,7 @@ data class NetworkTodo(
     val date: String,
     val update_time: String,
     val todo_group_id: Int? = null,
+    val orgin_group_id: Int,
     val time: String? = null,
     val is_del: Boolean,
     val user_id: String? = null,

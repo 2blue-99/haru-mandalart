@@ -10,7 +10,6 @@ import com.coldblue.data.util.isPassed
 import com.coldblue.data.util.toFirstLocalDate
 import com.coldblue.data.util.toHistoryList
 import com.coldblue.data.util.toLastLocalDate
-import com.coldblue.database.dao.AlarmDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
@@ -30,11 +29,10 @@ class TodoRepositoryImpl @Inject constructor(
     private val todoDataSource: TodoDataSource,
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
-    private val alarmDao: AlarmDao
 ) : TodoRepository {
 
     override suspend fun upsertTodo(todo: Todo) {
-        todoDao.upsertTodo(todo.asEntity())
+        todoDao.upsertTodo2(todo.asEntity())
         todo.syncAlarm()
         syncHelper.syncWrite()
     }
@@ -45,7 +43,7 @@ class TodoRepositoryImpl @Inject constructor(
 
     override fun getTodo(todoId: Int): Flow<Todo> {
         return todoDao.getTodo(todoId).map {
-            if (todoId == -1) Todo("") else it.asDomain()
+            if (todoId == -1) Todo("", originGroupId = 0) else it.asDomain()
         }
     }
 
@@ -60,8 +58,6 @@ class TodoRepositoryImpl @Inject constructor(
     override fun getUniqueTodoCountByDate(): Flow<Int> {
         return todoDao.getUniqueTodoCountByDate()
     }
-
-
 
     override suspend fun syncRead(): Boolean {
         try {
@@ -101,7 +97,7 @@ class TodoRepositoryImpl @Inject constructor(
             return
         }
         // date, time 추가 시점이 과거인지 체크
-        if(LocalDateTime.of(date, time).isPassed()){
+        if (LocalDateTime.of(date, time).isPassed()) {
             alarmScheduler.cancel(id)
             return
         }

@@ -6,6 +6,7 @@ import com.coldblue.database.dao.AppDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.datastore.UserDataSource
 import com.coldblue.network.SupabaseDataSource
+import com.orhanobut.logger.Logger
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composeAuth

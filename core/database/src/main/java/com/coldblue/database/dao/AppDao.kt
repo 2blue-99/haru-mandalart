@@ -14,10 +14,14 @@ interface AppDao {
         deleteAllCurrentGroup()
         deleteAllTMandaKey()
         deleteAllTMandaDetail()
+        deleteAllAlarm()
     }
 
     @Query("DELETE FROM todo")
     suspend fun deleteAllTodo()
+
+    @Query("DELETE FROM ALARM")
+    suspend fun deleteAllAlarm()
 
     @Query("DELETE FROM todo_group")
     suspend fun deleteAllTodoGroup()

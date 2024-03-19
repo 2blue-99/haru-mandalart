@@ -14,6 +14,7 @@ data class TodoEntity(
     @ColumnInfo(name = "is_done") val isDone: Boolean,
     @ColumnInfo(name = "time") val time: LocalTime?,
     @ColumnInfo(name = "date") val date: LocalDate,
+    @ColumnInfo(name = "origin_group_id") val originGroupId: Int,
     @ColumnInfo(name = "todo_group_id") val todoGroupId: Int? = null,
     @ColumnInfo(name = "origin_id") override val originId: Int,
     @ColumnInfo(name = "is_sync") override val isSync: Boolean,
