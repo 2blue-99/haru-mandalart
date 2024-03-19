@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TodoGroupRepository: Syncable {
     suspend fun upsertTodoGroup(todoGroup: TodoGroup)
-    suspend fun upsertTodoGroup(todoGroupId:Int,name: String)
+    suspend fun upsertTodoGroup(originGroupId:Int,todoGroupId:Int,name: String)
 
     fun getTodoGroup(): Flow<List<TodoGroup>>
 

@@ -10,6 +10,6 @@ class UpsertTodoGroupUseCase @Inject constructor(
     suspend operator fun invoke(todoGroup: TodoGroup) =
         todoGroupRepository.upsertTodoGroup(todoGroup)
 
-    suspend operator fun invoke(todoGroupId: Int, name: String) =
-        todoGroupRepository.upsertTodoGroup(todoGroupId, name)
+    suspend operator fun invoke(originGroupId:Int,todoGroupId: Int, name: String) =
+        todoGroupRepository.upsertTodoGroup(originGroupId,todoGroupId, name)
 }

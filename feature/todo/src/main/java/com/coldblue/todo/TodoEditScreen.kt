@@ -30,6 +30,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -132,6 +133,12 @@ fun TodoEditContent(
 
     var currentTodoGroupId by remember { mutableStateOf(currentGroupList.firstOrNull { it.todoGroupId == todo.todoGroupId }?.todoGroupId) }
 
+    var currentOriginGroupId by remember {
+        mutableIntStateOf(
+            currentGroupList.firstOrNull { it.originGroupId == todo.originId }?.originGroupId ?: 0
+        )
+    }
+
     val dateButtons = remember {
         mutableStateListOf(
             ToggleInfo(todoDate.isMatch(0), "오늘", plus = 0),
@@ -147,34 +154,34 @@ fun TodoEditContent(
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(Modifier.padding(bottom = 60.dp)) {
             item {
-               Box(modifier = Modifier.fillMaxWidth()){
-                   Row(
-                       Modifier
-                           .fillMaxWidth()
-                           .height(30.dp)
-                           .background(HMColor.Background),
-                       verticalAlignment = Alignment.CenterVertically,
-                       horizontalArrangement = Arrangement.Absolute.Center
-                   ) {
-                       Text(
-                           text = "세부 항목", style = HmStyle.text16, fontWeight = FontWeight.Bold
-                       )
-                   }
-                   Row(
-                       Modifier
-                           .fillMaxWidth()
-                           .height(30.dp),
-                       verticalAlignment = Alignment.CenterVertically,
-                       horizontalArrangement = Arrangement.End
-                   ) {
-                       IconButton(onClick = { onDismissRequest() }) {
-                           Icon(
-                               imageVector = Icons.Default.Close,
-                               contentDescription = "작성 종료"
-                           )
-                       }
-                   }
-               }
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .background(HMColor.Background),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Absolute.Center
+                    ) {
+                        Text(
+                            text = "세부 항목", style = HmStyle.text16, fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(30.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(onClick = { onDismissRequest() }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "작성 종료"
+                            )
+                        }
+                    }
+                }
 
             }
             item {
@@ -250,9 +257,9 @@ fun TodoEditContent(
                 Row {
                     dateButtons.forEach { button ->
                         SelectButton(button) {
-                            if (button.text=="직접입력") {
+                            if (button.text == "직접입력") {
                                 date = todo.date
-                            }else{
+                            } else {
                                 date = today.plusDays(button.plus)
 
                             }
@@ -271,8 +278,13 @@ fun TodoEditContent(
                 }
             }
             item {
-                GroupPicker(currentGroupList, currentTodoGroupId) { todoGroupId ->
+                GroupPicker(
+                    currentGroupList,
+                    currentTodoGroupId,
+                    currentOriginGroupId
+                ) { todoGroupId, originId ->
                     currentTodoGroupId = todoGroupId
+                    currentOriginGroupId = originId
                 }
             }
         }
@@ -323,6 +335,7 @@ fun TodoEditContent(
                                 content = contentText,
                                 time = if (onSwitch) myTime.getAmPmHour() else null,
                                 todoGroupId = currentTodoGroupId,
+                                originGroupId = if (currentOriginGroupId != 0) currentOriginGroupId else 0,
                                 date = date
                             )
                         )

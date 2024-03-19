@@ -123,7 +123,7 @@ fun TodoScreen(
                 hideSheet = { todoViewModel.hideSheet() },
                 upsertTodo = { todo -> todoViewModel.upsertTodo(todo) },
                 upsertTodoGroup = { todoGroup -> todoViewModel.upsertTodoGroup(todoGroup) },
-                upsertTodoGroupById = { id, name -> todoViewModel.upsertTodoGroup(id, name) },
+                upsertTodoGroupById = { oid,id, name -> todoViewModel.upsertTodoGroup(oid,id, name) },
                 onTodoToggle = { todo -> todoViewModel.toggleTodo(todo) },
                 upsertCurrentGroup = { group -> todoViewModel.upsertCurrentGroup(group) },
                 deleteCurrentGroup = todoViewModel::deleteCurrentGroup,
@@ -145,7 +145,7 @@ private fun TodoContentWithState(
     hideSheet: () -> Unit,
     upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
-    upsertTodoGroupById: (Int, String) -> Unit,
+    upsertTodoGroupById: (Int,Int, String) -> Unit,
     onTodoToggle: (Todo) -> Unit,
     upsertCurrentGroup: (CurrentGroup) -> Unit,
     deleteCurrentGroup: (Int, Int, LocalDate) -> Unit,
@@ -190,7 +190,7 @@ private fun TodoContent(
     hideSheet: () -> Unit,
     upsertTodo: (Todo) -> Unit,
     upsertTodoGroup: (TodoGroup) -> Unit,
-    upsertTodoGroupById: (Int, String) -> Unit,
+    upsertTodoGroupById: (Int,Int, String) -> Unit,
     currentGroupStateList: List<CurrentGroupState>,
     currentGroupList: List<CurrentGroup>,
     todoList: List<Todo>,
@@ -447,7 +447,7 @@ fun HaruManda(
     showSheet: (ContentState) -> Unit,
     todoGroupList: List<TodoGroup>,
     deleteCurrentGroup: (currentGroupId: Int, todoGroupId: Int, date: LocalDate) -> Unit,
-    upsertTodoGroupById: (Int, String) -> Unit,
+    upsertTodoGroupById: (Int,Int, String) -> Unit,
     date: LocalDate
 ) {
     var openDialog by remember { mutableStateOf(false) }
@@ -685,7 +685,7 @@ fun TodoContentPreView() {
         {},
         {},
         {},
-        { a, b -> },
+        { a, b ,d-> },
         List<CurrentGroupState>(9) {
             CurrentGroupState.Done(
                 "안드로이드",

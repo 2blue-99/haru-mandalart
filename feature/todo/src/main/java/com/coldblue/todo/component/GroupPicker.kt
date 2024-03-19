@@ -25,8 +25,11 @@ import com.coldblue.model.ToggleInfo
 fun GroupPicker(
     currentGroupList: List<CurrentGroup>,
     currentTodoGroupId: Int?,
-    onClick: (Int?) -> Unit
+    currentOriginGroupId: Int,
+    onClick: (Int?, Int) -> Unit
 ) {
+
+
     val groupButtons = remember {
         mutableStateListOf<ToggleInfo>().apply {
             add(
@@ -37,13 +40,16 @@ fun GroupPicker(
             )
             addAll(currentGroupList.map { group ->
                 ToggleInfo(
-                    isChecked = currentTodoGroupId == group.todoGroupId,
+                    isChecked = if (currentOriginGroupId == 0) currentTodoGroupId == group.todoGroupId else currentOriginGroupId == group.originGroupId,
                     text = group.name,
-                    groupId = group.todoGroupId
+                    groupId = group.todoGroupId,
+                    originId = group.originGroupId
                 )
             })
         }
     }
+
+
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             modifier = Modifier.padding(top = 48.dp),
@@ -54,7 +60,7 @@ fun GroupPicker(
         LazyRow(modifier = Modifier.fillMaxWidth()) {
             items(groupButtons) { group ->
                 SelectButton(group) {
-                    onClick(group.groupId)
+                    onClick(group.groupId, group.originId)
                     groupButtons.replaceAll {
                         it.copy(isChecked = it.text == group.text)
                     }

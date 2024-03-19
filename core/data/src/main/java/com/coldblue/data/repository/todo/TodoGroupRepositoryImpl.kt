@@ -29,8 +29,8 @@ class TodoGroupRepositoryImpl @Inject constructor(
         syncHelper.syncWrite()
     }
 
-    override suspend fun upsertTodoGroup(todoGroupId: Int, name: String) {
-        todoGroupDao.upsertTodoGroup(todoGroupId, name, getUpdateTime())
+    override suspend fun upsertTodoGroup(originGroupId: Int, todoGroupId: Int, name: String) {
+        todoGroupDao.upsertTodoGroup(originGroupId, todoGroupId, name, getUpdateTime())
         syncHelper.syncWrite()
     }
 
@@ -66,7 +66,8 @@ class TodoGroupRepositoryImpl @Inject constructor(
 
     override suspend fun syncWrite(): Boolean {
         try {
-            val localNew = todoGroupDao.getToWriteTodoGroups(updateTimeDataSource.todoGroupUpdateTime.first())
+            val localNew =
+                todoGroupDao.getToWriteTodoGroups(updateTimeDataSource.todoGroupUpdateTime.first())
             val originIds = todoGroupDataSource.upsertTodoGroup(localNew.asNetworkModel())
             val toUpsertTodoGroups = localNew.asSyncedEntity(originIds)
             val currentGroupUpdateTime = getUpdateTime()
