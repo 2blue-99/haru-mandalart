@@ -1,6 +1,5 @@
 package com.coldblue.history
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetYearlyExistTodoDateUseCase
@@ -33,6 +32,9 @@ class HistoryViewModel @Inject constructor(
     private val toggleTodoUseCase: ToggleTodoUseCase,
 ) : ViewModel() {
 
+    init {
+        Logger.d("초기화여")
+    }
     private val _yearSate = MutableStateFlow(LocalDate.now().year)
     val yearSate: StateFlow<Int> = _yearSate
 
@@ -49,9 +51,6 @@ class HistoryViewModel @Inject constructor(
         yearlyExistDateFlow,
         getTodoYearRangeUseCase()
     ) { todoList, uniqueTodoCnt, dateList, yearList ->
-
-        Logger.d("Coom")
-
         HistoryUiState.Success(
             allTodoDayCnt = uniqueTodoCnt,
             controllerList = HistoryUtil.controllerListMaker(yearSate.value, dateList),
@@ -81,7 +80,6 @@ class HistoryViewModel @Inject constructor(
 
     fun selectYear(year: Int) {
         viewModelScope.launch {
-//            _dateSate.value = dateSate.value.withYear(year)
             _yearSate.value = year
         }
     }
