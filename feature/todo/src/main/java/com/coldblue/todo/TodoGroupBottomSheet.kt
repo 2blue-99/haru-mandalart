@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -82,16 +83,44 @@ fun TodoGroupBottomSheet(
     }
 
     Column(
+        modifier = Modifier.padding(bottom = 40.dp)
     ) {
+        // 그룹
         Text(
-            text = "그룹", modifier = Modifier.fillMaxWidth(),
+            text = "이름", modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Start, style = HmStyle.text16, fontWeight = FontWeight.Bold
         )
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.1f),
+                .fillMaxHeight(0.1f)
         ) {
+            item {
+                OutlinedButton(
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier
+                        .fillMaxHeight(0.7f)
+                        .aspectRatio(1.1f)
+                        .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
+                        .border(
+                            width = 1.dp,
+                            color = HMColor.Primary,
+                            shape = RoundedCornerShape(5.dp)
+                        )
+                        .clip(RoundedCornerShape(5.dp)),
+//                        .background(HMColor.Background),
+                    colors = ButtonDefaults.buttonColors(containerColor = HMColor.Primary),
+                    onClick = { openTodoGroupDialog = true },
+                    shape = RoundedCornerShape(5.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = IconPack.Plus,
+                        contentDescription = null,
+                        tint = HMColor.Background
+                    )
+                }
+            }
             items(unSelectedTodoGroupList) { todoGroup ->
                 Surface(
                     color = HMColor.Background,
@@ -131,32 +160,6 @@ fun TodoGroupBottomSheet(
                     )
                 }
             }
-            item {
-                OutlinedButton(
-                    contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier
-                        .fillMaxHeight(0.7f)
-                        .aspectRatio(1.1f)
-                        .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-                        .border(
-                            width = 1.dp,
-                            color = HMColor.Primary,
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                        .clip(RoundedCornerShape(5.dp))
-                        .background(HMColor.Background),
-                    onClick = { openTodoGroupDialog = true },
-                    shape = RoundedCornerShape(5.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = IconPack.Plus,
-                        contentDescription = null,
-                        tint = HMColor.Primary
-                    )
-                }
-            }
-
         }
     }
 }

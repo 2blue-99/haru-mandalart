@@ -390,14 +390,13 @@ fun GroupBottomSheet(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .padding(bottom = 48.dp)
+                .padding(start = 24.dp, end = 24.dp, bottom = 48.dp)
         ) {
             Text(
                 text = content.title, modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 28.dp),
-                textAlign = TextAlign.Center, style = HmStyle.text16, fontWeight = FontWeight.Bold
+                textAlign = TextAlign.Center, style = HmStyle.text20, fontWeight = FontWeight.Bold
             )
             when (content) {
                 is ContentState.Group -> {

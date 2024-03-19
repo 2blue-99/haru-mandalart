@@ -24,6 +24,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -145,9 +146,14 @@ fun TodoEditContent(
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(Modifier.padding(bottom = 60.dp)) {
+        LazyColumn(
+            Modifier.padding(bottom = 60.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
             item {
-               Box(modifier = Modifier.fillMaxWidth()){
+               Box(modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(vertical = 20.dp)){
                    Row(
                        Modifier
                            .fillMaxWidth()
@@ -157,7 +163,7 @@ fun TodoEditContent(
                        horizontalArrangement = Arrangement.Absolute.Center
                    ) {
                        Text(
-                           text = "세부 항목", style = HmStyle.text16, fontWeight = FontWeight.Bold
+                           text = "세부 항목", style = HmStyle.text20, fontWeight = FontWeight.Bold
                        )
                    }
                    Row(
@@ -201,7 +207,6 @@ fun TodoEditContent(
                 )
             }
             item {
-                Spacer(modifier = Modifier.size(16.dp))
                 HMTimePicker(
                     myTime = myTime,
                     onSwitch = onSwitch,
@@ -216,8 +221,6 @@ fun TodoEditContent(
                 )
             }
             item {
-                Spacer(modifier = Modifier.size(16.dp))
-
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     text = "설명",
@@ -237,8 +240,6 @@ fun TodoEditContent(
                 )
             }
             item {
-                Spacer(modifier = Modifier.size(16.dp))
-
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     text = "날짜",
