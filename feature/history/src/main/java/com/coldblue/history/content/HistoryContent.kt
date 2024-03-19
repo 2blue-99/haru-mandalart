@@ -155,47 +155,53 @@ fun HistoryController(
     selectYear: (Int) -> Unit,
     dateShowState: (Boolean) -> Unit
 ) {
-    com.orhanobut.logger.Logger.d("$today")
+
+
+    var clickedDate by remember { mutableStateOf(today)    }
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val presentLocalYear = LocalDate.now().year
 
-    val boxClickStateList =
-        remember { mutableStateListOf<Boolean>().apply { addAll(List(controllerList.size * 7) { false }) } }
+//    val boxClickStateList = remember { mutableStateListOf<Boolean>().apply { addAll(List(controllerList.size * 7) { false }) } }
 
     val yearClickStateList =
         remember { mutableStateListOf<Boolean>().apply { addAll(List(todoYearList.size) { todoYearList[it] == presentLocalYear }) } }
-    var clickedState by remember { mutableStateOf(true) }
-    var beforeDateIndex by remember { mutableIntStateOf(0) }
+//    var clickedState by remember { mutableStateOf(true) }
+//    var beforeDateIndex by remember { mutableIntStateOf(0) }
     var beforeYearIndex by remember { mutableIntStateOf(-1) }
-    var pickedDateIndex by remember { mutableIntStateOf(0) }
+//    var pickedDateIndex by remember { mutableIntStateOf(0) }
     var pickedYearIndex by remember { mutableIntStateOf(todoYearList.indices.firstOrNull { todoYearList[it] == presentLocalYear } ?: 0) }
 
     // Init Clicked Controller
     LaunchedEffect(controllerList) {
         if (todoYearList[pickedYearIndex] == presentLocalYear && beforeYearIndex != pickedYearIndex) {
-            boxClickStateList[beforeDateIndex] = false
-            boxClickStateList[pickedDateIndex] = true
-            beforeDateIndex = pickedDateIndex
+//            boxClickStateList[beforeDateIndex] = false
+//            boxClickStateList[pickedDateIndex] = true
+//            beforeDateIndex = pickedDateIndex
             beforeYearIndex = pickedYearIndex
-            clickedState = true
+//            clickedState = true
         } else {
-            boxClickStateList[beforeDateIndex] = false
-            clickedState = false
+//            boxClickStateList[beforeDateIndex] = false
+//            clickedState = false
         }
     }
 
-    LaunchedEffect(clickedState) {
-        dateShowState(clickedState)
+//    LaunchedEffect(clickedState) {
+//        dateShowState(clickedState)
+//    }
+
+    fun clickDate(date: LocalDate){
+        clickedDate = date
+
     }
 
-    fun boxController(presentIndex: Int) {
-        boxClickStateList[beforeDateIndex] = false
-        boxClickStateList[presentIndex] = true
-        beforeDateIndex = presentIndex
-        pickedDateIndex = presentIndex
-        clickedState = true
-    }
+//    fun boxController(presentIndex: Int) {
+////        boxClickStateList[beforeDateIndex] = false
+////        boxClickStateList[presentIndex] = true
+////        beforeDateIndex = presentIndex
+////        pickedDateIndex = presentIndex
+//        clickedState = true
+//    }
 
     fun yearController(presentIndex: Int) {
         yearClickStateList.indices.forEach { yearClickStateList[it] = false }
@@ -259,22 +265,24 @@ fun HistoryController(
                                             ControllerBox(
                                                 containerColor = HMColor.Gray,
                                                 tintColor = HMColor.Gray,
-                                                isClicked = boxClickStateList[stateIndex]
+                                                isClicked = clickedDate== timeState.date
                                             ) {
                                                 selectDate(timeState.date)
-                                                boxController(stateIndex)
+                                                clickDate(timeState.date)
+
                                             }
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            pickedDateIndex = stateIndex
+//                                            pickedDateIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Gray,
                                                 tintColor = HMColor.Gray,
-                                                isClicked = boxClickStateList[stateIndex]
+                                                isClicked = clickedDate== timeState.date
                                             ) {
                                                 selectDate(timeState.date)
-                                                boxController(stateIndex)
+                                                clickDate(timeState.date)
+
                                             }
                                         }
 
@@ -282,10 +290,11 @@ fun HistoryController(
                                             ControllerBox(
                                                 containerColor = HMColor.Box,
                                                 tintColor = HMColor.Box,
-                                                isClicked = boxClickStateList[stateIndex]
+                                                isClicked = clickedDate== timeState.date
                                             ) {
                                                 selectDate(timeState.date)
-                                                boxController(stateIndex)
+                                                clickDate(timeState.date)
+
                                             }
                                         }
                                     }
@@ -299,23 +308,24 @@ fun HistoryController(
                                                 containerColor = HMColor.Box,
                                                 tintColor = HMColor.Primary,
                                                 isExistTodo = true,
-                                                isClicked = boxClickStateList[stateIndex]
+                                                isClicked = clickedDate== timeState.date
                                             ) {
                                                 selectDate(timeState.date)
-                                                boxController(stateIndex)
+                                                clickDate(timeState.date)
+
                                             }
                                         }
 
                                         is ControllerTimeState.Present -> {
-                                            pickedDateIndex = stateIndex
+//                                            pickedDateIndex = stateIndex
                                             ControllerBox(
                                                 containerColor = HMColor.Box,
                                                 tintColor = HMColor.Primary,
                                                 isExistTodo = true,
-                                                isClicked = boxClickStateList[stateIndex]
+                                                isClicked = clickedDate== timeState.date
                                             ) {
                                                 selectDate(timeState.date)
-                                                boxController(stateIndex)
+                                                clickDate(timeState.date)
                                             }
                                         }
 
@@ -324,10 +334,10 @@ fun HistoryController(
                                                 containerColor = HMColor.Background,
                                                 tintColor = HMColor.LightPrimary,
                                                 isExistTodo = true,
-                                                isClicked = boxClickStateList[stateIndex]
+                                                isClicked = clickedDate== timeState.date
                                             ) {
                                                 selectDate(timeState.date)
-                                                boxController(stateIndex)
+                                                clickDate(timeState.date)
                                             }
                                         }
                                     }
