@@ -12,6 +12,7 @@ data class Todo(
     val todoGroupId: Int? = null,
     val groupName: String = "",
     val isDel: Boolean = false,
+   val originGroupId: Int,
     val originId: Int = 0,
     val id: Int = 0,
 )

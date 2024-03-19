@@ -28,17 +28,19 @@ interface TodoGroupDao {
     suspend fun syncWriteTodoGroup(
         todoGroups: List<TodoGroupEntity>,
         currentGroupUpdateTime: String
-    ): Boolean {
+    ) {
         upsertTodoGroupList(todoGroups)
-        var rowsAffected = 0
         todoGroups.forEach {
-            rowsAffected += updateOriginGroupId(it.originId, it.id, currentGroupUpdateTime)
+            updateOriginGroupId(it.originId, it.id, currentGroupUpdateTime)
+            updateTodoGroupId(it.originId, it.id, currentGroupUpdateTime)
         }
-        return rowsAffected > 0
     }
 
     @Query("UPDATE current_group SET is_sync=0, update_time=:updateTime, origin_group_id = :originId WHERE todo_group_id = :todoGroupId")
     suspend fun updateOriginGroupId(originId: Int, todoGroupId: Int, updateTime: String): Int
+
+    @Query("UPDATE todo SET is_sync=0, update_time=:updateTime, origin_group_id = :originId WHERE todo_group_id = :todoGroupId")
+    suspend fun updateTodoGroupId(originId: Int, todoGroupId: Int, updateTime: String): Int
 
     @Query("Select * From current_group")
     fun getcg(): List<CurrentGroupEntity>

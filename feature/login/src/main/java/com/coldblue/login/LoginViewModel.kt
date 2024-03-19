@@ -50,8 +50,6 @@ class LoginViewModel @Inject constructor(
             }
 
             is NativeSignInResult.Error -> {
-                Logger.e("실패임 ")
-                Logger.e(result.message)
                 when (result.message.exceptionHandler()) {
                     is LoginExceptionState.Waiting -> _loginState.value =
                         LoginUiState.Fail(LoginExceptionState.Waiting())

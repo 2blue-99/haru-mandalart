@@ -22,6 +22,7 @@ object TodoEntityMapper {
             isDel = domain.isDel,
             updateTime = getUpdateTime(),
             id = domain.id,
+            originGroupId = domain.originGroupId
         )
     }
 
@@ -41,8 +42,9 @@ object TodoEntityMapper {
             todoGroupId = entity.todo.todoGroupId,
             isDel = entity.todo.isDel,
             originId = entity.todo.originId,
-            groupName = entity.groupName?:"",
+            groupName = entity.groupName ?: "",
             id = entity.todo.id,
+            originGroupId = entity.todo.originGroupId
         )
     }
 
@@ -71,6 +73,8 @@ object TodoEntityMapper {
             isDel = network.is_del,
             updateTime = network.update_time,
             id = todoId ?: 0,
+            originGroupId = network.orgin_group_id
+
         )
     }
 }
@@ -95,6 +99,7 @@ fun List<TodoEntity>.asSyncedEntity(originIds: List<Int>): List<TodoEntity> {
             isDel = entity.isDel,
             updateTime = entity.updateTime,
             id = entity.id,
+            originGroupId = entity.originGroupId
         )
     }
 }
@@ -108,7 +113,8 @@ fun TodoEntity.asNetworkModel() = NetworkTodo(
     update_time = updateTime,
     time = if (time == null) null else time.toString(),
     is_del = isDel,
-    id = originId
+    id = originId,
+    orgin_group_id = originGroupId
 )
 
 fun List<Todo>.asEntity(): List<TodoEntity> {

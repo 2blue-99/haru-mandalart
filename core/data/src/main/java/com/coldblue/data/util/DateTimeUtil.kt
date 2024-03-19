@@ -17,9 +17,9 @@ fun getUpdateTime(): String {
 }
 
 fun String?.toTime(): LocalTime? {
-    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
+    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
     return if (this.isNullOrBlank()) null
-    else LocalTime.parse(this, formatter)
+    else LocalTime.parse(this.take(8), formatter)
 
 }
 

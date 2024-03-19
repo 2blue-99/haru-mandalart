@@ -77,6 +77,7 @@ class TodoViewModel @Inject constructor(
 
     val todoUiState: StateFlow<TodoUiState> =
         groupFlow.combine(todoFlow) { group, todoList ->
+            Logger.d(todoList)
             val todoGroupList = group.todoGroupList
             val currentGroupList = group.currentGroupList.groupBy { it.index }
             TodoUiState.Success(
@@ -110,7 +111,13 @@ class TodoViewModel @Inject constructor(
                         CurrentGroupState.Center(
                             totTodo = todoList.size.toString(),
                             doneTodo = todoList.filter { it.isDone }.size.toString(),
-                            currentGroup = CurrentGroup(-1, index = 5, date = dateSate.value, originId = 0, originGroupId = 0)
+                            currentGroup = CurrentGroup(
+                                -1,
+                                index = 5,
+                                date = dateSate.value,
+                                originId = 0,
+                                originGroupId = 0
+                            )
                         )
                     } else {
                         CurrentGroupState.Empty(
@@ -163,9 +170,9 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    fun deleteCurrentGroup(currentGroupId: Int, todoGroupId: Int,date:LocalDate) {
+    fun deleteCurrentGroup(currentGroupId: Int, todoGroupId: Int, date: LocalDate) {
         viewModelScope.launch {
-            deleteCurrentGroupUseCase(currentGroupId, todoGroupId,date)
+            deleteCurrentGroupUseCase(currentGroupId, todoGroupId, date)
         }
     }
 

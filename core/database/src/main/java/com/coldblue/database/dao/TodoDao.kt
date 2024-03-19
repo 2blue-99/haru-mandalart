@@ -5,6 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.coldblue.database.entity.CurrentGroupEntity
+import com.coldblue.database.entity.CurrentGroupWithName
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoWithGroupName
 import kotlinx.coroutines.flow.Flow
@@ -13,10 +15,10 @@ import java.time.LocalDate
 @Dao
 interface TodoDao {
 
-    @Query("SELECT todo.*, IFNULL(todo_group.name, '') AS groupName FROM todo LEFT JOIN todo_group ON todo.todo_group_id = todo_group.id WHERE date=:date AND todo.is_del=0")
+    @Query("SELECT todo.*, todo_group.name AS groupName FROM todo LEFT JOIN todo_group ON CASE WHEN todo.origin_group_id != 0 THEN todo.origin_group_id = todo_group.origin_id ELSE todo.todo_group_id = todo_group.id END WHERE todo.date=:date AND todo.is_del=0")
     fun getTodo(date: LocalDate): Flow<List<TodoWithGroupName>>
 
-    @Query("SELECT todo.*, IFNULL(todo_group.name, '') AS groupName FROM todo LEFT JOIN todo_group ON todo.todo_group_id = todo_group.id WHERE todo.id=:todoId AND todo.is_del=0")
+    @Query("SELECT todo.*, todo_group.name AS groupName FROM todo LEFT JOIN todo_group ON CASE WHEN todo.origin_group_id != 0 THEN todo.origin_group_id = todo_group.origin_id ELSE todo.todo_group_id = todo_group.id END WHERE todo.id=:todoId AND todo.is_del=0")
     fun getTodo(todoId: Int): Flow<TodoWithGroupName>
 
     @Query("SELECT DISTINCT(todo.date) FROM todo WHERE date >= :startDate AND date <= :endDate AND is_del=0")
@@ -36,6 +38,18 @@ interface TodoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodo(todo: TodoEntity)
+
+    @Query("SELECT todo_group.origin_id FROM todo_group WHERE todo_group.id=:todoGroupId")
+    fun getOriginGroupId(todoGroupId: Int): Int
+
+    @Transaction
+    suspend fun upsertTodo2(todo: TodoEntity) {
+        val originGroupId = if (todo.todoGroupId != null) {
+            getOriginGroupId(todo.todoGroupId)
+        } else 0
+        upsertTodo(todo.copy(originGroupId= originGroupId))
+    }
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodo(todos: List<TodoEntity>)

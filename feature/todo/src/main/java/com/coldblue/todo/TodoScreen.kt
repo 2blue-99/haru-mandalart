@@ -98,7 +98,7 @@ fun TodoScreen(
                 shape = CircleShape,
                 onClick = {
 //                    navigateToTodoEdit(DEFAULT_TODO)
-                    todoViewModel.showSheet(ContentState.Todo(todo = Todo("")))
+                    todoViewModel.showSheet(ContentState.Todo(todo = Todo("", originGroupId = 0)))
                 },
                 content = {
                     Icon(
