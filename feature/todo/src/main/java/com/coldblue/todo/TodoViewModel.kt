@@ -77,7 +77,6 @@ class TodoViewModel @Inject constructor(
 
     val todoUiState: StateFlow<TodoUiState> =
         groupFlow.combine(todoFlow) { group, todoList ->
-            Logger.d(todoList)
             val todoGroupList = group.todoGroupList
             val currentGroupList = group.currentGroupList.groupBy { it.index }
             TodoUiState.Success(
@@ -158,9 +157,9 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    fun upsertTodoGroup(todoGroupId: Int, name: String) {
+    fun upsertTodoGroup(originGroupId:Int,todoGroupId: Int, name: String) {
         viewModelScope.launch {
-            upsertTodoGroupUseCase(todoGroupId, name)
+            upsertTodoGroupUseCase(originGroupId,todoGroupId, name)
         }
     }
 

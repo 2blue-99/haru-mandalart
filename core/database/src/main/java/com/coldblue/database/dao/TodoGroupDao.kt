@@ -16,7 +16,22 @@ interface TodoGroupDao {
     fun getTodoGroup(): Flow<List<TodoGroupEntity>>
 
     @Query("UPDATE todo_group SET name = :name , update_time = :updateTime,is_sync=0 WHERE id = :todoGroupId")
-    suspend fun upsertTodoGroup(todoGroupId: Int, name: String, updateTime: String)
+    suspend fun upsertTodoGroup2(todoGroupId: Int, name: String, updateTime: String)
+
+    @Query("UPDATE todo_group SET name = :name , update_time = :updateTime,is_sync=0 WHERE origin_id = :originId")
+    suspend fun upsertTodoGroupOrigin(originId: Int, name: String, updateTime: String)
+
+    @Transaction
+    suspend fun upsertTodoGroup(
+        originGroupId: Int, todoGroupId: Int, name: String, updateTime: String
+    ) {
+        if (originGroupId == 0) {
+            upsertTodoGroup2(todoGroupId, name, updateTime)
+        } else {
+            upsertTodoGroupOrigin(originGroupId, name, updateTime)
+        }
+
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodoGroup(todoGroup: TodoGroupEntity)

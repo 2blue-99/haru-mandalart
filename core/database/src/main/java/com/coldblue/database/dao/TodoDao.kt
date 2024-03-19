@@ -8,7 +8,9 @@ import androidx.room.Transaction
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.CurrentGroupWithName
 import com.coldblue.database.entity.TodoEntity
+import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.database.entity.TodoWithGroupName
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -39,15 +41,17 @@ interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertTodo(todo: TodoEntity)
 
-    @Query("SELECT todo_group.origin_id FROM todo_group WHERE todo_group.id=:todoGroupId")
-    fun getOriginGroupId(todoGroupId: Int): Int
+    @Query("SELECT todo_group.origin_id FROM todo_group WHERE todo_group.origin_id=:todoGroupId")
+    fun getOriginGroupId(todoGroupId: Int): Int?
 
     @Transaction
     suspend fun upsertTodo2(todo: TodoEntity) {
-        val originGroupId = if (todo.todoGroupId != null) {
-            getOriginGroupId(todo.todoGroupId)
-        } else 0
-        upsertTodo(todo.copy(originGroupId= originGroupId))
+        Logger.d(todo)
+
+        val originGroupId = getOriginGroupId(todo.originGroupId) ?: 0
+        Logger.d(originGroupId)
+
+        upsertTodo(todo.copy(originGroupId = originGroupId))
     }
 
 
