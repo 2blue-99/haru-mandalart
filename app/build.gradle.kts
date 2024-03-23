@@ -9,9 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.coldblue.haru_mandalart"
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -20,7 +19,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -46,20 +46,14 @@ dependencies {
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
-    implementation(project(":core:model"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
-
     implementation(libs.hilt.ext.work)
     implementation(libs.androidx.work.ktx)
-
     implementation (libs.play.services.oss.licenses)
-
-//    implementation (libs.logger)
-
 
 }

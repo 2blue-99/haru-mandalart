@@ -1,6 +1,5 @@
 package com.coldblue.data.repository.manda
 
-import android.service.autofill.UserData
 import com.coldblue.data.mapper.MandaKeyMapper.asDomain
 import com.coldblue.data.mapper.MandaKeyMapper.asEntity
 import com.coldblue.data.mapper.MandaKeyMapper.asNetworkModel
@@ -80,11 +79,6 @@ class MandaKeyRepositoryImpl @Inject constructor(
             val toUpsertMandaKeys = localNew.asSyncedEntity(originIds)
             mandaKeyDao.upsertMandaKeys(toUpsertMandaKeys)
 
-//            if (!userDataSource.isInit.first()) {
-//                checkFinalManda()
-//            }
-
-
             syncHelper.setMaxUpdateTime(
                 toUpsertMandaKeys,
                 updateTimeDataSource::setMandaKeyUpdateTime
@@ -96,11 +90,6 @@ class MandaKeyRepositoryImpl @Inject constructor(
         }
     }
 
-//    suspend fun checkFinalManda() {
-//        val finalManda = mandaKeyDao.getFinalManda().map { it != null }
-//        if (finalManda.first()) {
-//            userDataSource.updateInit(true)
-//        }
-//    }
+
 
 }

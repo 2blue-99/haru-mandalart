@@ -5,10 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.CurrentGroupWithName
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -102,7 +100,5 @@ interface CurrentGroupDao {
 
     @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON CASE WHEN current_group.origin_group_id != 0 THEN current_group.origin_group_id = todo_group.origin_id ELSE current_group.todo_group_id = todo_group.id END WHERE current_group.date=:date AND current_group.is_del=0")
     fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupWithName>>
-//    @Query("SELECT current_group.*, todo_group.name AS groupName FROM current_group LEFT JOIN todo_group ON current_group.todo_group_id = todo_group.id WHERE current_group.date=:date AND current_group.is_del=0")
-//    fun getCurrentGroup(date: LocalDate): Flow<List<CurrentGroupWithName>>
 
 }

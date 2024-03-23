@@ -39,10 +39,6 @@ fun DeleteDialog(
                     append(text)
                 }
             )
-//            Text(
-//                text = text,
-//                fontWeight = FontWeight.Bold
-//            )
         }, onDismissRequest = {
             onDismissRequest()
         }, confirmButton = {

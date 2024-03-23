@@ -29,7 +29,6 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.CurrentGroup
 import com.coldblue.model.TodoGroup
-import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
 @Composable

@@ -46,10 +46,6 @@ fun NavGraphBuilder.todoEditScreen(onDismissRequest: () -> Unit) {
             navArgument(DATE) { type = NavType.StringType },
         )
     ) { backStackEntry ->
-//        val todoId = backStackEntry.arguments?.getInt("todoId")
-//        val title = backStackEntry.arguments?.getString("title")
-//        val myTimeJson = backStackEntry.arguments?.getString("myTime")
-//        val myTime = Gson().fromJson(myTimeJson, MyTime::class.java)
         TodoEditScreen(onDismissRequest = onDismissRequest)
 
     }

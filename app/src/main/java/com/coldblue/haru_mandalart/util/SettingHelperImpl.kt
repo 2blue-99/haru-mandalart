@@ -3,7 +3,6 @@ package com.coldblue.haru_mandalart.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import com.coldblue.data.util.SettingHelper
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity

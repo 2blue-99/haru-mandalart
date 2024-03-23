@@ -21,7 +21,6 @@ import com.coldblue.haru_mandalart.navigation.HMNavHost
 fun HMApp(
     navController: HMAppState = rememberHMState()
 ) {
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {

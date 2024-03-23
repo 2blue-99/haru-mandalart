@@ -1,6 +1,5 @@
 package com.coldblue.network.datasource
 
-import com.coldblue.model.MandaDetail
 import com.coldblue.network.model.NetworkMandaDetail
 
 interface MandaDetailDataSource {

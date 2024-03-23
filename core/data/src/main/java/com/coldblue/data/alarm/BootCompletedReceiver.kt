@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import com.coldblue.data.mapper.AlarmMapper.asDomain
 import com.coldblue.database.dao.AlarmDao
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

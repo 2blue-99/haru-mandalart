@@ -21,11 +21,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,20 +37,14 @@ import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.asMyTime
 import com.coldblue.data.util.getAmPmHour
 import com.coldblue.designsystem.component.HMButton
-import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Todo
 import com.coldblue.todo.component.HMTimePicker
 import com.coldblue.todo.uistate.DEFAULT_TODO
 import com.google.gson.Gson
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
-import kotlin.math.sin
 
 
 @OptIn(ExperimentalMaterial3Api::class)
