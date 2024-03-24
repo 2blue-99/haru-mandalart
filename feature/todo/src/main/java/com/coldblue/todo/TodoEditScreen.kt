@@ -197,7 +197,7 @@ fun TodoEditContent(
 
             }
             item {
-                Text(text = "할 일", style = HmStyle.text16, fontWeight = FontWeight.Bold)
+                Text(text = "이름", style = HmStyle.text16, fontWeight = FontWeight.Bold)
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = titleText,
