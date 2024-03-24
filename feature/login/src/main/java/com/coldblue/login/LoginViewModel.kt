@@ -62,4 +62,11 @@ class LoginViewModel @Inject constructor(
             else -> {}
         }
     }
+
+
+    fun loginWithOutAuth(){
+        viewModelScope.launch {
+            loginHelper.loginWithOutAuth()
+        }
+    }
 }

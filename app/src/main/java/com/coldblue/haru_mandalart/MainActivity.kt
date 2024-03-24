@@ -64,6 +64,9 @@ class MainActivity : ComponentActivity() {
                                 LoginScreen()
                             }
                             LoginState.Login -> {
+                                HMApp()
+                            }
+                            LoginState.LoginWithOutAuth -> {
                                 syncHelper.initialize()
                                 HMApp()
                             }

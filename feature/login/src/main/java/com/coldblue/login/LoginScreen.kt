@@ -97,6 +97,9 @@ fun LoginScreen(
                 }
             }
         }
+        Button(modifier = Modifier.weight(1f), onClick = { loginViewModel.loginWithOutAuth() }) {
+            Text(text = "이것은 임시 버튼")
+        }
     }
 }
 
