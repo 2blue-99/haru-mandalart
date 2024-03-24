@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
@@ -47,9 +48,9 @@ class MainActivity : ComponentActivity() {
     lateinit var syncHelper: SyncHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         setContent {
             HarumandalartTheme {
                 Surface(

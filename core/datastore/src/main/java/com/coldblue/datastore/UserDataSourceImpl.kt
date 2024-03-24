@@ -39,10 +39,10 @@ class UserDataSourceImpl @Inject constructor(
 
     override suspend fun reset() {
         dataStore.edit { preferences -> preferences[tokenKey] = "" }
-        dataStore.edit { preferences -> preferences[tutorialKey] = false }
-        dataStore.edit { preferences -> preferences[alarmKey] = false }
         dataStore.edit { preferences -> preferences[isStartedKey] = false }
         dataStore.edit { preferences -> preferences[emailKey] = "비회원" }
+        dataStore.edit { preferences -> preferences[tutorialKey] = false }
+        dataStore.edit { preferences -> preferences[alarmKey] = false }
         dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
     }
 

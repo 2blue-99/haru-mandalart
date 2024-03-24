@@ -51,14 +51,21 @@ interface CurrentGroupDao {
         val existingGroup = getGroupByDateAndIndex(currentGroup.date, currentGroup.index)
         if (existingGroup != null) {
             if (existingGroup.originGroupId == 0) {
+                //오리진 그룹아이디가 없는경우
+
+
                 upsertCurrentGroup(currentGroup.copy(id = existingGroup.id))
             } else {
+
+
                 upsertCurrentGroup(
                     currentGroup.copy(
                         id = existingGroup.id,
                         originGroupId = existingGroup.originGroupId
                     )
                 )
+
+
             }
         } else {
             upsertCurrentGroup(currentGroup)
