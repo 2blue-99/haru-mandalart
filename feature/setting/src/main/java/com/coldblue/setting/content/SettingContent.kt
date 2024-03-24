@@ -46,11 +46,10 @@ fun SettingContent(
     alarm: Boolean,
     networkState: Boolean,
     loginState: LoginState,
-
-
     ) {
     var openDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
 
     if (openDialog) {
 

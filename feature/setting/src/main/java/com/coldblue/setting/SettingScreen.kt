@@ -1,5 +1,6 @@
 package com.coldblue.setting
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.util.LoginState
 import com.coldblue.setting.content.SettingContent
+import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
 @Composable
 fun SettingScreen(
@@ -20,6 +22,11 @@ fun SettingScreen(
     val networkState by settingViewModel.isOnline.collectAsStateWithLifecycle()
     val loginState by settingViewModel.loginWithOutAuth.collectAsStateWithLifecycle()
 
+    val authState = settingViewModel.getComposeAuth().rememberSignInWithGoogle(
+        onResult = { result -> settingViewModel.checkLoginState(result) },
+        fallback = { }
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +37,7 @@ fun SettingScreen(
             showContact = settingViewModel::showContact,
             versionName = settingViewModel.versionName,
             logout = settingViewModel::logout,
-            login = settingViewModel::login,
+            login = {authState.startFlow()},
             deleteUser = settingViewModel::deleteUser,
             onChangeAlarm = settingViewModel::updateAlarmState,
             email = email,
