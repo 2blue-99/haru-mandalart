@@ -86,22 +86,28 @@ fun LoginScreen(
                 Text(text = "만다라트", style = HmStyle.text30, color = HMColor.Primary)
             }
         }
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f)) {
-            LoginButton {
-                if (networkState) {
-                    authState.startFlow()
-                } else {
-                    Toast.makeText(
-                        context,
-                        " 인터넷 연결을 확인하세요",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+        ){
+            Column(modifier = Modifier
+                .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                LoginButton {
+                    if (networkState) {
+                        authState.startFlow()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            " 인터넷 연결을 확인하세요",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                NotMemberLoginButton {
+                    loginViewModel.loginWithOutAuth()
                 }
             }
-            NotMemberLoginButton { loginViewModel.loginWithOutAuth() }
-
         }
 
     }
@@ -116,7 +122,7 @@ fun NotMemberLoginButton(
         onClick = { onClick() },
         shape = RoundedCornerShape(5.dp),
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(vertical = 16.5.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = HMColor.Background,
             contentColor = HMColor.Text
@@ -145,6 +151,7 @@ fun LoginButton(
         border = BorderStroke(1.dp, HMColor.Gray),
         onClick = { onClick() },
         shape = RoundedCornerShape(5.dp),
+        contentPadding = PaddingValues(vertical = 14.dp),
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = HMColor.Background,
@@ -152,7 +159,7 @@ fun LoginButton(
         ),
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 6.dp),
+//            modifier = Modifier.padding(vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
 
