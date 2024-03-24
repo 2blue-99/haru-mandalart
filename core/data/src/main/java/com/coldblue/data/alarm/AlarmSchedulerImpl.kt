@@ -22,6 +22,7 @@ class AlarmSchedulerImpl @Inject constructor(
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(TODO_TITLE, item.title)
+            putExtra(TODO_ID, item.id)
         }
         try {
             alarmManager.setExactAndAllowWhileIdle(
