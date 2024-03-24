@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.data.util.LoginState
 import com.coldblue.designsystem.component.DeleteDialog
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
@@ -38,13 +39,16 @@ fun SettingContent(
     showContact: () -> Unit,
     versionName: String,
     logout: () -> Unit,
+    login: () -> Unit,
     deleteUser: () -> Unit,
     onChangeAlarmState: (Boolean) -> Unit,
     email: String,
     alarm: Boolean,
-    networkState:Boolean
+    networkState: Boolean,
+    loginState: LoginState,
 
-) {
+
+    ) {
     var openDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -97,33 +101,43 @@ fun SettingContent(
                     contentDescription = "오픈소스 라이센스"
                 )
             }
-            SettingItem(title = "앱 버전") {
+            SettingItem(title = "앱 버전", isLast = loginState == LoginState.LoginWithOutAuth) {
                 Text(text = "v $versionName")
             }
-            SettingItem(
-                title = "탈퇴",
-                isLast = true,
-                isClickable = true,
-                onClick = {
-                    if (networkState){
-                        openDialog = true
-                    }else{
-                        Toast.makeText(
-                            context,
-                            " 인터넷 연결을 확인하세요",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "탈퇴"
-                )
+            if (loginState == LoginState.AuthenticatedLogin) {
+                SettingItem(
+                    title = "탈퇴",
+                    isLast = true,
+                    isClickable = true,
+                    onClick = {
+                        if (networkState) {
+                            openDialog = true
+                        } else {
+                            Toast.makeText(
+                                context,
+                                " 인터넷 연결을 확인하세요",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "탈퇴"
+                    )
+                }
+            }
+
+        }
+        if (loginState == LoginState.AuthenticatedLogin) {
+            HMButton(text = "로그아웃", clickableState = true) {
+                logout()
+            }
+        } else {
+            HMButton(text = "로그인", clickableState = true) {
+                login()
             }
         }
-        HMButton(text = "로그아웃", clickableState = true) {
-            logout()
-        }
+
     }
 }
 
@@ -159,7 +173,20 @@ fun SettingItem(
 @Preview
 @Composable
 fun SettingContentPreview() {
-    SettingContent({}, {}, {}, "1.0", {}, {},{}, "hno05039@naver.com" , false,false)
+    SettingContent(
+        {},
+        {},
+        {},
+        "1.0",
+        {},
+        {},
+        {},
+        {},
+        "hno05039@naver.com",
+        false,
+        false,
+        LoginState.LoginWithOutAuth,
+    )
 }
 
 

@@ -3,6 +3,7 @@ package com.coldblue.setting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.data.util.LoginHelper
+import com.coldblue.data.util.LoginState
 import com.coldblue.data.util.NetworkHelper
 import com.coldblue.data.util.SettingHelper
 import com.coldblue.domain.user.GetAlarmStateUseCase
@@ -33,6 +34,14 @@ class SettingViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = false
     )
+
+    val loginWithOutAuth: StateFlow<LoginState> = loginHelper.isLogin.map {
+        it
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = LoginState.Loading
+    )
     val versionName = settingHelper.versionName
 
     val email = getEmailUseCase().stateIn(
@@ -50,6 +59,10 @@ class SettingViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             loginHelper.setLogout()
+        }
+    }
+    fun login() {
+        viewModelScope.launch {
         }
     }
 

@@ -27,7 +27,7 @@ class UserDataSourceImpl @Inject constructor(
     override val isStarted: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[isStartedKey] ?: false }
     override val email: Flow<String> =
-        dataStore.data.map { preferences -> preferences[emailKey] ?: "" }
+        dataStore.data.map { preferences -> preferences[emailKey] ?: "비회원" }
     override val isTutorial: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
     override val isAlarm: Flow<Boolean> =
@@ -41,6 +41,7 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.edit { preferences -> preferences[tokenKey] = "" }
         dataStore.edit { preferences -> preferences[tutorialKey] = false }
         dataStore.edit { preferences -> preferences[alarmKey] = false }
+        dataStore.edit { preferences -> preferences[isStartedKey] = false }
         dataStore.edit { preferences -> preferences[emailKey] = "" }
         dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
     }
