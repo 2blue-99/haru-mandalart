@@ -7,7 +7,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -84,7 +86,9 @@ fun LoginScreen(
                 Text(text = "만다라트", style = HmStyle.text30, color = HMColor.Primary)
             }
         }
-        Box(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)) {
             LoginButton {
                 if (networkState) {
                     authState.startFlow()
@@ -96,10 +100,42 @@ fun LoginScreen(
                     ).show()
                 }
             }
+            NotMemberLoginButton { loginViewModel.loginWithOutAuth() }
+
         }
+
     }
 }
 
+@Composable
+fun NotMemberLoginButton(
+    onClick: () -> Unit
+) {
+    Button(
+        border = BorderStroke(1.dp, HMColor.Gray),
+        onClick = { onClick() },
+        shape = RoundedCornerShape(5.dp),
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = HMColor.Background,
+            contentColor = HMColor.Text
+        ),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+
+        ) {
+            Text(
+                color = HMColor.SubText,
+                text = "비회원으로 시작하기",
+                style = TextStyle.Default,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
 
 @Composable
 fun LoginButton(

@@ -8,5 +8,5 @@ android {
 
 dependencies {
 
-    implementation(libs.appcompat)
+    implementation(libs.supabase.compose.auth)
 }

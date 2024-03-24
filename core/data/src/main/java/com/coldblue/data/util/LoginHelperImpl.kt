@@ -11,7 +11,8 @@ import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composeAuth
 import io.github.jan.supabase.gotrue.auth
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 class LoginHelperImpl @Inject constructor(
@@ -23,16 +24,24 @@ class LoginHelperImpl @Inject constructor(
     private val syncHelper: SyncHelper,
     private val supabaseDataSource: SupabaseDataSource,
 ) : LoginHelper {
+
+
     override val isLogin: Flow<LoginState> =
-        userDataSource.token.map {
-            if (it.isBlank())
-                LoginState.Logout
-            else
-                LoginState.Login
+        userDataSource.isStarted.combine(userDataSource.token) { isStarted, token ->
+            if (isStarted) {
+                if (token.isBlank()) LoginState.LoginWithOutAuth
+                else LoginState.AuthenticatedLogin
+            } else LoginState.Logout
+        }.catch {
+            LoginState.Logout
         }
+
     override val initPermissionState: Flow<Boolean> = userDataSource.permissionInitState
 
     override fun getComposeAuth(): ComposeAuth = client.composeAuth
+    override suspend fun loginWithOutAuth() {
+        userDataSource.updateStarted(true)
+    }
 
     override suspend fun setLoginSucceeded() {
         userDataSource.updateToken(client.auth.currentAccessTokenOrNull() ?: "")

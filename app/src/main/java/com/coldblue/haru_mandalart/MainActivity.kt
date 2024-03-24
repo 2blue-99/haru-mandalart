@@ -63,7 +63,10 @@ class MainActivity : ComponentActivity() {
                                 CheckPermission()
                                 LoginScreen()
                             }
-                            LoginState.Login -> {
+                            LoginState.LoginWithOutAuth -> {
+                                HMApp()
+                            }
+                            LoginState.AuthenticatedLogin -> {
                                 syncHelper.initialize()
                                 HMApp()
                             }

@@ -46,7 +46,6 @@ class LoginViewModel @Inject constructor(
                     loginHelper.setLoginSucceeded()
                 }
             }
-
             is NativeSignInResult.Error -> {
                 when (result.message.exceptionHandler()) {
                     is LoginExceptionState.Waiting -> _loginState.value =
@@ -60,6 +59,13 @@ class LoginViewModel @Inject constructor(
             }
 
             else -> {}
+        }
+    }
+
+
+    fun loginWithOutAuth(){
+        viewModelScope.launch {
+            loginHelper.loginWithOutAuth()
         }
     }
 }

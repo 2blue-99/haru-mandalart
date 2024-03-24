@@ -15,6 +15,7 @@ class UserDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : UserDataSource {
     private val tokenKey = stringPreferencesKey("token")
+    private val isStartedKey = booleanPreferencesKey("verifiedUser")
     private val emailKey = stringPreferencesKey("email")
     private val tutorialKey = booleanPreferencesKey("tutorial")
     private val alarmKey = booleanPreferencesKey("alarm")
@@ -23,8 +24,10 @@ class UserDataSourceImpl @Inject constructor(
 
     override val token: Flow<String> =
         dataStore.data.map { preferences -> preferences[tokenKey] ?: "" }
+    override val isStarted: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[isStartedKey] ?: false }
     override val email: Flow<String> =
-        dataStore.data.map { preferences -> preferences[emailKey] ?: "" }
+        dataStore.data.map { preferences -> preferences[emailKey] ?: "비회원" }
     override val isTutorial: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
     override val isAlarm: Flow<Boolean> =
@@ -38,6 +41,7 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.edit { preferences -> preferences[tokenKey] = "" }
         dataStore.edit { preferences -> preferences[tutorialKey] = false }
         dataStore.edit { preferences -> preferences[alarmKey] = false }
+        dataStore.edit { preferences -> preferences[isStartedKey] = false }
         dataStore.edit { preferences -> preferences[emailKey] = "" }
         dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
     }
@@ -45,6 +49,12 @@ class UserDataSourceImpl @Inject constructor(
     override suspend fun updateToken(token: String) {
         dataStore.edit { preferences ->
             preferences[tokenKey] = token
+        }
+    }
+
+    override suspend fun updateStarted(state: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[isStartedKey] = state
         }
     }
 

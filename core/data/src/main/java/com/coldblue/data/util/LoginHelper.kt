@@ -5,8 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface LoginHelper {
     val isLogin: Flow<LoginState>
+
     val initPermissionState: Flow<Boolean>
     fun getComposeAuth(): ComposeAuth
+    suspend fun loginWithOutAuth()
     suspend fun setLoginSucceeded()
     suspend fun setLogout()
     suspend fun deleteUser()
