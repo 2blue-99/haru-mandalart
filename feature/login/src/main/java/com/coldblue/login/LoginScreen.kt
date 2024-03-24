@@ -97,12 +97,40 @@ fun LoginScreen(
                 }
             }
         }
-        Button(modifier = Modifier.weight(1f), onClick = { loginViewModel.loginWithOutAuth() }) {
-            Text(text = "이것은 임시 버튼")
-        }
+        NotMemberLoginButton { loginViewModel.loginWithOutAuth() }
     }
 }
 
+@Composable
+fun NotMemberLoginButton(
+    onClick: () -> Unit
+){
+    Button(
+        border = BorderStroke(1.dp, HMColor.Gray),
+        onClick = { onClick() },
+        shape = RoundedCornerShape(5.dp),
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = HMColor.Background,
+            contentColor = HMColor.Text
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+
+        ) {
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                color = HMColor.SubText,
+                text = "비회원으로 시작하기",
+                style = TextStyle.Default,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
 
 @Composable
 fun LoginButton(

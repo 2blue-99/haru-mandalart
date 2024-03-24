@@ -11,12 +11,16 @@ import androidx.work.WorkManager
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.database.entity.SyncableEntity
+import com.coldblue.datastore.UserDataSource
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class SyncHelperImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-) : SyncHelper {
+    private val userDataSource: UserDataSource,
+
+    ) : SyncHelper {
     private val SYNC_WRITE = "SyncWrite"
     private val SYNC_READ = "SyncRead"
 
@@ -53,11 +57,15 @@ class SyncHelperImpl @Inject constructor(
     }
 
     override fun syncWrite() {
-        WorkManager.getInstance(context).beginUniqueWork(
-            SYNC_READ + SYNC_WRITE,
-            ExistingWorkPolicy.KEEP,
-            readRequest()
-        ).then(writeRequest()).enqueue()
+        userDataSource.token.map {
+            if (it.isNotBlank()) {
+                WorkManager.getInstance(context).beginUniqueWork(
+                    SYNC_READ + SYNC_WRITE,
+                    ExistingWorkPolicy.KEEP,
+                    readRequest()
+                ).then(writeRequest()).enqueue()
+            }
+        }
     }
 
     override fun initialize() {
