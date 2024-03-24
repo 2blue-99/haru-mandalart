@@ -12,7 +12,9 @@ import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.database.entity.SyncableEntity
 import com.coldblue.datastore.UserDataSource
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -56,15 +58,13 @@ class SyncHelperImpl @Inject constructor(
         maxUpdateTime?.run { updateTime(this) }
     }
 
-    override fun syncWrite() {
-        userDataSource.token.map {
-            if (it.isNotBlank()) {
-                WorkManager.getInstance(context).beginUniqueWork(
-                    SYNC_READ + SYNC_WRITE,
-                    ExistingWorkPolicy.KEEP,
-                    readRequest()
-                ).then(writeRequest()).enqueue()
-            }
+    override suspend fun syncWrite() {
+        if (userDataSource.token.first().isNotBlank()) {
+            WorkManager.getInstance(context).beginUniqueWork(
+                SYNC_READ + SYNC_WRITE,
+                ExistingWorkPolicy.KEEP,
+                readRequest()
+            ).then(writeRequest()).enqueue()
         }
     }
 
