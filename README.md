@@ -1,11 +1,10 @@
 
-![하루 만다라트](https://github.com/haru-mandal-art/testt/assets/94586184/4b39abf6-29d3-4b75-8157-99c7cfbef372 "하루 만다라트")
+![하루 만다라트](https://github.com/haru-mandal-art/haru-mandalart/assets/94586184/5ca8c3e4-e6bf-4978-8f63-570a9a682700 "하루 만다라트")
 
 
+<br>
 
-
-
-## 하루 만다라트
+# 하루 만다라트
 > 💡 **만다라트와 투두의 만남으로 가지고있는 꿈과 목표를 구체화하고 달성하세요.**
 
 ### Feature
@@ -20,9 +19,9 @@
 #### 하루 만다라트
 - 하루마다 8개의 할일 그룹 관리
 - 날짜별, 그룹별 투두 완료 상태 표출
-- 미완료한 투두 시간에 알림 표출
+- 미완료한 투두 알림
 #### 기록
-- 작성한 투두 기록 github 잔디 형태로 표출
+- 작성한 투두 기록 Github 잔디 형태로 표출
 - 투두를 작성한 총 일수 표출
 
 
@@ -31,7 +30,9 @@
 |-|-|-|-|
 | <img src="https://github.com/haru-mandal-art/testt/assets/94586184/c8219c8f-dc41-4bfc-b61c-0e06ea77809b" height="360"> | <img src="https://github.com/haru-mandal-art/testt/assets/94586184/e5ae765e-0ed9-4ba2-b407-ecaf175ca730" height="360"> |<img src="https://github.com/haru-mandal-art/testt/assets/94586184/f1d84d56-25b6-4ec1-97f1-a11ffa427784" height="360"> |<img src="https://github.com/haru-mandal-art/testt/assets/94586184/336a6ed5-bd3f-4878-b500-7376015e3c694" height="360">| 
 
-## Module
+<br>
+
+# Module
 
 ```mermaid
 graph TD;
@@ -54,7 +55,9 @@ classDef feature  stroke:#FF8A65
 linkStyle 0,1 stroke:#00E489,stroke-width:2px;
 linkStyle 2,3,4,5 stroke:#FF8A65,stroke-width:2px;
 ```
-## Architecture
+<br>
+
+# Architecture
 **하루 만다라트**는 [Android Architecture Guide](https://developer.android.com/topic/architecture) 를 준수합니다.
 
 ### Overview
@@ -99,8 +102,9 @@ classDef Data stroke-width:2px,stroke:#083042
 
 ```
 
+<br>
 
-## Development
+# Development
 ### Required
 | Name | Version |
 | --- | --- |
@@ -125,7 +129,9 @@ classDef Data stroke-width:2px,stroke:#083042
 > [!NOTE]
 > 사용한 라이브러리 세부정보는 [libs.versions.toml](https://github.com/haru-mandal-art/haru-mandalart/blob/dev/gradle/libs.versions.toml) 를 참고해 주세요.
 
-## Team
+<br>
+
+# Team
 
 |                                        Android                                         |                                              Android                                               |
 |:-------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------:|
