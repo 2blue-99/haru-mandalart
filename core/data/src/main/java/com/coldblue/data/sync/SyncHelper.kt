@@ -3,7 +3,7 @@ package com.coldblue.data.sync
 import com.coldblue.database.entity.SyncableEntity
 
 interface SyncHelper {
-    fun syncWrite()
+    suspend fun syncWrite()
 
     fun initialize()
 

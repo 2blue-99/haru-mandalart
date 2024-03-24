@@ -42,7 +42,7 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.edit { preferences -> preferences[tutorialKey] = false }
         dataStore.edit { preferences -> preferences[alarmKey] = false }
         dataStore.edit { preferences -> preferences[isStartedKey] = false }
-        dataStore.edit { preferences -> preferences[emailKey] = "" }
+        dataStore.edit { preferences -> preferences[emailKey] = "비회원" }
         dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
     }
 

@@ -154,9 +154,6 @@ fun HistoryController(
     selectDate: (LocalDate) -> Unit,
     selectYear: (Int) -> Unit,
 ) {
-
-    com.orhanobut.logger.Logger.d(today)
-
     var clickedDate by remember { mutableStateOf(today) }
     var clickedYear by remember { mutableStateOf(today.year) }
 

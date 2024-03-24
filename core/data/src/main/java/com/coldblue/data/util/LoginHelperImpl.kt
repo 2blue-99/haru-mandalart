@@ -46,6 +46,7 @@ class LoginHelperImpl @Inject constructor(
     override suspend fun setLoginSucceeded() {
         userDataSource.updateToken(client.auth.currentAccessTokenOrNull() ?: "")
         userDataSource.updateEmail(client.auth.currentUserOrNull()?.email ?: "")
+        userDataSource.updateStarted(true)
     }
 
     override suspend fun setLogout() {
