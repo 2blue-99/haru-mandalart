@@ -73,7 +73,7 @@ object TodoEntityMapper {
             isDel = network.is_del,
             updateTime = network.update_time,
             id = todoId ?: 0,
-            originGroupId = network.orgin_group_id
+            originGroupId = network.origin_group_id
 
         )
     }
@@ -114,7 +114,7 @@ fun TodoEntity.asNetworkModel() = NetworkTodo(
     time = if (time == null) null else time.toString(),
     is_del = isDel,
     id = originId,
-    orgin_group_id = originGroupId
+    origin_group_id = originGroupId
 )
 
 fun List<Todo>.asEntity(): List<TodoEntity> {
