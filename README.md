@@ -1,7 +1,7 @@
 
 ![하루 만다라트](https://github.com/haru-mandal-art/haru-mandalart/assets/94586184/5ca8c3e4-e6bf-4978-8f63-570a9a682700 "하루 만다라트")
 
-
+<a href="https://play.google.com/store/apps/details?id=com.coldblue.haru_mandalart"><img src="https://play.google.com/intl/ko_kr/badges/static/images/badges/ko_badge_web_generic.png" height="70"></a> <a>&nbsp;&nbsp;</a>
 <br>
 
 # 하루 만다라트
