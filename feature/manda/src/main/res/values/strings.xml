@@ -4,7 +4,7 @@
     // Screen
     <string name="key_goal">핵심 목표 : </string>
     <string name="detail_goal">세부 목표 : </string>
-    <string name="done_percentage">달성률</string>
+    <string name="done_percentage">달성률 : %1$d</string>
     <string name="unInit_screen_title">지금 당신은,\n무엇을 이루고 싶으신가요?</string>
     <string name="goal_realization">목표 구체화 하기</string>
     <string name="delete_dialog_title"> 이(가) 포함된 세부목표는 전부 삭제돼요.</string>

@@ -35,6 +35,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +44,7 @@ import com.coldblue.data.util.formatToDot
 import com.coldblue.designsystem.component.TitleText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.feature.history.R
 import com.coldblue.history.ControllerDayState
 import com.coldblue.history.ControllerTimeState
 import com.coldblue.history.ControllerWeek
@@ -78,7 +80,7 @@ fun HistoryContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "${historyUiState.allTodoDayCnt}개의\n하루, 만다라트",
+                text = stringResource(R.string.top_title, historyUiState.allTodoDayCnt),
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
@@ -113,7 +115,7 @@ fun HistoryContent(
                 color = HMColor.Primary
             )
 
-            TitleText(text = "기록")
+            TitleText(text = stringResource(id = R.string.record))
 
             if (historyUiState.todoList.isEmpty())
                 Text(
@@ -121,7 +123,7 @@ fun HistoryContent(
                         .fillMaxWidth()
                         .padding(top = 40.dp),
                     textAlign = TextAlign.Center,
-                    text = "기록이 비었어요.",
+                    text = stringResource(id = R.string.record_empty),
                     style = HmStyle.text20,
                     color = HMColor.SubText
                 )
@@ -203,7 +205,7 @@ fun HistoryController(
                     ) {
                         ControllerBox(
                             containerColor = Color.Transparent,
-                            sideText = if (controllerWeek.month != null) "${controllerWeek.month}월" else "",
+                            sideText = if (controllerWeek.month != null) stringResource(id = R.string.month, controllerWeek.month) else "",
                             clickAble = false
                         ) {}
 

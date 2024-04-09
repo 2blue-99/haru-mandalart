@@ -188,7 +188,7 @@ fun MandaStatus(
         }
         Column {
             Text(
-                text = "${stringResource(id = R.string.done_percentage)} : ${((donePercentage * 100).roundToInt())}",
+                text = stringResource(id = R.string.done_percentage, ((donePercentage * 100).roundToInt())),
                 style = HmStyle.text12,
                 color = HMColor.Primary,
                 modifier = Modifier.fillMaxWidth(),
