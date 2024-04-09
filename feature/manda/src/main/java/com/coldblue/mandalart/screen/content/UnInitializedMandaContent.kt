@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +28,7 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.state.mandaFinalMaxLen
 import com.coldblue.mandalart.util.MandaUtils.getTagList
 import com.coldblue.model.MandaKey
+import com.colddelight.mandalart.R
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -38,13 +40,15 @@ fun UnInitializedMandaContent(
     var buttonClickableState by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(top = 40.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 40.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
 
     ){
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "지금 당신은,\n무엇을 이루고 싶으신가요?",
+            text = stringResource(id = R.string.unInit_screen_title),
             style = HmStyle.text24,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left
@@ -74,7 +78,7 @@ fun UnInitializedMandaContent(
                 }
             }
         }
-        HMButton(text = "목표 구체화 하기", modifier = Modifier.weight(0.1f), clickableState = buttonClickableState) {
+        HMButton(text = stringResource(id = R.string.goal_realization), modifier = Modifier.weight(0.1f), clickableState = buttonClickableState) {
             updateInitState(true)
             insertFinalManda(MandaKey(id = 5 , name = inputText))
         }
