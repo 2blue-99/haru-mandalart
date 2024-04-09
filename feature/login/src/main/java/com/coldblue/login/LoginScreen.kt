@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,11 +47,14 @@ fun LoginScreen(
     val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
 
     when (val state = loginUiState) {
-        is LoginUiState.Fail -> Toast.makeText(
-            context,
-            "실패 : ${state.loginException.msg}",
-            Toast.LENGTH_SHORT
-        ).show()
+        is LoginUiState.Fail -> {
+            val failMessage = stringResource(id = com.coldblue.login.R.string.fail_message, state.loginException.msg)
+            Toast.makeText(
+                context,
+                failMessage,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
         else -> {}
     }
@@ -82,8 +86,8 @@ fun LoginScreen(
             Column(
                 Modifier.fillMaxWidth(0.4f)
             ) {
-                Text(text = "하루,", style = HmStyle.text30, color = HMColor.Primary)
-                Text(text = "만다라트", style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = com.coldblue.login.R.string.haru), style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = com.coldblue.login.R.string.mandalart), style = HmStyle.text30, color = HMColor.Primary)
             }
         }
         Box(
@@ -98,17 +102,19 @@ fun LoginScreen(
                     if (networkState) {
                         authState.startFlow()
                     } else {
+                        val checkConnectionMessage = com.coldblue.login.R.string.check_connecting
                         Toast.makeText(
                             context,
-                            " 인터넷 연결을 확인하세요",
+                            checkConnectionMessage,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
                 NotMemberLoginButton {
+                    val nonMemberMessage = com.coldblue.login.R.string.non_member_notice
                     Toast.makeText(
                         context,
-                        "비회원 사용시 앱을 삭제하면 데이터가 전부 삭제됩니다.",
+                        nonMemberMessage,
                         Toast.LENGTH_SHORT
                     ).show()
                     loginViewModel.loginWithOutAuth()
@@ -141,7 +147,7 @@ fun NotMemberLoginButton(
         ) {
             Text(
                 color = HMColor.SubText,
-                text = "비회원으로 시작하기",
+                text = stringResource(id = com.coldblue.login.R.string.non_member_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
             )
@@ -166,7 +172,6 @@ fun LoginButton(
         ),
     ) {
         Row(
-//            modifier = Modifier.padding(vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
 
@@ -179,7 +184,7 @@ fun LoginButton(
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 color = HMColor.Text,
-                text = "Google로 시작하기",
+                text = stringResource(id = com.coldblue.login.R.string.google_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
             )
