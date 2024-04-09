@@ -1,5 +1,6 @@
 package com.coldblue.setting.exception
 
+import com.coldblue.setting.R
 import com.coldblue.setting.state.LoginExceptionState
 
 
@@ -8,6 +9,6 @@ fun String.exceptionHandler(): LoginExceptionState {
         "error: operation canceled" -> LoginExceptionState.DropDown()
         "10: Caller not whitelisted to call this API." -> LoginExceptionState.Waiting()
         "16: Caller has been temporarily blocked due to too many canceled sign-in prompts." -> LoginExceptionState.Waiting()
-        else -> LoginExceptionState.Unknown("알 수 없는 오류 : $this")
+        else -> LoginExceptionState.Unknown("${R.string.unknown_err} : $this")
     }
 }

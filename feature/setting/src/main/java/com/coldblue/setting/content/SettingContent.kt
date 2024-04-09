@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.LoginState
@@ -31,6 +32,7 @@ import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.setting.R
 
 @Composable
 fun SettingContent(
@@ -55,8 +57,8 @@ fun SettingContent(
 
         DeleteDialog(
             targetText = "",
-            text = "탈퇴하면 모든 데이터가 완전히 삭제돼요.",
-            deleteConfirmText = "탈퇴",
+            text = stringResource(id = R.string.delete_dialog_title),
+            deleteConfirmText = stringResource(id = R.string.resign),
             onDismissRequest = {
                 openDialog = false
             },
@@ -74,47 +76,48 @@ fun SettingContent(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            SettingItem(title = "알림") {
+            SettingItem(title = stringResource(id = R.string.notice)) {
                 HMSwitch(checked = alarm) {
                     onChangeAlarmState(!alarm)
                 }
             }
-            SettingItem(title = "현재계정") {
+            SettingItem(title = stringResource(id = R.string.account)) {
                 Text(text = email)
             }
-            SettingItem(title = "문의하기", isClickable = true, onClick = { showContact() }) {
+            SettingItem(title = stringResource(id = R.string.ask), isClickable = true, onClick = { showContact() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "문의"
                 )
             }
-            SettingItem(title = "앱 평가하기", isClickable = true, onClick = { showPlayStore() }) {
+            SettingItem(title = stringResource(id = R.string.evaluate), isClickable = true, onClick = { showPlayStore() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "앱 평가"
                 )
             }
-            SettingItem(title = "오픈소스 라이센스", isClickable = true, onClick = { showOss() }) {
+            SettingItem(title = stringResource(id = R.string.open_source), isClickable = true, onClick = { showOss() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "오픈소스 라이센스"
                 )
             }
-            SettingItem(title = "앱 버전", isLast = loginState == LoginState.LoginWithOutAuth) {
+            SettingItem(title = stringResource(id = R.string.version), isLast = loginState == LoginState.LoginWithOutAuth) {
                 Text(text = "v $versionName")
             }
             if (loginState == LoginState.AuthenticatedLogin) {
                 SettingItem(
-                    title = "탈퇴",
+                    title = stringResource(id = R.string.resign),
                     isLast = true,
                     isClickable = true,
                     onClick = {
                         if (networkState) {
                             openDialog = true
                         } else {
+                            val connectionErrMessage = R.string.connection_err
                             Toast.makeText(
                                 context,
-                                " 인터넷 연결을 확인하세요",
+                                connectionErrMessage,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -128,11 +131,11 @@ fun SettingContent(
 
         }
         if (loginState == LoginState.AuthenticatedLogin) {
-            HMButton(text = "로그아웃", clickableState = true) {
+            HMButton(text = stringResource(id = R.string.logout), clickableState = true) {
                 logout()
             }
         } else {
-            HMButton(text = "로그인", clickableState = true) {
+            HMButton(text = stringResource(id = R.string.login), clickableState = true) {
                 login()
             }
         }
