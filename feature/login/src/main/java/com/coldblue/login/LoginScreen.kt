@@ -88,9 +88,10 @@ fun LoginScreen(
         }
         Box(
             contentAlignment = Alignment.BottomCenter,
-        ){
-            Column(modifier = Modifier
-                .fillMaxWidth(),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 LoginButton {
@@ -105,6 +106,11 @@ fun LoginScreen(
                     }
                 }
                 NotMemberLoginButton {
+                    Toast.makeText(
+                        context,
+                        "비회원 사용시 앱을 삭제하면 데이터가 전부 삭제됩니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     loginViewModel.loginWithOutAuth()
                 }
             }
@@ -142,6 +148,7 @@ fun NotMemberLoginButton(
         }
     }
 }
+
 
 @Composable
 fun LoginButton(

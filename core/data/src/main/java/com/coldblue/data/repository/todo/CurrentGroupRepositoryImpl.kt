@@ -52,6 +52,8 @@ class CurrentGroupRepositoryImpl @Inject constructor(
             val toUpsertCurrentGroups = remoteNew.asEntity(todoGroupIds)
 
             currentGroupDao.syncWriteCurrentTGroup(toUpsertCurrentGroups)
+
+
             syncHelper.setMaxUpdateTime(
                 toUpsertCurrentGroups,
                 updateTimeDataSource::setCurrentGroupUpdateTime
