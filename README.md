@@ -1,6 +1,8 @@
 
 ![하루 만다라트](https://github.com/haru-mandal-art/haru-mandalart/assets/94586184/5ca8c3e4-e6bf-4978-8f63-570a9a682700 "하루 만다라트")
 
+<a href="https://play.google.com/store/apps/details?id=com.coldblue.haru_mandalart"><img src="https://play.google.com/intl/ko_kr/badges/static/images/badges/ko_badge_web_generic.png" height="70"></a> <a>&nbsp;&nbsp;</a>
+<a href="https://drive.google.com/file/d/1ZlDJpeW8TAvz4C50G2ZxL4jCAxgumMuq/view?usp=sharing"><img src="https://github.com/haru-mandal-art/testt/assets/94586184/541768ab-a91d-429b-a56f-c688c682fcaf" height="70"></a>
 
 <br>
 
@@ -61,46 +63,21 @@ linkStyle 2,3,4,5 stroke:#FF8A65,stroke-width:2px;
 **하루 만다라트**는 [Android Architecture Guide](https://developer.android.com/topic/architecture) 를 준수합니다.
 
 ### Overview
+
 <center>
-<img src="https://github.com/haru-mandal-art/testt/assets/94586184/eb9b91ae-1d42-4f99-a79a-56353b0f1e67" width="600px" />
+<img src="https://github.com/haru-mandal-art/haru-mandalart/assets/94586184/ed103fc2-c0aa-4b0f-9a34-8b79dc3c3bf8" width="800px" />
 </center>
 
 - Data, Domain, UI 총 세 개의 Layer로 구성되어 있습니다.
-- [unidirectional data flow](https://developer.android.com/topic/architecture/ui-layer#udf) 를 준수합니다.
+- [Unidirectional Data Flow](https://developer.android.com/topic/architecture/ui-layer#udf) 를 준수합니다.
 
-    - 상위 Layer는 하위 Layer의 변화에 반응한다.
-    - Event는 상위에서 하위 Layer로 이동한다.
-    - Data는 하위에서 상위 Layer로 이동한다.
+    - 상위 Layer는 하위 Layer의 변화에 반응합니다. 
+    - Event는 상위에서 하위 Layer로 이동합니다. 
+    - Data는 하위에서 상위 Layer로 이동합니다.
+
 
 - 데이터 흐름은 streams 통해 표현하며 Kotlin Flow를 사용합니다.
 
-```mermaid
-graph TB
-Screen:::UI
-ViewModel:::UI
-UseCase:::Domain
-Repository:::Data
-
-Database:::Data
-DataStore:::Data
-Network:::Data
-
-Network --> Supabase
-
-    Repository --> Database
-    Repository --> DataStore
-    Repository --> Network
-    Repository --> Workmanager
-
-    UseCase --> Repository
-    ViewModel --> UseCase
-    Screen --> ViewModel
-
-classDef UI stroke-width:2px,stroke:#00E489
-classDef Domain stroke-width:2px,stroke:#1A73E8
-classDef Data stroke-width:2px,stroke:#083042
-
-```
 
 <br>
 
