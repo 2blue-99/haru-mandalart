@@ -10,6 +10,28 @@ android {
         buildConfig = true
     }
     namespace = "com.coldblue.network"
+
+
+    buildTypes {
+        release {
+            val key = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty("RELEASE_URL")
+            val url = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty("RELEASE_KEY")
+            val googleClientId = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty("RELEASE_CLIENT_ID")
+
+            buildConfigField("String", "SupaUrl", "\"$key\"")
+            buildConfigField("String", "SupaKey", "\"$url\"")
+            buildConfigField("String", "ClientId", "\"$googleClientId\"")
+        }
+        debug {
+            val key = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty("DEBUG_URL")
+            val url = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty("DEBUG_KEY")
+            val googleClientId = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(rootDir).getProperty("DEBUG_CLIENT_ID")
+            buildConfigField("String", "SupaUrl", "\"$key\"")
+            buildConfigField("String", "SupaKey", "\"$url\"")
+            buildConfigField("String", "ClientId", "\"$googleClientId\"")
+        }
+    }
+
 }
 
 dependencies {
