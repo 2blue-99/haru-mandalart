@@ -1,3 +1,19 @@
 <resources>
+
+    //
     <string name="app_name">하루 만다라트</string>
+    <string name="reject_alarm">알림 권한은 앱 설정에서 변경 가능합니다.</string>
+    <string name="back_notice">한 번 더 누르면 앱이 종료됩니다.</string>
+
+    // Notice
+    <string name="notice_title">Todo 알림</string>
+
+    // Setting
+    <string name="chan_mail">hno05039@naver.com</string>
+    <string name="pu_mail">lpm083100@gmail.com</string>
+    <string name="mail_title">[하루 만다라트] 문의</string>
+    <string name="mail_content">문의내용: </string>
+    <string name="fail_mail">메일을 전송할 수 없습니다.</string>
+    <string name="fail_playStore">플레이스토어 실행에 실패하였습니다.</string>
+
 </resources>

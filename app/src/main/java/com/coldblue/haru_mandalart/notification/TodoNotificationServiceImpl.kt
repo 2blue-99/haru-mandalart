@@ -8,6 +8,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.coldblue.data.alarm.TodoNotificationService
 import com.coldblue.haru_mandalart.MainActivity
+import com.coldblue.haru_mandalart.R
 import javax.inject.Inject
 
 class TodoNotificationServiceImpl @Inject constructor(
@@ -29,7 +30,7 @@ class TodoNotificationServiceImpl @Inject constructor(
         )
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(com.coldblue.data.R.drawable.notification_icon)
-            .setContentTitle("Todo 알림")
+            .setContentTitle(R.string.notice_title.toString())
             .setContentText(text)
             .setContentIntent(activityPendingIntent)
             .setVibrate(LongArray(1)) // 사이즈는 영향 X
@@ -46,6 +47,5 @@ class TodoNotificationServiceImpl @Inject constructor(
         const val CHANNEL_NAME = "오늘 할 일"
         const val IMPORTANCE = NotificationManager.IMPORTANCE_HIGH
         const val description = "오늘 일정에서 계획된 시간이 지났음에도 완료가 안된 할 일에 대한 알림을 받습니다."
-
     }
 }
