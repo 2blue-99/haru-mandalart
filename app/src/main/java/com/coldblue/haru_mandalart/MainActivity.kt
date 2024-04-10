@@ -87,8 +87,7 @@ class MainActivity : ComponentActivity() {
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 if (!isGranted)
-                    Toast.makeText(context, rejectAlarmMessage, Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(context, rejectAlarmMessage, Toast.LENGTH_SHORT).show()
                 CoroutineScope(Dispatchers.IO).launch {
                     loginHelper.updatePermissionInitState(true)
                 }

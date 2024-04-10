@@ -114,10 +114,9 @@ fun SettingContent(
                         if (networkState) {
                             openDialog = true
                         } else {
-                            val connectionErrMessage = R.string.connection_err
                             Toast.makeText(
                                 context,
-                                connectionErrMessage,
+                                R.string.connection_err,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
