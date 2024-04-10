@@ -32,9 +32,6 @@ class HistoryViewModel @Inject constructor(
     private val toggleTodoUseCase: ToggleTodoUseCase,
 ) : ViewModel() {
 
-    init {
-        Logger.d("초기화여")
-    }
     private val _yearSate = MutableStateFlow(LocalDate.now().year)
     val yearSate: StateFlow<Int> = _yearSate
 
