@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,6 +74,7 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.colddelight.mandalart.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -170,14 +172,14 @@ fun MandaStatus(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row {
-                Text(text = "핵심 목표 : ", style = HmStyle.text16)
+                Text(text = stringResource(id = R.string.key_goal), style = HmStyle.text16)
                 Text(
                     text = "$keyMandaCnt / $MAX_MANDA_KEY_SIZE",
                     style = HmStyle.text16
                 )
             }
             Row {
-                Text(text = "세부 목표 : ", style = HmStyle.text16)
+                Text(text = stringResource(id = R.string.detail_goal), style = HmStyle.text16)
                 Text(
                     text = "$detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
                     style = HmStyle.text16
@@ -186,7 +188,7 @@ fun MandaStatus(
         }
         Column {
             Text(
-                text = "달성률 ${(donePercentage * 100).roundToInt()} %",
+                text = stringResource(id = R.string.done_percentage, ((donePercentage * 100).roundToInt())),
                 style = HmStyle.text12,
                 color = HMColor.Primary,
                 modifier = Modifier.fillMaxWidth(),

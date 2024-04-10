@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    // Screen
+    <string name="key_goal">핵심 목표 : </string>
+    <string name="detail_goal">세부 목표 : </string>
+    <string name="done_percentage">달성률 : %1$d</string>
+    <string name="unInit_screen_title">지금 당신은,\n무엇을 이루고 싶으신가요?</string>
+    <string name="goal_realization">목표 구체화 하기</string>
+    <string name="delete_dialog_title"> 이(가) 포함된 세부목표는 전부 삭제돼요.</string>
+    <string name="delete">삭제</string>
+    <string name="name">이름</string>
+    <string name="exist_goal">이미 존재하는 목표에요.</string>
+    <string name="save">저장</string>
+    <string name="color">색상</string>
+    <string name="delete_dialog_notice">핵심목표 " %1$s " 을(를) 삭제하면 포함된 세부목표가 전부 삭제돼요.</string>
+    <string name="cancel">취소</string>
+    <string name="achieve_state">달성 상태</string>
+    <string name="achieve">달성</string>
+    <string name="not_achieve">미달성</string>
+
+</resources>

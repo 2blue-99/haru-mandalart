@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,11 +82,12 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun CheckPermission(){
         val context = LocalContext.current
+        val rejectAlarmMessage = stringResource(R.string.reject_alarm)
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 if (!isGranted)
-                    Toast.makeText(context, "알림 권한은 앱 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, rejectAlarmMessage, Toast.LENGTH_SHORT)
                         .show()
                 CoroutineScope(Dispatchers.IO).launch {
                     loginHelper.updatePermissionInitState(true)
@@ -109,14 +111,13 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         var backPressedState by remember { mutableStateOf(true) }
         var backPressedTime = 0L
-
+        val backNoticeMessage = stringResource(R.string.back_notice)
         BackHandler(enabled = backPressedState) {
             if (System.currentTimeMillis() - backPressedTime <= 1000L) {
-
                 (context as Activity).finish()
             } else {
                 backPressedState = true
-                Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, backNoticeMessage, Toast.LENGTH_SHORT).show()
                 backPressedTime = System.currentTimeMillis()
             }
         }
