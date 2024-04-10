@@ -29,15 +29,15 @@ fun HMApp(
                     navController.popBackStack()
                 }
         },
-        bottomBar = {
-            if (navController.checkBottomNavBar())
-                HMBottomBar(
-                    destination = navController.bottomNavDestination,
-                    navigate = navController::navigateToTopLevelDestination,
-                    checkCurrentLocation = navController.currentLocation
-                )
-
-        }
+//        bottomBar = {
+//            if (navController.checkBottomNavBar())
+//                HMBottomBar(
+//                    destination = navController.bottomNavDestination,
+//                    navigate = navController::navigateToTopLevelDestination,
+//                    checkCurrentLocation = navController.currentLocation
+//                )
+//
+//        }
     ) { padding ->
         HMNavHost(
             modifier = Modifier.padding(padding),

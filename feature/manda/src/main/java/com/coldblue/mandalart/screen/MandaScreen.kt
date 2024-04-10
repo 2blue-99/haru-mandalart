@@ -23,7 +23,9 @@ import com.coldblue.model.MandaKey
 @Composable
 fun MandaScreen(
     mandaViewModel: MandaViewModel = hiltViewModel(),
-) {
+    navigateToSetting: () -> Unit,
+
+    ) {
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
     val bottomSheetUiState by mandaViewModel.mandaBottomSheetUIState.collectAsStateWithLifecycle()
     val context = LocalFocusManager.current
@@ -48,7 +50,9 @@ fun MandaScreen(
             deleteMandaKey = mandaViewModel::deleteMandaKey,
             deleteMandaDetail = mandaViewModel::deleteMandaDetail,
             deleteMandaAll = mandaViewModel::deleteMandaAll,
-            changeBottomSheet = mandaViewModel::changeBottomSheet
+            changeBottomSheet = mandaViewModel::changeBottomSheet,
+            navigateToSetting = navigateToSetting
+
         )
     }
 }
@@ -64,8 +68,11 @@ fun MandaContentWithState(
     deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
     deleteMandaAll: () -> Unit,
-    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
-) {
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
+    navigateToSetting: () -> Unit,
+
+
+    ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {}
         is MandaUIState.Error -> {}
@@ -86,7 +93,8 @@ fun MandaContentWithState(
                 deleteMandaKey = deleteMandaKey,
                 deleteMandaDetail = deleteMandaDetail,
                 deleteMandaAll = deleteMandaAll,
-                changeBottomSheet = changeBottomSheet
+                changeBottomSheet = changeBottomSheet,
+                navigateToSetting = navigateToSetting
             )
 
         }

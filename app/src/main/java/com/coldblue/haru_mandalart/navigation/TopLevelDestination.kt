@@ -17,22 +17,22 @@ enum class TopLevelDestination(
     val unSelectedIcon: ImageVector
 ) {
 
-    HISTORY(
-        route= historyRoute,
-        titleText = "기록",
-        selectedIcon = IconPack.History,
-        unSelectedIcon = IconPack.History
-    ),
+//    HISTORY(
+//        route= historyRoute,
+//        titleText = "기록",
+//        selectedIcon = IconPack.History,
+//        unSelectedIcon = IconPack.History
+//    ),
     MANDA(
         route= mandaRoute,
         titleText = "만다라트",
         selectedIcon = IconPack.Manda,
         unSelectedIcon = IconPack.Manda
     ),
-    TODO(
-        route= todoRoute,
-        titleText = "홈",
-        selectedIcon = IconPack.Home,
-        unSelectedIcon = IconPack.Home
-    )
+//    TODO(
+//        route= todoRoute,
+//        titleText = "홈",
+//        selectedIcon = IconPack.Home,
+//        unSelectedIcon = IconPack.Home
+//    )
 }

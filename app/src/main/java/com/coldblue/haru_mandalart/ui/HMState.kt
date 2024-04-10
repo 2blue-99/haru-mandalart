@@ -31,21 +31,21 @@ class HMAppState(
     val navController: NavHostController
 ) {
 
-    val bottomNavDestination: List<TopLevelDestination> =
-        listOf(TopLevelDestination.MANDA, TopLevelDestination.TODO, TopLevelDestination.HISTORY)
+//    val bottomNavDestination: List<TopLevelDestination> =
+//        listOf(TopLevelDestination.MANDA, TopLevelDestination.TODO, TopLevelDestination.HISTORY)
 
     val currentLocation: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
 
-    @Composable
-    fun checkBottomNavBar(): Boolean {
-        currentLocation.let {
-            return when(it?.route){
-                todoRoute, mandaRoute, historyRoute-> true
-                else -> false
-            }
-        }
-    }
+//    @Composable
+//    fun checkBottomNavBar(): Boolean {
+//        currentLocation.let {
+//            return when(it?.route){
+//                todoRoute, mandaRoute, historyRoute-> true
+//                else -> false
+//            }
+//        }
+//    }
 
     @Composable
     fun checkTopBar(): Boolean {
