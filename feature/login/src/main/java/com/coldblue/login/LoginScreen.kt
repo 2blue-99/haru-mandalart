@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.coldblue.designsystem.R
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.login.state.LoginUiState
@@ -48,10 +46,9 @@ fun LoginScreen(
 
     when (val state = loginUiState) {
         is LoginUiState.Fail -> {
-            val failMessage = stringResource(id = com.coldblue.login.R.string.fail_message, state.loginException.msg)
             Toast.makeText(
                 context,
-                failMessage,
+                stringResource(id = R.string.fail_message, state.loginException.msg),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -80,14 +77,14 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.4f)
                     .aspectRatio(1f),
-                painter = painterResource(id = com.coldblue.login.R.drawable.app_icon),
+                painter = painterResource(id = R.drawable.app_icon),
                 contentDescription = "앱 아이콘"
             )
             Column(
                 Modifier.fillMaxWidth(0.4f)
             ) {
-                Text(text = stringResource(id = com.coldblue.login.R.string.haru), style = HmStyle.text30, color = HMColor.Primary)
-                Text(text = stringResource(id = com.coldblue.login.R.string.mandalart), style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = R.string.haru), style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = R.string.mandalart), style = HmStyle.text30, color = HMColor.Primary)
             }
         }
         Box(
@@ -98,23 +95,22 @@ fun LoginScreen(
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
+
                 LoginButton {
                     if (networkState) {
                         authState.startFlow()
                     } else {
-                        val checkConnectionMessage = com.coldblue.login.R.string.check_connecting
                         Toast.makeText(
                             context,
-                            checkConnectionMessage,
+                            R.string.check_connecting,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
                 NotMemberLoginButton {
-                    val nonMemberMessage = com.coldblue.login.R.string.non_member_notice
                     Toast.makeText(
                         context,
-                        nonMemberMessage,
+                        R.string.non_member_notice.toString(),
                         Toast.LENGTH_SHORT
                     ).show()
                     loginViewModel.loginWithOutAuth()
@@ -147,7 +143,7 @@ fun NotMemberLoginButton(
         ) {
             Text(
                 color = HMColor.SubText,
-                text = stringResource(id = com.coldblue.login.R.string.non_member_start),
+                text = stringResource(id = R.string.non_member_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
             )
@@ -178,7 +174,7 @@ fun LoginButton(
         ) {
             Image(
                 modifier = Modifier.size(22.dp),
-                painter = painterResource(id = R.drawable.google_icon),
+                painter = painterResource(id = com.coldblue.designsystem.R.drawable.google_icon),
                 contentDescription = null
             )
             Text(
