@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import com.coldblue.haru_mandalart.ui.HMAppState
 import com.coldblue.history.navigation.historyScreen
 import com.coldblue.login.navigation.loginScreen
+import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.mandaScreen
 import com.coldblue.mandalart.navigation.navigateToManda
 import com.coldblue.setting.navigation.navigateToSetting
@@ -21,7 +22,7 @@ import com.coldblue.tutorial.navigation.tutorialScreen
 fun HMNavHost(
     modifier: Modifier,
     appState: HMAppState,
-    startDestination: String = todoRoute
+    startDestination: String = mandaRoute
 ) {
     val navController = appState.navController
     NavHost(
@@ -30,14 +31,16 @@ fun HMNavHost(
         modifier = modifier
     ) {
         loginScreen(navigateToTodo = navController::navigateToTodo)
-        todoScreen(navigateToTodoEdit = navController::navigateToTodoEdit)
+//        todoScreen(navigateToTodoEdit = navController::navigateToTodoEdit)
         todoEditScreen(onDismissRequest = navController::popBackStack)
-        tutorialScreen(navigateToManda = navController::navigateToManda)
-        mandaScreen()
-        historyScreen(
-            navigateToSetting = navController::navigateToSetting,
-            navigateToTodoEdit = navController::navigateToTodoEdit
+//        tutorialScreen(navigateToManda = navController::navigateToManda)
+        mandaScreen(
+            navigateToSetting = navController::navigateToSetting
         )
+//        historyScreen(
+//            navigateToSetting = navController::navigateToSetting,
+//            navigateToTodoEdit = navController::navigateToTodoEdit
+//        )
         settingScreen()
     }
 }
