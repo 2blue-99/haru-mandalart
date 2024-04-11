@@ -1,11 +1,14 @@
 package com.coldblue.haru_mandalart
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.app.Activity
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -24,7 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
@@ -48,10 +53,15 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var syncHelper: SyncHelper
 
+    private lateinit var splashScreen: SplashScreen
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        splashScreen = installSplashScreen()
+        splashScreen()
+//        splashScreen.setKeepOnScreenCondition{false}
+
+//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             HarumandalartTheme {
                 Surface(
@@ -65,13 +75,16 @@ class MainActivity : ComponentActivity() {
                                 CheckPermission()
                                 LoginScreen()
                             }
+
                             LoginState.LoginWithOutAuth -> {
                                 HMApp()
                             }
+
                             LoginState.AuthenticatedLogin -> {
                                 syncHelper.initialize()
                                 HMApp()
                             }
+
                             else -> {}
                         }
                     }
@@ -79,8 +92,41 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun splashScreen() {
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+
+            val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.96f, 0.93f, 0.96f, 1f)
+            val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.96f, 0.93f, 0.96f, 1f)
+
+            val bounce = ObjectAnimator.ofPropertyValuesHolder(
+                splashScreenView.iconView,
+                scaleX,
+                scaleY
+            )
+
+            val fadeOut = ObjectAnimator.ofFloat(
+                splashScreenView.view,
+                View.ALPHA,
+                0f
+            )
+
+            bounce.interpolator = AnticipateInterpolator()
+            bounce.duration = 500L
+
+            fadeOut.interpolator = AnticipateInterpolator()
+            fadeOut.duration = 600L
+
+            bounce.start()
+
+            bounce.doOnEnd { fadeOut.start() }
+
+            fadeOut.doOnEnd { splashScreenView.remove() }
+        }
+    }
+
     @Composable
-    fun CheckPermission(){
+    fun CheckPermission() {
         val context = LocalContext.current
         val rejectAlarmMessage = stringResource(R.string.reject_alarm)
         val permissionLauncher = rememberLauncherForActivityResult(
@@ -95,7 +141,11 @@ class MainActivity : ComponentActivity() {
         )
         LaunchedEffect(permissionLauncher) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_DENIED
+                ) {
                     if (!loginHelper.initPermissionState.first()) {
                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
