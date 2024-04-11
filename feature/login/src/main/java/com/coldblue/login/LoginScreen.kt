@@ -20,6 +20,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.login.state.LoginUiState
@@ -43,6 +47,7 @@ fun LoginScreen(
     val context = LocalContext.current
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
     val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
+    var openDialog by remember { mutableStateOf(false) }
 
     when (val state = loginUiState) {
         is LoginUiState.Fail -> {
@@ -52,13 +57,27 @@ fun LoginScreen(
                 Toast.LENGTH_SHORT
             ).show()
         }
-
         else -> {}
     }
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(
         onResult = { result -> loginViewModel.checkLoginState(result) },
         fallback = { }
     )
+
+    if(openDialog){
+        HMTextDialog(
+            targetText = "",
+            text = stringResource(id = R.string.non_member_notice),
+            confirmText = stringResource(id = R.string.check),
+            tintColors = HMColor.Primary,
+            subText = stringResource(id = R.string.non_member_sub_notice),
+            onDismissRequest = { openDialog = false },
+            onConfirmation = {
+                loginViewModel.loginWithOutAuth()
+            }
+        )
+    }
+
 
     Column(
         modifier = Modifier
@@ -92,7 +111,8 @@ fun LoginScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
 
@@ -108,12 +128,12 @@ fun LoginScreen(
                     }
                 }
                 NotMemberLoginButton {
-                    Toast.makeText(
-                        context,
-                        R.string.non_member_notice.toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    loginViewModel.loginWithOutAuth()
+                    openDialog = true
+//                    Toast.makeText(
+//                        context,
+//                        R.string.non_member_notice.toString(),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
                 }
             }
         }
