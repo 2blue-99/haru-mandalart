@@ -22,9 +22,6 @@ import kotlinx.coroutines.withContext
 class SyncReadWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    @Assisted private val todoRepository: TodoRepository,
-    @Assisted private val todoGroupRepository: TodoGroupRepository,
-    @Assisted private val currentGroupRepository: CurrentGroupRepository,
     @Assisted private val mandaKeyRepository: MandaKeyRepository,
     @Assisted private val mandaDetailRepository: MandaDetailRepository,
     @Assisted private val userRepository: UserRepository,
@@ -32,17 +29,14 @@ class SyncReadWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             userRepository.refresh()
-            val todoGroupResult = async { todoGroupRepository.syncRead() }.await()
             val syncedSucceed = awaitAll(
-                async { todoRepository.syncRead() },
-                async { currentGroupRepository.syncRead() },
                 async { mandaKeyRepository.syncRead() },
                 async { mandaDetailRepository.syncRead() },
-                ).all { it }
-            if (syncedSucceed && todoGroupResult) {
+            ).all { it }
+
+            if (syncedSucceed) {
                 Result.success()
             } else {
-
                 Result.retry()
             }
         } catch (e: Exception) {
