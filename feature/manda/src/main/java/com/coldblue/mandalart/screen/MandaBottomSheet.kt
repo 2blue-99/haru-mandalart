@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.coldblue.designsystem.component.DeleteDialog
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.component.HMTextField
@@ -89,14 +89,16 @@ fun MandaBottomSheet(
     var duplicatedState by remember { mutableStateOf(false) }
 
     if (dialogState) {
-        DeleteDialog(
+        HMTextDialog(
             targetText = keyNameText,
             text = stringResource(id = R.string.delete_dialog_title),
-            deleteConfirmText = stringResource(id = R.string.delete),
+            confirmText = stringResource(id = R.string.delete),
             onDismissRequest = {
                 dialogState = false
                 onDisMiss()
-            }, onConfirmation = {
+            },
+            tintColors = HMColor.Dark.Red,
+            onConfirmation = {
                 deleteMandaKey(
                     mandaUI.id,
                     (contentType as MandaBottomSheetContentType.MandaKey).groupIdList ?: emptyList()
@@ -432,4 +434,10 @@ fun MandaBottomSheetDone(
 @Composable
 fun BottomSheetPreview() {
     MandaBottomSheetDone(false) {}
+}
+
+@Preview
+@Composable
+fun AlertDialogPreview() {
+    MandaKeyDialog("asdads", onDisMiss = {}, onDelete = {})
 }
