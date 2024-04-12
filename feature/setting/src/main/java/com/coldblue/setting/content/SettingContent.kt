@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.LoginState
-import com.coldblue.designsystem.component.DeleteDialog
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.theme.HMColor
@@ -55,10 +55,11 @@ fun SettingContent(
 
     if (openDialog) {
 
-        DeleteDialog(
+        HMTextDialog(
             targetText = "",
             text = stringResource(id = R.string.delete_dialog_title),
-            deleteConfirmText = stringResource(id = R.string.resign),
+            confirmText = stringResource(id = R.string.resign),
+            tintColors = HMColor.Dark.Red,
             onDismissRequest = {
                 openDialog = false
             },

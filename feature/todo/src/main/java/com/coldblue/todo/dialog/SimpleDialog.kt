@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.coldblue.designsystem.component.DeleteDialog
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -47,10 +47,11 @@ fun CurrentGroupDialog(
     var openDeleteDialog by remember { mutableStateOf(false) }
 
     if (openDeleteDialog) {
-        DeleteDialog(
+        HMTextDialog(
             targetText = groupName,
             text = " 이(가) 포함된 오늘 할 일은 그룹없음 상태가 돼요.",
-            deleteConfirmText = "삭제",
+            confirmText = "삭제",
+            tintColors = HMColor.Dark.Red,
             onDismissRequest = {
                 openDeleteDialog = false
             },

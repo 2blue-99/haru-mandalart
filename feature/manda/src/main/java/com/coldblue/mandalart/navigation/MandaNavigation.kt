@@ -11,8 +11,12 @@ fun NavController.navigateToManda(navOptions: NavOptions? = null){
     this.navigate(mandaRoute, navOptions)
 }
 
-fun NavGraphBuilder.mandaScreen(){
+fun NavGraphBuilder.mandaScreen(
+    navigateToSetting: () -> Unit,
+){
     composable(route =mandaRoute){
-        MandaScreen()
+        MandaScreen(
+            navigateToSetting = navigateToSetting,
+        )
     }
 }

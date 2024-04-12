@@ -24,9 +24,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -92,7 +95,8 @@ fun InitializedMandaContent(
     deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
     deleteMandaAll: () -> Unit,
-    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
+    navigateToSetting: () -> Unit,
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -123,9 +127,22 @@ fun InitializedMandaContent(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(16.dp)
     ) {
-        HMTitleComponent()
+        Box(modifier = Modifier.fillMaxWidth()) {
+            HMTitleComponent()
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                IconButton(
+                    onClick = { navigateToSetting() }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        tint = HMColor.Primary,
+                        contentDescription = ""
+                    )
+                }
+            }
+
+        }
 
         MandaStatus(
             finalName = uiState.finalManda.name,

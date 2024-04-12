@@ -42,9 +42,6 @@ class HMApplication : Application(), Configuration.Provider {
     }
 
     class SyncWorkerFactory @Inject constructor(
-        private val todoRepository: TodoRepository,
-        private val todoGroupRepository: TodoGroupRepository,
-        private val currentGroupRepository: CurrentGroupRepository,
         private val mandaKeyRepository: MandaKeyRepository,
         private val mandaDetailRepository: MandaDetailRepository,
         private val userRepository: UserRepository,
@@ -58,9 +55,6 @@ class HMApplication : Application(), Configuration.Provider {
                 SyncReadWorker::class.java.name -> SyncReadWorker(
                     appContext,
                     workerParameters,
-                    todoRepository,
-                    todoGroupRepository,
-                    currentGroupRepository,
                     mandaKeyRepository,
                     mandaDetailRepository,
                     userRepository
@@ -69,9 +63,6 @@ class HMApplication : Application(), Configuration.Provider {
                 SyncWriteWorker::class.java.name -> SyncWriteWorker(
                     appContext,
                     workerParameters,
-                    todoRepository,
-                    todoGroupRepository,
-                    currentGroupRepository,
                     mandaKeyRepository,
                     mandaDetailRepository,
                     userRepository
