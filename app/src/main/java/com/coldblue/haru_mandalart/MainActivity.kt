@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
         splashScreen()
 //        splashScreen.setKeepOnScreenCondition{false}
 
-//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+       requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             HarumandalartTheme {
                 Surface(
