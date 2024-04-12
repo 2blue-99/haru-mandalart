@@ -60,7 +60,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
         splashScreen()
-//        splashScreen.setKeepOnScreenCondition{false}
 
         setContent {
             HarumandalartTheme {

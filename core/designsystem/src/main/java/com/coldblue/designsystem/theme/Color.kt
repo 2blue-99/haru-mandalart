@@ -10,6 +10,7 @@ val Pink80 = Color(0xFFEFB8C8)
 object HMColor {
     val Primary = Color(0xFF432ED1)
     val LightPrimary = Color(0xFF8373F0)
+    val WhitePrimary = Color(0xFFECE9FF)
     val Text = Color(0xFF222222)
     val SubText = Color(0xFFB8BBBF)
     val NegativeText = Color(0xFFB93B50)

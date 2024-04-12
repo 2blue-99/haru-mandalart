@@ -18,5 +18,9 @@
     <string name="achieve_state">달성 상태</string>
     <string name="achieve">달성</string>
     <string name="not_achieve">미달성</string>
+    <string name="update_title">업데이트</string>
+    <string name="update_dialog_content">새로운 버전이 출시되었어요!</string>
+    <string name="update_note">업데이트 노트</string>
+    <string name="update_dialog_button">즉시 업데이트</string>
 
 </resources>

@@ -2,11 +2,13 @@ package com.coldblue.mandalart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coldblue.data.util.SettingHelper
 import com.coldblue.domain.manda.DeleteMandaAllUseCase
 import com.coldblue.domain.manda.DeleteMandaDetailUseCase
 import com.coldblue.domain.manda.DeleteMandaKeyUseCase
 import com.coldblue.domain.manda.GetDetailMandaUseCase
 import com.coldblue.domain.manda.GetKeyMandaUseCase
+import com.coldblue.domain.manda.GetUpdateNoteUseCase
 import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
@@ -15,9 +17,11 @@ import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.state.MandaUpdateDialogState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.UpdateNote
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +45,9 @@ class MandaViewModel @Inject constructor(
     getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
-    private val deleteMandaAllUseCase: DeleteMandaAllUseCase
+    private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
+    private val getUpdateNoteUseCase: GetUpdateNoteUseCase,
+    private val settingHelper: SettingHelper
 ) : ViewModel() {
 
     val mandaUiState: StateFlow<MandaUIState> =
@@ -72,17 +78,34 @@ class MandaViewModel @Inject constructor(
             initialValue = MandaUIState.Loading
         )
 
+    private val _mandaUpdateDialogUIState =
+        MutableStateFlow<MandaUpdateDialogState>(MandaUpdateDialogState.Down)
+    val mandaUpdateDialogUIState: StateFlow<MandaUpdateDialogState> get() = _mandaUpdateDialogUIState
+
+
+
     private val _mandaBottomSheetUIState =
         MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
     val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
 
     fun changeBottomSheet(isShow: Boolean, uiState: MandaBottomSheetContentState?) {
-
         if (isShow && uiState != null) {
             _mandaBottomSheetUIState.value = MandaBottomSheetUIState.Up(uiState)
         } else {
             _mandaBottomSheetUIState.value = MandaBottomSheetUIState.Down
         }
+    }
+
+    fun changeUpdateNoteDialog(isShow: Boolean, updateNote: UpdateNote? = null) {
+        if (isShow && updateNote != null) {
+            Logger.d(updateNote)
+            _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Up(updateNote)
+        }
+        else if(isShow && updateNote == null)
+            _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Error("업로드 실패")
+        else
+            _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Down
+
     }
 
     fun upsertMandaFinal(mandaKey: MandaKey) {
@@ -124,6 +147,18 @@ class MandaViewModel @Inject constructor(
     fun updateMandaInitState(state: Boolean) {
         viewModelScope.launch {
             updateMandaInitStateUseCase(state)
+        }
+    }
+
+    fun showPlayStore() {
+        settingHelper.showPlayStore()
+    }
+
+    fun getUpdateNote(){
+        viewModelScope.launch {
+            changeUpdateNoteDialog(true, getUpdateNoteUseCase())
+        }.runCatching {
+            changeUpdateNoteDialog(true, null)
         }
     }
 }

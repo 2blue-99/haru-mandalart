@@ -3,6 +3,8 @@ package com.coldblue.data.mapper
 import com.coldblue.data.util.getUpdateTime
 import com.coldblue.database.entity.MandaKeyEntity
 import com.coldblue.model.MandaKey
+import com.coldblue.model.UpdateNote
+import com.coldblue.network.model.NetWorkUpdateNote
 import com.coldblue.network.model.NetworkMandaKey
 
 object MandaKeyMapper {
@@ -22,6 +24,11 @@ object MandaKeyMapper {
         updateTime = getUpdateTime(),
         originId = originId,
         id = id,
+    )
+
+    fun NetWorkUpdateNote.asEntity(): UpdateNote = UpdateNote(
+        updateTime = this.update_time,
+        updateContent = this.update_content
     )
 
     fun List<NetworkMandaKey>.asEntity(mandaKeyIds: List<Int?>): List<MandaKeyEntity> {
