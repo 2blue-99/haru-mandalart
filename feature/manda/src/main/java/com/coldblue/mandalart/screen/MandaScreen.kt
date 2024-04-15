@@ -5,10 +5,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -28,7 +26,6 @@ import com.coldblue.model.MandaKey
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.orhanobut.logger.Logger
 
 const val UPDATE_REQUEST_CODE = 777
 
@@ -43,17 +40,20 @@ fun MandaScreen(
     val focus = LocalFocusManager.current
     val context = LocalContext.current
 
-
-    if(mandaUpdateUiState is MandaUpdateDialogState.Up){
-        UpdateDialog(
-            updateContent = "",
-            updateTime = "",
-            onUpdate = { mandaViewModel.showPlayStore() },
-            onDismiss = { mandaViewModel.changeUpdateNoteDialog(false) }
-        )
+    when(val uiState = mandaUpdateUiState){
+        is MandaUpdateDialogState.Up -> {
+            UpdateDialog(
+                updateNote = uiState.updateNote,
+                onUpdate = { mandaViewModel.showPlayStore() },
+                onDismiss = { mandaViewModel.changeUpdateNoteDialog(false) }
+            )
+        }
+        else -> {}
     }
 
-    CheckUpdate(context){ mandaViewModel.getUpdateNote() }
+    LaunchedEffect(Unit) {
+        checkUpdate(context) { mandaViewModel.getUpdateNote() }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -126,8 +126,7 @@ fun MandaContentWithState(
     }
 }
 
-@Composable
-private fun CheckUpdate(
+private fun checkUpdate(
     context: Context, onUpdate: () -> Unit
 ){
     onUpdate()
@@ -150,9 +149,9 @@ private fun CheckUpdate(
 
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
 
-        Logger.d(appUpdateInfo.updateAvailability())
-        Logger.d(UpdateAvailability.UPDATE_AVAILABLE)
-        Logger.d(appUpdateInfo.clientVersionStalenessDays())
+//        Logger.d(appUpdateInfo.updateAvailability())
+//        Logger.d(UpdateAvailability.UPDATE_AVAILABLE)
+//        Logger.d(appUpdateInfo.clientVersionStalenessDays())
 
         // 업데이트 할게 있는지 체크
         if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE

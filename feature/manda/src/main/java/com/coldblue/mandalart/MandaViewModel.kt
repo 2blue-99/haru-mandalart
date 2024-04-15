@@ -97,6 +97,7 @@ class MandaViewModel @Inject constructor(
     }
 
     fun changeUpdateNoteDialog(isShow: Boolean, updateNote: UpdateNote? = null) {
+        Logger.d(updateNote)
         if (isShow && updateNote != null) {
             Logger.d(updateNote)
             _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Up(updateNote)

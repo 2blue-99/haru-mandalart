@@ -60,7 +60,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
         splashScreen()
-
         setContent {
             HarumandalartTheme {
                 Surface(
@@ -114,7 +113,7 @@ class MainActivity : ComponentActivity() {
             bounce.duration = 500L
 
             fadeOut.interpolator = AnticipateInterpolator()
-            fadeOut.duration = 600L
+            fadeOut.duration = 700L
 
             bounce.start()
 
