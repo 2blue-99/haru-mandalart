@@ -10,7 +10,7 @@ interface LoginHelper {
     fun getComposeAuth(): ComposeAuth
     suspend fun loginWithOutAuth()
     suspend fun setLoginSucceeded()
-    suspend fun setLogout()
+    suspend fun logout()
     suspend fun deleteUser()
     suspend fun updatePermissionInitState(state: Boolean)
 }

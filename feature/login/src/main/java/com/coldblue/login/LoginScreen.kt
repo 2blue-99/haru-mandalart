@@ -129,11 +129,6 @@ fun LoginScreen(
                 }
                 NotMemberLoginButton {
                     openDialog = true
-//                    Toast.makeText(
-//                        context,
-//                        R.string.non_member_notice.toString(),
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                 }
             }
         }

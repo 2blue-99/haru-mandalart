@@ -6,16 +6,19 @@ import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
 import com.coldblue.data.util.NetworkHelper
 import com.coldblue.data.util.SettingHelper
+import com.coldblue.domain.auth.DeleteUserUseCase
+import com.coldblue.domain.auth.GetAuthStateUseCase
+import com.coldblue.domain.auth.GetComposeAuthUseCase
+import com.coldblue.domain.auth.LoginSucceededUseCase
+import com.coldblue.domain.auth.LoginWithOutAuthUseCase
+import com.coldblue.domain.auth.LogoutUseCase
+import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.domain.user.GetAlarmStateUseCase
 import com.coldblue.domain.user.GetEmailUseCase
 import com.coldblue.domain.user.UpdateAlarmStateUseCase
-import com.coldblue.setting.exception.exceptionHandler
-import com.coldblue.setting.state.LoginExceptionState
-import com.coldblue.setting.state.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -25,17 +28,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
+    private val getComposeAuthUseCase: GetComposeAuthUseCase,
+    private val loginSucceededUseCase: LoginSucceededUseCase,
     private val settingHelper: SettingHelper,
-    private val loginHelper: LoginHelper,
+    private val logoutUseCase: LogoutUseCase,
+    private val deleteUserUseCase: DeleteUserUseCase,
     getEmailUseCase: GetEmailUseCase,
     getAlarmStateUseCase: GetAlarmStateUseCase,
     private val updateAlarmStateUseCase: UpdateAlarmStateUseCase,
-    networkHelper: NetworkHelper
-
+    getAuthStateUseCase: GetAuthStateUseCase,
+    getNetworkStateUseCase: GetNetworkStateUseCase
 ) : ViewModel() {
-    private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.None)
-    val loginState: StateFlow<LoginUiState> get() = _loginState
-    val isOnline: StateFlow<Boolean> = networkHelper.isOnline.map {
+    val isOnline: StateFlow<Boolean> = getNetworkStateUseCase().map {
         it
     }.stateIn(
         scope = viewModelScope,
@@ -43,7 +47,7 @@ class SettingViewModel @Inject constructor(
         initialValue = false
     )
 
-    val loginWithOutAuth: StateFlow<LoginState> = loginHelper.isLogin.map {
+    val loginWithOutAuth = getAuthStateUseCase().map {
         it
     }.stateIn(
         scope = viewModelScope,
@@ -64,45 +68,30 @@ class SettingViewModel @Inject constructor(
     )
 
 
-    fun getComposeAuth(): ComposeAuth = loginHelper.getComposeAuth()
+    fun getComposeAuth() = getComposeAuthUseCase()
 
 
     fun checkLoginState(result: NativeSignInResult) {
         when (result) {
             is NativeSignInResult.Success -> {
-                _loginState.value = LoginUiState.Success
                 viewModelScope.launch {
-                    loginHelper.setLoginSucceeded()
-                }
-            }
-            is NativeSignInResult.Error -> {
-                when (result.message.exceptionHandler()) {
-                    is LoginExceptionState.Waiting -> _loginState.value =
-                        LoginUiState.Fail(LoginExceptionState.Waiting())
-
-                    is LoginExceptionState.Unknown -> _loginState.value =
-                        LoginUiState.Fail(LoginExceptionState.Unknown(result.message))
-
-                    else -> {}
+                    loginSucceededUseCase()
                 }
             }
 
             else -> {}
         }
     }
+
     fun logout() {
         viewModelScope.launch {
-            loginHelper.setLogout()
-        }
-    }
-    fun login() {
-        viewModelScope.launch {
+            logoutUseCase()
         }
     }
 
     fun deleteUser() {
         viewModelScope.launch {
-            loginHelper.deleteUser()
+            deleteUserUseCase()
         }
     }
 
