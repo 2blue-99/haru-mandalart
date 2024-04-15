@@ -1,6 +1,5 @@
 package com.coldblue.setting
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -61,7 +60,7 @@ fun SettingContentWithState(
     email: String,
     alarm: Boolean,
     networkState:Boolean,
-    loginState: LoginState,
+    loginState: com.coldblue.data.util.LoginState,
 ) {
 
     SettingContent(

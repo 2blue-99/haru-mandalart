@@ -2,22 +2,21 @@ package com.coldblue.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
-import com.coldblue.data.util.NetworkHelper
-import com.coldblue.data.util.SettingHelper
 import com.coldblue.domain.auth.DeleteUserUseCase
 import com.coldblue.domain.auth.GetAuthStateUseCase
 import com.coldblue.domain.auth.GetComposeAuthUseCase
 import com.coldblue.domain.auth.LoginSucceededUseCase
-import com.coldblue.domain.auth.LoginWithOutAuthUseCase
 import com.coldblue.domain.auth.LogoutUseCase
 import com.coldblue.domain.network.GetNetworkStateUseCase
+import com.coldblue.domain.setting.GetVersionUseCase
+import com.coldblue.domain.setting.ShowContactUseCase
+import com.coldblue.domain.setting.ShowOssUseCase
+import com.coldblue.domain.setting.ShowPlayStoreUseCase
 import com.coldblue.domain.user.GetAlarmStateUseCase
 import com.coldblue.domain.user.GetEmailUseCase
 import com.coldblue.domain.user.UpdateAlarmStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,15 +29,19 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val getComposeAuthUseCase: GetComposeAuthUseCase,
     private val loginSucceededUseCase: LoginSucceededUseCase,
-    private val settingHelper: SettingHelper,
     private val logoutUseCase: LogoutUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     getEmailUseCase: GetEmailUseCase,
     getAlarmStateUseCase: GetAlarmStateUseCase,
     private val updateAlarmStateUseCase: UpdateAlarmStateUseCase,
     getAuthStateUseCase: GetAuthStateUseCase,
-    getNetworkStateUseCase: GetNetworkStateUseCase
-) : ViewModel() {
+    getNetworkStateUseCase: GetNetworkStateUseCase,
+    getVersionUseCase: GetVersionUseCase,
+    private val showContactUseCase: ShowContactUseCase,
+    private val showOssUseCase: ShowOssUseCase,
+    private val showPlayStoreUseCase: ShowPlayStoreUseCase,
+
+    ) : ViewModel() {
     val isOnline: StateFlow<Boolean> = getNetworkStateUseCase().map {
         it
     }.stateIn(
@@ -52,9 +55,9 @@ class SettingViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = LoginState.Loading
+        initialValue = com.coldblue.data.util.LoginState.Loading
     )
-    val versionName = settingHelper.versionName
+    val versionName = getVersionUseCase()
 
     val email = getEmailUseCase().stateIn(
         scope = viewModelScope,
@@ -96,15 +99,15 @@ class SettingViewModel @Inject constructor(
     }
 
     fun showOss() {
-        settingHelper.showOss()
+        showOssUseCase()
     }
 
     fun showContact() {
-        settingHelper.showContact()
+        showContactUseCase()
     }
 
     fun showPlayStore() {
-        settingHelper.showPlayStore()
+        showPlayStoreUseCase()
     }
 
     fun updateAlarmState(state: Boolean) {

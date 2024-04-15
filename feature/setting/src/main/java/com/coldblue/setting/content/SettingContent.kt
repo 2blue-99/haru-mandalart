@@ -47,7 +47,7 @@ fun SettingContent(
     email: String,
     alarm: Boolean,
     networkState: Boolean,
-    loginState: LoginState,
+    loginState: com.coldblue.data.util.LoginState,
     ) {
     var openDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -103,10 +103,10 @@ fun SettingContent(
                     contentDescription = "오픈소스 라이센스"
                 )
             }
-            SettingItem(title = stringResource(id = R.string.version), isLast = loginState == LoginState.LoginWithOutAuth) {
+            SettingItem(title = stringResource(id = R.string.version), isLast = loginState == com.coldblue.data.util.LoginState.LoginWithOutAuth) {
                 Text(text = "v $versionName")
             }
-            if (loginState == LoginState.AuthenticatedLogin) {
+            if (loginState == com.coldblue.data.util.LoginState.AuthenticatedLogin) {
                 SettingItem(
                     title = stringResource(id = R.string.resign),
                     isLast = true,
@@ -130,7 +130,7 @@ fun SettingContent(
             }
 
         }
-        if (loginState == LoginState.AuthenticatedLogin) {
+        if (loginState == com.coldblue.data.util.LoginState.AuthenticatedLogin) {
             HMButton(text = stringResource(id = R.string.logout), clickableState = true) {
                 logout()
             }
@@ -187,7 +187,7 @@ fun SettingContentPreview() {
         "hno05039@naver.com",
         false,
         false,
-        LoginState.LoginWithOutAuth,
+        com.coldblue.data.util.LoginState.LoginWithOutAuth,
     )
 }
 
