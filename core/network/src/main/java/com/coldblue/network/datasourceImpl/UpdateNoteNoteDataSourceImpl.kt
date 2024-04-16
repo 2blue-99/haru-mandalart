@@ -11,11 +11,11 @@ class UpdateNoteNoteDataSourceImpl @Inject constructor(
     private val client: SupabaseClient
 ) : UpdateNoteDataSource {
 
-    override suspend fun getUpdateNote(): List<NetWorkUpdateNote> {
+    override suspend fun getUpdateNote(): NetWorkUpdateNote {
         return client.postgrest["updateNote"].select {
 //            filter {
 //                NetWorkUpdateNote::id
 //            }
-        }.decodeList<NetWorkUpdateNote>()
+        }.decodeList<NetWorkUpdateNote>().last()
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.mandalart.MandaViewModel
+import com.coldblue.mandalart.UpdateNoteViewModel
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
 import com.coldblue.mandalart.screen.content.UnInitializedMandaContent
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
@@ -27,14 +28,15 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 
-const val UPDATE_REQUEST_CODE = 777
+//const val UPDATE_REQUEST_CODE = 777
 
 @Composable
 fun MandaScreen(
     mandaViewModel: MandaViewModel = hiltViewModel(),
+    updateNoteViewModel: UpdateNoteViewModel = hiltViewModel(),
     navigateToSetting: () -> Unit,
 ) {
-    val mandaUpdateUiState by mandaViewModel.mandaUpdateDialogUIState.collectAsStateWithLifecycle()
+    val mandaUpdateUiState by updateNoteViewModel.mandaUpdateDialogUIState.collectAsStateWithLifecycle()
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
     val bottomSheetUiState by mandaViewModel.mandaBottomSheetUIState.collectAsStateWithLifecycle()
     val focus = LocalFocusManager.current
@@ -44,15 +46,15 @@ fun MandaScreen(
         is MandaUpdateDialogState.Up -> {
             UpdateDialog(
                 updateNote = uiState.updateNote,
-                onUpdate = { mandaViewModel.showPlayStore() },
-                onDismiss = { mandaViewModel.changeUpdateNoteDialog(false) }
+                onUpdate = { updateNoteViewModel.showPlayStore() },
+                onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(false) }
             )
         }
         else -> {}
     }
 
     LaunchedEffect(Unit) {
-        checkUpdate(context) { mandaViewModel.getUpdateNote() }
+        checkUpdate(context) { updateNoteViewModel.getUpdateNote() }
     }
 
     Column(
@@ -77,7 +79,7 @@ fun MandaScreen(
             deleteMandaAll = mandaViewModel::deleteMandaAll,
             changeBottomSheet = mandaViewModel::changeBottomSheet,
             navigateToSetting = navigateToSetting,
-            goPlayStore = mandaViewModel::showPlayStore
+            goPlayStore = updateNoteViewModel::showPlayStore
         )
     }
 }

@@ -70,7 +70,6 @@ class MainActivity : ComponentActivity() {
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
                             LoginState.Logout -> {
-                                CheckPermission()
                                 LoginScreen()
                             }
 
