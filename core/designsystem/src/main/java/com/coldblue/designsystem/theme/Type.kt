@@ -46,6 +46,10 @@ object HmStyle{
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold
     )
+    val text18 = TextStyle(
+        fontFamily = orbit,
+        fontSize = 18.sp,
+    )
     val text16 = TextStyle(
         fontFamily = orbit,
         fontSize = 16.sp,

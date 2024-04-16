@@ -3,11 +3,9 @@ package com.coldblue.network.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NetWorkTodoGroup(
+data class NetWorkUpdateNote(
     val id: Int = 0,
-    val is_del: Boolean,
     val update_time: String,
-    val name: String,
-    val user_id: String = "",
+    val update_content: String,
 )
 

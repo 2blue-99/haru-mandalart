@@ -10,7 +10,9 @@ import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.datastore.UserDataSource
 import com.coldblue.model.MandaKey
+import com.coldblue.model.UpdateNote
 import com.coldblue.network.datasource.MandaKeyDataSource
+import com.coldblue.network.datasource.UpdateNoteDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -23,9 +25,13 @@ class MandaKeyRepositoryImpl @Inject constructor(
     private val mandaKeyDao: MandaKeyDao,
     private val mandaKeyDataSource: MandaKeyDataSource,
     private val updateTimeDataSource: UpdateTimeDataSource,
+    private val getUpdateNoteDataSource: UpdateNoteDataSource
     ) : MandaKeyRepository {
     override fun getMandaKeys(): Flow<List<MandaKey>> =
         mandaKeyDao.getMandaKeys().map { it.map { it.asDomain() } }
+
+    override suspend fun getUpdateNote(): UpdateNote =
+        getUpdateNoteDataSource.getUpdateNote().last().asEntity()
 
     override suspend fun upsertMandaKeys(mandaKeys: List<MandaKey>) {
         mandaKeyDao.upsertMandaKeys(mandaKeys.map { it.asEntity() })
