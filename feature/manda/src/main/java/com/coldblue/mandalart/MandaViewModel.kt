@@ -46,8 +46,6 @@ class MandaViewModel @Inject constructor(
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
-    private val getUpdateNoteUseCase: GetUpdateNoteUseCase,
-    private val settingHelper: SettingHelper
 ) : ViewModel() {
 
     val mandaUiState: StateFlow<MandaUIState> =
@@ -78,12 +76,6 @@ class MandaViewModel @Inject constructor(
             initialValue = MandaUIState.Loading
         )
 
-    private val _mandaUpdateDialogUIState =
-        MutableStateFlow<MandaUpdateDialogState>(MandaUpdateDialogState.Down)
-    val mandaUpdateDialogUIState: StateFlow<MandaUpdateDialogState> get() = _mandaUpdateDialogUIState
-
-
-
     private val _mandaBottomSheetUIState =
         MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
     val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
@@ -94,19 +86,6 @@ class MandaViewModel @Inject constructor(
         } else {
             _mandaBottomSheetUIState.value = MandaBottomSheetUIState.Down
         }
-    }
-
-    fun changeUpdateNoteDialog(isShow: Boolean, updateNote: UpdateNote? = null) {
-        Logger.d(updateNote)
-        if (isShow && updateNote != null) {
-            Logger.d(updateNote)
-            _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Up(updateNote)
-        }
-        else if(isShow && updateNote == null)
-            _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Error("업로드 실패")
-        else
-            _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Down
-
     }
 
     fun upsertMandaFinal(mandaKey: MandaKey) {
@@ -148,18 +127,6 @@ class MandaViewModel @Inject constructor(
     fun updateMandaInitState(state: Boolean) {
         viewModelScope.launch {
             updateMandaInitStateUseCase(state)
-        }
-    }
-
-    fun showPlayStore() {
-        settingHelper.showPlayStore()
-    }
-
-    fun getUpdateNote(){
-        viewModelScope.launch {
-            changeUpdateNoteDialog(true, getUpdateNoteUseCase())
-        }.runCatching {
-            changeUpdateNoteDialog(true, null)
         }
     }
 }

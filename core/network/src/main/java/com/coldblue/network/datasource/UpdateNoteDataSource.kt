@@ -4,6 +4,6 @@ import com.coldblue.network.model.NetWorkUpdateNote
 
 
 interface UpdateNoteDataSource {
-    suspend fun getUpdateNote(): List<NetWorkUpdateNote>
+    suspend fun getUpdateNote(): NetWorkUpdateNote
 
 }

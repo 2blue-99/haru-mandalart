@@ -70,7 +70,7 @@ fun UpdateDialog(
                         color = HMColor.Primary,
                     )
                     Text(
-                        text = updateNote.updateContent,
+                        text = updateNote.updateTime,
                         style = HmStyle.text12,
                         color = HMColor.SubText
                     )

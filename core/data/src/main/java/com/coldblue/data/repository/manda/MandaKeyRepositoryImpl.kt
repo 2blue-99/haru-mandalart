@@ -25,13 +25,9 @@ class MandaKeyRepositoryImpl @Inject constructor(
     private val mandaKeyDao: MandaKeyDao,
     private val mandaKeyDataSource: MandaKeyDataSource,
     private val updateTimeDataSource: UpdateTimeDataSource,
-    private val getUpdateNoteDataSource: UpdateNoteDataSource
     ) : MandaKeyRepository {
     override fun getMandaKeys(): Flow<List<MandaKey>> =
         mandaKeyDao.getMandaKeys().map { it.map { it.asDomain() } }
-
-    override suspend fun getUpdateNote(): UpdateNote =
-        getUpdateNoteDataSource.getUpdateNote().last().asEntity()
 
     override suspend fun upsertMandaKeys(mandaKeys: List<MandaKey>) {
         mandaKeyDao.upsertMandaKeys(mandaKeys.map { it.asEntity() })
