@@ -22,7 +22,7 @@ import com.coldblue.designsystem.theme.HmStyle
 fun HMTextDialog(
     targetText: String,
     text: String,
-    tintColors: Color,
+    tintColor: Color,
     subText: String = "",
     confirmText: String,
     onDismissRequest: () -> Unit,
@@ -39,7 +39,7 @@ fun HMTextDialog(
                     buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                color = tintColors,
+                                color = tintColor,
                                 fontWeight = FontWeight.Bold
                             )
                         ) {
@@ -52,7 +52,7 @@ fun HMTextDialog(
                     Text(
                         text = subText,
                         style = HmStyle.text12,
-                        color = HMColor.SubText
+                        color = HMColor.SubLightText
                     )
             }
         }, onDismissRequest = {
@@ -61,14 +61,14 @@ fun HMTextDialog(
             TextButton(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = HMColor.Background,
-                    contentColor = tintColors
+                    contentColor = tintColor
                 ),
                 onClick = {
                     onConfirmation()
                 }) {
                 Text(
                     text = confirmText,
-                    color = tintColors,
+                    color = tintColor,
                     fontWeight = FontWeight.Bold,
                     style = HmStyle.text16
                 )

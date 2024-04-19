@@ -22,5 +22,9 @@
     <string name="update_dialog_content">새로운 버전이 출시되었어요!</string>
     <string name="update_note">업데이트 노트</string>
     <string name="update_dialog_button">즉시 업데이트</string>
+    <string name="explain_manda_1">1. 정중앙에 이루고자 하는 목표를 정해요.</string>
+    <string name="explain_manda_2">2. 목표를 이루기 위한 세부 목표를 설정한 후,</string>
+    <string name="explain_manda_3">3. 세부 목표를 이루기 위한 할일을 선정하여</string>
+    <string name="explain_manda_advantage">목표를 향해\n차근차근 나아갈 수 있도록 도와줘요.</string>
 
 </resources>

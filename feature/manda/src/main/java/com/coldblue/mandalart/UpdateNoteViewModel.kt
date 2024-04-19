@@ -23,6 +23,7 @@ class UpdateNoteViewModel @Inject constructor(
         MutableStateFlow<MandaUpdateDialogState>(MandaUpdateDialogState.Down)
     val mandaUpdateDialogUIState: StateFlow<MandaUpdateDialogState> get() = _mandaUpdateDialogUIState
 
+
     fun changeUpdateNoteDialog(isShow: Boolean, updateNote: UpdateNote? = null) {
         Logger.d(updateNote)
         if (isShow && updateNote != null) {
@@ -33,7 +34,6 @@ class UpdateNoteViewModel @Inject constructor(
             _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Error("업로드 실패")
         else
             _mandaUpdateDialogUIState.value = MandaUpdateDialogState.Down
-
     }
 
     fun showPlayStore() {

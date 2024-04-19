@@ -69,7 +69,7 @@ fun LoginScreen(
             targetText = "",
             text = stringResource(id = R.string.non_member_notice),
             confirmText = stringResource(id = R.string.check),
-            tintColors = HMColor.Primary,
+            tintColor = HMColor.Primary,
             subText = stringResource(id = R.string.non_member_sub_notice),
             onDismissRequest = { openDialog = false },
             onConfirmation = {
@@ -162,7 +162,7 @@ fun NotMemberLoginButton(
 
         ) {
             Text(
-                color = HMColor.SubText,
+                color = HMColor.SubLightText,
                 text = stringResource(id = R.string.non_member_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
