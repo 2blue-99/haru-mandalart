@@ -46,16 +46,15 @@ fun MandaScreen(
     val context = LocalContext.current
 
     when (val uiState = mandaUpdateUiState) {
-        is MandaUpdateDialogState.Up -> {
+        is MandaUpdateDialogState.Show -> {
             UpdateDialog(
                 updateNote = uiState.updateNote,
-                onUpdate = { updateNoteViewModel.showPlayStore() },
-                onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(false) }
+                onUpdate = updateNoteViewModel::showPlayStore,
+                onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(true, null) }
             )
         }
 
-        else -> { /*TODO  인터넷 연결 X */
-        }
+        else -> { /*TODO  인터넷 연결 X */ }
     }
 
     LaunchedEffect(Unit) {
@@ -73,7 +72,9 @@ fun MandaScreen(
             }
     ) {
         if (!mandaExplainUiState) {
-            MandaExplainPage()
+            MandaExplainPage(
+                updateExplainState = explainViewModel::updateExplainState
+            )
         } else {
             MandaContentWithState(
                 mandaUIState = mandaUiState,
@@ -138,12 +139,12 @@ fun MandaContentWithState(
 }
 
 private fun checkUpdate(
-    context: Context, onUpdate: () -> Unit
+    context: Context,
+    onUpdate: () -> Unit
 ) {
     onUpdate()
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-
 //    val updateLauncher = rememberLauncherForActivityResult(
 //        ActivityResultContracts.StartIntentSenderForResult()
 //    ) { result ->
@@ -157,13 +158,11 @@ private fun checkUpdate(
 ////            }
 //        }
 //    }
-
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
 
 //        Logger.d(appUpdateInfo.updateAvailability())
 //        Logger.d(UpdateAvailability.UPDATE_AVAILABLE)
 //        Logger.d(appUpdateInfo.clientVersionStalenessDays())
-
         // 업데이트 할게 있는지 체크
         if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
             // 몇번 물어봤는지 체크 + 업데이트 불가능하면 NULL

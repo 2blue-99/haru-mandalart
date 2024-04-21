@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.screen
 
+import android.content.IntentSender.OnFinished
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -24,8 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,14 +43,16 @@ import com.coldblue.designsystem.component.HMText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MandaExplainPage() {
+fun MandaExplainPage(
+    updateExplainState: () -> Unit
+) {
     val pageState = rememberPagerState(pageCount = { 4 })
+    val coroutineScope = rememberCoroutineScope()
 
     Surface(
         modifier = Modifier
@@ -61,9 +63,7 @@ fun MandaExplainPage() {
             state = pageState,
             beyondBoundsPageCount = 0,
         ) { page ->
-            ExplainPage(page) {
-
-            }
+            ExplainPage(page)
         }
 
         Box(
@@ -85,9 +85,18 @@ fun MandaExplainPage() {
                 .padding(horizontal = 30.dp)
         ) {
             HMButton(
-                text = if (pageState.currentPage == 3) "하루 만다라트 사용하기" else "다음",
+                text = if (pageState.currentPage == 3)
+                    stringResource(id = R.string.explain_finish) else stringResource(id = R.string.explain_next),
                 clickableState = true
-            ) { }
+            ) {
+                coroutineScope.launch {
+                    val current = pageState.currentPage
+                    if (current == 3)
+                        updateExplainState()
+                    else
+                        pageState.animateScrollToPage(pageState.currentPage + 1)
+                }
+            }
         }
     }
 }
@@ -95,10 +104,10 @@ fun MandaExplainPage() {
 @Composable
 fun ExplainPage(
     pageCount: Int,
-    onClick: () -> Unit
 ) {
 //    val alpha = remember { Animatable(0f) }
-//    LaunchedEffect(Unit) {
+//    LaunchedEffect(pageCount) {
+//        alpha.animateTo(0f)
 //        delay(100L)
 //        alpha.animateTo(
 //            targetValue = 1f,
@@ -111,8 +120,9 @@ fun ExplainPage(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 100.dp)
+            .padding(top = 90.dp)
             .padding(horizontal = 30.dp)
+//            .alpha(alpha.value)
     ) {
 
         LazyColumn(
@@ -189,21 +199,21 @@ fun PagerIndicator(
 fun FirstPage() {
     Column {
         Text(
-            text = "만다라트란?",
+            text = stringResource(id = R.string.explain_title),
             style = HmStyle.text46,
             color = HMColor.Primary
         )
         Text(
-            text = "Manda(본질의 깨달음) + la(달성/성취) + art(기술)",
+            text = stringResource(id = R.string.explain_manda_mean),
             style = HmStyle.text12,
             color = HMColor.SubDarkText
         )
     }
 
     HMText(
-        topText = "본질을 깨닫는 기술,\n",
-        targetText = "목표를 달성하는 기술",
-        bottomText = "을 의미해요.",
+        topText = stringResource(id = R.string.explain_content_top),
+        targetText = stringResource(id = R.string.explain_content_tint),
+        bottomText = stringResource(id = R.string.explain_content_bottom),
         tintColor = HMColor.Primary,
         fontSize = 18.sp
     )
@@ -286,6 +296,7 @@ fun FourthPage() {
     }
 
     Text(
+        modifier = Modifier.fillMaxWidth(),
         text = stringResource(id = R.string.explain_manda_advantage),
         style = HmStyle.text20,
         color = HMColor.Primary,

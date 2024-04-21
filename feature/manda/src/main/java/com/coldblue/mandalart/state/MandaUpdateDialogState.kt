@@ -4,6 +4,6 @@ import com.coldblue.model.UpdateNote
 
 sealed interface MandaUpdateDialogState {
     data class Error(val msg: String) : MandaUpdateDialogState
-    data object Down : MandaUpdateDialogState
-    data class Up(val updateNote: UpdateNote) : MandaUpdateDialogState
+    data object Hide : MandaUpdateDialogState
+    data class Show(val updateNote: UpdateNote) : MandaUpdateDialogState
 }
