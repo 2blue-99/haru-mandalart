@@ -53,7 +53,6 @@ fun MandaExplainPage(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(HMColor.Background)
     ) {
         HorizontalPager(
             state = pageState,
@@ -115,14 +114,16 @@ fun ExplainPage(
 //    }
     Surface(
         modifier = Modifier
+            .background(HMColor.Background)
             .fillMaxSize()
             .padding(top = 90.dp)
             .padding(horizontal = 30.dp)
 //            .alpha(alpha.value)
     ) {
-
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(HMColor.Background),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
         ) {
@@ -292,7 +293,8 @@ fun FourthPage() {
     }
 
     Text(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         text = stringResource(id = R.string.explain_manda_advantage),
         style = HmStyle.text20,
         color = HMColor.Primary,
