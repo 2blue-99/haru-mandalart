@@ -142,7 +142,7 @@ private fun checkUpdate(
     context: Context,
     onUpdate: () -> Unit
 ) {
-    onUpdate()
+//    onUpdate()
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val appUpdateInfoTask = appUpdateManager.appUpdateInfo
 //    val updateLauncher = rememberLauncherForActivityResult(
@@ -159,7 +159,6 @@ private fun checkUpdate(
 //        }
 //    }
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-
 //        Logger.d(appUpdateInfo.updateAvailability())
 //        Logger.d(UpdateAvailability.UPDATE_AVAILABLE)
 //        Logger.d(appUpdateInfo.clientVersionStalenessDays())

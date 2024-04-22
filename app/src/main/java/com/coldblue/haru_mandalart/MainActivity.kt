@@ -4,7 +4,6 @@ import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.app.Activity
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -125,7 +124,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun CheckPermission() {
         val context = LocalContext.current
-        val rejectAlarmMessage = stringResource(R.string.reject_alarm)
+        val rejectAlarmMessage = stringResource(R.string.app_reject_alarm)
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
@@ -157,7 +156,7 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         var backPressedState by remember { mutableStateOf(true) }
         var backPressedTime = 0L
-        val backNoticeMessage = stringResource(R.string.back_notice)
+        val backNoticeMessage = stringResource(R.string.app_back_notice)
         BackHandler(enabled = backPressedState) {
             if (System.currentTimeMillis() - backPressedTime <= 1000L) {
                 (context as Activity).finish()

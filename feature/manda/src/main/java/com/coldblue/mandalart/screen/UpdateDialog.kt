@@ -61,7 +61,7 @@ fun UpdateDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = stringResource(id = R.string.update_title),
+                        text = stringResource(id = R.string.dialog_title),
                         style = HmStyle.text18,
                         fontWeight = FontWeight.Bold,
                         color = HMColor.Primary,
@@ -77,7 +77,7 @@ fun UpdateDialog(
                 }
 
                 Text(
-                    text = stringResource(id = R.string.update_dialog_content),
+                    text = stringResource(id = R.string.update_note_dialog_content),
                     style = HmStyle.text18,
                     fontWeight = FontWeight.Bold,
                     color = HMColor.Text,
@@ -109,7 +109,7 @@ fun UpdateDialog(
                 }
 
                 HMButton(
-                    text = stringResource(id = R.string.update_dialog_button),
+                    text = stringResource(id = R.string.update_note_dialog_button),
                     clickableState = true
                 ) {
                     onUpdate()

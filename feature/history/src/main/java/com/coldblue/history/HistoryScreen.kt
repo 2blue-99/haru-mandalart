@@ -50,7 +50,7 @@ fun HistoryContentWithState(
     date : LocalDate,
 ) {
     when (uiState) {
-        is HistoryUiState.Loading -> Text(text = stringResource(id = R.string.loading))
+        is HistoryUiState.Loading -> Text(text = stringResource(id = R.string.hisotry_loading))
         is HistoryUiState.Error -> Text(text = uiState.msg)
         is HistoryUiState.Success ->
             HistoryContent(

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.ui.res.stringResource
 import com.coldblue.data.util.SettingHelper
 import com.coldblue.haru_mandalart.R
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -30,12 +29,12 @@ class SettingHelperImpl @Inject constructor(
         val intent = Intent(Intent.ACTION_SEND).apply {
             putExtra(
                 Intent.EXTRA_EMAIL,
-                arrayOf(R.string.chan_mail, R.string.pu_mail)
+                arrayOf(R.string.setting_chan_mail, R.string.setting_pu_mail)
             )
             type = "plain/Text"
 
-            putExtra(Intent.EXTRA_SUBJECT, R.string.mail_title)
-            putExtra(Intent.EXTRA_TEXT, R.string.mail_content)
+            putExtra(Intent.EXTRA_SUBJECT, R.string.setting_mail_title)
+            putExtra(Intent.EXTRA_TEXT, R.string.setting_mail_content)
             setPackage("com.google.android.gm")
         }
 
@@ -44,7 +43,7 @@ class SettingHelperImpl @Inject constructor(
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (e: Exception) {
-            Toast.makeText(context, R.string.fail_mail, Toast.LENGTH_LONG).show()
+            Toast.makeText(context, R.string.setting_fail_mail, Toast.LENGTH_LONG).show()
         }
     }
 //    com.coldblue.haru_mandalart
@@ -58,7 +57,7 @@ class SettingHelperImpl @Inject constructor(
         } catch (e: Exception) {
             Toast.makeText(
                 context,
-                R.string.fail_playStore,
+                R.string.setting_fail_playStore,
                 Toast.LENGTH_LONG
             ).show()
         }

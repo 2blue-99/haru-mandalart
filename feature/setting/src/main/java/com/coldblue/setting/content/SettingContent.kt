@@ -58,7 +58,7 @@ fun SettingContent(
         HMTextDialog(
             targetText = "",
             text = stringResource(id = R.string.delete_dialog_title),
-            confirmText = stringResource(id = R.string.resign),
+            confirmText = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
             tintColor = HMColor.Dark.Red,
             onDismissRequest = {
                 openDialog = false
@@ -77,38 +77,38 @@ fun SettingContent(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            SettingItem(title = stringResource(id = R.string.notice)) {
+            SettingItem(title = stringResource(id = R.string.setting_notice)) {
                 HMSwitch(checked = alarm) {
                     onChangeAlarmState(!alarm)
                 }
             }
-            SettingItem(title = stringResource(id = R.string.account)) {
+            SettingItem(title = stringResource(id = R.string.setting_account)) {
                 Text(text = email)
             }
-            SettingItem(title = stringResource(id = R.string.ask), isClickable = true, onClick = { showContact() }) {
+            SettingItem(title = stringResource(id = R.string.setting_ask), isClickable = true, onClick = { showContact() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "문의"
                 )
             }
-            SettingItem(title = stringResource(id = R.string.evaluate), isClickable = true, onClick = { showPlayStore() }) {
+            SettingItem(title = stringResource(id = R.string.setting_evaluate), isClickable = true, onClick = { showPlayStore() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "앱 평가"
                 )
             }
-            SettingItem(title = stringResource(id = R.string.open_source), isClickable = true, onClick = { showOss() }) {
+            SettingItem(title = stringResource(id = R.string.setting_open_source), isClickable = true, onClick = { showOss() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "오픈소스 라이센스"
                 )
             }
-            SettingItem(title = stringResource(id = R.string.version), isLast = loginState == LoginState.LoginWithOutAuth) {
+            SettingItem(title = stringResource(id = R.string.setting_version), isLast = loginState == LoginState.LoginWithOutAuth) {
                 Text(text = "v $versionName")
             }
             if (loginState == LoginState.AuthenticatedLogin) {
                 SettingItem(
-                    title = stringResource(id = R.string.resign),
+                    title = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
                     isLast = true,
                     isClickable = true,
                     onClick = {
@@ -117,7 +117,7 @@ fun SettingContent(
                         } else {
                             Toast.makeText(
                                 context,
-                                R.string.connection_err,
+                                R.string.setting_connection_err,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -131,11 +131,11 @@ fun SettingContent(
 
         }
         if (loginState == LoginState.AuthenticatedLogin) {
-            HMButton(text = stringResource(id = R.string.logout), clickableState = true) {
+            HMButton(text = stringResource(id = R.string.setting_logout), clickableState = true) {
                 logout()
             }
         } else {
-            HMButton(text = stringResource(id = R.string.login), clickableState = true) {
+            HMButton(text = stringResource(id = R.string.setting_login), clickableState = true) {
                 login()
             }
         }

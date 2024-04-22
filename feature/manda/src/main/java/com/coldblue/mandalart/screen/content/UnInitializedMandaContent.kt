@@ -48,7 +48,7 @@ fun UnInitializedMandaContent(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.unInit_screen_title),
+            text = stringResource(id = R.string.unInitialized_title),
             style = HmStyle.text24,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left
@@ -79,7 +79,7 @@ fun UnInitializedMandaContent(
             }
         }
         HMButton(
-            text = stringResource(id = R.string.goal_realization),
+            text = stringResource(id = R.string.unInitialized_goal_realization),
             modifier = Modifier.weight(0.1f),
             clickableState = buttonClickableState
         ) {

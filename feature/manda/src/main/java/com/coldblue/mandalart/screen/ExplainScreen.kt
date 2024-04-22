@@ -1,9 +1,5 @@
 package com.coldblue.mandalart.screen
 
-import android.content.IntentSender.OnFinished
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -237,7 +233,7 @@ fun SecondPage() {
     )
     Text(
         modifier = Modifier.padding(start = 10.dp),
-        text = stringResource(id = R.string.explain_manda_1),
+        text = stringResource(id = R.string.explain_usage_1),
         style = HmStyle.text16,
         color = HMColor.Primary
     )
@@ -256,11 +252,11 @@ fun ThirdPage() {
         modifier = Modifier.padding(start = 10.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.explain_manda_1),
+            text = stringResource(id = R.string.explain_usage_1),
             style = HmStyle.text16
         )
         Text(
-            text = stringResource(id = R.string.explain_manda_2),
+            text = stringResource(id = R.string.explain_usage_2),
             style = HmStyle.text16,
             color = HMColor.Primary
         )
@@ -280,16 +276,16 @@ fun FourthPage() {
         modifier = Modifier.padding(start = 10.dp),
     ) {
         Text(
-            text = stringResource(id = R.string.explain_manda_1),
+            text = stringResource(id = R.string.explain_usage_1),
             style = HmStyle.text16
         )
         Text(
-            text = stringResource(id = R.string.explain_manda_2),
+            text = stringResource(id = R.string.explain_usage_2),
             style = HmStyle.text16
         )
 
         Text(
-            text = stringResource(id = R.string.explain_manda_3),
+            text = stringResource(id = R.string.explain_usage_3),
             style = HmStyle.text16,
             color = HMColor.Primary
         )
