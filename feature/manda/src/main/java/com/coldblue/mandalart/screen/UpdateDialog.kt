@@ -1,6 +1,5 @@
 package com.coldblue.mandalart.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,8 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -72,10 +69,10 @@ fun UpdateDialog(
                     Text(
                         text = updateNote.updateTime,
                         style = HmStyle.text12,
-                        color = HMColor.SubText
+                        color = HMColor.SubLightText
                     )
                     HorizontalDivider(
-                        color = HMColor.SubText
+                        color = HMColor.SubLightText
                     )
                 }
 

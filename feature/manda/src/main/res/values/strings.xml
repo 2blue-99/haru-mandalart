@@ -23,4 +23,19 @@
     <string name="update_note">업데이트 노트</string>
     <string name="update_dialog_button">즉시 업데이트</string>
 
+    // Explain
+    <string name="explain_next">다음</string>
+    <string name="explain_finish">하루 만다라트 시작하기</string>
+    <string name="explain_title">만다라트란?</string>
+    <string name="explain_manda_mean">Manda(본질의 깨달음) + la(달성/성취) + art(기술)</string>
+    <string name="explain_middle_">본질을 깨닫는 기술,\n</string>
+    <string name="explain_content_top">본질을 깨닫는 기술,</string>
+    <string name="explain_content_tint">목표를 달성하는 기술</string>
+    <string name="explain_content_bottom">을 의미해요.</string>
+    <string name="explain_manda_1">1. 정중앙에 이루고자 하는 목표를 정해요.</string>
+    <string name="explain_manda_2">2. 목표를 이루기 위한 세부 목표를 설정한 후,</string>
+    <string name="explain_manda_3">3. 세부 목표를 이루기 위한 할일을 선정하여</string>
+    <string name="explain_manda_advantage">목표를 향해\n차근차근 나아갈 수 있도록 도와줘요.</string>
+
+
 </resources>

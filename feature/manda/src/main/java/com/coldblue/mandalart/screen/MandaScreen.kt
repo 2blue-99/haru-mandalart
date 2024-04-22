@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.mandalart.ExplainViewModel
 import com.coldblue.mandalart.MandaViewModel
 import com.coldblue.mandalart.UpdateNoteViewModel
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
@@ -34,23 +35,26 @@ import com.google.android.play.core.install.model.UpdateAvailability
 fun MandaScreen(
     mandaViewModel: MandaViewModel = hiltViewModel(),
     updateNoteViewModel: UpdateNoteViewModel = hiltViewModel(),
+    explainViewModel: ExplainViewModel = hiltViewModel(),
     navigateToSetting: () -> Unit,
 ) {
+    val mandaExplainUiState by explainViewModel.mandaExplainUIState.collectAsStateWithLifecycle()
     val mandaUpdateUiState by updateNoteViewModel.mandaUpdateDialogUIState.collectAsStateWithLifecycle()
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
     val bottomSheetUiState by mandaViewModel.mandaBottomSheetUIState.collectAsStateWithLifecycle()
     val focus = LocalFocusManager.current
     val context = LocalContext.current
 
-    when(val uiState = mandaUpdateUiState){
-        is MandaUpdateDialogState.Up -> {
+    when (val uiState = mandaUpdateUiState) {
+        is MandaUpdateDialogState.Show -> {
             UpdateDialog(
                 updateNote = uiState.updateNote,
-                onUpdate = { updateNoteViewModel.showPlayStore() },
-                onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(false) }
+                onUpdate = updateNoteViewModel::showPlayStore,
+                onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(true, null) }
             )
         }
-        else -> {}
+
+        else -> { /*TODO  인터넷 연결 X */ }
     }
 
     LaunchedEffect(Unit) {
@@ -67,20 +71,26 @@ fun MandaScreen(
                 })
             }
     ) {
-        MandaContentWithState(
-            mandaUIState = mandaUiState,
-            mandaBottomSheetUiState = bottomSheetUiState,
-            updateInitState = mandaViewModel::updateMandaInitState,
-            upsertFinalManda = mandaViewModel::upsertMandaFinal,
-            upsertMandaKey = mandaViewModel::upsertMandaKey,
-            upsertMandaDetail = mandaViewModel::upsertMandaDetail,
-            deleteMandaKey = mandaViewModel::deleteMandaKey,
-            deleteMandaDetail = mandaViewModel::deleteMandaDetail,
-            deleteMandaAll = mandaViewModel::deleteMandaAll,
-            changeBottomSheet = mandaViewModel::changeBottomSheet,
-            navigateToSetting = navigateToSetting,
-            goPlayStore = updateNoteViewModel::showPlayStore
-        )
+        if (!mandaExplainUiState) {
+            MandaExplainPage(
+                updateExplainState = explainViewModel::updateExplainState
+            )
+        } else {
+            MandaContentWithState(
+                mandaUIState = mandaUiState,
+                mandaBottomSheetUiState = bottomSheetUiState,
+                updateInitState = mandaViewModel::updateMandaInitState,
+                upsertFinalManda = mandaViewModel::upsertMandaFinal,
+                upsertMandaKey = mandaViewModel::upsertMandaKey,
+                upsertMandaDetail = mandaViewModel::upsertMandaDetail,
+                deleteMandaKey = mandaViewModel::deleteMandaKey,
+                deleteMandaDetail = mandaViewModel::deleteMandaDetail,
+                deleteMandaAll = mandaViewModel::deleteMandaAll,
+                changeBottomSheet = mandaViewModel::changeBottomSheet,
+                navigateToSetting = navigateToSetting,
+                goPlayStore = updateNoteViewModel::showPlayStore
+            )
+        }
     }
 }
 
@@ -98,7 +108,7 @@ fun MandaContentWithState(
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     goPlayStore: () -> Unit
-    ) {
+) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {}
         is MandaUIState.Error -> {}
@@ -129,12 +139,12 @@ fun MandaContentWithState(
 }
 
 private fun checkUpdate(
-    context: Context, onUpdate: () -> Unit
-){
+    context: Context,
+    onUpdate: () -> Unit
+) {
     onUpdate()
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-
 //    val updateLauncher = rememberLauncherForActivityResult(
 //        ActivityResultContracts.StartIntentSenderForResult()
 //    ) { result ->
@@ -148,13 +158,11 @@ private fun checkUpdate(
 ////            }
 //        }
 //    }
-
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
 
 //        Logger.d(appUpdateInfo.updateAvailability())
 //        Logger.d(UpdateAvailability.UPDATE_AVAILABLE)
 //        Logger.d(appUpdateInfo.clientVersionStalenessDays())
-
         // 업데이트 할게 있는지 체크
         if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
             // 몇번 물어봤는지 체크 + 업데이트 불가능하면 NULL

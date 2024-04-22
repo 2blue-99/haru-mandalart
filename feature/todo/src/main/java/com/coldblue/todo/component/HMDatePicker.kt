@@ -29,7 +29,7 @@ fun HMDatePicker(
             textStyle = HmStyle.text16,
             items = List(101) { "${2000 + it}년" },
             initialItem = "${date.year}년",
-            textColor = HMColor.SubText,
+            textColor = HMColor.SubLightText,
             selectedTextColor = HMColor.Text,
             onItemSelected = { a, year -> onYearChange(year.dropLast(1).toInt()) },
             scrollState = rememberLazyListState(date.year - 2000)
@@ -42,7 +42,7 @@ fun HMDatePicker(
                 TextStyle.FULL,
                 Locale.KOREA
             ),
-            textColor = HMColor.SubText,
+            textColor = HMColor.SubLightText,
             selectedTextColor = HMColor.Text,
             onItemSelected = { a, month -> onMonthChange(month.dropLast(1).toInt()) },
             scrollState = rememberLazyListState(date.month.value - 1)
@@ -52,7 +52,7 @@ fun HMDatePicker(
             textStyle = HmStyle.text16,
             items = List(date.lengthOfMonth()) { "${it + 1}일" },
             initialItem = "${date.dayOfMonth}일",
-            textColor = HMColor.SubText,
+            textColor = HMColor.SubLightText,
             selectedTextColor = HMColor.Text,
             onItemSelected = { a, day -> onDayChange(day.dropLast(1).toInt()) },
             scrollState = rememberLazyListState(date.dayOfMonth - 1)

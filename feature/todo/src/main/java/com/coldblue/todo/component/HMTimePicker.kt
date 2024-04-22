@@ -73,7 +73,7 @@ fun HMTimePicker(
                 textStyle = HmStyle.text16,
                 items = listOf("오전", "오후"),
                 initialItem = myTime.ampm,
-                textColor = HMColor.SubText,
+                textColor = HMColor.SubLightText,
                 selectedTextColor = HMColor.Text,
                 onItemSelected = { _, item ->
                     onAmPmChange(item)
@@ -86,7 +86,7 @@ fun HMTimePicker(
                 textStyle = HmStyle.text16,
                 items = List(12) { it + 1 },
                 initialItem = myTime.hour,
-                textColor = HMColor.SubText,
+                textColor = HMColor.SubLightText,
                 selectedTextColor = HMColor.Text,
                 onItemSelected = { index, item ->
                     onHourChange(item)
@@ -120,7 +120,7 @@ fun HMTimePicker(
                 textStyle = HmStyle.text16,
                 items = List(60) { it.padTwoZero() },
                 initialItem = myTime.minute.padTwoZero(),
-                textColor = HMColor.SubText,
+                textColor = HMColor.SubLightText,
                 selectedTextColor = HMColor.Text,
                 onItemSelected = { index, item ->
                     onMinuteChange(item.toInt())

@@ -138,7 +138,7 @@ fun TodoBottomSheet(
                         .padding(vertical = 8.dp),
                     text = AnnotatedString("세부 항목 >"),
                     style = HmStyle.text16.copy(
-                        color = HMColor.SubText,
+                        color = HMColor.SubLightText,
                         textAlign = TextAlign.End,
                         fontWeight = FontWeight.Bold
                     ),
