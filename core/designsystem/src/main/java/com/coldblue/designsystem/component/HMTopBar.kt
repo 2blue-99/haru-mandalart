@@ -21,6 +21,7 @@ import com.coldblue.designsystem.theme.HmStyle
 
 @Composable
 fun HMTopBar(
+    title:String,
     popBackStack: () -> Unit
 ) {
 
@@ -33,7 +34,7 @@ fun HMTopBar(
         horizontalArrangement = Arrangement.Absolute.Center
     ) {
         Text(
-            text = "설정", style = HmStyle.text16, fontWeight = FontWeight.Bold
+            text = title, style = HmStyle.text16, fontWeight = FontWeight.Bold
         )
     }
     Row(
@@ -58,5 +59,5 @@ fun HMTopBar(
 @Preview
 @Composable
 fun HMTopBarPreview() {
-    HMTopBar({})
+    HMTopBar("설정",{})
 }

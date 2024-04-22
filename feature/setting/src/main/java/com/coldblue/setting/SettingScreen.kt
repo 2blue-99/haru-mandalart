@@ -13,7 +13,9 @@ import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
 @Composable
 fun SettingScreen(
+    navigateToNotice: () -> Unit,
     settingViewModel: SettingViewModel = hiltViewModel(),
+
 ) {
     val email by settingViewModel.email.collectAsStateWithLifecycle()
     val alarm by settingViewModel.alarm.collectAsStateWithLifecycle()
@@ -31,6 +33,7 @@ fun SettingScreen(
             .fillMaxSize()
     ) {
         SettingContentWithState(
+            navigateToNotice = navigateToNotice,
             showOss = settingViewModel::showOss,
             showPlayStore = settingViewModel::showPlayStore,
             showContact = settingViewModel::showContact,
@@ -49,6 +52,7 @@ fun SettingScreen(
 
 @Composable
 fun SettingContentWithState(
+    navigateToNotice: () -> Unit,
     showOss: () -> Unit,
     showPlayStore: () -> Unit,
     showContact: () -> Unit,
@@ -60,10 +64,11 @@ fun SettingContentWithState(
     email: String,
     alarm: Boolean,
     networkState:Boolean,
-    loginState: com.coldblue.data.util.LoginState,
+    loginState: LoginState,
 ) {
 
     SettingContent(
+        navigateToNotice,
         showOss,
         showPlayStore,
         showContact,
