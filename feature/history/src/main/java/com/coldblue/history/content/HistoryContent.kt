@@ -125,7 +125,7 @@ fun HistoryContent(
                     textAlign = TextAlign.Center,
                     text = stringResource(id = R.string.record_empty),
                     style = HmStyle.text20,
-                    color = HMColor.SubText
+                    color = HMColor.SubLightText
                 )
             else
                 LazyColumn(

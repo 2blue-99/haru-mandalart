@@ -60,9 +60,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
         splashScreen()
-//        splashScreen.setKeepOnScreenCondition{false}
-
-       requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             HarumandalartTheme {
                 Surface(
@@ -72,8 +69,7 @@ class MainActivity : ComponentActivity() {
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
-                         LoginState.Logout -> {
-//                                CheckPermission()
+                            LoginState.Logout -> {
                                 LoginScreen()
                             }
 
@@ -116,7 +112,7 @@ class MainActivity : ComponentActivity() {
             bounce.duration = 500L
 
             fadeOut.interpolator = AnticipateInterpolator()
-            fadeOut.duration = 600L
+            fadeOut.duration = 700L
 
             bounce.start()
 

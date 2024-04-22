@@ -97,6 +97,7 @@ fun InitializedMandaContent(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
+    goPlayStore: () -> Unit
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -104,6 +105,7 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
@@ -119,6 +121,8 @@ fun InitializedMandaContent(
             changeBottomSheet(false, null)
         }
     }
+
+
 
     LaunchedEffect(uiState.donePercentage) { percentage = uiState.donePercentage }
 
@@ -672,7 +676,7 @@ fun MandaDetailBox(
 
 @Composable
 fun MandaEmptyBox(
-    color: Color = HMColor.SubText,
+    color: Color = HMColor.SubLightText,
     onClick: () -> Unit
 ) {
     val stroke = Stroke(
@@ -701,7 +705,7 @@ fun MandaEmptyBox(
                 .fillMaxSize()
                 .scale(0.35f),
             imageVector = IconPack.Plus,
-            tint = HMColor.SubText,
+            tint = HMColor.SubLightText,
             contentDescription = ""
         )
     }

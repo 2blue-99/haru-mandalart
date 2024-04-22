@@ -47,10 +47,10 @@ class SettingHelperImpl @Inject constructor(
             Toast.makeText(context, R.string.fail_mail, Toast.LENGTH_LONG).show()
         }
     }
-
+//    com.coldblue.haru_mandalart
     override fun showPlayStore() {
-        val packageName = context.packageName
-        val playStoreUri = Uri.parse("market://details?id=$packageName")
+        val playStoreUri = Uri.parse("market://details?id=com.coldblue.haru_mandalart")
+//        val playStoreUri = Uri.parse("market://details?id=$packageName")
         val playStoreIntent = Intent(Intent.ACTION_VIEW, playStoreUri)
         playStoreIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         try {

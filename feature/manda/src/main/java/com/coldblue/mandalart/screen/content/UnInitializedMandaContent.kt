@@ -45,7 +45,7 @@ fun UnInitializedMandaContent(
             .padding(top = 40.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
 
-    ){
+    ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.unInit_screen_title),
@@ -78,18 +78,22 @@ fun UnInitializedMandaContent(
                 }
             }
         }
-        HMButton(text = stringResource(id = R.string.goal_realization), modifier = Modifier.weight(0.1f), clickableState = buttonClickableState) {
+        HMButton(
+            text = stringResource(id = R.string.goal_realization),
+            modifier = Modifier.weight(0.1f),
+            clickableState = buttonClickableState
+        ) {
             updateInitState(true)
-            insertFinalManda(MandaKey(id = 5 , name = inputText))
+            insertFinalManda(MandaKey(id = 5, name = inputText))
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewUnInit(){
+fun PreviewUnInit() {
     UnInitializedMandaContent(
         updateInitState = {},
-        insertFinalManda =  {}
+        insertFinalManda = {}
     )
 }

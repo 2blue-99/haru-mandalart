@@ -59,7 +59,7 @@ fun SettingContent(
             targetText = "",
             text = stringResource(id = R.string.delete_dialog_title),
             confirmText = stringResource(id = R.string.resign),
-            tintColors = HMColor.Dark.Red,
+            tintColor = HMColor.Dark.Red,
             onDismissRequest = {
                 openDialog = false
             },
@@ -168,7 +168,7 @@ fun SettingItem(
     }
     if (!isLast)
         HorizontalDivider(
-            color = HMColor.SubText,
+            color = HMColor.SubLightText,
         )
 }
 

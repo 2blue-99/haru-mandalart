@@ -97,7 +97,7 @@ fun MandaBottomSheet(
                 dialogState = false
                 onDisMiss()
             },
-            tintColors = HMColor.Dark.Red,
+            tintColor = HMColor.Dark.Red,
             onConfirmation = {
                 deleteMandaKey(
                     mandaUI.id,
