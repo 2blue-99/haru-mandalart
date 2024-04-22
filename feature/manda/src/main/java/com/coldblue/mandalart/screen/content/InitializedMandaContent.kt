@@ -688,14 +688,15 @@ fun MandaEmptyBox(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1F)
-            .clip(RoundedCornerShape(8.dp))
-            .drawBehind {
-                drawRoundRect(
-                    color = color,
-                    style = stroke,
-                    cornerRadius = CornerRadius(8.dp.toPx())
-                )
-            }
+            .border(1.dp, HMColor.Gray, RoundedCornerShape(8.dp))
+//            .clip(RoundedCornerShape(8.dp))
+//            .drawBehind {
+//                drawRoundRect(
+//                    color = color,
+//                    style = stroke,
+//                    cornerRadius = CornerRadius(8.dp.toPx())
+//                )
+//            }
             .clickable {
                 onClick()
             }

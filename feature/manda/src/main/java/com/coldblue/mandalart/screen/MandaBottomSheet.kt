@@ -281,7 +281,7 @@ fun MandaBottomSheetColor(
             MandaColorInfo(HMColor.Dark.Yellow, false, 3),
             MandaColorInfo(HMColor.Dark.Green, false, 4),
             MandaColorInfo(HMColor.Dark.Blue, false, 5),
-            MandaColorInfo(HMColor.Dark.Indigo, false, 6),
+            MandaColorInfo(HMColor.Dark.Mint, false, 6),
             MandaColorInfo(HMColor.Dark.Purple, false, 7)
         )
     }
