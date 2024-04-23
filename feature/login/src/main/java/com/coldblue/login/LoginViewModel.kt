@@ -2,13 +2,14 @@ package com.coldblue.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.data.util.LoginHelper
-import com.coldblue.data.util.NetworkHelper
+import com.coldblue.domain.auth.GetComposeAuthUseCase
+import com.coldblue.domain.auth.LoginSucceededUseCase
+import com.coldblue.domain.auth.LoginWithOutAuthUseCase
+import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.login.exception.exceptionHandler
 import com.coldblue.login.state.LoginExceptionState
 import com.coldblue.login.state.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.jan.supabase.compose.auth.ComposeAuth
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,14 +21,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginHelper: LoginHelper,
-    networkHelper: NetworkHelper
+    private val loginWithOutAuthUseCase: LoginWithOutAuthUseCase,
+    private val getComposeAuthUseCase: GetComposeAuthUseCase,
+    private val loginSucceededUseCase: LoginSucceededUseCase,
+    getNetworkStateUseCase: GetNetworkStateUseCase
 ) : ViewModel() {
 
     private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.None)
     val loginState: StateFlow<LoginUiState> get() = _loginState
 
-    val isOnline: StateFlow<Boolean> = networkHelper.isOnline.map {
+    val isOnline: StateFlow<Boolean> = getNetworkStateUseCase().map {
         it
     }.stateIn(
         scope = viewModelScope,
@@ -35,7 +38,7 @@ class LoginViewModel @Inject constructor(
         initialValue = false
     )
 
-    fun getComposeAuth(): ComposeAuth = loginHelper.getComposeAuth()
+    fun getComposeAuth() = getComposeAuthUseCase()
 
 
     fun checkLoginState(result: NativeSignInResult) {
@@ -43,9 +46,10 @@ class LoginViewModel @Inject constructor(
             is NativeSignInResult.Success -> {
                 _loginState.value = LoginUiState.Success
                 viewModelScope.launch {
-                    loginHelper.setLoginSucceeded()
+                    loginSucceededUseCase()
                 }
             }
+
             is NativeSignInResult.Error -> {
                 when (result.message.exceptionHandler()) {
                     is LoginExceptionState.Waiting -> _loginState.value =
@@ -63,9 +67,9 @@ class LoginViewModel @Inject constructor(
     }
 
 
-    fun loginWithOutAuth(){
+    fun loginWithOutAuth() {
         viewModelScope.launch {
-            loginHelper.loginWithOutAuth()
+            loginWithOutAuthUseCase()
         }
     }
 }

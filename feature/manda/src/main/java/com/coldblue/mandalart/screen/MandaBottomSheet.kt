@@ -267,7 +267,6 @@ fun MandaBottomSheet(
 
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MandaBottomSheetColor(
     initColorIndex: Int,

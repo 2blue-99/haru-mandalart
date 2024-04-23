@@ -142,7 +142,7 @@ private fun checkUpdate(
     context: Context,
     onUpdate: () -> Unit
 ) {
-    onUpdate()
+//    onUpdate()
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val appUpdateInfoTask = appUpdateManager.appUpdateInfo
 //    val updateLauncher = rememberLauncherForActivityResult(
