@@ -53,7 +53,7 @@ fun LoginScreen(
         is LoginUiState.Fail -> {
             Toast.makeText(
                 context,
-                stringResource(id = R.string.fail_message, state.loginException.msg),
+                stringResource(id = R.string.login_fail, state.loginException.msg),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -67,10 +67,10 @@ fun LoginScreen(
     if(openDialog){
         HMTextDialog(
             targetText = "",
-            text = stringResource(id = R.string.non_member_notice),
-            confirmText = stringResource(id = R.string.check),
+            text = stringResource(id = R.string.login_non_member_notice),
+            confirmText = stringResource(id = R.string.login_check),
             tintColor = HMColor.Primary,
-            subText = stringResource(id = R.string.non_member_sub_notice),
+            subText = stringResource(id = R.string.login_non_member_sub_notice),
             onDismissRequest = { openDialog = false },
             onConfirmation = {
                 loginViewModel.loginWithOutAuth()
@@ -102,8 +102,8 @@ fun LoginScreen(
             Column(
                 Modifier.fillMaxWidth(0.4f)
             ) {
-                Text(text = stringResource(id = R.string.haru), style = HmStyle.text30, color = HMColor.Primary)
-                Text(text = stringResource(id = R.string.mandalart), style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = R.string.login_haru), style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = R.string.login_mandalart), style = HmStyle.text30, color = HMColor.Primary)
             }
         }
         Box(
@@ -122,7 +122,7 @@ fun LoginScreen(
                     } else {
                         Toast.makeText(
                             context,
-                            R.string.check_connecting,
+                            R.string.login_check_connecting,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -158,7 +158,7 @@ fun NotMemberLoginButton(
         ) {
             Text(
                 color = HMColor.SubLightText,
-                text = stringResource(id = R.string.non_member_start),
+                text = stringResource(id = R.string.login_non_member_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
             )
@@ -195,7 +195,7 @@ fun LoginButton(
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 color = HMColor.Text,
-                text = stringResource(id = com.coldblue.login.R.string.google_start),
+                text = stringResource(id = com.coldblue.login.R.string.login_google_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
             )

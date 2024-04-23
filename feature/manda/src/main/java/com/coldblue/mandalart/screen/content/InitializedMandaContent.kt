@@ -193,14 +193,14 @@ fun MandaStatus(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row {
-                Text(text = stringResource(id = R.string.key_goal), style = HmStyle.text16)
+                Text(text = stringResource(id = R.string.initialized_key_goal), style = HmStyle.text16)
                 Text(
                     text = "$keyMandaCnt / $MAX_MANDA_KEY_SIZE",
                     style = HmStyle.text16
                 )
             }
             Row {
-                Text(text = stringResource(id = R.string.detail_goal), style = HmStyle.text16)
+                Text(text = stringResource(id = R.string.initialized_detail_goal), style = HmStyle.text16)
                 Text(
                     text = "$detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
                     style = HmStyle.text16
@@ -209,7 +209,7 @@ fun MandaStatus(
         }
         Column {
             Text(
-                text = stringResource(id = R.string.done_percentage, ((donePercentage * 100).roundToInt())),
+                text = stringResource(id = R.string.initialized_done_percentage, ((donePercentage * 100).roundToInt())),
                 style = HmStyle.text12,
                 color = HMColor.Primary,
                 modifier = Modifier.fillMaxWidth(),
@@ -688,14 +688,15 @@ fun MandaEmptyBox(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1F)
-            .clip(RoundedCornerShape(8.dp))
-            .drawBehind {
-                drawRoundRect(
-                    color = color,
-                    style = stroke,
-                    cornerRadius = CornerRadius(8.dp.toPx())
-                )
-            }
+            .border(1.dp, HMColor.Gray, RoundedCornerShape(8.dp))
+//            .clip(RoundedCornerShape(8.dp))
+//            .drawBehind {
+//                drawRoundRect(
+//                    color = color,
+//                    style = stroke,
+//                    cornerRadius = CornerRadius(8.dp.toPx())
+//                )
+//            }
             .clickable {
                 onClick()
             }

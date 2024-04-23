@@ -80,7 +80,7 @@ fun HistoryContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = stringResource(R.string.top_title, historyUiState.allTodoDayCnt),
+                text = stringResource(R.string.history_top_title, historyUiState.allTodoDayCnt),
                 style = HmStyle.text20,
                 color = HMColor.Primary
             )
@@ -115,7 +115,7 @@ fun HistoryContent(
                 color = HMColor.Primary
             )
 
-            TitleText(text = stringResource(id = R.string.record))
+            TitleText(text = stringResource(id = R.string.history_record))
 
             if (historyUiState.todoList.isEmpty())
                 Text(
@@ -123,7 +123,7 @@ fun HistoryContent(
                         .fillMaxWidth()
                         .padding(top = 40.dp),
                     textAlign = TextAlign.Center,
-                    text = stringResource(id = R.string.record_empty),
+                    text = stringResource(id = R.string.history_record_empty),
                     style = HmStyle.text20,
                     color = HMColor.SubLightText
                 )
@@ -205,7 +205,7 @@ fun HistoryController(
                     ) {
                         ControllerBox(
                             containerColor = Color.Transparent,
-                            sideText = if (controllerWeek.month != null) stringResource(id = R.string.month, controllerWeek.month) else "",
+                            sideText = if (controllerWeek.month != null) stringResource(id = R.string.history_month, controllerWeek.month) else "",
                             clickAble = false
                         ) {}
 

@@ -91,8 +91,8 @@ fun MandaBottomSheet(
     if (dialogState) {
         HMTextDialog(
             targetText = keyNameText,
-            text = stringResource(id = R.string.delete_dialog_title),
-            confirmText = stringResource(id = R.string.delete),
+            text = stringResource(id = R.string.dialog_main_title),
+            confirmText = stringResource(id = R.string.bottom_sheet_delete),
             onDismissRequest = {
                 dialogState = false
                 onDisMiss()
@@ -132,7 +132,7 @@ fun MandaBottomSheet(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.name),
+                    text = stringResource(id = R.string.bottom_sheet_name),
                     style = HmStyle.text16,
                     fontWeight = FontWeight.Bold
                 )
@@ -143,7 +143,7 @@ fun MandaBottomSheet(
                 }
                 if (duplicatedState)
                     Text(
-                        text = stringResource(id = R.string.exist_goal),
+                        text = stringResource(id = R.string.bottom_sheet_exist_goal),
                         style = HmStyle.text12,
                         color = HMColor.NegativeText
                     )
@@ -163,7 +163,7 @@ fun MandaBottomSheet(
             when (mandaBottomSheetContentState) {
 
                 is MandaBottomSheetContentState.Insert -> {
-                    HMButton(text = stringResource(id = R.string.save), clickableState = buttonClickableState) {
+                    HMButton(text = stringResource(id = com.coldblue.designsystem.R.string.all_save), clickableState = buttonClickableState) {
                         when (contentType) {
 
                             is MandaBottomSheetContentType.MandaFinal ->
@@ -224,14 +224,14 @@ fun MandaBottomSheet(
                             }
                         ) {
                             Text(
-                                text = stringResource(id = R.string.delete),
+                                text = stringResource(id = R.string.bottom_sheet_delete),
                                 style = HmStyle.text16,
                                 color = HMColor.Primary,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         HMButton(
-                            text = stringResource(id = R.string.save),
+                            text = stringResource(id = com.coldblue.designsystem.R.string.all_save),
                             clickableState = buttonClickableState,
                             modifier = Modifier
                                 .padding(start = 5.dp)
@@ -280,7 +280,7 @@ fun MandaBottomSheetColor(
             MandaColorInfo(HMColor.Dark.Yellow, false, 3),
             MandaColorInfo(HMColor.Dark.Green, false, 4),
             MandaColorInfo(HMColor.Dark.Blue, false, 5),
-            MandaColorInfo(HMColor.Dark.Indigo, false, 6),
+            MandaColorInfo(HMColor.Dark.Mint, false, 6),
             MandaColorInfo(HMColor.Dark.Purple, false, 7)
         )
     }
@@ -292,7 +292,7 @@ fun MandaBottomSheetColor(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.color),
+            text = stringResource(id = R.string.bottom_sheet_color),
             modifier = Modifier.fillMaxWidth(),
             style = HmStyle.text16,
             textAlign = TextAlign.Start,
@@ -368,7 +368,7 @@ fun MandaKeyDialog(
         onDismissRequest = { onDisMiss() },
         text = {
             Text(
-                text = stringResource(id = R.string.delete_dialog_notice, name),
+                text = stringResource(id = R.string.dialog_notice, name),
                 style = HmStyle.text16,
                 color = HMColor.Text
             )
@@ -376,7 +376,7 @@ fun MandaKeyDialog(
         dismissButton = {
             TextButton(onClick = { onDisMiss() }) {
                 Text(
-                    text = stringResource(id = R.string.cancel),
+                    text = stringResource(id = R.string.dialog_cancel),
                     style = HmStyle.text16,
                     color = HMColor.Text,
                     fontWeight = FontWeight.Bold
@@ -389,7 +389,7 @@ fun MandaKeyDialog(
                 onDisMiss()
             }) {
                 Text(
-                    text = stringResource(id = R.string.delete),
+                    text = stringResource(id = R.string.bottom_sheet_delete),
                     style = HmStyle.text16,
                     color = HMColor.NegativeText,
                     fontWeight = FontWeight.Bold
@@ -407,7 +407,7 @@ fun MandaBottomSheetDone(
 ) {
     Column {
         Text(
-            text = stringResource(id = R.string.achieve_state),
+            text = stringResource(id = R.string.bottom_sheet_achieve_state),
             style = HmStyle.text16,
             color = HMColor.Text,
             fontWeight = FontWeight.Bold
@@ -418,7 +418,9 @@ fun MandaBottomSheetDone(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = if (checkedState) stringResource(id = R.string.achieve) else stringResource(id = R.string.not_achieve),
+                text = if (checkedState)
+                    stringResource(id = R.string.bottom_sheet_achieve) else
+                        stringResource(id = R.string.bottom_sheet_not_achieve),
                 style = HmStyle.text12,
                 color = HMColor.Text,
             )

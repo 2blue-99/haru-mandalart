@@ -159,14 +159,13 @@ private fun checkUpdate(
 //        }
 //    }
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-
 //        Logger.d(appUpdateInfo.updateAvailability())
 //        Logger.d(UpdateAvailability.UPDATE_AVAILABLE)
 //        Logger.d(appUpdateInfo.clientVersionStalenessDays())
         // 업데이트 할게 있는지 체크
         if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
             // 몇번 물어봤는지 체크 + 업데이트 불가능하면 NULL
-            && (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= 1
+            && (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= 7
             // 즉시, 유연한 업데이트 가능한지 체크
             && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
         ) {

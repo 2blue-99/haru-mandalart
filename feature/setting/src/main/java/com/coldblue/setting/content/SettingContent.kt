@@ -63,7 +63,7 @@ fun SettingContent(
         HMTextDialog(
             targetText = "",
             text = stringResource(id = R.string.delete_dialog_title),
-            confirmText = stringResource(id = R.string.resign),
+            confirmText = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
             tintColor = HMColor.Dark.Red,
             onDismissRequest = {
                 openDialog = false
@@ -170,7 +170,6 @@ fun SettingContent(
                         contentDescription = "오픈소스 라이센스"
                     )
                 }
-
             }
         }
 

@@ -1,7 +1,7 @@
 package com.coldblue.mandalart.screen
 
-import android.content.IntentSender.OnFinished
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -20,16 +20,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,18 +57,36 @@ fun MandaExplainPage(
     updateExplainState: () -> Unit
 ) {
     val pageState = rememberPagerState(pageCount = { 4 })
+    val fadeAlpha = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        fadeAlpha.fadeInScreen()
+    }
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(HMColor.Background)
+            .alpha(fadeAlpha.value)
     ) {
         HorizontalPager(
             state = pageState,
             beyondBoundsPageCount = 0,
         ) { page ->
-            ExplainPage(page)
+            Surface(
+                modifier = Modifier
+                    .graphicsLayer {
+                        val pageOffset = pageState.calculateCurrentOffsetForPage(page)
+                        translationX = pageOffset * size.width
+                        alpha = 1 - pageOffset.absoluteValue
+                    }
+                    .background(HMColor.Background)
+                    .fillMaxSize()
+                    .padding(top = 90.dp)
+                    .padding(horizontal = 30.dp)
+            ) {
+                ExplainPage(page)
+            }
         }
 
         Box(
@@ -91,8 +114,10 @@ fun MandaExplainPage(
             ) {
                 coroutineScope.launch {
                     val current = pageState.currentPage
-                    if (current == 3)
+                    if (current == 3) {
+                        fadeAlpha.fadeOutScreen()
                         updateExplainState()
+                    }
                     else
                         pageState.animateScrollToPage(pageState.currentPage + 1)
                 }
@@ -105,46 +130,28 @@ fun MandaExplainPage(
 fun ExplainPage(
     pageCount: Int,
 ) {
-//    val alpha = remember { Animatable(0f) }
-//    LaunchedEffect(pageCount) {
-//        alpha.animateTo(0f)
-//        delay(100L)
-//        alpha.animateTo(
-//            targetValue = 1f,
-//            animationSpec = tween(
-//                durationMillis = 300,
-//                easing = LinearEasing
-//            )
-//        )
-//    }
-    Surface(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 90.dp)
-            .padding(horizontal = 30.dp)
-//            .alpha(alpha.value)
-    ) {
+            .background(HMColor.Background),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start,
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start,
-        ) {
-            item {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(40.dp),
-                ) {
-                    when (pageCount) {
-                        0 -> FirstPage()
-                        1 -> SecondPage()
-                        2 -> ThirdPage()
-                        else -> FourthPage()
-                    }
+    ) {
+        item {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(40.dp),
+            ) {
+                when (pageCount) {
+                    0 -> FirstPage()
+                    1 -> SecondPage()
+                    2 -> ThirdPage()
+                    else -> FourthPage()
                 }
             }
-
-
         }
+
+
     }
 }
 
@@ -237,7 +244,7 @@ fun SecondPage() {
     )
     Text(
         modifier = Modifier.padding(start = 10.dp),
-        text = stringResource(id = R.string.explain_manda_1),
+        text = stringResource(id = R.string.explain_usage_1),
         style = HmStyle.text16,
         color = HMColor.Primary
     )
@@ -256,11 +263,11 @@ fun ThirdPage() {
         modifier = Modifier.padding(start = 10.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.explain_manda_1),
+            text = stringResource(id = R.string.explain_usage_1),
             style = HmStyle.text16
         )
         Text(
-            text = stringResource(id = R.string.explain_manda_2),
+            text = stringResource(id = R.string.explain_usage_2),
             style = HmStyle.text16,
             color = HMColor.Primary
         )
@@ -280,28 +287,54 @@ fun FourthPage() {
         modifier = Modifier.padding(start = 10.dp),
     ) {
         Text(
-            text = stringResource(id = R.string.explain_manda_1),
+            text = stringResource(id = R.string.explain_usage_1),
             style = HmStyle.text16
         )
         Text(
-            text = stringResource(id = R.string.explain_manda_2),
+            text = stringResource(id = R.string.explain_usage_2),
             style = HmStyle.text16
         )
 
         Text(
-            text = stringResource(id = R.string.explain_manda_3),
+            text = stringResource(id = R.string.explain_usage_3),
             style = HmStyle.text16,
             color = HMColor.Primary
         )
     }
 
     Text(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         text = stringResource(id = R.string.explain_manda_advantage),
         style = HmStyle.text20,
         color = HMColor.Primary,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+fun PagerState.calculateCurrentOffsetForPage(page: Int): Float {
+    return (currentPage - page) + currentPageOffsetFraction
+}
+
+suspend fun Animatable<Float, AnimationVector1D>.fadeInScreen(){
+    animateTo(
+        targetValue = 1f,
+        animationSpec = tween(
+            durationMillis = 500,
+            easing = LinearEasing
+        )
+    )
+}
+
+suspend fun Animatable<Float, AnimationVector1D>.fadeOutScreen(){
+    animateTo(
+        targetValue = 0f,
+        animationSpec = tween(
+            durationMillis = 300,
+            easing = LinearEasing
+        )
     )
 }
 
