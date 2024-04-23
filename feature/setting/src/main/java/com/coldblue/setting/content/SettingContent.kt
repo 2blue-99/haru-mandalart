@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -76,7 +75,7 @@ fun SettingContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(HMColor.Light.Indigo)
+            .background(HMColor.Box)
     ) {
         item {
             Spacer(modifier = Modifier.size(20.dp))
@@ -89,7 +88,7 @@ fun SettingContent(
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
-                SettingItem(title = stringResource(id = R.string.account)) {
+                SettingItem(title = stringResource(id = R.string.setting_account)) {
                     Text(text = email)
                 }
                 SettingItem(
@@ -124,7 +123,7 @@ fun SettingContent(
                     )
                 }
                 SettingItem(
-                    title = stringResource(id = R.string.ask),
+                    title = stringResource(id = R.string.setting_ask),
                     isClickable = true,
                     onClick = { showContact() }) {
                     Icon(
@@ -133,7 +132,7 @@ fun SettingContent(
                     )
                 }
                 SettingItem(
-                    title = stringResource(id = R.string.evaluate),
+                    title = stringResource(id = R.string.setting_evaluate),
                     isClickable = true,
                     isLast = true,
                     onClick = { showPlayStore() }) {
@@ -156,12 +155,12 @@ fun SettingContent(
                 )
 
                 SettingItem(
-                    title = stringResource(id = R.string.version),
+                    title = stringResource(id = R.string.setting_version),
                 ) {
                     Text(text = "v $versionName")
                 }
                 SettingItem(
-                    title = stringResource(id = R.string.open_source),
+                    title = stringResource(id = R.string.setting_open_source),
                     isClickable = true,
                     isLast = true,
                     onClick = { showOss() }) {
@@ -176,7 +175,6 @@ fun SettingContent(
         item {
             SettingTile {
                 Text(
-                    modifier = Modifier.padding(top = 16.dp),
                     text = "계정관리",
                     style = HmStyle.text20,
                     color = HMColor.Primary,
@@ -184,7 +182,7 @@ fun SettingContent(
                 )
                 if (loginState == LoginState.AuthenticatedLogin) {
                     SettingItem(
-                        title = stringResource(id = R.string.resign),
+                        title = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
                         isLast = false,
                         isClickable = true,
                         onClick = {
@@ -193,38 +191,38 @@ fun SettingContent(
                             } else {
                                 Toast.makeText(
                                     context,
-                                    R.string.connection_err,
+                                    R.string.setting_connection_err,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                         }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = stringResource(id = R.string.resign)
+                            contentDescription = "탈퇴"
                         )
                     }
                 }
                 if (loginState == LoginState.AuthenticatedLogin) {
                     SettingItem(
-                        title = stringResource(id = R.string.logout),
+                        title = stringResource(id = R.string.setting_logout),
                         color = HMColor.Dark.Red,
                         isLast = true,
                         isClickable = true,
                         onClick = { logout() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = stringResource(id = R.string.logout)
+                            contentDescription = stringResource(id = R.string.setting_logout)
                         )
                     }
                 } else {
                     SettingItem(
-                        title = stringResource(id = R.string.login),
+                        title = stringResource(id = R.string.setting_login),
                         isLast = true,
                         isClickable = true,
                         onClick = { login() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = stringResource(id = R.string.login)
+                            contentDescription = stringResource(id = R.string.setting_login)
                         )
                     }
                 }
