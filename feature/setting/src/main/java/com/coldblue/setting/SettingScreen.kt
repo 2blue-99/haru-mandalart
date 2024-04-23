@@ -1,6 +1,5 @@
 package com.coldblue.setting
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,7 +13,9 @@ import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
 @Composable
 fun SettingScreen(
+    navigateToNotice: () -> Unit,
     settingViewModel: SettingViewModel = hiltViewModel(),
+
 ) {
     val email by settingViewModel.email.collectAsStateWithLifecycle()
     val alarm by settingViewModel.alarm.collectAsStateWithLifecycle()
@@ -32,6 +33,7 @@ fun SettingScreen(
             .fillMaxSize()
     ) {
         SettingContentWithState(
+            navigateToNotice = navigateToNotice,
             showOss = settingViewModel::showOss,
             showPlayStore = settingViewModel::showPlayStore,
             showContact = settingViewModel::showContact,
@@ -50,6 +52,7 @@ fun SettingScreen(
 
 @Composable
 fun SettingContentWithState(
+    navigateToNotice: () -> Unit,
     showOss: () -> Unit,
     showPlayStore: () -> Unit,
     showContact: () -> Unit,
@@ -65,6 +68,7 @@ fun SettingContentWithState(
 ) {
 
     SettingContent(
+        navigateToNotice,
         showOss,
         showPlayStore,
         showContact,

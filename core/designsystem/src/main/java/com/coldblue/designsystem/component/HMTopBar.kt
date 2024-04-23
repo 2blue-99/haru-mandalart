@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.theme.HMColor
@@ -20,6 +21,7 @@ import com.coldblue.designsystem.theme.HmStyle
 
 @Composable
 fun HMTopBar(
+    title:String,
     popBackStack: () -> Unit
 ) {
 
@@ -32,7 +34,7 @@ fun HMTopBar(
         horizontalArrangement = Arrangement.Absolute.Center
     ) {
         Text(
-            text = "설정", style = HmStyle.text16
+            text = title, style = HmStyle.text16, fontWeight = FontWeight.Bold
         )
     }
     Row(
@@ -57,5 +59,5 @@ fun HMTopBar(
 @Preview
 @Composable
 fun HMTopBarPreview() {
-    HMTopBar({})
+    HMTopBar("설정",{})
 }
