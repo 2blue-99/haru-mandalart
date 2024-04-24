@@ -150,8 +150,6 @@ fun ExplainPage(
                 }
             }
         }
-
-
     }
 }
 

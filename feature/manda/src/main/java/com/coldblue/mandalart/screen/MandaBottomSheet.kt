@@ -136,7 +136,7 @@ fun MandaBottomSheet(
                     style = HmStyle.text16,
                     fontWeight = FontWeight.Bold
                 )
-                HMTextField(inputText = inputText, maxLen = contentType.maxLen) {
+                MandaTextField(inputText = inputText, maxLen = contentType.maxLen) {
                     inputText = it
                     buttonClickableState = inputText.isNotBlank()
                     duplicatedState = false
