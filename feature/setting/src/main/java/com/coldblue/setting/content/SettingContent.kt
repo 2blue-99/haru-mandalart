@@ -42,6 +42,7 @@ import com.coldblue.setting.R
 @Composable
 fun SettingContent(
     navigateToNotice: () -> Unit,
+    navigateToSurvey: () -> Unit,
     showOss: () -> Unit,
     showPlayStore: () -> Unit,
     showContact: () -> Unit,
@@ -118,7 +119,7 @@ fun SettingContent(
                 SettingItem(
                     title = "기능 제안하기",
                     isClickable = true,
-                    onClick = { showPlayStore() }) {
+                    onClick = { navigateToSurvey() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = "기능 제안하기"
@@ -290,6 +291,7 @@ fun SettingItem(
 @Composable
 fun SettingContentPreview() {
     SettingContent(
+        {},
         {},
         {},
         {},

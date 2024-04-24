@@ -16,6 +16,7 @@ import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.navigateToManda
 import com.coldblue.notice.navigation.noticeRoute
 import com.coldblue.setting.navigation.settingRoute
+import com.coldblue.survey.navigation.surveyRoute
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.todoRoute
 
@@ -54,6 +55,7 @@ class HMAppState(
             return when(it?.route){
                 settingRoute -> true to "설정"
                 noticeRoute -> true to "공지사항"
+                surveyRoute -> true to "기능 제안하기"
                 else -> false to ""
             }
         }

@@ -14,6 +14,7 @@ import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 @Composable
 fun SettingScreen(
     navigateToNotice: () -> Unit,
+    navigateToSurvey: () -> Unit,
     settingViewModel: SettingViewModel = hiltViewModel(),
 
 ) {
@@ -34,6 +35,7 @@ fun SettingScreen(
     ) {
         SettingContentWithState(
             navigateToNotice = navigateToNotice,
+            navigateToSurvey = navigateToSurvey,
             showOss = settingViewModel::showOss,
             showPlayStore = settingViewModel::showPlayStore,
             showContact = settingViewModel::showContact,
@@ -53,6 +55,8 @@ fun SettingScreen(
 @Composable
 fun SettingContentWithState(
     navigateToNotice: () -> Unit,
+    navigateToSurvey: () -> Unit,
+
     showOss: () -> Unit,
     showPlayStore: () -> Unit,
     showContact: () -> Unit,
@@ -69,6 +73,7 @@ fun SettingContentWithState(
 
     SettingContent(
         navigateToNotice,
+        navigateToSurvey,
         showOss,
         showPlayStore,
         showContact,

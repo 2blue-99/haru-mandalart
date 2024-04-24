@@ -15,10 +15,11 @@ fun NavController.navigateToSetting(navOptions: NavOptions? = null){
 
 fun NavGraphBuilder.settingScreen(
     navigateToNotice: () -> Unit,
+    navigateToSurvey: () -> Unit,
 ){
 
     composable(route = settingRoute){
-        SettingScreen(navigateToNotice)
+        SettingScreen(navigateToNotice,navigateToSurvey)
     }
 }
 
