@@ -47,6 +47,8 @@ dependencies {
     implementation(project(":feature:setting"))
     implementation(project(":feature:history"))
     implementation(project(":feature:login"))
+    implementation(project(":feature:notice"))
+    implementation(project(":feature:survey"))
 
 
     implementation(project(":core:designsystem"))

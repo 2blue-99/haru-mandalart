@@ -9,4 +9,8 @@ android {
 dependencies {
 
     implementation(libs.supabase.compose.auth)
+
+    implementation(project(":feature:notice"))
+    implementation(project(":feature:survey"))
+
 }
