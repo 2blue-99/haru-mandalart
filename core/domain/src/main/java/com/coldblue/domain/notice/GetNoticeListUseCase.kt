@@ -7,5 +7,6 @@ import javax.inject.Inject
 class GetNoticeListUseCase @Inject constructor(
     private val noticeRepository: NoticeRepository
 ) {
-    suspend operator fun invoke(): List<Notice> = noticeRepository.getNoticeList()
+    suspend operator fun invoke(): List<Notice> =
+        noticeRepository.getNoticeList()
 }
