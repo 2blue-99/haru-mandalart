@@ -9,9 +9,9 @@ import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.mandaScreen
 import com.coldblue.mandalart.navigation.navigateToManda
-import com.coldblue.setting.navigation.navigateToNotice
+import com.coldblue.notice.navigation.navigateToNotice
+import com.coldblue.notice.navigation.noticeScreen
 import com.coldblue.setting.navigation.navigateToSetting
-import com.coldblue.setting.navigation.noticeScreen
 import com.coldblue.setting.navigation.settingScreen
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.navigateToTodoEdit

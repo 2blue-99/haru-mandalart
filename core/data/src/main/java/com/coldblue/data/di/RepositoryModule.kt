@@ -6,6 +6,8 @@ import com.coldblue.data.repository.manda.MandaKeyRepository
 import com.coldblue.data.repository.manda.MandaKeyRepositoryImpl
 import com.coldblue.data.repository.manda.UpdateNoteRepository
 import com.coldblue.data.repository.manda.UpdateNoteRepositoryImpl
+import com.coldblue.data.repository.notice.NoticeRepository
+import com.coldblue.data.repository.notice.NoticeRepositoryImpl
 import com.coldblue.data.repository.todo.CurrentGroupRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepositoryImpl
 import com.coldblue.data.repository.todo.TodoGroupRepository
@@ -54,6 +56,10 @@ interface RepositoryModule {
     fun bindTodoGroupRepository(
         todoGroupRepository: TodoGroupRepositoryImpl
     ): TodoGroupRepository
+    @Binds
+    fun bindNoticeRepository(
+        noticeRepository: NoticeRepositoryImpl
+    ): NoticeRepository
 
     @Binds
     fun bindUserPreferencesRepo(
@@ -69,4 +75,6 @@ interface RepositoryModule {
     fun bindsNetworkMonitor(
         networkMonitor: ConnectivityManagerNetworkHelper
     ): NetworkHelper
+
+
 }

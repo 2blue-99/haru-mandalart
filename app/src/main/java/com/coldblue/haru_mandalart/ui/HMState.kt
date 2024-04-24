@@ -14,7 +14,7 @@ import com.coldblue.history.navigation.historyRoute
 import com.coldblue.history.navigation.navigateToHistory
 import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.navigateToManda
-import com.coldblue.setting.navigation.noticeRoute
+import com.coldblue.notice.navigation.noticeRoute
 import com.coldblue.setting.navigation.settingRoute
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.todoRoute
