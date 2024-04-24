@@ -32,7 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.LoginState
+import com.coldblue.designsystem.component.BottomSpacer
 import com.coldblue.designsystem.component.HMTextDialog
+import com.coldblue.designsystem.component.TopSpacer
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.setting.R
@@ -78,7 +80,7 @@ fun SettingContent(
             .background(HMColor.Box)
     ) {
         item {
-            Spacer(modifier = Modifier.size(20.dp))
+            TopSpacer()
         }
         item {
             SettingTile {
@@ -229,7 +231,7 @@ fun SettingContent(
             }
         }
         item {
-            Spacer(modifier = Modifier.size(40.dp))
+            BottomSpacer()
         }
     }
 }
@@ -245,7 +247,7 @@ fun SettingTile(
     ) {
         content()
     }
-    Spacer(modifier = Modifier.size(20.dp))
+    TopSpacer()
 }
 
 @Composable
@@ -260,7 +262,8 @@ fun SettingItem(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(60.dp).padding(1.dp)
+            .height(60.dp)
+            .padding(1.dp)
             .clickable(isClickable) {
                 if (onClick != null) {
                     onClick()
