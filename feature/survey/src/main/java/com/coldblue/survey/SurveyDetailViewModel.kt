@@ -1,10 +1,10 @@
 package com.coldblue.survey
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.domain.survey.GetSurveyListUseCase
+import com.coldblue.domain.survey.GetSurveyUseCase
 import com.coldblue.model.Survey
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,11 +12,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SurveyViewModel @Inject constructor(
-    private val getSurveyListUseCase: GetSurveyListUseCase
+class SurveyDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+
+    private val getSurveyUseCase: GetSurveyUseCase
 ) : ViewModel() {
-    private val _surveyUIState = MutableStateFlow<SurveyUiState>(SurveyUiState.Loading)
-    val surveyUIState: StateFlow<SurveyUiState> get() = _surveyUIState
+
+    private val id: Int? = savedStateHandle.get<Int>("id")
 
 
     private val _survey = MutableStateFlow<Survey?>(null)
@@ -24,9 +26,14 @@ class SurveyViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
+            if (id != null) {
+                _survey.value = getSurveyUseCase(id)
+            }
         }
     }
 
+    fun likeSurvey(id: Int) {
+
+    }
 
 }

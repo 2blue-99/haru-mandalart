@@ -12,4 +12,10 @@ class SurveyRepositoryImpl @Inject constructor(
         val surveyLikedList = surveyDataSource.getSurveyLikedList()
         return surveyDataSource.getSurveyList().asDomain(surveyLikedList.map { it.survey_id })
     }
+
+    override suspend fun getSurvey(id:Int): Survey {
+        val surveyLiked = surveyDataSource.isSurveyLiked(id)
+        return surveyDataSource.getSurvey(id).asDomain(surveyLiked)
+
+    }
 }

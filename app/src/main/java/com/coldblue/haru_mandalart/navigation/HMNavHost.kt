@@ -14,6 +14,8 @@ import com.coldblue.notice.navigation.noticeScreen
 import com.coldblue.setting.navigation.navigateToSetting
 import com.coldblue.setting.navigation.settingScreen
 import com.coldblue.survey.navigation.navigateToSurvey
+import com.coldblue.survey.navigation.navigateToSurveyDetail
+import com.coldblue.survey.navigation.surveyDetailScreen
 import com.coldblue.survey.navigation.surveyScreen
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.navigateToTodoEdit
@@ -51,9 +53,9 @@ fun HMNavHost(
         )
         noticeScreen()
         surveyScreen(
-            navigateToSurveyDetail = {}
-
+            navigateToSurveyDetail = navController::navigateToSurveyDetail
         )
+        surveyDetailScreen()
 
     }
 }

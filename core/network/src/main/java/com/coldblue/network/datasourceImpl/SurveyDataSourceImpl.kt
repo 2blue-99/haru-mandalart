@@ -41,6 +41,14 @@ class SurveyDataSourceImpl @Inject constructor(
         }.decodeSingle<NetworkSurvey>()
     }
 
+    override suspend fun isSurveyLiked(id: Int): Boolean {
+        return client.postgrest["surveyLike"].select {
+            filter {
+                NetworkSurveyLike::survey_id eq id
+            }
+        }.decodeList<NetworkSurveyLike>().isNotEmpty()
+    }
+
     override suspend fun upsertLike(id: Int, likeCount: Int) {
         client.postgrest["survey"].update(
             {

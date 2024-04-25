@@ -8,6 +8,8 @@ interface SurveyDataSource {
     suspend fun getSurveyLikedList(): List<NetworkSurveyLike>
 
     suspend fun getSurvey(id: Int): NetworkSurvey
+    suspend fun isSurveyLiked(id: Int): Boolean
+
 
     suspend fun upsertLike(id: Int, likeCount:Int)
 }

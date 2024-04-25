@@ -43,11 +43,6 @@ class SettingViewModel @Inject constructor(
     private val showPlayStoreUseCase: ShowPlayStoreUseCase,
 
     ) : ViewModel() {
-    init {
-        Logger.d("이곳이다")
-    }
-
-
     val isOnline: StateFlow<Boolean> = getNetworkStateUseCase().map {
         it
     }.stateIn(

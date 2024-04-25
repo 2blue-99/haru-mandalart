@@ -32,7 +32,7 @@ import com.coldblue.model.Survey
 @Composable
 fun SurveyListContent(
     surveyList: List<Survey>,
-    navigateToSurveyDetail: (id: Int) -> Unit
+    navigateToSurveyDetail: (id: Int) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -47,7 +47,7 @@ fun SurveyListContent(
 @Composable
 fun SurveyItem(
     survey: Survey,
-    navigateToSurveyDetail: (id: Int) -> Unit
+    navigateToSurveyDetail: (id: Int) -> Unit={},
 ) {
 
     Row(
@@ -113,7 +113,9 @@ fun SurveyState(state: String) {
         Alignment.Center
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 2.dp).padding(bottom = 1.dp),
+            modifier = Modifier
+                .padding(vertical = 2.dp)
+                .padding(bottom = 1.dp),
             text = state,
             style = HmStyle.text12,
             color = color
