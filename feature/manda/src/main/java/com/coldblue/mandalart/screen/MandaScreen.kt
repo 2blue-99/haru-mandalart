@@ -80,7 +80,6 @@ fun MandaScreen(
             deleteMandaAll = mandaViewModel::deleteMandaAll,
             changeBottomSheet = mandaViewModel::changeBottomSheet,
             navigateToSetting = navigateToSetting,
-            goPlayStore = updateNoteViewModel::showPlayStore
         )
     }
 }
@@ -98,7 +97,6 @@ fun MandaContentWithState(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
-    goPlayStore: () -> Unit
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {}
@@ -122,7 +120,6 @@ fun MandaContentWithState(
                 deleteMandaAll = deleteMandaAll,
                 changeBottomSheet = changeBottomSheet,
                 navigateToSetting = navigateToSetting,
-                goPlayStore = goPlayStore
             )
 
         }

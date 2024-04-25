@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -98,7 +99,6 @@ fun InitializedMandaContent(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
-    goPlayStore: () -> Unit
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -127,45 +127,51 @@ fun InitializedMandaContent(
 
     LaunchedEffect(uiState.donePercentage) { percentage = uiState.donePercentage }
 
-
-    Column(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier.background(HMColor.Background),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            IconButton(
+                onClick = { navigateToSetting() }) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    tint = HMColor.Primary,
+                    contentDescription = ""
+                )
+            }
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .padding(top = 24.dp)
+        ) {
+
             HMTitleComponent()
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(
-                    onClick = { navigateToSetting() }) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        tint = HMColor.Primary,
-                        contentDescription = ""
-                    )
-                }
+
+            MandaStatus(
+                finalName = uiState.finalManda.name,
+                keyMandaCnt = uiState.keyMandaCnt,
+                detailMandaCnt = uiState.detailMandaCnt,
+                donePercentage = uiState.donePercentage,
+                animateDonePercentage = animateDonePercentage.value
+            ) {
+                changeBottomSheet(
+                    true,
+                    MandaBottomSheetContentState.Insert(MandaBottomSheetContentType.MandaFinal(mandaUI = uiState.finalManda))
+                )
             }
 
-        }
-
-        MandaStatus(
-            finalName = uiState.finalManda.name,
-            keyMandaCnt = uiState.keyMandaCnt,
-            detailMandaCnt = uiState.detailMandaCnt,
-            donePercentage = uiState.donePercentage,
-            animateDonePercentage = animateDonePercentage.value
-        ) {
-            changeBottomSheet(
-                true,
-                MandaBottomSheetContentState.Insert(MandaBottomSheetContentType.MandaFinal(mandaUI = uiState.finalManda))
+            Mandalart(
+                mandaStateList = uiState.mandaStateList,
+                changeBottomSheet = changeBottomSheet
             )
         }
-
-        Mandalart(
-            mandaStateList = uiState.mandaStateList,
-            changeBottomSheet = changeBottomSheet
-        )
     }
 }
 
@@ -190,18 +196,26 @@ fun MandaStatus(
             style = HmStyle.text24,
         )
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row {
-                Text(text = stringResource(id = R.string.initialized_key_goal), style = HmStyle.text16)
+                Text(
+                    text = stringResource(id = R.string.initialized_key_goal),
+                    style = HmStyle.text16
+                )
                 Text(
                     text = " $keyMandaCnt / $MAX_MANDA_KEY_SIZE",
                     style = HmStyle.text16
                 )
             }
             Row {
-                Text(text = stringResource(id = R.string.initialized_detail_goal), style = HmStyle.text16)
+                Text(
+                    text = stringResource(id = R.string.initialized_detail_goal),
+                    style = HmStyle.text16
+                )
                 Text(
                     text = " $detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
                     style = HmStyle.text16
@@ -210,7 +224,10 @@ fun MandaStatus(
         }
         Column {
             Text(
-                text = stringResource(id = R.string.initialized_done_percentage, ((donePercentage * 100).roundToInt())),
+                text = stringResource(
+                    id = R.string.initialized_done_percentage,
+                    ((donePercentage * 100).roundToInt())
+                ),
                 style = HmStyle.text12,
                 color = HMColor.Primary,
                 modifier = Modifier.fillMaxWidth(),
