@@ -2,13 +2,11 @@ package com.coldblue.mandalart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.data.util.SettingHelper
 import com.coldblue.domain.manda.DeleteMandaAllUseCase
 import com.coldblue.domain.manda.DeleteMandaDetailUseCase
 import com.coldblue.domain.manda.DeleteMandaKeyUseCase
 import com.coldblue.domain.manda.GetDetailMandaUseCase
 import com.coldblue.domain.manda.GetKeyMandaUseCase
-import com.coldblue.domain.manda.GetUpdateNoteUseCase
 import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
@@ -17,12 +15,9 @@ import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaUIState
-import com.coldblue.mandalart.state.MandaUpdateDialogState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.coldblue.model.UpdateNote
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -52,7 +47,6 @@ class MandaViewModel @Inject constructor(
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
                 getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
-//                    Logger.d(mandaKeys)
                     val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,

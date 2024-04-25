@@ -27,11 +27,16 @@ class LoginHelperImpl @Inject constructor(
 
 
     override val isLogin: Flow<LoginState> =
-        userDataSource.isStarted.combine(userDataSource.token) { isStarted, token ->
-            if (isStarted) {
-                if (token.isBlank()) LoginState.LoginWithOutAuth
-                else LoginState.AuthenticatedLogin
-            } else LoginState.Logout
+        combine(userDataSource.isStarted, userDataSource.isExplain, userDataSource.token) { isStarted, isExplain, token ->
+            if (isStarted && isExplain) {
+                if (token.isBlank())
+                    LoginState.NoneAuthLogin
+                else
+                    LoginState.AuthenticatedLogin
+            } else if(isStarted && !isExplain)
+                LoginState.Explain
+            else
+                LoginState.Logout
         }.catch {
             LoginState.Logout
         }
