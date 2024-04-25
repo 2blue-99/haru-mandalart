@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,9 +62,12 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTitleComponent
+import com.coldblue.designsystem.iconpack.Manda
+import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.iconpack.ZoomIn
 import com.coldblue.designsystem.iconpack.ZoomOut
@@ -126,53 +130,86 @@ fun InitializedMandaContent(
         }
     }
 
-
-
     LaunchedEffect(uiState.donePercentage) { percentage = uiState.donePercentage }
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
     ) {
-        Box(
-            modifier = Modifier.background(HMColor.Background),
-            contentAlignment = Alignment.TopEnd
-        ) {
-            IconButton(
-                onClick = { navigateToSetting() }) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    tint = HMColor.Primary,
-                    contentDescription = ""
-                )
-            }
+
+        MandaTitle{
+            navigateToSetting()
         }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .padding(top = 24.dp)
+        MandaStatus(
+            finalName = uiState.finalManda.name,
+            keyMandaCnt = uiState.keyMandaCnt,
+            detailMandaCnt = uiState.detailMandaCnt,
+            donePercentage = uiState.donePercentage,
+            animateDonePercentage = animateDonePercentage.value
         ) {
-
-            HMTitleComponent()
-
-            MandaStatus(
-                finalName = uiState.finalManda.name,
-                keyMandaCnt = uiState.keyMandaCnt,
-                detailMandaCnt = uiState.detailMandaCnt,
-                donePercentage = uiState.donePercentage,
-                animateDonePercentage = animateDonePercentage.value
-            ) {
-                changeBottomSheet(
-                    true,
-                    MandaBottomSheetContentState.Insert(MandaBottomSheetContentType.MandaFinal(mandaUI = uiState.finalManda))
+            changeBottomSheet(
+                true,
+                MandaBottomSheetContentState.Insert(
+                    MandaBottomSheetContentType.MandaFinal(
+                        mandaUI = uiState.finalManda
+                    )
                 )
-            }
+            )
+        }
 
-            Mandalart(
-                mandaStateList = uiState.mandaStateList,
-                changeBottomSheet = changeBottomSheet
+        Mandalart(
+            mandaStateList = uiState.mandaStateList,
+            changeBottomSheet = changeBottomSheet
+        )
+
+//        Column(
+//            verticalArrangement = Arrangement.spacedBy(30.dp),
+//            modifier = Modifier
+//                .fillMaxSize()
+//        ) {
+//
+//
+//
+//        }
+    }
+}
+
+@Composable
+fun MandaTitle(
+    navigateToSetting: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = IconPack.Mandalart,
+                tint = HMColor.Primary,
+                contentDescription = "main_icon"
+            )
+            Text(
+                text = "하루 만다라트",
+                style = HmStyle.text16,
+                modifier = Modifier.padding(horizontal = 15.dp),
+                color = HMColor.Primary,
+            )
+        }
+        IconButton(
+            onClick = { navigateToSetting() }) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.Settings,
+                tint = HMColor.Primary,
+                contentDescription = ""
             )
         }
     }
@@ -189,62 +226,66 @@ fun MandaStatus(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         ClickableText(
             text = AnnotatedString("\" $finalName \""),
             onClick = { onClickTitle() },
-            style = HmStyle.text24,
+            style = HmStyle.text24.copy(color = HMColor.Primary),
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Row {
-                Text(
-                    text = stringResource(id = R.string.initialized_key_goal),
-                    style = HmStyle.text16
-                )
-                Text(
-                    text = " $keyMandaCnt / $MAX_MANDA_KEY_SIZE",
-                    style = HmStyle.text16
-                )
-            }
-            Row {
-                Text(
-                    text = stringResource(id = R.string.initialized_detail_goal),
-                    style = HmStyle.text16
-                )
-                Text(
-                    text = " $detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
-                    style = HmStyle.text16
-                )
-            }
-        }
-        Column {
-            Text(
-                text = stringResource(
-                    id = R.string.initialized_done_percentage,
-                    ((donePercentage * 100).roundToInt())
-                ),
-                style = HmStyle.text12,
-                color = HMColor.Primary,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End
-            )
-            LinearProgressIndicator(
-                progress = { animateDonePercentage },
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .clip(RoundedCornerShape(2.dp)),
-                color = HMColor.Primary,
-                trackColor = HMColor.Gray
-            )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row {
+                    Text(
+                        text = stringResource(id = R.string.initialized_key_goal),
+                        style = HmStyle.text16
+                    )
+                    Text(
+                        text = " $keyMandaCnt / $MAX_MANDA_KEY_SIZE",
+                        style = HmStyle.text16
+                    )
+                }
+                Row {
+                    Text(
+                        text = stringResource(id = R.string.initialized_detail_goal),
+                        style = HmStyle.text16
+                    )
+                    Text(
+                        text = " $detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
+                        style = HmStyle.text16
+                    )
+                }
+            }
+            Column {
+                Text(
+                    text = stringResource(
+                        id = R.string.initialized_done_percentage,
+                        ((donePercentage * 100).roundToInt())
+                    ),
+                    style = HmStyle.text12,
+                    color = HMColor.Primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.End
+                )
+                LinearProgressIndicator(
+                    progress = { animateDonePercentage },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .clip(RoundedCornerShape(2.dp)),
+                    color = HMColor.Primary,
+                    trackColor = HMColor.Gray
+                )
+            }
         }
     }
 }

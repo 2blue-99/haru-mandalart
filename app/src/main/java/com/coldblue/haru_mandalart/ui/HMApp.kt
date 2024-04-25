@@ -23,12 +23,12 @@ fun HMApp(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            val cur = navController.checkTopBar()
-                HMTopBar(title = cur.second) {
-                    navController.popBackStack()
-                }
-        },
+//        topBar = {
+//            val cur = navController.checkTopBar()
+//                HMTopBar(title = cur.second) {
+//                    navController.popBackStack()
+//                }
+//        },
 //        bottomBar = {
 //            if (navController.checkBottomNavBar())
 //                HMBottomBar(
