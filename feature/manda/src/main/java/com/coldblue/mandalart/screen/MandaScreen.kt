@@ -50,6 +50,7 @@ fun MandaScreen(
                 onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(true, null) }
             )
         }
+
         else -> { /*TODO  인터넷 연결 X */
         }
     }
@@ -130,26 +131,10 @@ private fun checkUpdate(
     context: Context,
     onUpdate: () -> Unit
 ) {
-//    onUpdate()
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-//    val updateLauncher = rememberLauncherForActivityResult(
-//        ActivityResultContracts.StartIntentSenderForResult()
-//    ) { result ->
-//        // handle callback
-//        if (result.data == null) return@rememberLauncherForActivityResult
-//        if (result.resultCode == UPDATE_REQUEST_CODE) {
-//            Logger.d(result.resultCode)
-////            Toast.makeText(context, "Downloading stated", Toast.LENGTH_SHORT).show()
-////            if (result.resultCode != Activity.RESULT_OK) {
-////                Toast.makeText(context, "Downloading failed" , Toast.LENGTH_SHORT).show()            FlashLightApp.appContext.toast { getString(R.string.update_failed) }
-////            }
-//        }
-//    }
+
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-//        Logger.d(appUpdateInfo.updateAvailability())
-//        Logger.d(UpdateAvailability.UPDATE_AVAILABLE)
-//        Logger.d(appUpdateInfo.clientVersionStalenessDays())
         // 업데이트 할게 있는지 체크
         if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
             // 몇번 물어봤는지 체크 + 업데이트 불가능하면 NULL
@@ -158,23 +143,7 @@ private fun checkUpdate(
             && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
         ) {
             onUpdate()
-//            val updateResultStarter =
-//                IntentSenderForResultStarter { intent, _, fillInIntent, flagsMask, flagsValues, _, _ ->
-//                    val request = IntentSenderRequest.Builder(intent)
-//                        .setFillInIntent(fillInIntent)
-//                        .setFlags(flagsValues, flagsMask)
-//                        .build()
-//                    updateLauncher.launch(request)
-//                }
-//
-//            appUpdateManager.startUpdateFlowForResult(
-//                appUpdateInfo,
-//                updateResultStarter,
-//                AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build(),
-//                UPDATE_REQUEST_CODE
-//            )
         }
-
     }
 }
 

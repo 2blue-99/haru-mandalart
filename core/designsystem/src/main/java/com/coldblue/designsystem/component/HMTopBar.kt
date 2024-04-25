@@ -24,7 +24,6 @@ fun HMTopBar(
     title:String,
     popBackStack: () -> Unit
 ) {
-
     Row(
         Modifier
             .fillMaxWidth()

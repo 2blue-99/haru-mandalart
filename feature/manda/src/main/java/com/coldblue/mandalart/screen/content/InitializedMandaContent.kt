@@ -71,6 +71,9 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.screen.MandaBottomSheet
+import com.coldblue.mandalart.screen.MandaDetailBox
+import com.coldblue.mandalart.screen.MandaEmptyBox
+import com.coldblue.mandalart.screen.MandaKeyBox
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
@@ -638,100 +641,6 @@ fun Mandalart(
 }
 
 
-@Composable
-fun MandaKeyBox(
-    name: String,
-    color: Color,
-    isDone: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .border(BorderStroke(1.5.dp, color), RoundedCornerShape(8.dp))
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isDone) color else HMColor.Background)
-            .clickable { onClick() }
-    ) {
-        Text(
-            modifier = Modifier.padding(5.dp),
-            textAlign = TextAlign.Center,
-            color = if (isDone) HMColor.Background else color,
-            text = name,
-            style = HmStyle.text6,
-        )
-    }
-}
 
-@Composable
-fun MandaDetailBox(
-    name: String,
-    darkColor: Color,
-    lightColor: Color,
-    isDone: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isDone) darkColor else lightColor)
-            .clickable { onClick() }
-    ) {
-        Text(
-            textAlign = TextAlign.Center,
-            text = name,
-            color = if (isDone) HMColor.Background else HMColor.Text,
-            modifier = Modifier.padding(5.dp),
-            style = HmStyle.text4,
-        )
-    }
-}
 
-@Composable
-fun MandaEmptyBox(
-    color: Color = HMColor.SubLightText,
-    onClick: () -> Unit
-) {
-    val stroke = Stroke(
-        width = 6f,
-        pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
-    )
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .border(1.dp, HMColor.Gray, RoundedCornerShape(8.dp))
-//            .clip(RoundedCornerShape(8.dp))
-//            .drawBehind {
-//                drawRoundRect(
-//                    color = color,
-//                    style = stroke,
-//                    cornerRadius = CornerRadius(8.dp.toPx())
-//                )
-//            }
-            .clickable {
-                onClick()
-            }
-    ) {
-        Icon(
-            modifier = Modifier
-                .fillMaxSize()
-                .scale(0.35f),
-            imageVector = IconPack.Plus,
-            tint = HMColor.SubLightText,
-            contentDescription = ""
-        )
-    }
-}
 
-@Preview
-@Composable
-fun DetailBoxPreview() {
-    MandaEmptyBox() {}
-}
