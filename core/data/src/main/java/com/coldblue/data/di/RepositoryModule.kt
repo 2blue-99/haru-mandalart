@@ -8,6 +8,8 @@ import com.coldblue.data.repository.manda.UpdateNoteRepository
 import com.coldblue.data.repository.manda.UpdateNoteRepositoryImpl
 import com.coldblue.data.repository.notice.NoticeRepository
 import com.coldblue.data.repository.notice.NoticeRepositoryImpl
+import com.coldblue.data.repository.survey.SurveyRepository
+import com.coldblue.data.repository.survey.SurveyRepositoryImpl
 import com.coldblue.data.repository.todo.CurrentGroupRepository
 import com.coldblue.data.repository.todo.CurrentGroupRepositoryImpl
 import com.coldblue.data.repository.todo.TodoGroupRepository
@@ -60,6 +62,11 @@ interface RepositoryModule {
     fun bindNoticeRepository(
         noticeRepository: NoticeRepositoryImpl
     ): NoticeRepository
+
+    @Binds
+    fun bindSurveyRepository(
+        surveyRepository: SurveyRepositoryImpl
+    ): SurveyRepository
 
     @Binds
     fun bindUserPreferencesRepo(

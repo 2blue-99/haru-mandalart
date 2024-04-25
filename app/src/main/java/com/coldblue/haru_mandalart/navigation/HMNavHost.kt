@@ -50,7 +50,10 @@ fun HMNavHost(
             navigateToSurvey = navController::navigateToSurvey
         )
         noticeScreen()
-        surveyScreen()
+        surveyScreen(
+            navigateToSurveyDetail = {}
+
+        )
 
     }
 }

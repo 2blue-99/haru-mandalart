@@ -18,8 +18,7 @@ class NoticeDataSourceImpl @Inject constructor(
                 column = "id",
                 order = Order.DESCENDING
             )
-        }
-            .decodeList<NetworkNotice>()
+        }.decodeList<NetworkNotice>()
     }
 
     override suspend fun getNotice(id: Int): NetworkNotice {

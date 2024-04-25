@@ -56,7 +56,6 @@ fun SettingScreen(
 fun SettingContentWithState(
     navigateToNotice: () -> Unit,
     navigateToSurvey: () -> Unit,
-
     showOss: () -> Unit,
     showPlayStore: () -> Unit,
     showContact: () -> Unit,

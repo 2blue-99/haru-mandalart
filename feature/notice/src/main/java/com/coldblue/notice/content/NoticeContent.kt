@@ -130,5 +130,4 @@ fun NoticePreview() {
             )
         )
     )
-
 }

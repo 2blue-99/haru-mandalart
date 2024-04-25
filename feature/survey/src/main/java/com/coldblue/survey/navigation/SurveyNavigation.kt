@@ -8,12 +8,12 @@ import com.coldblue.survey.SurveyScreen
 
 const val surveyRoute = "Survey"
 
-fun NavController.navigateToSurvey(navOptions: NavOptions? = null){
+fun NavController.navigateToSurvey(navOptions: NavOptions? = null) {
     this.navigate(surveyRoute, navOptions)
 }
 
-fun NavGraphBuilder.surveyScreen(){
-    composable(route = surveyRoute){
-        SurveyScreen()
+fun NavGraphBuilder.surveyScreen(navigateToSurveyDetail: (id: Int) -> Unit) {
+    composable(route = surveyRoute) {
+        SurveyScreen(navigateToSurveyDetail)
     }
 }
