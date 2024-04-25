@@ -16,6 +16,7 @@ import com.coldblue.domain.setting.ShowPlayStoreUseCase
 import com.coldblue.domain.user.GetAlarmStateUseCase
 import com.coldblue.domain.user.GetEmailUseCase
 import com.coldblue.domain.user.UpdateAlarmStateUseCase
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,7 +56,7 @@ class SettingViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = com.coldblue.data.util.LoginState.Loading
+        initialValue = LoginState.Loading
     )
     val versionName = getVersionUseCase()
 

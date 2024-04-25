@@ -2,11 +2,6 @@ package com.coldblue.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-
 object HMColor {
     val Primary = Color(0xFF432ED1)
     val LightPrimary = Color(0xFF8373F0)
@@ -17,6 +12,8 @@ object HMColor {
     val NegativeText = Color(0xFFB93B50)
     val Gray = Color(0xFFD9DBE3)
     val Background = Color(0xFFFFFFFF)
+    val SurveyGreen = Color(0xFF167263)
+    val SurveyYellow = Color(0xFFA7741B)
     val Box = Color(0xFFF2F4F8)
 
 
