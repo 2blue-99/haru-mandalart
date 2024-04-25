@@ -37,6 +37,7 @@ import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
+import com.coldblue.explain.ExplainScreen
 import com.coldblue.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -57,8 +58,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         splashScreen = installSplashScreen()
         splashScreen()
+
         setContent {
             HarumandalartTheme {
                 Surface(
@@ -68,20 +71,11 @@ class MainActivity : ComponentActivity() {
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
-                            LoginState.Logout -> {
-                                LoginScreen()
-                            }
-
-                            LoginState.LoginWithOutAuth -> {
-                                HMApp()
-                            }
-
-                            LoginState.AuthenticatedLogin -> {
-                                syncHelper.initialize()
-                                HMApp()
-                            }
-
-                            else -> {}
+                            LoginState.Explain -> ExplainScreen()
+                            LoginState.NoneAuthLogin -> HMApp()
+                            LoginState.AuthenticatedLogin -> syncHelper.initialize().also { HMApp() }
+                            LoginState.Logout -> LoginScreen()
+                            LoginState.Loading -> {}
                         }
                     }
                 }

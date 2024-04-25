@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.coldblue.mandalart.ExplainViewModel
 import com.coldblue.mandalart.MandaViewModel
 import com.coldblue.mandalart.UpdateNoteViewModel
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
@@ -35,10 +34,8 @@ import com.google.android.play.core.install.model.UpdateAvailability
 fun MandaScreen(
     mandaViewModel: MandaViewModel = hiltViewModel(),
     updateNoteViewModel: UpdateNoteViewModel = hiltViewModel(),
-    explainViewModel: ExplainViewModel = hiltViewModel(),
     navigateToSetting: () -> Unit,
 ) {
-    val mandaExplainUiState by explainViewModel.mandaExplainUIState.collectAsStateWithLifecycle()
     val mandaUpdateUiState by updateNoteViewModel.mandaUpdateDialogUIState.collectAsStateWithLifecycle()
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
     val bottomSheetUiState by mandaViewModel.mandaBottomSheetUIState.collectAsStateWithLifecycle()
@@ -53,8 +50,8 @@ fun MandaScreen(
                 onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(true, null) }
             )
         }
-
-        else -> { /*TODO  인터넷 연결 X */ }
+        else -> { /*TODO  인터넷 연결 X */
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -71,26 +68,20 @@ fun MandaScreen(
                 })
             }
     ) {
-        if (!mandaExplainUiState) {
-            MandaExplainPage(
-                updateExplainState = explainViewModel::updateExplainState
-            )
-        } else {
-            MandaContentWithState(
-                mandaUIState = mandaUiState,
-                mandaBottomSheetUiState = bottomSheetUiState,
-                updateInitState = mandaViewModel::updateMandaInitState,
-                upsertFinalManda = mandaViewModel::upsertMandaFinal,
-                upsertMandaKey = mandaViewModel::upsertMandaKey,
-                upsertMandaDetail = mandaViewModel::upsertMandaDetail,
-                deleteMandaKey = mandaViewModel::deleteMandaKey,
-                deleteMandaDetail = mandaViewModel::deleteMandaDetail,
-                deleteMandaAll = mandaViewModel::deleteMandaAll,
-                changeBottomSheet = mandaViewModel::changeBottomSheet,
-                navigateToSetting = navigateToSetting,
-                goPlayStore = updateNoteViewModel::showPlayStore
-            )
-        }
+        MandaContentWithState(
+            mandaUIState = mandaUiState,
+            mandaBottomSheetUiState = bottomSheetUiState,
+            updateInitState = mandaViewModel::updateMandaInitState,
+            upsertFinalManda = mandaViewModel::upsertMandaFinal,
+            upsertMandaKey = mandaViewModel::upsertMandaKey,
+            upsertMandaDetail = mandaViewModel::upsertMandaDetail,
+            deleteMandaKey = mandaViewModel::deleteMandaKey,
+            deleteMandaDetail = mandaViewModel::deleteMandaDetail,
+            deleteMandaAll = mandaViewModel::deleteMandaAll,
+            changeBottomSheet = mandaViewModel::changeBottomSheet,
+            navigateToSetting = navigateToSetting,
+            goPlayStore = updateNoteViewModel::showPlayStore
+        )
     }
 }
 

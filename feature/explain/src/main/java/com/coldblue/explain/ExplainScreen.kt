@@ -1,4 +1,4 @@
-package com.coldblue.mandalart.screen
+package com.coldblue.explain
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -43,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMText
 import com.coldblue.designsystem.theme.HMColor
@@ -53,9 +55,10 @@ import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MandaExplainPage(
-    updateExplainState: () -> Unit
+fun ExplainScreen(
+    explainViewModel: ExplainViewModel = hiltViewModel()
 ) {
+//    val mandaExplainUiState by explainViewModel.mandaExplainUIState.collectAsStateWithLifecycle()
     val pageState = rememberPagerState(pageCount = { 4 })
     val fadeAlpha = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
@@ -116,7 +119,7 @@ fun MandaExplainPage(
                     val current = pageState.currentPage
                     if (current == 3) {
                         fadeAlpha.fadeOutScreen()
-                        updateExplainState()
+                        explainViewModel.updateExplainState()
                     }
                     else
                         pageState.animateScrollToPage(pageState.currentPage + 1)
@@ -137,7 +140,7 @@ fun ExplainPage(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
 
-    ) {
+        ) {
         item {
             Column(
                 verticalArrangement = Arrangement.spacedBy(40.dp),
