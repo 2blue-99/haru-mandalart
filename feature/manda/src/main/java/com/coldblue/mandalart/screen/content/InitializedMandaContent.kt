@@ -58,6 +58,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
@@ -189,20 +190,20 @@ fun MandaStatus(
             style = HmStyle.text24,
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row {
                 Text(text = stringResource(id = R.string.initialized_key_goal), style = HmStyle.text16)
                 Text(
-                    text = "$keyMandaCnt / $MAX_MANDA_KEY_SIZE",
+                    text = " $keyMandaCnt / $MAX_MANDA_KEY_SIZE",
                     style = HmStyle.text16
                 )
             }
             Row {
                 Text(text = stringResource(id = R.string.initialized_detail_goal), style = HmStyle.text16)
                 Text(
-                    text = "$detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
+                    text = " $detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
                     style = HmStyle.text16
                 )
             }
@@ -642,7 +643,7 @@ fun MandaKeyBox(
             textAlign = TextAlign.Center,
             color = if (isDone) HMColor.Background else color,
             text = name,
-            style = HmStyle.text6
+            style = HmStyle.text6,
         )
     }
 }
@@ -669,7 +670,7 @@ fun MandaDetailBox(
             text = name,
             color = if (isDone) HMColor.Background else HMColor.Text,
             modifier = Modifier.padding(5.dp),
-            style = HmStyle.text4
+            style = HmStyle.text4,
         )
     }
 }
