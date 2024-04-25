@@ -9,10 +9,14 @@ import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.mandaScreen
 import com.coldblue.mandalart.navigation.navigateToManda
-import com.coldblue.setting.navigation.navigateToNotice
+import com.coldblue.notice.navigation.navigateToNotice
+import com.coldblue.notice.navigation.noticeScreen
 import com.coldblue.setting.navigation.navigateToSetting
-import com.coldblue.setting.navigation.noticeScreen
 import com.coldblue.setting.navigation.settingScreen
+import com.coldblue.survey.navigation.navigateToSurvey
+import com.coldblue.survey.navigation.navigateToSurveyDetail
+import com.coldblue.survey.navigation.surveyDetailScreen
+import com.coldblue.survey.navigation.surveyScreen
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.navigateToTodoEdit
 import com.coldblue.todo.navigation.todoEditScreen
@@ -44,9 +48,14 @@ fun HMNavHost(
 //            navigateToTodoEdit = navController::navigateToTodoEdit
 //        )
         settingScreen(
-            navigateToNotice = navController::navigateToNotice
+            navigateToNotice = navController::navigateToNotice,
+            navigateToSurvey = navController::navigateToSurvey
         )
         noticeScreen()
+        surveyScreen(
+            navigateToSurveyDetail = navController::navigateToSurveyDetail
+        )
+        surveyDetailScreen()
 
     }
 }
