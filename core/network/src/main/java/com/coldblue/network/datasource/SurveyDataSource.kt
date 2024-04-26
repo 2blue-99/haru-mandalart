@@ -10,6 +10,6 @@ interface SurveyDataSource {
     suspend fun getSurvey(id: Int): NetworkSurvey
     suspend fun isSurveyLiked(id: Int): Boolean
 
-
-    suspend fun upsertLike(id: Int, likeCount:Int)
+    suspend fun likeSurvey(id: Int, likeCount: Int)
+    suspend fun likeCancelSurvey(id: Int, likeCount: Int)
 }
