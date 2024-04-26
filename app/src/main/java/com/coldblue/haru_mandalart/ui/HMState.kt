@@ -20,6 +20,7 @@ import com.coldblue.survey.navigation.surveyDetailRoute
 import com.coldblue.survey.navigation.surveyRoute
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.todoRoute
+import com.orhanobut.logger.Logger
 
 @Composable
 fun rememberHMState(
@@ -57,7 +58,7 @@ class HMAppState(
                 settingRoute -> true to "설정"
                 noticeRoute -> true to "공지사항"
                 surveyRoute -> true to "기능 제안하기"
-                "$surveyDetailRoute/{id}" -> true to ""
+                "$surveyDetailRoute/{id}" -> true to "기능 제안하기"
                 else -> false to ""
             }
         }
@@ -65,6 +66,7 @@ class HMAppState(
 
     fun popBackStack() {
         navController.popBackStack()
+        Logger.d("뒤로가기임")
     }
 
     fun navigateToTopLevelDestination(route: String) {

@@ -74,7 +74,7 @@ fun SurveyItem(
         ) {
 
 
-            SurveyState(survey.state)
+            SurveyStateChip(survey.state)
 
             Text(text = survey.title)
             Text(
@@ -104,7 +104,7 @@ fun SurveyItem(
 }
 
 @Composable
-fun SurveyState(state: String) {
+fun SurveyStateChip(state: String) {
     val color = when (state) {
         "완료" -> HMColor.SubLightText
         "진행중" -> HMColor.SurveyGreen

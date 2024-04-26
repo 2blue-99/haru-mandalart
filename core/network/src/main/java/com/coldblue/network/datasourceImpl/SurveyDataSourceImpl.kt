@@ -49,7 +49,8 @@ class SurveyDataSourceImpl @Inject constructor(
         }.decodeList<NetworkSurveyLike>().isNotEmpty()
     }
 
-    override suspend fun upsertLike(id: Int, likeCount: Int) {
+    override suspend fun likeSurvey(id: Int, likeCount: Int) {
+
         client.postgrest["survey"].update(
             {
                 NetworkSurvey::like_count setTo likeCount
@@ -59,6 +60,26 @@ class SurveyDataSourceImpl @Inject constructor(
                 NetworkSurvey::id eq id
             }
         }
+
+        val like = NetworkSurveyLike(survey_id = id)
+        client.postgrest["surveyLike"].insert(like)
+
     }
 
+    override suspend fun likeCancelSurvey(id: Int, likeCount: Int) {
+        client.postgrest["survey"].update(
+            {
+                NetworkSurvey::like_count setTo likeCount
+            }
+        ) {
+            filter {
+                NetworkSurvey::id eq id
+            }
+        }
+        client.postgrest["surveyLike"].delete {
+            filter {
+                NetworkSurveyLike::survey_id eq id
+            }
+        }
+    }
 }
