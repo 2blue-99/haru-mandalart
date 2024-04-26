@@ -28,7 +28,6 @@ class SurveyViewModel @Inject constructor(
         }
     }
     init {
-        Logger.d("시작인것")
         viewModelScope.launch {
             _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
         }

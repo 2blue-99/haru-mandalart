@@ -12,6 +12,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,7 +29,9 @@ class SurveyDetailViewModel @Inject constructor(
     private val id: Int? = savedStateHandle.get<Int>("id")
     private val _survey = MutableStateFlow<Survey?>(null)
 
-    val authState = getAuthStateUseCase().stateIn(
+    val authState = getAuthStateUseCase().catch {
+        LoginState.Loading
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = LoginState.Loading
