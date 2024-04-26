@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.coldblue.survey.SurveyDetailScreen
 import com.coldblue.survey.SurveyScreen
+import com.orhanobut.logger.Logger
 
 const val surveyRoute = "Survey"
 const val surveyDetailRoute = "SurveyDetail"
