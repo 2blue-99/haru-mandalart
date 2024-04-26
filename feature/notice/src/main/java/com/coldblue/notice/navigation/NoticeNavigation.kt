@@ -12,8 +12,12 @@ fun NavController.navigateToNotice(navOptions: NavOptions? = null){
     this.navigate(noticeRoute, navOptions)
 }
 
-fun NavGraphBuilder.noticeScreen(){
+fun NavGraphBuilder.noticeScreen(
+    navigateToBackStack: () -> Unit
+){
     composable(route = noticeRoute){
-        NoticeScreen()
+        NoticeScreen(
+            navigateToBackStack = navigateToBackStack
+        )
     }
 }

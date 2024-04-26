@@ -49,13 +49,19 @@ fun HMNavHost(
 //        )
         settingScreen(
             navigateToNotice = navController::navigateToNotice,
-            navigateToSurvey = navController::navigateToSurvey
+            navigateToSurvey = navController::navigateToSurvey,
+            navigateToBackStack = navController::popBackStack
         )
-        noticeScreen()
+        noticeScreen(
+            navigateToBackStack = navController::popBackStack
+        )
         surveyScreen(
-            navigateToSurveyDetail = navController::navigateToSurveyDetail
+            navigateToSurveyDetail = navController::navigateToSurveyDetail,
+            navigateToBackStack = navController::popBackStack
         )
-        surveyDetailScreen()
+        surveyDetailScreen(
+            navigateToBackStack = navController::popBackStack
+        )
 
     }
 }

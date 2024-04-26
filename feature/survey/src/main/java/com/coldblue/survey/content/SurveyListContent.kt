@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Survey
@@ -33,11 +34,17 @@ import com.coldblue.model.Survey
 fun SurveyListContent(
     surveyList: List<Survey>,
     navigateToSurveyDetail: (id: Int) -> Unit,
+    navigateToBackstack: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        item{
+            HMTopBar(title = "기능 제안하기") {
+                navigateToBackstack()
+            }
+        }
         items(surveyList) {
             SurveyItem(it, navigateToSurveyDetail)
         }
@@ -135,6 +142,7 @@ fun SurveyListContentPreview() {
             Survey(2, "위젯", "진행중", "2024-05-11", 1, "만타탙", "관리자", true),
             Survey(3, "다크모드 지원", "개발예정", "2024-06-13", 0, "만ㅋ크크크제거", "관리자", false),
         ),
+        {},
         {}
     )
 }

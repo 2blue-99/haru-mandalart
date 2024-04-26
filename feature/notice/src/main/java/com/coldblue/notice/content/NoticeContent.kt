@@ -1,8 +1,18 @@
 package com.coldblue.notice.content
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Notice
@@ -36,13 +47,18 @@ import com.coldblue.model.Notice
 @Composable
 fun NoticeContent(
     noticeList: List<Notice>,
-    getNotice: (id: Int) -> Unit
+    getNotice: (id: Int) -> Unit,
+    navigateToBackStack: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
-
+        item {
+            HMTopBar(title = "공지사항") {
+                navigateToBackStack()
+            }
+        }
         items(noticeList) {
             NoticeItem(it, getNotice)
         }
@@ -57,14 +73,14 @@ fun NoticeItem(
     var expanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessMedium
-                )
-            )
             .fillMaxWidth()
             .background(HMColor.Background)
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            )
             .clickable(
                 interactionSource = remember {
                     MutableInteractionSource()
@@ -78,7 +94,9 @@ fun NoticeItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(0.8f)
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(0.8f)
         ) {
             Text(text = notice.date, style = HmStyle.text12, color = HMColor.SubDarkText)
             Text(text = notice.title)
@@ -90,7 +108,11 @@ fun NoticeItem(
             contentDescription = "기능 제안하기"
         )
     }
-    if (expanded) {
+    AnimatedVisibility(
+        visible = expanded,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -109,6 +131,7 @@ fun NoticeItem(
 fun NoticePreview() {
     NoticeContent(
         getNotice = {},
+        navigateToBackStack = {},
         noticeList = listOf(
             Notice(
                 1,

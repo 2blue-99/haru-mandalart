@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -34,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.LoginState
 import com.coldblue.designsystem.component.BottomSpacer
 import com.coldblue.designsystem.component.HMTextDialog
+import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.component.TopSpacer
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -43,6 +42,7 @@ import com.coldblue.setting.R
 fun SettingContent(
     navigateToNotice: () -> Unit,
     navigateToSurvey: () -> Unit,
+    navigateToBackStack: () -> Unit,
     showOss: () -> Unit,
     showPlayStore: () -> Unit,
     showContact: () -> Unit,
@@ -61,7 +61,6 @@ fun SettingContent(
 
 
     if (openDialog) {
-
         HMTextDialog(
             targetText = "",
             text = stringResource(id = R.string.delete_dialog_title),
@@ -80,14 +79,19 @@ fun SettingContent(
             .fillMaxSize()
             .background(HMColor.Box)
     ) {
+        item{
+            HMTopBar(title = stringResource(id = R.string.setting_title)) {
+                navigateToBackStack()
+            }
+        }
         item {
             TopSpacer()
         }
         item {
             SettingTile {
                 Text(
-                    text = "일반",
-                    style = HmStyle.text20,
+                    text = stringResource(id = R.string.setting_general),
+                    style = HmStyle.text12,
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
@@ -95,7 +99,7 @@ fun SettingContent(
                     Text(text = email)
                 }
                 SettingItem(
-                    title = "공지사항",
+                    title = stringResource(id = R.string.setting_notice),
                     isClickable = true,
                     isLast = true,
                     onClick = { navigateToNotice() }) {
@@ -111,13 +115,13 @@ fun SettingContent(
             SettingTile {
 
                 Text(
-                    text = "피드백",
-                    style = HmStyle.text20,
+                    text = stringResource(id = R.string.setting_feedback),
+                    style = HmStyle.text12,
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
                 SettingItem(
-                    title = "기능 제안하기",
+                    title = stringResource(id = R.string.setting_survey),
                     isClickable = true,
                     onClick = { navigateToSurvey() }) {
                     Icon(
@@ -151,8 +155,8 @@ fun SettingContent(
             SettingTile {
 
                 Text(
-                    text = "앱 정보",
-                    style = HmStyle.text20,
+                    text = stringResource(id = R.string.setting_information),
+                    style = HmStyle.text12,
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
@@ -178,8 +182,8 @@ fun SettingContent(
         item {
             SettingTile {
                 Text(
-                    text = "계정관리",
-                    style = HmStyle.text20,
+                    text = stringResource(id = R.string.setting_manage_account),
+                    style = HmStyle.text12,
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
@@ -291,6 +295,7 @@ fun SettingItem(
 @Composable
 fun SettingContentPreview() {
     SettingContent(
+        {},
         {},
         {},
         {},

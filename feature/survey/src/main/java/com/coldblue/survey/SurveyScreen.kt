@@ -15,13 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.component.HMTopBar
+import com.coldblue.model.Survey
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.survey.content.SurveyListContent
 
 @Composable
 fun SurveyScreen(
+    navigateToSurveyDetail: (id:Int) -> Unit,
     navigateToSurveyDetail: (id: Int) -> Unit,
-
+    navigateToBackstack: () -> Unit,
     surveyViewModel: SurveyViewModel = hiltViewModel(),
 ) {
     val surveyUiState by surveyViewModel.surveyUIState.collectAsStateWithLifecycle()
@@ -35,7 +38,8 @@ fun SurveyScreen(
         SurveyScreenWithState(
             uiState = surveyUiState,
             navigateToSurveyDetail = navigateToSurveyDetail,
-            getSurveyList = surveyViewModel::getSurveyList
+            getSurveyList = surveyViewModel::getSurveyList,
+            navigateToBackstack = navigateToBackstack
         )
     }
 }
@@ -43,10 +47,10 @@ fun SurveyScreen(
 @Composable
 fun SurveyScreenWithState(
     uiState: SurveyUiState,
+    navigateToSurveyDetail: (id:Int) -> Unit,
     navigateToSurveyDetail: (id: Int) -> Unit,
-    getSurveyList: () -> Unit
-
-
+    getSurveyList: () -> Unit,
+    navigateToBackstack: () -> Unit,
 ) {
     when (uiState) {
         is SurveyUiState.Loading -> {}
@@ -62,7 +66,8 @@ fun SurveyScreenWithState(
         is SurveyUiState.Success -> {
             SurveyListContent(
                 uiState.surveyList,
-                navigateToSurveyDetail
+                navigateToSurveyDetail,
+                navigateToBackstack
             )
         }
     }

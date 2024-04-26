@@ -9,13 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.data.util.LoginState
 import com.coldblue.model.Survey
 import com.coldblue.survey.content.SurveyDetailContent
 
 @Composable
 fun SurveyDetailScreen(
-    surveyDetailViewModel: SurveyDetailViewModel = hiltViewModel(),
+    navigateToBackStack: () -> Unit,
+    surveyDetailViewModel: SurveyDetailViewModel = hiltViewModel()
 ) {
     val survey by surveyDetailViewModel.surveyState.collectAsStateWithLifecycle()
     val authState by surveyDetailViewModel.authState.collectAsStateWithLifecycle()
@@ -28,6 +30,9 @@ fun SurveyDetailScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        HMTopBar(title = "???") {
+            navigateToBackStack()
+        }
         SurveyDetailScreenWithState(
             survey = survey
         ) {

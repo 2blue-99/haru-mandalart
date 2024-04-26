@@ -21,19 +21,29 @@ fun NavController.navigateToSurveyDetail(id:Int,navOptions: NavOptions? = null) 
     this.navigate("$surveyDetailRoute/$id", navOptions)
 }
 
-fun NavGraphBuilder.surveyScreen(navigateToSurveyDetail: (id: Int) -> Unit) {
+fun NavGraphBuilder.surveyScreen(
+    navigateToSurveyDetail: (id: Int) -> Unit,
+    navigateToBackStack: () -> Unit
+) {
     composable(route = surveyRoute) {
-        SurveyScreen(navigateToSurveyDetail)
+        SurveyScreen(
+            navigateToSurveyDetail,
+            navigateToBackStack
+        )
     }
 }
 
-fun NavGraphBuilder.surveyDetailScreen() {
+fun NavGraphBuilder.surveyDetailScreen(
+    navigateToBackStack: () -> Unit
+) {
     composable(route = "$surveyDetailRoute/{id}",
         arguments = listOf(
             navArgument("id"){type=NavType.IntType}
         )
     ) {
-        SurveyDetailScreen()
+        SurveyDetailScreen(
+            navigateToBackStack = navigateToBackStack
+        )
     }
 }
 

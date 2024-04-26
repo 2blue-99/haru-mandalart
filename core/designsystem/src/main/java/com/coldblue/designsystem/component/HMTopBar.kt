@@ -2,13 +2,16 @@ package com.coldblue.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,35 +27,64 @@ fun HMTopBar(
     title:String,
     popBackStack: () -> Unit
 ) {
-    Row(
+    Surface(
         Modifier
             .fillMaxWidth()
-            .height(60.dp)
-            .background(HMColor.Background),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Absolute.Center
+            .height(70.dp),
+        color = HMColor.Background
     ) {
-        Text(
-            text = title, style = HmStyle.text16, fontWeight = FontWeight.Bold
-        )
-    }
-    Row(
-        Modifier
-            .height(60.dp)
-            .background(HMColor.Background),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
-    ) {
-        IconButton(onClick = { popBackStack() }) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "뒤로"
+        Box(
+            contentAlignment = Alignment.CenterStart
+        ) {
+            IconButton(onClick = { popBackStack() }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "뒤로"
+                )
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Absolute.Center
+        ) {
+            Text(
+                text = title,
+                style = HmStyle.text16,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 2.dp)
             )
         }
     }
 
 
 
+//    Row(
+//        Modifier
+//            .fillMaxWidth()
+//            .height(80.dp)
+////            .height(60.dp)
+//            .background(HMColor.Background),
+//        verticalAlignment = Alignment.CenterVertically,
+//        horizontalArrangement = Arrangement.Absolute.Center
+//    ) {
+//        Text(
+//            text = title, style = HmStyle.text16, fontWeight = FontWeight.Bold
+//        )
+//    }
+//    Row(
+//        Modifier
+//            .height(60.dp)
+//            .background(HMColor.Background),
+//        verticalAlignment = Alignment.CenterVertically,
+//        horizontalArrangement = Arrangement.Start
+//    ) {
+//        IconButton(onClick = { popBackStack() }) {
+//            Icon(
+//                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+//                contentDescription = "뒤로"
+//            )
+//        }
+//    }
 }
 
 @Preview
