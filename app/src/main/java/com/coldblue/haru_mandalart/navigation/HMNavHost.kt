@@ -49,7 +49,8 @@ fun HMNavHost(
 //        )
         settingScreen(
             navigateToNotice = navController::navigateToNotice,
-            navigateToSurvey = navController::navigateToSurvey
+            navigateToSurvey = navController::navigateToSurvey,
+            navigateToBackStack = navController::popBackStack
         )
         noticeScreen()
         surveyScreen(

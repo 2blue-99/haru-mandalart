@@ -15,9 +15,10 @@ import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 fun SettingScreen(
     navigateToNotice: () -> Unit,
     navigateToSurvey: () -> Unit,
+    navigateToBackStack: () -> Unit,
     settingViewModel: SettingViewModel = hiltViewModel(),
 
-) {
+    ) {
     val email by settingViewModel.email.collectAsStateWithLifecycle()
     val alarm by settingViewModel.alarm.collectAsStateWithLifecycle()
 
@@ -36,12 +37,13 @@ fun SettingScreen(
         SettingContentWithState(
             navigateToNotice = navigateToNotice,
             navigateToSurvey = navigateToSurvey,
+            navigateToBackStack = navigateToBackStack,
             showOss = settingViewModel::showOss,
             showPlayStore = settingViewModel::showPlayStore,
             showContact = settingViewModel::showContact,
             versionName = settingViewModel.versionName,
             logout = settingViewModel::logout,
-            login = {authState.startFlow()},
+            login = { authState.startFlow() },
             deleteUser = settingViewModel::deleteUser,
             onChangeAlarm = settingViewModel::updateAlarmState,
             email = email,
@@ -56,6 +58,7 @@ fun SettingScreen(
 fun SettingContentWithState(
     navigateToNotice: () -> Unit,
     navigateToSurvey: () -> Unit,
+    navigateToBackStack: () -> Unit,
     showOss: () -> Unit,
     showPlayStore: () -> Unit,
     showContact: () -> Unit,
@@ -66,13 +69,14 @@ fun SettingContentWithState(
     onChangeAlarm: (Boolean) -> Unit,
     email: String,
     alarm: Boolean,
-    networkState:Boolean,
+    networkState: Boolean,
     loginState: LoginState,
 ) {
 
     SettingContent(
         navigateToNotice,
         navigateToSurvey,
+        navigateToBackStack,
         showOss,
         showPlayStore,
         showContact,

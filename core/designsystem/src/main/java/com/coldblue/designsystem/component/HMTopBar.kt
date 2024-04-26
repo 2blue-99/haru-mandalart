@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
@@ -48,7 +49,10 @@ fun HMTopBar(
             horizontalArrangement = Arrangement.Absolute.Center
         ) {
             Text(
-                text = title, style = HmStyle.text16, fontWeight = FontWeight.Bold
+                text = title,
+                style = HmStyle.text16,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 2.dp)
             )
         }
     }
