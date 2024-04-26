@@ -7,10 +7,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.notice.content.NoticeContent
 
 @Composable
 fun NoticeScreen(
+    navigateToBackStack: () -> Unit,
     noticeViewModel: NoticeViewModel = hiltViewModel(),
 ) {
     val noticeUiState by noticeViewModel.noticeUIState.collectAsStateWithLifecycle()
@@ -21,7 +23,8 @@ fun NoticeScreen(
     ) {
         NoticeScreenWithState(
             uiState = noticeUiState,
-            getNotice = noticeViewModel::getNotice
+            getNotice = noticeViewModel::getNotice,
+            navigateToBackStack = navigateToBackStack
         )
     }
 
@@ -31,8 +34,8 @@ fun NoticeScreen(
 @Composable
 fun NoticeScreenWithState(
     uiState: NoticeUiState,
-    getNotice: (id: Int) -> Unit
-
+    getNotice: (id: Int) -> Unit,
+    navigateToBackStack: () -> Unit
 ) {
     when (uiState) {
         is NoticeUiState.Loading -> {}
@@ -40,7 +43,8 @@ fun NoticeScreenWithState(
         is NoticeUiState.Success -> {
             NoticeContent(
                 uiState.noticeList,
-                getNotice
+                getNotice,
+                navigateToBackStack
             )
         }
     }

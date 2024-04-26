@@ -52,11 +52,16 @@ fun HMNavHost(
             navigateToSurvey = navController::navigateToSurvey,
             navigateToBackStack = navController::popBackStack
         )
-        noticeScreen()
-        surveyScreen(
-            navigateToSurveyDetail = navController::navigateToSurveyDetail
+        noticeScreen(
+            navigateToBackStack = navController::popBackStack
         )
-        surveyDetailScreen()
+        surveyScreen(
+            navigateToSurveyDetail = navController::navigateToSurveyDetail,
+            navigateToBackStack = navController::popBackStack
+        )
+        surveyDetailScreen(
+            navigateToBackStack = navController::popBackStack
+        )
 
     }
 }

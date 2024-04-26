@@ -30,9 +30,8 @@ fun HMTopBar(
     Surface(
         Modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .background(HMColor.Background),
-
+            .height(70.dp),
+        color = HMColor.Background
     ) {
         Box(
             contentAlignment = Alignment.CenterStart

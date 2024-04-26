@@ -8,6 +8,7 @@
     <string name="setting_title">설정</string>
     <string name="setting_general">일반</string>
     <string name="setting_notice">공지사항</string>
+    <string name="setting_feedback">피드백</string>
     <string name="setting_survey">기능 제안하기</string>
     <string name="setting_ask">문의하기</string>
     <string name="setting_evaluate">앱 평가하기</string>

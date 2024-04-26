@@ -99,7 +99,7 @@ fun SettingContent(
                     Text(text = email)
                 }
                 SettingItem(
-                    title = stringResource(id = R.string.setting_survey),
+                    title = stringResource(id = R.string.setting_notice),
                     isClickable = true,
                     isLast = true,
                     onClick = { navigateToNotice() }) {
@@ -115,8 +115,8 @@ fun SettingContent(
             SettingTile {
 
                 Text(
-                    text = stringResource(id = R.string.setting_notice),
-                    style = HmStyle.text20,
+                    text = stringResource(id = R.string.setting_feedback),
+                    style = HmStyle.text12,
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
@@ -155,8 +155,8 @@ fun SettingContent(
             SettingTile {
 
                 Text(
-                    text = stringResource(id = R.string.setting_evaluate),
-                    style = HmStyle.text20,
+                    text = stringResource(id = R.string.setting_information),
+                    style = HmStyle.text12,
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
@@ -183,7 +183,7 @@ fun SettingContent(
             SettingTile {
                 Text(
                     text = stringResource(id = R.string.setting_manage_account),
-                    style = HmStyle.text20,
+                    style = HmStyle.text12,
                     color = HMColor.Primary,
                     fontWeight = FontWeight.Bold
                 )
