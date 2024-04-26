@@ -36,8 +36,6 @@ fun NoticeScreen(
             navigateToBackStack = navigateToBackStack
         )
     }
-
-
 }
 
 @Composable

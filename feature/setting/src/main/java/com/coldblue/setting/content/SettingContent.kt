@@ -37,6 +37,7 @@ import com.coldblue.designsystem.component.TopSpacer
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.setting.R
+import com.coldblue.setting.state.DialogType
 
 @Composable
 fun SettingContent(
@@ -56,23 +57,26 @@ fun SettingContent(
     networkState: Boolean,
     loginState: LoginState,
 ) {
-    var openDialog by remember { mutableStateOf(false) }
+    var openDialog by remember { mutableStateOf(Pair(false, DialogType.Logout)) }
     val context = LocalContext.current
 
 
-    if (openDialog) {
-        HMTextDialog(
-            targetText = "",
-            text = stringResource(id = R.string.delete_dialog_title),
-            confirmText = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
-            tintColor = HMColor.Dark.Red,
-            onDismissRequest = {
-                openDialog = false
-            },
-            onConfirmation = {
-                deleteUser()
-            },
-        )
+    if (openDialog.first) {
+        when(openDialog.second){
+            DialogType.Logout -> {
+                LogoutDialog(
+                    onDismiss = { openDialog = openDialog.copy(false) },
+                    onResign = logout
+                )
+            }
+            DialogType.Resign -> {
+                ResignDialog(
+                    onDismiss = { openDialog = openDialog.copy(false) },
+                    deleteUser = deleteUser
+                )
+            }
+        }
+
     }
     LazyColumn(
         modifier = Modifier
@@ -189,33 +193,10 @@ fun SettingContent(
                 )
                 if (loginState == LoginState.AuthenticatedLogin) {
                     SettingItem(
-                        title = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
-                        isLast = false,
-                        isClickable = true,
-                        onClick = {
-                            if (networkState) {
-                                openDialog = true
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    R.string.setting_connection_err,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = "탈퇴"
-                        )
-                    }
-                }
-                if (loginState == LoginState.AuthenticatedLogin) {
-                    SettingItem(
                         title = stringResource(id = R.string.setting_logout),
-                        color = HMColor.Dark.Red,
                         isLast = true,
                         isClickable = true,
-                        onClick = { logout() }) {
+                        onClick = { openDialog = Pair(true, DialogType.Logout) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = stringResource(id = R.string.setting_logout)
@@ -240,6 +221,29 @@ fun SettingContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = stringResource(id = R.string.setting_login)
+                        )
+                    }
+                }
+                if (loginState == LoginState.AuthenticatedLogin) {
+                    SettingItem(
+                        title = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
+                        color = HMColor.Dark.Red,
+                        isLast = false,
+                        isClickable = true,
+                        onClick = {
+                            if (networkState) {
+                                openDialog = Pair(true, DialogType.Resign)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    R.string.setting_connection_err,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "탈퇴"
                         )
                     }
                 }
@@ -299,6 +303,44 @@ fun SettingItem(
 //        HorizontalDivider(
 //            color = HMColor.SubLightText,
 //        )
+}
+
+@Composable
+fun ResignDialog(
+    onDismiss: () -> Unit,
+    deleteUser: () -> Unit
+){
+    HMTextDialog(
+        targetText = "",
+        text = stringResource(id = R.string.delete_dialog_resign),
+        confirmText = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
+        tintColor = HMColor.Dark.Red,
+        onDismissRequest = {
+            onDismiss()
+        },
+        onConfirmation = {
+            deleteUser()
+        },
+    )
+}
+
+@Composable
+fun LogoutDialog(
+    onDismiss: () -> Unit,
+    onResign: () -> Unit
+){
+    HMTextDialog(
+        targetText = "",
+        text = stringResource(id = R.string.delete_dialog_logout),
+        confirmText = stringResource(id = R.string.setting_logout),
+        tintColor = HMColor.Dark.Red,
+        onDismissRequest = {
+            onDismiss()
+        },
+        onConfirmation = {
+            onResign()
+        },
+    )
 }
 
 @Preview

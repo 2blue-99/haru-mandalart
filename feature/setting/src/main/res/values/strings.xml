@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    // Screen
-    <string name="delete_dialog_title">탈퇴하면 모든 데이터가 완전히 삭제돼요.</string>
     <string name="setting_connection_err">인터넷 연결을 확인하세요</string>
 
+    // Dialog
+    <string name="delete_dialog_resign">탈퇴하면 모든 데이터가 완전히 삭제돼요.</string>
+    <string name="delete_dialog_logout">정말 로그아웃할까요?</string>
+
+    // Screen
     <string name="setting_title">설정</string>
     <string name="setting_general">일반</string>
     <string name="setting_notice">공지사항</string>
