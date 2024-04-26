@@ -25,7 +25,6 @@ fun HMApp(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             val cur = navController.checkTopBar()
-            if (cur.first)
                 HMTopBar(title = cur.second) {
                     navController.popBackStack()
                 }

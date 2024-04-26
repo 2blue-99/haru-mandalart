@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.colddelight.mandalart"
+    namespace = "com.colddelight.explain"
 }
 
 

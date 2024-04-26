@@ -49,7 +49,7 @@ import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.colddelight.mandalart.R
+import com.colddelight.explain.R
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
