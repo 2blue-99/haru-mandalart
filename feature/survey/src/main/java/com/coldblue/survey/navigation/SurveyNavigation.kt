@@ -14,7 +14,6 @@ const val surveyRoute = "Survey"
 const val surveyDetailRoute = "SurveyDetail"
 
 fun NavController.navigateToSurvey(navOptions: NavOptions? = null) {
-    Logger.d("기능제안으로 감")
     this.navigate(surveyRoute, navOptions)
 }
 
