@@ -16,70 +16,86 @@ class SurveyDataSourceImpl @Inject constructor(
     private val client: SupabaseClient
 ) : SurveyDataSource {
     override suspend fun getSurveyList(): List<NetworkSurvey> {
-        return client.postgrest["survey"].select {
-            order(
-                column = "id",
-                order = Order.DESCENDING
-            )
-        }.decodeList<NetworkSurvey>()
+        return try {
+            client.postgrest["survey"].select {
+                order(
+                    column = "date",
+                    order = Order.DESCENDING
+                )
+            }.decodeList<NetworkSurvey>()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     override suspend fun getSurveyLikedList(): List<NetworkSurveyLike> {
-        return client.postgrest["surveyLike"].select {
-            order(
-                column = "survey_id",
-                order = Order.DESCENDING
-            )
-        }.decodeList<NetworkSurveyLike>()
+        return try {
+            client.postgrest["surveyLike"].select().decodeList<NetworkSurveyLike>()
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     override suspend fun getSurvey(id: Int): NetworkSurvey {
-        return client.postgrest["survey"].select {
-            filter {
-                NetworkNotice::id eq id
-            }
-        }.decodeSingle<NetworkSurvey>()
+        return try {
+            client.postgrest["survey"].select {
+                filter {
+                    NetworkNotice::id eq id
+                }
+            }.decodeSingle<NetworkSurvey>()
+        } catch (e: Exception) {
+            NetworkSurvey(0, "", "", "", "", true, 0)
+        }
     }
 
     override suspend fun isSurveyLiked(id: Int): Boolean {
-        return client.postgrest["surveyLike"].select {
-            filter {
-                NetworkSurveyLike::survey_id eq id
-            }
-        }.decodeList<NetworkSurveyLike>().isNotEmpty()
+        return try {
+            client.postgrest["surveyLike"].select {
+                filter {
+                    NetworkSurveyLike::survey_id eq id
+                }
+            }.decodeList<NetworkSurveyLike>().isNotEmpty()
+        } catch (e: Exception) {
+            false
+        }
     }
 
     override suspend fun likeSurvey(id: Int, likeCount: Int) {
+        try {
+            client.postgrest["survey"].update(
+                {
+                    NetworkSurvey::like_count setTo likeCount
+                }
+            ) {
+                filter {
+                    NetworkSurvey::id eq id
+                }
+            }
 
-        client.postgrest["survey"].update(
-            {
-                NetworkSurvey::like_count setTo likeCount
-            }
-        ) {
-            filter {
-                NetworkSurvey::id eq id
-            }
+            val like = NetworkSurveyLike(survey_id = id)
+            client.postgrest["surveyLike"].insert(like)
+
+        } catch (e: Exception) {
         }
-
-        val like = NetworkSurveyLike(survey_id = id)
-        client.postgrest["surveyLike"].insert(like)
-
     }
 
     override suspend fun likeCancelSurvey(id: Int, likeCount: Int) {
-        client.postgrest["survey"].update(
-            {
-                NetworkSurvey::like_count setTo likeCount
+        try {
+            client.postgrest["survey"].update(
+                {
+                    NetworkSurvey::like_count setTo likeCount
+                }
+            ) {
+                filter {
+                    NetworkSurvey::id eq id
+                }
             }
-        ) {
-            filter {
-                NetworkSurvey::id eq id
+            client.postgrest["surveyLike"].delete {
+                filter {
+                    NetworkSurveyLike::survey_id eq id
+                }
             }
-        }
-        client.postgrest["surveyLike"].delete {
-            filter {
-                NetworkSurveyLike::survey_id eq id
-            }
+        } catch (e: Exception) {
         }
     }
 }

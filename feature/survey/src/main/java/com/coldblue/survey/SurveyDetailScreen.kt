@@ -30,7 +30,7 @@ fun SurveyDetailScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        HMTopBar(title = "???") {
+        HMTopBar(title = "기능 제안하기") {
             navigateToBackStack()
         }
         SurveyDetailScreenWithState(

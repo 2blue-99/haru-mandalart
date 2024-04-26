@@ -79,7 +79,7 @@ fun SettingContent(
             .fillMaxSize()
             .background(HMColor.Box)
     ) {
-        item{
+        item {
             HMTopBar(title = stringResource(id = R.string.setting_title)) {
                 navigateToBackStack()
             }
@@ -226,7 +226,17 @@ fun SettingContent(
                         title = stringResource(id = R.string.setting_login),
                         isLast = true,
                         isClickable = true,
-                        onClick = { login() }) {
+                        onClick = {
+                            if (networkState) {
+                                login()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    R.string.setting_connection_err,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                             contentDescription = stringResource(id = R.string.setting_login)

@@ -23,7 +23,6 @@ import com.coldblue.survey.content.SurveyListContent
 @Composable
 fun SurveyScreen(
     navigateToSurveyDetail: (id:Int) -> Unit,
-    navigateToSurveyDetail: (id: Int) -> Unit,
     navigateToBackstack: () -> Unit,
     surveyViewModel: SurveyViewModel = hiltViewModel(),
 ) {
@@ -48,7 +47,6 @@ fun SurveyScreen(
 fun SurveyScreenWithState(
     uiState: SurveyUiState,
     navigateToSurveyDetail: (id:Int) -> Unit,
-    navigateToSurveyDetail: (id: Int) -> Unit,
     getSurveyList: () -> Unit,
     navigateToBackstack: () -> Unit,
 ) {
