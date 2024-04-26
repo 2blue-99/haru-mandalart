@@ -22,7 +22,13 @@ class SurveyViewModel @Inject constructor(
     private val _survey = MutableStateFlow<Survey?>(null)
     val survey: StateFlow<Survey?> get() = _survey
 
+    fun getSurveyList(){
+        viewModelScope.launch {
+            _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
+        }
+    }
     init {
+        Logger.d("시작인것")
         viewModelScope.launch {
             _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
         }

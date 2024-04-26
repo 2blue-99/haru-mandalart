@@ -20,6 +20,7 @@ import com.coldblue.survey.navigation.surveyDetailRoute
 import com.coldblue.survey.navigation.surveyRoute
 import com.coldblue.todo.navigation.navigateToTodo
 import com.coldblue.todo.navigation.todoRoute
+import com.orhanobut.logger.Logger
 
 @Composable
 fun rememberHMState(
@@ -65,6 +66,7 @@ class HMAppState(
 
     fun popBackStack() {
         navController.popBackStack()
+        Logger.d("뒤로가기임")
     }
 
     fun navigateToTopLevelDestination(route: String) {

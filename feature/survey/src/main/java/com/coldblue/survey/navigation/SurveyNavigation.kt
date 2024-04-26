@@ -8,11 +8,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.coldblue.survey.SurveyDetailScreen
 import com.coldblue.survey.SurveyScreen
+import com.orhanobut.logger.Logger
 
 const val surveyRoute = "Survey"
 const val surveyDetailRoute = "SurveyDetail"
 
 fun NavController.navigateToSurvey(navOptions: NavOptions? = null) {
+    Logger.d("기능제안으로 감")
     this.navigate(surveyRoute, navOptions)
 }
 
