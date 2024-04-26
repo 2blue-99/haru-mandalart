@@ -57,7 +57,7 @@ class HMAppState(
                 settingRoute -> true to "설정"
                 noticeRoute -> true to "공지사항"
                 surveyRoute -> true to "기능 제안하기"
-                "$surveyDetailRoute/{id}" -> true to ""
+                "$surveyDetailRoute/{id}" -> true to "기능 제안하기"
                 else -> false to ""
             }
         }
