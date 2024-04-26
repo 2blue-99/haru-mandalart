@@ -29,7 +29,7 @@ class SettingHelperImpl @Inject constructor(
         val intent = Intent(Intent.ACTION_SEND).apply {
             putExtra(
                 Intent.EXTRA_EMAIL,
-                arrayOf(R.string.setting_chan_mail, R.string.setting_pu_mail)
+                arrayOf("hno05039@naver.com", "lpm083100@gmail.com")
             )
             type = "plain/Text"
 
