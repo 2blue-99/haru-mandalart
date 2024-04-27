@@ -229,7 +229,7 @@ fun FirstPage() {
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f),
-        painter = painterResource(id = R.drawable.explain_third_manda),
+        painter = painterResource(id = R.drawable.explain_manda_third),
         contentDescription = ""
     )
 }
@@ -240,7 +240,7 @@ fun SecondPage() {
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f),
-        painter = painterResource(id = R.drawable.explain_first_manda),
+        painter = painterResource(id = R.drawable.explain_manda_first),
         contentDescription = ""
     )
     Text(
@@ -257,7 +257,7 @@ fun ThirdPage() {
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f),
-        painter = painterResource(id = R.drawable.explain_second_manda),
+        painter = painterResource(id = R.drawable.explain_manda_second),
         contentDescription = ""
     )
     Column(
@@ -281,7 +281,7 @@ fun FourthPage() {
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1f),
-        painter = painterResource(id = R.drawable.explain_third_manda),
+        painter = painterResource(id = R.drawable.explain_manda_third),
         contentDescription = ""
     )
     Column(
