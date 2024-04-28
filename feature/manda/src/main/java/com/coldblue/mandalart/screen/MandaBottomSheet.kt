@@ -36,11 +36,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.coldblue.designsystem.component.DeleteDialog
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.component.HMTextField
@@ -54,6 +55,7 @@ import com.coldblue.mandalart.model.asMandaKey
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.colddelight.mandalart.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,14 +89,16 @@ fun MandaBottomSheet(
     var duplicatedState by remember { mutableStateOf(false) }
 
     if (dialogState) {
-        DeleteDialog(
+        HMTextDialog(
             targetText = keyNameText,
-            text = " 이(가) 포함된 세부목표는 전부 삭제돼요.",
-            deleteConfirmText = "삭제",
+            text = stringResource(id = R.string.dialog_main_title),
+            confirmText = stringResource(id = R.string.bottom_sheet_delete),
             onDismissRequest = {
                 dialogState = false
                 onDisMiss()
-            }, onConfirmation = {
+            },
+            tintColor = HMColor.Dark.Red,
+            onConfirmation = {
                 deleteMandaKey(
                     mandaUI.id,
                     (contentType as MandaBottomSheetContentType.MandaKey).groupIdList ?: emptyList()
@@ -128,7 +132,7 @@ fun MandaBottomSheet(
                 verticalArrangement = Arrangement.spacedBy((-5).dp)
             ) {
                 Text(
-                    text = "이름",
+                    text = stringResource(id = R.string.bottom_sheet_name),
                     style = HmStyle.text16,
                     fontWeight = FontWeight.Bold
                 )
@@ -139,7 +143,7 @@ fun MandaBottomSheet(
                 }
                 if (duplicatedState)
                     Text(
-                        text = "이미 존재하는 목표에요.",
+                        text = stringResource(id = R.string.bottom_sheet_exist_goal),
                         style = HmStyle.text12,
                         color = HMColor.NegativeText
                     )
@@ -159,7 +163,7 @@ fun MandaBottomSheet(
             when (mandaBottomSheetContentState) {
 
                 is MandaBottomSheetContentState.Insert -> {
-                    HMButton(text = "저장", clickableState = buttonClickableState) {
+                    HMButton(text = stringResource(id = com.coldblue.designsystem.R.string.all_save), clickableState = buttonClickableState) {
                         when (contentType) {
 
                             is MandaBottomSheetContentType.MandaFinal ->
@@ -220,14 +224,14 @@ fun MandaBottomSheet(
                             }
                         ) {
                             Text(
-                                text = "삭제",
+                                text = stringResource(id = R.string.bottom_sheet_delete),
                                 style = HmStyle.text16,
                                 color = HMColor.Primary,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         HMButton(
-                            text = "저장",
+                            text = stringResource(id = com.coldblue.designsystem.R.string.all_save),
                             clickableState = buttonClickableState,
                             modifier = Modifier
                                 .padding(start = 5.dp)
@@ -263,7 +267,6 @@ fun MandaBottomSheet(
 
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MandaBottomSheetColor(
     initColorIndex: Int,
@@ -277,7 +280,7 @@ fun MandaBottomSheetColor(
             MandaColorInfo(HMColor.Dark.Yellow, false, 3),
             MandaColorInfo(HMColor.Dark.Green, false, 4),
             MandaColorInfo(HMColor.Dark.Blue, false, 5),
-            MandaColorInfo(HMColor.Dark.Indigo, false, 6),
+            MandaColorInfo(HMColor.Dark.Mint, false, 6),
             MandaColorInfo(HMColor.Dark.Purple, false, 7)
         )
     }
@@ -289,7 +292,7 @@ fun MandaBottomSheetColor(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "색상",
+            text = stringResource(id = R.string.bottom_sheet_color),
             modifier = Modifier.fillMaxWidth(),
             style = HmStyle.text16,
             textAlign = TextAlign.Start,
@@ -365,7 +368,7 @@ fun MandaKeyDialog(
         onDismissRequest = { onDisMiss() },
         text = {
             Text(
-                text = "핵심목표 \"$name\" 을(를) 삭제하면 포함된 세부목표가 전부 삭제돼요.",
+                text = stringResource(id = R.string.dialog_notice, name),
                 style = HmStyle.text16,
                 color = HMColor.Text
             )
@@ -373,7 +376,7 @@ fun MandaKeyDialog(
         dismissButton = {
             TextButton(onClick = { onDisMiss() }) {
                 Text(
-                    text = "취소",
+                    text = stringResource(id = R.string.dialog_cancel),
                     style = HmStyle.text16,
                     color = HMColor.Text,
                     fontWeight = FontWeight.Bold
@@ -386,7 +389,7 @@ fun MandaKeyDialog(
                 onDisMiss()
             }) {
                 Text(
-                    text = "삭제",
+                    text = stringResource(id = R.string.bottom_sheet_delete),
                     style = HmStyle.text16,
                     color = HMColor.NegativeText,
                     fontWeight = FontWeight.Bold
@@ -404,7 +407,7 @@ fun MandaBottomSheetDone(
 ) {
     Column {
         Text(
-            text = "달성 상태",
+            text = stringResource(id = R.string.bottom_sheet_achieve_state),
             style = HmStyle.text16,
             color = HMColor.Text,
             fontWeight = FontWeight.Bold
@@ -415,7 +418,9 @@ fun MandaBottomSheetDone(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = if (checkedState) "달성" else "미달성",
+                text = if (checkedState)
+                    stringResource(id = R.string.bottom_sheet_achieve) else
+                        stringResource(id = R.string.bottom_sheet_not_achieve),
                 style = HmStyle.text12,
                 color = HMColor.Text,
             )
@@ -430,4 +435,10 @@ fun MandaBottomSheetDone(
 @Composable
 fun BottomSheetPreview() {
     MandaBottomSheetDone(false) {}
+}
+
+@Preview
+@Composable
+fun AlertDialogPreview() {
+    MandaKeyDialog("asdads", onDisMiss = {}, onDelete = {})
 }

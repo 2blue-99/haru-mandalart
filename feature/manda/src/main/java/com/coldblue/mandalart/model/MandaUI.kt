@@ -7,8 +7,8 @@ import com.coldblue.model.MandaKey
 
 data class MandaUI(
     val name: String = "",
-    var darkColor: Color = HMColor.SubText,
-    var lightColor: Color = HMColor.SubText,
+    var darkColor: Color = HMColor.SubLightText,
+    var lightColor: Color = HMColor.SubLightText,
     var isDone: Boolean = false,
     var originId: Int = 0,
     val id: Int

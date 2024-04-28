@@ -20,15 +20,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -52,12 +57,17 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTitleComponent
+import com.coldblue.designsystem.iconpack.Manda
+import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.iconpack.ZoomIn
 import com.coldblue.designsystem.iconpack.ZoomOut
@@ -65,6 +75,9 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.screen.MandaBottomSheet
+import com.coldblue.mandalart.screen.MandaDetailBox
+import com.coldblue.mandalart.screen.MandaEmptyBox
+import com.coldblue.mandalart.screen.MandaKeyBox
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
@@ -73,6 +86,7 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.colddelight.mandalart.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -90,7 +104,8 @@ fun InitializedMandaContent(
     deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
     deleteMandaAll: () -> Unit,
-    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
+    navigateToSetting: () -> Unit,
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -98,6 +113,7 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
@@ -118,12 +134,15 @@ fun InitializedMandaContent(
 
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
     ) {
-        HMTitleComponent()
+
+        MandaTitle{
+            navigateToSetting()
+        }
 
         MandaStatus(
             finalName = uiState.finalManda.name,
@@ -134,7 +153,11 @@ fun InitializedMandaContent(
         ) {
             changeBottomSheet(
                 true,
-                MandaBottomSheetContentState.Insert(MandaBottomSheetContentType.MandaFinal(mandaUI = uiState.finalManda))
+                MandaBottomSheetContentState.Insert(
+                    MandaBottomSheetContentType.MandaFinal(
+                        mandaUI = uiState.finalManda
+                    )
+                )
             )
         }
 
@@ -142,6 +165,53 @@ fun InitializedMandaContent(
             mandaStateList = uiState.mandaStateList,
             changeBottomSheet = changeBottomSheet
         )
+
+//        Column(
+//            verticalArrangement = Arrangement.spacedBy(30.dp),
+//            modifier = Modifier
+//                .fillMaxSize()
+//        ) {
+//
+//
+//
+//        }
+    }
+}
+
+@Composable
+fun MandaTitle(
+    navigateToSetting: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = IconPack.Mandalart,
+                tint = HMColor.Primary,
+                contentDescription = "main_icon"
+            )
+            Text(
+                text = "하루 만다라트",
+                style = HmStyle.text16,
+                modifier = Modifier.padding(horizontal = 15.dp),
+                color = HMColor.Primary,
+            )
+        }
+        IconButton(
+            onClick = { navigateToSetting() }) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.Settings,
+                tint = HMColor.Primary,
+                contentDescription = ""
+            )
+        }
     }
 }
 
@@ -156,51 +226,66 @@ fun MandaStatus(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         ClickableText(
             text = AnnotatedString("\" $finalName \""),
             onClick = { onClickTitle() },
-            style = HmStyle.text24,
+            style = HmStyle.text24.copy(color = HMColor.Primary),
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Row {
-                Text(text = "핵심 목표 : ", style = HmStyle.text16)
-                Text(
-                    text = "$keyMandaCnt / $MAX_MANDA_KEY_SIZE",
-                    style = HmStyle.text16
-                )
-            }
-            Row {
-                Text(text = "세부 목표 : ", style = HmStyle.text16)
-                Text(
-                    text = "$detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
-                    style = HmStyle.text16
-                )
-            }
-        }
-        Column {
-            Text(
-                text = "달성률 ${(donePercentage * 100).roundToInt()} %",
-                style = HmStyle.text12,
-                color = HMColor.Primary,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End
-            )
-            LinearProgressIndicator(
-                progress = { animateDonePercentage },
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .clip(RoundedCornerShape(2.dp)),
-                color = HMColor.Primary,
-                trackColor = HMColor.Gray
-            )
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row {
+                    Text(
+                        text = stringResource(id = R.string.initialized_key_goal),
+                        style = HmStyle.text16
+                    )
+                    Text(
+                        text = " $keyMandaCnt / $MAX_MANDA_KEY_SIZE",
+                        style = HmStyle.text16
+                    )
+                }
+                Row {
+                    Text(
+                        text = stringResource(id = R.string.initialized_detail_goal),
+                        style = HmStyle.text16
+                    )
+                    Text(
+                        text = " $detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
+                        style = HmStyle.text16
+                    )
+                }
+            }
+            Column {
+                Text(
+                    text = stringResource(
+                        id = R.string.initialized_done_percentage,
+                        ((donePercentage * 100).roundToInt())
+                    ),
+                    style = HmStyle.text12,
+                    color = HMColor.Primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.End
+                )
+                LinearProgressIndicator(
+                    progress = { animateDonePercentage },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .clip(RoundedCornerShape(2.dp)),
+                    color = HMColor.Primary,
+                    trackColor = HMColor.Gray
+                )
+            }
         }
     }
 }
@@ -597,99 +682,6 @@ fun Mandalart(
 }
 
 
-@Composable
-fun MandaKeyBox(
-    name: String,
-    color: Color,
-    isDone: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .border(BorderStroke(1.5.dp, color), RoundedCornerShape(8.dp))
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isDone) color else HMColor.Background)
-            .clickable { onClick() }
-    ) {
-        Text(
-            modifier = Modifier.padding(5.dp),
-            textAlign = TextAlign.Center,
-            color = if (isDone) HMColor.Background else color,
-            text = name,
-            style = HmStyle.text6
-        )
-    }
-}
 
-@Composable
-fun MandaDetailBox(
-    name: String,
-    darkColor: Color,
-    lightColor: Color,
-    isDone: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isDone) darkColor else lightColor)
-            .clickable { onClick() }
-    ) {
-        Text(
-            textAlign = TextAlign.Center,
-            text = name,
-            color = if (isDone) HMColor.Background else HMColor.Text,
-            modifier = Modifier.padding(5.dp),
-            style = HmStyle.text4
-        )
-    }
-}
 
-@Composable
-fun MandaEmptyBox(
-    color: Color = HMColor.SubText,
-    onClick: () -> Unit
-) {
-    val stroke = Stroke(
-        width = 6f,
-        pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
-    )
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .clip(RoundedCornerShape(8.dp))
-            .drawBehind {
-                drawRoundRect(
-                    color = color,
-                    style = stroke,
-                    cornerRadius = CornerRadius(8.dp.toPx())
-                )
-            }
-            .clickable {
-                onClick()
-            }
-    ) {
-        Icon(
-            modifier = Modifier
-                .fillMaxSize()
-                .scale(0.35f),
-            imageVector = IconPack.Plus,
-            tint = HMColor.SubText,
-            contentDescription = ""
-        )
-    }
-}
 
-@Preview
-@Composable
-fun DetailBoxPreview() {
-    MandaEmptyBox() {}
-}

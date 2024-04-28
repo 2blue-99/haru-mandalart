@@ -6,14 +6,19 @@ import com.coldblue.network.SupabaseDataSourceImpl
 import com.coldblue.network.datasource.CurrentGroupDataSource
 import com.coldblue.network.datasource.MandaDetailDataSource
 import com.coldblue.network.datasource.MandaKeyDataSource
+import com.coldblue.network.datasource.NoticeDataSource
+import com.coldblue.network.datasource.SurveyDataSource
 import com.coldblue.network.datasource.TodoDataSource
 import com.coldblue.network.datasource.TodoGroupDataSource
+import com.coldblue.network.datasource.UpdateNoteDataSource
 import com.coldblue.network.datasourceImpl.CurrentGroupDataSourceImpl
 import com.coldblue.network.datasourceImpl.MandaDetailDataSourceImpl
 import com.coldblue.network.datasourceImpl.MandaKeyDataSourceImpl
+import com.coldblue.network.datasourceImpl.NoticeDataSourceImpl
+import com.coldblue.network.datasourceImpl.SurveyDataSourceImpl
 import com.coldblue.network.datasourceImpl.TodoDataSourceImpl
 import com.coldblue.network.datasourceImpl.TodoGroupDataSourceImpl
-import com.orhanobut.logger.Logger
+import com.coldblue.network.datasourceImpl.UpdateNoteNoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,4 +83,20 @@ object SupabaseModule {
     @Provides
     fun provideMandaDetailDataSource(client: SupabaseClient): MandaDetailDataSource =
         MandaDetailDataSourceImpl(client)
+
+    @Singleton
+    @Provides
+    fun provideUpdateNoteDataSource(client: SupabaseClient): UpdateNoteDataSource =
+        UpdateNoteNoteDataSourceImpl(client)
+
+    @Singleton
+    @Provides
+    fun provideNoticeDataSource(client: SupabaseClient): NoticeDataSource =
+        NoticeDataSourceImpl(client)
+
+    @Singleton
+    @Provides
+    fun provideSurveyDataSource(client: SupabaseClient): SurveyDataSource =
+        SurveyDataSourceImpl(client)
+
 }

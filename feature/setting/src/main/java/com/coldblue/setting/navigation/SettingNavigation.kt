@@ -11,8 +11,20 @@ fun NavController.navigateToSetting(navOptions: NavOptions? = null){
     this.navigate(settingRoute, navOptions)
 }
 
-fun NavGraphBuilder.settingScreen(){
+
+
+fun NavGraphBuilder.settingScreen(
+    navigateToNotice: () -> Unit,
+    navigateToSurvey: () -> Unit,
+    navigateToBackStack: () -> Unit,
+){
     composable(route = settingRoute){
-        SettingScreen()
+        SettingScreen(
+            navigateToNotice,
+            navigateToSurvey,
+            navigateToBackStack
+        )
     }
 }
+
+

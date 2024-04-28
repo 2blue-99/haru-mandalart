@@ -27,11 +27,16 @@ class LoginHelperImpl @Inject constructor(
 
 
     override val isLogin: Flow<LoginState> =
-        userDataSource.isStarted.combine(userDataSource.token) { isStarted, token ->
-            if (isStarted) {
-                if (token.isBlank()) LoginState.LoginWithOutAuth
-                else LoginState.AuthenticatedLogin
-            } else LoginState.Logout
+        combine(userDataSource.isStarted, userDataSource.isExplain, userDataSource.token) { isStarted, isExplain, token ->
+            if (isStarted && isExplain) {
+                if (token.isBlank())
+                    LoginState.NoneAuthLogin
+                else
+                    LoginState.AuthenticatedLogin
+            } else if(isStarted && !isExplain)
+                LoginState.Explain
+            else
+                LoginState.Logout
         }.catch {
             LoginState.Logout
         }
@@ -50,7 +55,7 @@ class LoginHelperImpl @Inject constructor(
         syncHelper.syncWrite()
     }
 
-    override suspend fun setLogout() {
+    override suspend fun logout() {
         client.auth.clearSession()
         alarmScheduler.cancelAll()
         userDataSource.reset()
@@ -61,7 +66,7 @@ class LoginHelperImpl @Inject constructor(
 
     override suspend fun deleteUser() {
         supabaseDataSource.deleteUser()
-        setLogout()
+        logout()
     }
 
     override suspend fun updatePermissionInitState(state: Boolean) {

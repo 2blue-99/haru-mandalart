@@ -18,7 +18,6 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,14 +40,13 @@ class MandaViewModel @Inject constructor(
     getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
-    private val deleteMandaAllUseCase: DeleteMandaAllUseCase
+    private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
 ) : ViewModel() {
 
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
                 getKeyMandaUseCase().combine(getDetailMandaUseCase()) { mandaKeys, mandaDetails ->
-                    Logger.d(mandaKeys)
                     val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
@@ -77,7 +75,6 @@ class MandaViewModel @Inject constructor(
     val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
 
     fun changeBottomSheet(isShow: Boolean, uiState: MandaBottomSheetContentState?) {
-
         if (isShow && uiState != null) {
             _mandaBottomSheetUIState.value = MandaBottomSheetUIState.Up(uiState)
         } else {

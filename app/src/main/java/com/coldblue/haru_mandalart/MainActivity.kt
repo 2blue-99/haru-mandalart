@@ -1,11 +1,14 @@
 package com.coldblue.haru_mandalart
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.app.Activity
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -23,7 +26,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
@@ -31,6 +37,7 @@ import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
+import com.coldblue.explain.ExplainScreen
 import com.coldblue.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -47,10 +54,14 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var syncHelper: SyncHelper
 
+    private lateinit var splashScreen: SplashScreen
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        splashScreen = installSplashScreen()
+        splashScreen()
+
         setContent {
             HarumandalartTheme {
                 Surface(
@@ -60,33 +71,59 @@ class MainActivity : ComponentActivity() {
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
-                            LoginState.Logout -> {
-                                CheckPermission()
-                                LoginScreen()
-                            }
-                            LoginState.LoginWithOutAuth -> {
-                                HMApp()
-                            }
-                            LoginState.AuthenticatedLogin -> {
-                                syncHelper.initialize()
-                                HMApp()
-                            }
-                            else -> {}
+                            LoginState.Explain -> ExplainScreen()
+                            LoginState.NoneAuthLogin -> HMApp()
+                            LoginState.AuthenticatedLogin -> syncHelper.initialize().also { HMApp() }
+                            LoginState.Logout -> LoginScreen()
+                            LoginState.Loading -> {}
                         }
                     }
                 }
             }
         }
     }
+
+    private fun splashScreen() {
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+
+            val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0.96f, 0.93f, 0.96f, 1f)
+            val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0.96f, 0.93f, 0.96f, 1f)
+
+            val bounce = ObjectAnimator.ofPropertyValuesHolder(
+                splashScreenView.iconView,
+                scaleX,
+                scaleY
+            )
+
+            val fadeOut = ObjectAnimator.ofFloat(
+                splashScreenView.view,
+                View.ALPHA,
+                0f
+            )
+
+            bounce.interpolator = AnticipateInterpolator()
+            bounce.duration = 500L
+
+            fadeOut.interpolator = AnticipateInterpolator()
+            fadeOut.duration = 700L
+
+            bounce.start()
+
+            bounce.doOnEnd { fadeOut.start() }
+
+            fadeOut.doOnEnd { splashScreenView.remove() }
+        }
+    }
+
     @Composable
-    fun CheckPermission(){
+    fun CheckPermission() {
         val context = LocalContext.current
+        val rejectAlarmMessage = stringResource(R.string.app_reject_alarm)
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
                 if (!isGranted)
-                    Toast.makeText(context, "알림 권한은 앱 설정에서 변경 가능합니다.", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(context, rejectAlarmMessage, Toast.LENGTH_SHORT).show()
                 CoroutineScope(Dispatchers.IO).launch {
                     loginHelper.updatePermissionInitState(true)
                 }
@@ -94,7 +131,11 @@ class MainActivity : ComponentActivity() {
         )
         LaunchedEffect(permissionLauncher) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_DENIED
+                ) {
                     if (!loginHelper.initPermissionState.first()) {
                         permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
@@ -109,14 +150,13 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         var backPressedState by remember { mutableStateOf(true) }
         var backPressedTime = 0L
-
+        val backNoticeMessage = stringResource(R.string.app_back_notice)
         BackHandler(enabled = backPressedState) {
             if (System.currentTimeMillis() - backPressedTime <= 1000L) {
-
                 (context as Activity).finish()
             } else {
                 backPressedState = true
-                Toast.makeText(context, "한 번 더 누르시면 앱이 종료됩니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, backNoticeMessage, Toast.LENGTH_SHORT).show()
                 backPressedTime = System.currentTimeMillis()
             }
         }

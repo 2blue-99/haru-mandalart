@@ -5,6 +5,7 @@ import com.coldblue.designsystem.iconpack.Check
 import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Home
 import com.coldblue.designsystem.iconpack.Manda
+import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.iconpack.Newzoomin
 import com.coldblue.designsystem.iconpack.Newzoomout
 import com.coldblue.designsystem.iconpack.Plus
@@ -21,6 +22,6 @@ public val IconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(Check, History, Home, Manda, Newzoomin, Newzoomout, Plus, ZoomIn, ZoomOut)
+    __AllIcons= listOf(Check, History, Home, Manda, Newzoomin, Newzoomout, Plus, ZoomIn, ZoomOut, Mandalart)
     return __AllIcons!!
   }

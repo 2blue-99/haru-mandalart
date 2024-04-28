@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,17 +20,21 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.coldblue.designsystem.R
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.login.state.LoginUiState
@@ -44,20 +47,37 @@ fun LoginScreen(
     val context = LocalContext.current
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
     val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
+    var openDialog by remember { mutableStateOf(false) }
 
     when (val state = loginUiState) {
-        is LoginUiState.Fail -> Toast.makeText(
-            context,
-            "실패 : ${state.loginException.msg}",
-            Toast.LENGTH_SHORT
-        ).show()
-
+        is LoginUiState.Fail -> {
+            Toast.makeText(
+                context,
+                stringResource(id = R.string.login_fail, state.loginException.msg),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
         else -> {}
     }
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(
         onResult = { result -> loginViewModel.checkLoginState(result) },
         fallback = { }
     )
+
+    if(openDialog){
+        HMTextDialog(
+            targetText = "",
+            text = stringResource(id = R.string.login_non_member_notice),
+            confirmText = stringResource(id = R.string.login_check),
+            tintColor = HMColor.Primary,
+            subText = stringResource(id = R.string.login_non_member_sub_notice),
+            onDismissRequest = { openDialog = false },
+            onConfirmation = {
+                loginViewModel.loginWithOutAuth()
+            }
+        )
+    }
+
 
     Column(
         modifier = Modifier
@@ -76,14 +96,14 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.4f)
                     .aspectRatio(1f),
-                painter = painterResource(id = com.coldblue.login.R.drawable.app_icon),
+                painter = painterResource(id = R.drawable.app_icon),
                 contentDescription = "앱 아이콘"
             )
             Column(
                 Modifier.fillMaxWidth(0.4f)
             ) {
-                Text(text = "하루,", style = HmStyle.text30, color = HMColor.Primary)
-                Text(text = "만다라트", style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = R.string.login_haru), style = HmStyle.text30, color = HMColor.Primary)
+                Text(text = stringResource(id = R.string.login_mandalart), style = HmStyle.text30, color = HMColor.Primary)
             }
         }
         Box(
@@ -91,27 +111,24 @@ fun LoginScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
+
                 LoginButton {
                     if (networkState) {
                         authState.startFlow()
                     } else {
                         Toast.makeText(
                             context,
-                            " 인터넷 연결을 확인하세요",
+                            R.string.login_check_connecting,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
                 NotMemberLoginButton {
-                    Toast.makeText(
-                        context,
-                        "비회원 사용시 앱을 삭제하면 데이터가 전부 삭제됩니다.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    loginViewModel.loginWithOutAuth()
+                    openDialog = true
                 }
             }
         }
@@ -140,8 +157,8 @@ fun NotMemberLoginButton(
 
         ) {
             Text(
-                color = HMColor.SubText,
-                text = "비회원으로 시작하기",
+                color = HMColor.SubLightText,
+                text = stringResource(id = R.string.login_non_member_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
             )
@@ -166,20 +183,19 @@ fun LoginButton(
         ),
     ) {
         Row(
-//            modifier = Modifier.padding(vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
 
         ) {
             Image(
                 modifier = Modifier.size(22.dp),
-                painter = painterResource(id = R.drawable.google_icon),
+                painter = painterResource(id = com.coldblue.designsystem.R.drawable.google_icon),
                 contentDescription = null
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 color = HMColor.Text,
-                text = "Google로 시작하기",
+                text = stringResource(id = com.coldblue.login.R.string.login_google_start),
                 style = TextStyle.Default,
                 fontWeight = FontWeight.Medium
             )

@@ -15,6 +15,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "haru-mandalart"
+
 include(":app")
 
 include(":core:data")
@@ -25,12 +26,12 @@ include(":core:network")
 include(":core:database")
 include(":core:designsystem")
 
-
-
-
 include(":feature:todo")
 include(":feature:manda")
 include(":feature:tutorial")
 include(":feature:setting")
 include(":feature:history")
 include(":feature:login")
+include(":feature:notice")
+include(":feature:survey")
+include(":feature:explain")

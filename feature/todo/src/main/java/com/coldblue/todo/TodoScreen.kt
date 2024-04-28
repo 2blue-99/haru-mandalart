@@ -270,7 +270,7 @@ private fun TodoContent(
                     textAlign = TextAlign.Center,
                     text = "할 일을 추가해 주세요!",
                     style = HmStyle.text20,
-                    color = HMColor.SubText
+                    color = HMColor.SubLightText
                 )
             }
 
@@ -310,7 +310,7 @@ fun WeeklyDatePicker(
         ) {
             weekDates.forEach { date ->
                 val backGround = if (date == today) HMColor.Primary else HMColor.Box
-                val textColor = if (date == today) HMColor.Background else HMColor.SubText
+                val textColor = if (date == today) HMColor.Background else HMColor.SubLightText
 
                 Surface(
                     shape = RoundedCornerShape(5.dp),

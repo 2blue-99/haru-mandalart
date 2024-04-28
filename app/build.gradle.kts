@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.coldblue.haru_mandalart"
-        versionCode = 3
-        versionName = "1.0"
+        versionCode = 5
+        versionName = "1.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -26,6 +26,11 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            applicationIdSuffix = ".debug"
+            isMinifyEnabled = false
+        }
+
     }
     packaging {
         resources {
@@ -42,6 +47,9 @@ dependencies {
     implementation(project(":feature:setting"))
     implementation(project(":feature:history"))
     implementation(project(":feature:login"))
+    implementation(project(":feature:notice"))
+    implementation(project(":feature:survey"))
+    implementation(project(":feature:explain"))
 
 
     implementation(project(":core:designsystem"))

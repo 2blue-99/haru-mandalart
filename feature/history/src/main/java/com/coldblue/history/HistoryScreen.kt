@@ -6,8 +6,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.feature.history.R
 import com.coldblue.history.content.HistoryContent
 import com.coldblue.model.Todo
 import java.time.LocalDate
@@ -48,7 +50,7 @@ fun HistoryContentWithState(
     date : LocalDate,
 ) {
     when (uiState) {
-        is HistoryUiState.Loading -> Text(text = "로딩")
+        is HistoryUiState.Loading -> Text(text = stringResource(id = R.string.hisotry_loading))
         is HistoryUiState.Error -> Text(text = uiState.msg)
         is HistoryUiState.Success ->
             HistoryContent(

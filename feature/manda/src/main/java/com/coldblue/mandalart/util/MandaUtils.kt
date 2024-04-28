@@ -125,7 +125,7 @@ object MandaUtils {
             3 -> Pair(HMColor.Dark.Yellow, HMColor.Light.Yellow)
             4 -> Pair(HMColor.Dark.Green, HMColor.Light.Green)
             5 -> Pair(HMColor.Dark.Blue, HMColor.Light.Blue)
-            6 -> Pair(HMColor.Dark.Indigo, HMColor.Light.Indigo)
+            6 -> Pair(HMColor.Dark.Mint, HMColor.Light.Mint)
             else -> Pair(HMColor.Dark.Purple, HMColor.Light.Purple)
         }
     }
@@ -138,7 +138,7 @@ object MandaUtils {
             HMColor.Dark.Yellow -> 3
             HMColor.Dark.Green -> 4
             HMColor.Dark.Blue -> 5
-            HMColor.Dark.Indigo -> 6
+            HMColor.Dark.Mint -> 6
             else -> 0
         }
     }

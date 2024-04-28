@@ -17,7 +17,7 @@ class UserDataSourceImpl @Inject constructor(
     private val tokenKey = stringPreferencesKey("token")
     private val isStartedKey = booleanPreferencesKey("verifiedUser")
     private val emailKey = stringPreferencesKey("email")
-    private val tutorialKey = booleanPreferencesKey("tutorial")
+    private val explainKey = booleanPreferencesKey("explain")
     private val alarmKey = booleanPreferencesKey("alarm")
     private val mandaInitStateKey = booleanPreferencesKey("initManda")
     private val permissionInitStateKey = booleanPreferencesKey("initPermission")
@@ -28,8 +28,8 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.data.map { preferences -> preferences[isStartedKey] ?: false }
     override val email: Flow<String> =
         dataStore.data.map { preferences -> preferences[emailKey] ?: "비회원" }
-    override val isTutorial: Flow<Boolean> =
-        dataStore.data.map { preferences -> preferences[tutorialKey] ?: false }
+    override val isExplain: Flow<Boolean> =
+        dataStore.data.map { preferences -> preferences[explainKey] ?: false }
     override val isAlarm: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[alarmKey] ?: true }
     override val mandaInitState: Flow<Boolean> =
@@ -41,7 +41,6 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.edit { preferences -> preferences[tokenKey] = "" }
         dataStore.edit { preferences -> preferences[isStartedKey] = false }
         dataStore.edit { preferences -> preferences[emailKey] = "비회원" }
-        dataStore.edit { preferences -> preferences[tutorialKey] = false }
         dataStore.edit { preferences -> preferences[alarmKey] = false }
         dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
     }
@@ -64,9 +63,9 @@ class UserDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateTutorial(state: Boolean) {
+    override suspend fun updateExplain(state: Boolean) {
         dataStore.edit { preferences ->
-            preferences[tutorialKey] = state
+            preferences[explainKey] = state
         }
     }
 

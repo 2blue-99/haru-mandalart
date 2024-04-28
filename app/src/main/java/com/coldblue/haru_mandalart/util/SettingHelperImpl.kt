@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import com.coldblue.data.util.SettingHelper
+import com.coldblue.haru_mandalart.R
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import javax.inject.Inject
 
@@ -32,8 +33,8 @@ class SettingHelperImpl @Inject constructor(
             )
             type = "plain/Text"
 
-            putExtra(Intent.EXTRA_SUBJECT, "[하루 만다라트] 문의")
-            putExtra(Intent.EXTRA_TEXT, "문의내용: ")
+            putExtra(Intent.EXTRA_SUBJECT, R.string.setting_mail_title)
+            putExtra(Intent.EXTRA_TEXT, R.string.setting_mail_content)
             setPackage("com.google.android.gm")
         }
 
@@ -42,14 +43,13 @@ class SettingHelperImpl @Inject constructor(
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             )
         } catch (e: Exception) {
-            Toast.makeText(context, "메일을 전송할 수 없습니다.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, R.string.setting_fail_mail, Toast.LENGTH_LONG).show()
         }
     }
-
+//    com.coldblue.haru_mandalart
     override fun showPlayStore() {
-
-        val packageName = context.packageName
-        val playStoreUri = Uri.parse("market://details?id=$packageName")
+        val playStoreUri = Uri.parse("market://details?id=com.coldblue.haru_mandalart")
+//        val playStoreUri = Uri.parse("market://details?id=$packageName")
         val playStoreIntent = Intent(Intent.ACTION_VIEW, playStoreUri)
         playStoreIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         try {
@@ -57,7 +57,7 @@ class SettingHelperImpl @Inject constructor(
         } catch (e: Exception) {
             Toast.makeText(
                 context,
-                "플레이스토어 실행에 실패하였습니다.",
+                R.string.setting_fail_playStore,
                 Toast.LENGTH_LONG
             ).show()
         }

@@ -23,21 +23,21 @@ fun HMApp(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            if (navController.checkTopBar())
-                HMTopBar {
-                    navController.popBackStack()
-                }
-        },
-        bottomBar = {
-            if (navController.checkBottomNavBar())
-                HMBottomBar(
-                    destination = navController.bottomNavDestination,
-                    navigate = navController::navigateToTopLevelDestination,
-                    checkCurrentLocation = navController.currentLocation
-                )
-
-        }
+//        topBar = {
+//            val cur = navController.checkTopBar()
+//                HMTopBar(title = cur.second) {
+//                    navController.popBackStack()
+//                }
+//        },
+//        bottomBar = {
+//            if (navController.checkBottomNavBar())
+//                HMBottomBar(
+//                    destination = navController.bottomNavDestination,
+//                    navigate = navController::navigateToTopLevelDestination,
+//                    checkCurrentLocation = navController.currentLocation
+//                )
+//
+//        }
     ) { padding ->
         HMNavHost(
             modifier = Modifier.padding(padding),
