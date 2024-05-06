@@ -11,6 +11,7 @@ object HMColor {
     val SubDarkText = Color(0xFF87898D)
     val NegativeText = Color(0xFFB93B50)
     val Gray = Color(0xFFD9DBE3)
+    val DarkGray = Color(0xFFB8BBC0)
     val Background = Color(0xFFFFFFFF)
     val SurveyGreen = Color(0xFF167263)
     val SurveyYellow = Color(0xFFA7741B)

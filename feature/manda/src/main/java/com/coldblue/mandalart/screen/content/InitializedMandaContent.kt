@@ -443,7 +443,7 @@ fun Mandalart(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .border(2.dp, HMColor.Gray, shape = RoundedCornerShape(8.dp))
+                    .border(1.5.dp, HMColor.DarkGray, shape = RoundedCornerShape(8.dp))
             ) {
                 item {
                     Column(
