@@ -10,10 +10,6 @@ import com.coldblue.data.repository.notice.NoticeRepository
 import com.coldblue.data.repository.notice.NoticeRepositoryImpl
 import com.coldblue.data.repository.survey.SurveyRepository
 import com.coldblue.data.repository.survey.SurveyRepositoryImpl
-import com.coldblue.data.repository.todo.CurrentGroupRepository
-import com.coldblue.data.repository.todo.CurrentGroupRepositoryImpl
-import com.coldblue.data.repository.todo.TodoGroupRepository
-import com.coldblue.data.repository.todo.TodoGroupRepositoryImpl
 import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.repository.todo.TodoRepositoryImpl
 import com.coldblue.data.repository.user.UserRepository
@@ -50,14 +46,6 @@ interface RepositoryModule {
         todoRepository: TodoRepositoryImpl
     ): TodoRepository
 
-    @Binds
-    fun bindCurrentGroupRepository(
-        currentGroupRepository: CurrentGroupRepositoryImpl
-    ): CurrentGroupRepository
-    @Binds
-    fun bindTodoGroupRepository(
-        todoGroupRepository: TodoGroupRepositoryImpl
-    ): TodoGroupRepository
     @Binds
     fun bindNoticeRepository(
         noticeRepository: NoticeRepositoryImpl

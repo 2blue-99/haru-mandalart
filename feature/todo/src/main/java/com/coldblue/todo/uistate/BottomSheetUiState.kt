@@ -14,6 +14,5 @@ sealed interface ContentState {
 
     data class Group(
         override val title: String = "그룹",
-        val currentGroup: CurrentGroupState,
     ) : ContentState
 }
