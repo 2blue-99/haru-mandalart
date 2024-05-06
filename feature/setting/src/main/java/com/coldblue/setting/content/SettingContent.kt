@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -62,13 +63,14 @@ fun SettingContent(
 
 
     if (openDialog.first) {
-        when(openDialog.second){
+        when (openDialog.second) {
             DialogType.Logout -> {
                 LogoutDialog(
                     onDismiss = { openDialog = openDialog.copy(false) },
                     onResign = logout
                 )
             }
+
             DialogType.Resign -> {
                 ResignDialog(
                     onDismiss = { openDialog = openDialog.copy(false) },
@@ -92,13 +94,7 @@ fun SettingContent(
             TopSpacer()
         }
         item {
-            SettingTile {
-                Text(
-                    text = stringResource(id = R.string.setting_general),
-                    style = HmStyle.text12,
-                    color = HMColor.Primary,
-                    fontWeight = FontWeight.Bold
-                )
+            SettingTile(stringResource(id = R.string.setting_general)) {
                 SettingItem(title = stringResource(id = R.string.setting_account)) {
                     Text(text = email)
                 }
@@ -116,14 +112,7 @@ fun SettingContent(
         }
 
         item {
-            SettingTile {
-
-                Text(
-                    text = stringResource(id = R.string.setting_feedback),
-                    style = HmStyle.text12,
-                    color = HMColor.Primary,
-                    fontWeight = FontWeight.Bold
-                )
+            SettingTile(stringResource(id = R.string.setting_feedback)) {
                 SettingItem(
                     title = stringResource(id = R.string.setting_survey),
                     isClickable = true,
@@ -156,15 +145,7 @@ fun SettingContent(
         }
 
         item {
-            SettingTile {
-
-                Text(
-                    text = stringResource(id = R.string.setting_information),
-                    style = HmStyle.text12,
-                    color = HMColor.Primary,
-                    fontWeight = FontWeight.Bold
-                )
-
+            SettingTile(stringResource(id = R.string.setting_information)) {
                 SettingItem(
                     title = stringResource(id = R.string.setting_version),
                 ) {
@@ -184,13 +165,8 @@ fun SettingContent(
         }
 
         item {
-            SettingTile {
-                Text(
-                    text = stringResource(id = R.string.setting_manage_account),
-                    style = HmStyle.text12,
-                    color = HMColor.Primary,
-                    fontWeight = FontWeight.Bold
-                )
+            SettingTile(stringResource(id = R.string.setting_manage_account)) {
+
                 if (loginState == LoginState.AuthenticatedLogin) {
                     SettingItem(
                         title = stringResource(id = R.string.setting_logout),
@@ -257,13 +233,20 @@ fun SettingContent(
 
 @Composable
 fun SettingTile(
+    text: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
         modifier = Modifier
             .background(HMColor.Background)
-            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
     ) {
+        Text(
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp),
+            text = text,
+            style = HmStyle.text12,
+            color = HMColor.Primary,
+            fontWeight = FontWeight.Bold
+        )
         content()
     }
     TopSpacer()
@@ -282,7 +265,6 @@ fun SettingItem(
         Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .padding(1.dp)
             .clickable(isClickable) {
                 if (onClick != null) {
                     onClick()
@@ -292,12 +274,14 @@ fun SettingItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            modifier = Modifier.padding(start = 16.dp),
+            modifier = Modifier.padding(start = 32.dp),
             text = title,
             style = HmStyle.text16,
             color = color
         )
-        content()
+        Box(modifier = Modifier.padding(end = 16.dp)) {
+            content()
+        }
     }
 //    if (!isLast)
 //        HorizontalDivider(
@@ -309,7 +293,7 @@ fun SettingItem(
 fun ResignDialog(
     onDismiss: () -> Unit,
     deleteUser: () -> Unit
-){
+) {
     HMTextDialog(
         targetText = "",
         text = stringResource(id = R.string.delete_dialog_resign),
@@ -328,7 +312,7 @@ fun ResignDialog(
 fun LogoutDialog(
     onDismiss: () -> Unit,
     onResign: () -> Unit
-){
+) {
     HMTextDialog(
         targetText = "",
         text = stringResource(id = R.string.delete_dialog_logout),
