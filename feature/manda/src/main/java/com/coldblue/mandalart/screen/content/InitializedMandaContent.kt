@@ -4,7 +4,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -47,28 +45,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.component.HMTitleComponent
-import com.coldblue.designsystem.iconpack.Manda
 import com.coldblue.designsystem.iconpack.Mandalart
-import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.iconpack.ZoomIn
 import com.coldblue.designsystem.iconpack.ZoomOut
 import com.coldblue.designsystem.theme.HMColor
@@ -87,6 +74,7 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -106,6 +94,8 @@ fun InitializedMandaContent(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
+    changeCurrentIndex: (Int) -> Unit
+
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -140,7 +130,7 @@ fun InitializedMandaContent(
         verticalArrangement = Arrangement.spacedBy(30.dp),
     ) {
 
-        MandaTitle{
+        MandaTitle {
             navigateToSetting()
         }
 
@@ -163,7 +153,8 @@ fun InitializedMandaContent(
 
         Mandalart(
             mandaStateList = uiState.mandaStateList,
-            changeBottomSheet = changeBottomSheet
+            changeBottomSheet = changeBottomSheet,
+            changeCurrentIndex = changeCurrentIndex
         )
 
 //        Column(
@@ -293,7 +284,9 @@ fun MandaStatus(
 @Composable
 fun Mandalart(
     mandaStateList: List<MandaState>,
-    changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit,
+    changeCurrentIndex: (Int) -> Unit
+
 ) {
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
@@ -337,6 +330,7 @@ fun Mandalart(
     )
 
     fun zoomInAndOut(index: Int) {
+        changeCurrentIndex(index)
         when (index) {
             0, 1, 3, 4 -> {
                 isZoom = true
