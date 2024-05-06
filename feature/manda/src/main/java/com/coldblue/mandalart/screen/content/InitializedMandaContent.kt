@@ -38,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,14 +45,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.iconpack.ZoomIn
@@ -68,12 +70,14 @@ import com.coldblue.mandalart.screen.MandaKeyBox
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
+import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -244,15 +248,19 @@ fun Mandalart(
 ) {
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
-    var pivotX by remember { mutableFloatStateOf(0f) }
-    var pivotY by remember { mutableFloatStateOf(0f) }
+    var translateX by remember { mutableFloatStateOf(0f) }
+    var translateY by remember { mutableFloatStateOf(0f) }
     var isZoom by remember { mutableStateOf(false) }
     var isGesture by remember { mutableStateOf(false) }
-    var beforeDirection by remember { mutableIntStateOf(-1) }
-    var afterDirection by remember { mutableIntStateOf(-1) }
+    var direction by remember { mutableStateOf(MandaGestureState.Down) }
 
-    val dampingRatio = 1f // 클수록 스프링 효과 감소
-    val stiffness = 1000f // 클수록 빨리 확대, 축소
+    var mandaSize by remember { mutableStateOf(Size.Zero) }
+
+    val widthList = listOf(mandaSize.width, 0f, -mandaSize.width)
+    val heightList = listOf(mandaSize.height, 0f, -mandaSize.height)
+
+    val dampingRatio = 0.8f // 클수록 스프링 효과 감소
+    val stiffness = 1200f // 클수록 빨리 확대, 축소
 
     val animatedScaleX by animateFloatAsState(
         targetValue = scaleX,
@@ -268,135 +276,77 @@ fun Mandalart(
             stiffness = stiffness
         ), label = ""
     )
-    val animatedPivotX by animateFloatAsState(
-        targetValue = pivotX,
+    val animatedTranslateX by animateFloatAsState(
+        targetValue = translateX,
         label = "",
         finishedListener = {
             isGesture = false
         }
     )
-    val animatedPivotY by animateFloatAsState(
-        targetValue = pivotY,
+    val animatedTranslateY by animateFloatAsState(
+        targetValue = translateY,
         label = "",
         finishedListener = {
             isGesture = false
         }
     )
-
-    fun zoomInAndOut(index: Int) {
-        when (index) {
-            0, 1, 3, 4 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 0f
-                pivotY = 0f
-                beforeDirection = 0
-            }
-
-            2, 5 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 1f
-                pivotY = 0f
-                beforeDirection = 1
-            }
-
-            6, 7 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 0f
-                pivotY = 1f
-                beforeDirection = 2
-            }
-
-            8 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 1f
-                pivotY = 1f
-                beforeDirection = 3
-            }
-
-            // 축소
-            else -> {
-                isZoom = false
-                scaleX = 1.0f
-                scaleY = 1.0f
-            }
-        }
-    }
 
     fun dragStartDetector(dragAmount: Offset) {
         val (x, y) = dragAmount
         if (abs(x) > abs(y)) {
             when {
-                x > 0 -> {  // left
-                    if (beforeDirection == 1)
-                        afterDirection = 0
-                    else if (beforeDirection == 3)
-                        afterDirection = 2
-                }
-
-                x < 0 -> {  // right
-                    if (beforeDirection == 0)
-                        afterDirection = 1
-                    else if (beforeDirection == 2)
-                        afterDirection = 3
-                }
+                x > 0 -> direction = MandaGestureState.Left
+                x < 0 -> direction = MandaGestureState.Right
             }
         } else {
             when {
-                y > 0 -> {    // Top
-                    if (beforeDirection == 2)
-                        afterDirection = 0
-                    else if (beforeDirection == 3)
-                        afterDirection = 1
-                }
-
-                y < 0 -> {  // Bottom
-                    if (beforeDirection == 0)
-                        afterDirection = 2
-                    else if (beforeDirection == 1)
-                        afterDirection = 3
-                }
+                y > 0 -> direction = MandaGestureState.Up
+                y < 0 -> direction = MandaGestureState.Down
             }
         }
     }
 
-    fun dragEndDetector() {
+    fun gestureController() {
         isGesture = true
-        when (afterDirection) {
-            0 -> {
-                if (beforeDirection == 1)
-                    zoomInAndOut(0)
-                else if (beforeDirection == 2)
-                    zoomInAndOut(0)
+        scaleX = 3f
+        scaleY = 3f
+        when (direction) {
+            MandaGestureState.Left -> {
+                if(translateX < mandaSize.width)
+                    translateX += mandaSize.width
             }
 
-            1 -> {
-                if (beforeDirection == 0)
-                    zoomInAndOut(2)
-                else if (beforeDirection == 3)
-                    zoomInAndOut(2)
+            MandaGestureState.Right -> {
+                if(translateX > -mandaSize.width)
+                    translateX -= mandaSize.width
             }
 
-            2 -> {
-                if (beforeDirection == 0)
-                    zoomInAndOut(6)
-                else if (beforeDirection == 3)
-                    zoomInAndOut(6)
+            MandaGestureState.Up -> {
+                if(translateY < mandaSize.height)
+                    translateY += mandaSize.height
             }
 
-            3 -> {
-                if (beforeDirection == 1)
-                    zoomInAndOut(8)
-                else if (beforeDirection == 2)
-                    zoomInAndOut(8)
+            MandaGestureState.Down -> {
+                if(translateY > -mandaSize.height)
+                    translateY -= mandaSize.height
             }
+        }
+    }
+
+    fun zoomController(index: Int) {
+        Logger.d(index)
+        if(index != -1){
+            isZoom = true
+            scaleX = 3f
+            scaleY = 3f
+            translateX += widthList[index % 3]
+            translateY += heightList[index / 3]
+        }else{
+            isZoom = false
+            scaleX = 1f
+            scaleY = 1f
+            translateX = 0f
+            translateY = 0f
         }
     }
 
@@ -413,9 +363,9 @@ fun Mandalart(
                 ),
                 onClick = {
                     if (isZoom)
-                        zoomInAndOut(-1)
+                        zoomController(-1)
                     else
-                        zoomInAndOut(1)
+                        zoomController(1)
                 }) {
                 if (isZoom)
                     Icon(
@@ -449,12 +399,10 @@ fun Mandalart(
                     Column(
                         modifier = Modifier
                             .graphicsLayer(
-                                transformOrigin = TransformOrigin(
-                                    if (isGesture) animatedPivotX else pivotX,
-                                    if (isGesture) animatedPivotY else pivotY
-                                ),
                                 scaleX = animatedScaleX,
                                 scaleY = animatedScaleY,
+                                translationX = animatedTranslateX,
+                                translationY = animatedTranslateY,
                             )
                             .pointerInput(isZoom) {
                                 if (isZoom)
@@ -464,9 +412,12 @@ fun Mandalart(
                                             dragStartDetector(dragAmount)
                                         },
                                         onDragEnd = {
-                                            dragEndDetector()
+                                            gestureController()
                                         }
                                     )
+                            }
+                            .onGloballyPositioned {
+                                mandaSize = it.size.toSize()
                             }
                     ) {
                         repeat(3) { keyRow ->
@@ -608,7 +559,7 @@ fun Mandalart(
                                                 .aspectRatio(1F)
                                                 .clickable {
                                                     if (!isZoom) {
-                                                        zoomInAndOut(keyColumn + keyRow * 3)
+                                                        zoomController(keyColumn + keyRow * 3)
                                                     }
                                                 }
                                             )
