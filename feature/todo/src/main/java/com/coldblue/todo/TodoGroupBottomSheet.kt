@@ -71,7 +71,7 @@ fun TodoGroupBottomSheet(
             targetText = selectTodoGroup,
             text = " 이(가) 포함한 모든 할 일은 그룹없음 상태가 돼요.",
             confirmText = "삭제",
-            tintColor = HMColor.Dark.Red,
+            tintColor = HMColor.Manda.Red,
             onDismissRequest = {
                 openDeleteDialog = false
             },

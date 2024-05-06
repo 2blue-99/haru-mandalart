@@ -17,7 +17,7 @@ object HMColor {
     val Box = Color(0xFFF2F4F8)
 
 
-    object Dark {
+    object Manda {
         val Pink = Color(0xFFBF7EB8)
         val Red = Color(0xFFE17582)
         val Orange = Color(0xFFF497A9)
@@ -26,16 +26,5 @@ object HMColor {
         val Blue = Color(0xFF7B89C6)
         val Mint = Color(0xFF6EC7CF)
         val Purple = Color(0xFF8979BA)
-    }
-
-    object Light {
-        val Pink = Color(0xFFDBB4C7)
-        val Red = Color(0xFFFFD7DF)
-        val Orange = Color(0xFFF2AD86)
-        val Yellow = Color(0xFFFFF8B2)
-        val Green = Color(0xFFDDF7D0)
-        val Blue = Color(0xFFC5E3FD)
-        val Mint = Color(0xFF91DAD6)
-        val Purple = Color(0xFFCDB3DA)
     }
 }

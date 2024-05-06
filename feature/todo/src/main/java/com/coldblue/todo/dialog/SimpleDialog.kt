@@ -51,7 +51,7 @@ fun CurrentGroupDialog(
             targetText = groupName,
             text = " 이(가) 포함된 오늘 할 일은 그룹없음 상태가 돼요.",
             confirmText = "삭제",
-            tintColor = HMColor.Dark.Red,
+            tintColor = HMColor.Manda.Red,
             onDismissRequest = {
                 openDeleteDialog = false
             },
@@ -96,7 +96,7 @@ fun CurrentGroupDialog(
                     }
                 )
                 if (isSame) {
-                    Text(text = "이미 존재하는 그룹이에요.", color = HMColor.Dark.Red)
+                    Text(text = "이미 존재하는 그룹이에요.", color = HMColor.Manda.Red)
                 }
             }
         }, onDismissRequest = {
@@ -166,7 +166,7 @@ fun TodoGroupDialog(
                     }
                 )
                 if (isSame) {
-                    Text(text = "이미 존재하는 그룹이에요.", color = HMColor.Dark.Red)
+                    Text(text = "이미 존재하는 그룹이에요.", color = HMColor.Manda.Red)
                 }
             }
         }, onDismissRequest = {

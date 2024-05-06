@@ -659,7 +659,7 @@ fun TodoItem(
                         Text(
                             text = todo.time!!.getDisplayName(),
                             style = HmStyle.text12,
-                            color = if (!todo.isDone && todo.time!!.isBefore(LocalTime.now())) HMColor.Dark.Red else HMColor.Text
+                            color = if (!todo.isDone && todo.time!!.isBefore(LocalTime.now())) HMColor.Manda.Red else HMColor.Text
                         )
                     }
                 }

@@ -4,7 +4,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -47,28 +45,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.component.HMTitleComponent
-import com.coldblue.designsystem.iconpack.Manda
 import com.coldblue.designsystem.iconpack.Mandalart
-import com.coldblue.designsystem.iconpack.Plus
 import com.coldblue.designsystem.iconpack.ZoomIn
 import com.coldblue.designsystem.iconpack.ZoomOut
 import com.coldblue.designsystem.theme.HMColor
@@ -137,7 +124,7 @@ fun InitializedMandaContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
 
         MandaTitle{
@@ -146,8 +133,6 @@ fun InitializedMandaContent(
 
         MandaStatus(
             finalName = uiState.finalManda.name,
-            keyMandaCnt = uiState.keyMandaCnt,
-            detailMandaCnt = uiState.detailMandaCnt,
             donePercentage = uiState.donePercentage,
             animateDonePercentage = animateDonePercentage.value
         ) {
@@ -165,16 +150,6 @@ fun InitializedMandaContent(
             mandaStateList = uiState.mandaStateList,
             changeBottomSheet = changeBottomSheet
         )
-
-//        Column(
-//            verticalArrangement = Arrangement.spacedBy(30.dp),
-//            modifier = Modifier
-//                .fillMaxSize()
-//        ) {
-//
-//
-//
-//        }
     }
 }
 
@@ -218,8 +193,6 @@ fun MandaTitle(
 @Composable
 fun MandaStatus(
     finalName: String,
-    keyMandaCnt: Int,
-    detailMandaCnt: Int,
     donePercentage: Float,
     animateDonePercentage: Float,
     onClickTitle: () -> Unit
@@ -239,32 +212,6 @@ fun MandaStatus(
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.initialized_key_goal),
-                        style = HmStyle.text16
-                    )
-                    Text(
-                        text = " $keyMandaCnt / $MAX_MANDA_KEY_SIZE",
-                        style = HmStyle.text16
-                    )
-                }
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.initialized_detail_goal),
-                        style = HmStyle.text16
-                    )
-                    Text(
-                        text = " $detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
-                        style = HmStyle.text16
-                    )
-                }
-            }
             Column {
                 Text(
                     text = stringResource(
@@ -281,7 +228,7 @@ fun MandaStatus(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(10.dp)
-                        .clip(RoundedCornerShape(2.dp)),
+                        .clip(RoundedCornerShape(7.dp)),
                     color = HMColor.Primary,
                     trackColor = HMColor.Gray
                 )
@@ -496,7 +443,7 @@ fun Mandalart(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .border(0.1.dp, HMColor.Primary, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, HMColor.Gray, shape = RoundedCornerShape(8.dp))
             ) {
                 item {
                     Column(
@@ -571,9 +518,7 @@ fun Mandalart(
                                                                                 .weight(1f)
                                                                                 .padding(2.dp)
                                                                         ) {
-                                                                            MandaEmptyBox(
-                                                                                color = smallBox.mandaUI.darkColor
-                                                                            ) {
+                                                                            MandaEmptyBox {
                                                                                 changeBottomSheet(
                                                                                     true,
                                                                                     MandaBottomSheetContentState.Insert(
@@ -602,7 +547,7 @@ fun Mandalart(
                                                                         ) {
                                                                             MandaKeyBox(
                                                                                 name = smallBoxData.name,
-                                                                                color = smallBoxData.darkColor,
+                                                                                color = smallBoxData.color,
                                                                                 isDone = smallBoxData.isDone
                                                                             ) {
                                                                                 changeBottomSheet(
@@ -635,8 +580,7 @@ fun Mandalart(
                                                                         ) {
                                                                             MandaDetailBox(
                                                                                 name = data.name,
-                                                                                darkColor = data.darkColor,
-                                                                                lightColor = data.lightColor,
+                                                                                color = data.color,
                                                                                 isDone = data.isDone
                                                                             ) {
                                                                                 changeBottomSheet(

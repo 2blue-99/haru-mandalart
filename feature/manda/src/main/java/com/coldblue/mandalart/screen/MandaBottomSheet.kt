@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -81,7 +80,7 @@ fun MandaBottomSheet(
     var inputText by remember { mutableStateOf(mandaUI.name) }
     var keyNameText by remember { mutableStateOf("") }
 
-    var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.darkColor)) }
+    var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.color)) }
 
     var buttonClickableState by remember { mutableStateOf(mandaUI.name.isNotBlank()) }
     var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
@@ -97,7 +96,7 @@ fun MandaBottomSheet(
                 dialogState = false
                 onDisMiss()
             },
-            tintColor = HMColor.Dark.Red,
+            tintColor = HMColor.Manda.Red,
             onConfirmation = {
                 deleteMandaKey(
                     mandaUI.id,
@@ -274,14 +273,14 @@ fun MandaBottomSheetColor(
 ) {
     val colorInfoListState = remember {
         mutableStateListOf(
-            MandaColorInfo(HMColor.Dark.Pink, false, 0),
-            MandaColorInfo(HMColor.Dark.Red, false, 1),
-            MandaColorInfo(HMColor.Dark.Orange, false, 2),
-            MandaColorInfo(HMColor.Dark.Yellow, false, 3),
-            MandaColorInfo(HMColor.Dark.Green, false, 4),
-            MandaColorInfo(HMColor.Dark.Blue, false, 5),
-            MandaColorInfo(HMColor.Dark.Mint, false, 6),
-            MandaColorInfo(HMColor.Dark.Purple, false, 7)
+            MandaColorInfo(HMColor.Manda.Pink, false, 0),
+            MandaColorInfo(HMColor.Manda.Red, false, 1),
+            MandaColorInfo(HMColor.Manda.Orange, false, 2),
+            MandaColorInfo(HMColor.Manda.Yellow, false, 3),
+            MandaColorInfo(HMColor.Manda.Green, false, 4),
+            MandaColorInfo(HMColor.Manda.Blue, false, 5),
+            MandaColorInfo(HMColor.Manda.Mint, false, 6),
+            MandaColorInfo(HMColor.Manda.Purple, false, 7)
         )
     }
     colorInfoListState[initColorIndex].isChecked = true
