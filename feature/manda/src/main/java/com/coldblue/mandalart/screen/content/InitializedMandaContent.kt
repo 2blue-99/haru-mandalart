@@ -94,7 +94,8 @@ fun InitializedMandaContent(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
-    changeCurrentIndex: (Int) -> Unit
+    changeCurrentIndex: (Int) -> Unit,
+    changeTodoRange : (Int) -> Unit,
 
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }

@@ -83,7 +83,8 @@ fun MandaScreen(
             deleteMandaAll = mandaViewModel::deleteMandaAll,
             changeBottomSheet = mandaViewModel::changeBottomSheet,
             navigateToSetting = navigateToSetting,
-            changeCurrentIndex = mandaViewModel::changeCurrentIndex
+            changeCurrentIndex = mandaViewModel::changeCurrentIndex,
+            changeTodoRange = mandaViewModel::changeTodoRange
         )
     }
 }
@@ -101,7 +102,8 @@ fun MandaContentWithState(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
-    changeCurrentIndex: (Int) -> Unit
+    changeCurrentIndex: (Int) -> Unit,
+    changeTodoRange: (Int) -> Unit,
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {}
@@ -126,7 +128,8 @@ fun MandaContentWithState(
                 deleteMandaAll = deleteMandaAll,
                 changeBottomSheet = changeBottomSheet,
                 navigateToSetting = navigateToSetting,
-                changeCurrentIndex = changeCurrentIndex
+                changeCurrentIndex = changeCurrentIndex,
+                changeTodoRange = changeTodoRange,
             )
 
         }

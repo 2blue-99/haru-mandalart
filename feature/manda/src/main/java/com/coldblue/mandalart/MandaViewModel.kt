@@ -54,6 +54,9 @@ class MandaViewModel @Inject constructor(
     private val _currentIndex = MutableStateFlow(4)
     val currentIndex: StateFlow<Int> get() = _currentIndex
 
+    private val _todoRange = MutableStateFlow(0)
+    val todoRange: StateFlow<Int> get() = _todoRange
+
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
@@ -61,8 +64,9 @@ class MandaViewModel @Inject constructor(
                     getKeyMandaUseCase(),
                     getDetailMandaUseCase(),
                     getTodoUseCase(LocalDate.now()),
-                    currentIndex
-                ) { mandaKeys, mandaDetails, todoList, curIndex ->
+                    currentIndex,
+                    todoRange
+                ) { mandaKeys, mandaDetails, todoList, curIndex,todoRange ->
                     val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
@@ -72,7 +76,7 @@ class MandaViewModel @Inject constructor(
                         mandaStateList = mandaStateList,
                         mandaKeyList = mandaKeys.map { it.name },
                         currentIndex = curIndex,
-                        todoRange = 0,
+                        todoRange = todoRange,
                         todoList = todoList,
                         todoCnt = todoList.map { it.isDone }.size,
                         doneTodoCnt = todoList.map { !it.isDone }.size,
@@ -147,5 +151,8 @@ class MandaViewModel @Inject constructor(
 
     fun changeCurrentIndex(index: Int) {
         _currentIndex.value = index
+    }
+    fun changeTodoRange(index: Int) {
+        _todoRange.value = index
     }
 }
