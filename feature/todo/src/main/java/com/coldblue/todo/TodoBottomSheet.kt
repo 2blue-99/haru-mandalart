@@ -40,9 +40,6 @@ import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Todo
-import com.coldblue.todo.component.HMTimePicker
-import com.coldblue.todo.uistate.DEFAULT_TODO
-import com.google.gson.Gson
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -76,20 +73,7 @@ fun TodoBottomSheet(
     }
 
 
-    DisposableEffect(toEdit) {
 
-        onDispose {
-            if (toEdit) {
-                navigateToTodoEdit(
-                    if (todo.id == 0) DEFAULT_TODO else todo.id,
-                    titleText.ifEmpty { DEFAULT_TODO.toString() },
-                    Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch))),
-                    today.toString()
-                )
-            }
-        }
-
-    }
 
     Box() {
         LazyColumn(Modifier.padding(bottom = 60.dp)) {
@@ -118,18 +102,7 @@ fun TodoBottomSheet(
                 )
             }
             item {
-                HMTimePicker(
-                    myTime = myTime,
-                    onSwitch = onSwitch,
-                    onCheckedChange = {
-                        onSwitch = !onSwitch
-                    },
-                    onHourChange = { hour ->
-                        myTime = myTime.copy(hour = hour)
-                    },
-                    onMinuteChange = { minute -> myTime = myTime.copy(minute = minute) },
-                    onAmPmChange = { ampm -> myTime = myTime.copy(ampm = ampm) },
-                )
+
             }
             item {
                 ClickableText(

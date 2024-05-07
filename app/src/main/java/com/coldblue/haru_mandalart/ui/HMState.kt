@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.coldblue.haru_mandalart.navigation.TopLevelDestination
 import com.coldblue.history.navigation.historyRoute
 import com.coldblue.history.navigation.navigateToHistory
 import com.coldblue.mandalart.navigation.mandaRoute

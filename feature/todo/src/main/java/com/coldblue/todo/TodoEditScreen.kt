@@ -26,7 +26,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,13 +47,8 @@ import com.coldblue.data.util.isNotMatch
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import com.coldblue.model.ToggleInfo
-import com.coldblue.todo.component.GroupPicker
-import com.coldblue.todo.component.HMDatePicker
-import com.coldblue.todo.component.HMTimePicker
-import com.coldblue.todo.component.SelectButton
 import com.coldblue.todo.uistate.TodoEditUiState
 import com.orhanobut.logger.Logger
 import java.time.LocalDate
@@ -102,8 +96,6 @@ fun TodoEditContentWithState(
         todo = uiState.todo,
         upsertTodo = upsertTodo,
         todoDate = uiState.today,
-        currentDay = uiState.currentDay,
-        currentGroupList = uiState.currentGroup,
         onDismissRequest = onDismissRequest,
         selectDate = selectDate
     )
@@ -115,8 +107,6 @@ fun TodoEditContent(
     todo: Todo,
     upsertTodo: (Todo) -> Unit,
     todoDate: LocalDate,
-    currentDay: LocalDate,
-    currentGroupList: List<CurrentGroup>,
     onDismissRequest: () -> Unit,
     selectDate: (LocalDate) -> Unit,
 
@@ -136,13 +126,8 @@ fun TodoEditContent(
     var titleText by remember { mutableStateOf(todo.title) }
     var contentText by remember { mutableStateOf(todo.content ?: "") }
 
-    var currentTodoGroupId by remember { mutableStateOf(currentGroupList.firstOrNull { it.todoGroupId == todo.todoGroupId }?.todoGroupId) }
 
-    var currentOriginGroupId by remember {
-        mutableIntStateOf(
-            currentGroupList.firstOrNull { it.originGroupId == todo.originId }?.originGroupId ?: 0
-        )
-    }
+
 
     val dateButtons = remember {
         mutableStateListOf(
@@ -220,20 +205,6 @@ fun TodoEditContent(
                 )
             }
             item {
-                HMTimePicker(
-                    myTime = myTime,
-                    onSwitch = onSwitch,
-                    onCheckedChange = {
-                        onSwitch = !onSwitch
-                    },
-                    onHourChange = { hour ->
-                        myTime = myTime.copy(hour = hour)
-                    },
-                    onMinuteChange = { minute -> myTime = myTime.copy(minute = minute) },
-                    onAmPmChange = { ampm -> myTime = myTime.copy(ampm = ampm) },
-                )
-            }
-            item {
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     text = "설명",
@@ -263,35 +234,13 @@ fun TodoEditContent(
 
                 Row {
                     dateButtons.forEach { button ->
-                        SelectButton(button) {
-                            if (button.text == "직접입력") {
-                                date = todo.date
-                            } else {
-                                date = today.plusDays(button.plus)
-                            }
-                            dateButtons.replaceAll {
-                                it.copy(isChecked = it.text == button.text)
-                            }
-                        }
+
                     }
                 }
-                if (dateButtons.last().isChecked) {
-                    HMDatePicker(
-                        date,
-                        onYearChange = { year -> date = date.withYear(year) },
-                        onMonthChange = { month -> date = date.withMonth(month) },
-                        onDayChange = { day -> date = date.withDayOfMonth(day) })
-                }
+
             }
             item {
-                GroupPicker(
-                    currentGroupList,
-                    currentTodoGroupId,
-                    currentOriginGroupId
-                ) { todoGroupId, originId ->
-                    currentTodoGroupId = todoGroupId
-                    currentOriginGroupId = originId
-                }
+
             }
         }
 
@@ -340,8 +289,6 @@ fun TodoEditContent(
                                 title = titleText,
                                 content = contentText,
                                 time = if (onSwitch) myTime.getAmPmHour() else null,
-                                todoGroupId = currentTodoGroupId,
-                                originGroupId = if (currentOriginGroupId != 0) currentOriginGroupId else 0,
                                 date = date
                             )
                         )
@@ -355,7 +302,6 @@ fun TodoEditContent(
                             title = titleText,
                             content = contentText,
                             time = if (onSwitch) myTime.getAmPmHour() else null,
-                            todoGroupId = currentTodoGroupId,
                             date = date
                         )
                     )

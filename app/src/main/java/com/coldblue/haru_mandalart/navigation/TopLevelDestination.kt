@@ -2,12 +2,8 @@ package com.coldblue.haru_mandalart.navigation
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.iconpack.History
-import com.coldblue.designsystem.iconpack.Home
 import com.coldblue.designsystem.iconpack.Manda
-import com.coldblue.history.navigation.historyRoute
 import com.coldblue.mandalart.navigation.mandaRoute
-import com.coldblue.todo.navigation.todoRoute
 
 
 enum class TopLevelDestination(

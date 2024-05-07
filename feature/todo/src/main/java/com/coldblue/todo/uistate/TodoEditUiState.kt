@@ -1,7 +1,6 @@
 package com.coldblue.todo.uistate
 
 import androidx.navigation.NavType
-import com.coldblue.model.CurrentGroup
 import com.coldblue.model.Todo
 import java.time.LocalDate
 
@@ -14,7 +13,6 @@ sealed interface TodoEditUiState {
         val today: LocalDate,
         val todo: Todo,
         val currentDay :LocalDate,
-        val currentGroup: List<CurrentGroup>
     ) : TodoEditUiState
 }
 

@@ -6,9 +6,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.coldblue.data.repository.manda.MandaDetailRepository
 import com.coldblue.data.repository.manda.MandaKeyRepository
-import com.coldblue.data.repository.todo.CurrentGroupRepository
-import com.coldblue.data.repository.todo.TodoGroupRepository
-import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.repository.user.UserRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

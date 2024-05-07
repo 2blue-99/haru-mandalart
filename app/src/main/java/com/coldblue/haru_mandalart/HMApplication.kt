@@ -11,9 +11,6 @@ import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.coldblue.data.repository.manda.MandaDetailRepository
 import com.coldblue.data.repository.manda.MandaKeyRepository
-import com.coldblue.data.repository.todo.CurrentGroupRepository
-import com.coldblue.data.repository.todo.TodoGroupRepository
-import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker

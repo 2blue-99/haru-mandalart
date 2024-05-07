@@ -3,7 +3,9 @@ package com.coldblue.mandalart.screen
 import android.content.Context
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,8 +29,8 @@ import com.coldblue.model.MandaKey
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.orhanobut.logger.Logger
 
-//const val UPDATE_REQUEST_CODE = 777
 
 @Composable
 fun MandaScreen(
@@ -81,6 +83,8 @@ fun MandaScreen(
             deleteMandaAll = mandaViewModel::deleteMandaAll,
             changeBottomSheet = mandaViewModel::changeBottomSheet,
             navigateToSetting = navigateToSetting,
+            changeCurrentIndex = mandaViewModel::changeCurrentIndex,
+            changeTodoRange = mandaViewModel::changeTodoRange
         )
     }
 }
@@ -98,6 +102,8 @@ fun MandaContentWithState(
     deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
+    changeCurrentIndex: (Int) -> Unit,
+    changeTodoRange: (Int) -> Unit,
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {}
@@ -110,6 +116,7 @@ fun MandaContentWithState(
         }
 
         is MandaUIState.InitializedSuccess -> {
+            Text(text = "현재 위치${mandaUIState.currentIndex}")
             InitializedMandaContent(
                 uiState = mandaUIState,
                 mandaBottomSheetUIState = mandaBottomSheetUiState,
@@ -121,6 +128,8 @@ fun MandaContentWithState(
                 deleteMandaAll = deleteMandaAll,
                 changeBottomSheet = changeBottomSheet,
                 navigateToSetting = navigateToSetting,
+                changeCurrentIndex = changeCurrentIndex,
+                changeTodoRange = changeTodoRange,
             )
 
         }

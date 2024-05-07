@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.coldblue.designsystem.component.HMNavigationBarItem
-import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.haru_mandalart.navigation.TopLevelDestination
 import com.coldblue.haru_mandalart.navigation.HMNavHost
