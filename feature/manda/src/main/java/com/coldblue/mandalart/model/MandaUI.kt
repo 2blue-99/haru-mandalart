@@ -7,8 +7,7 @@ import com.coldblue.model.MandaKey
 
 data class MandaUI(
     val name: String = "",
-    var darkColor: Color = HMColor.SubLightText,
-    var lightColor: Color = HMColor.SubLightText,
+    var color: Color = HMColor.SubLightText,
     var isDone: Boolean = false,
     var originId: Int = 0,
     val id: Int
@@ -17,8 +16,7 @@ data class MandaUI(
 fun MandaKey.asMandaUI(colors: Pair<Color,Color>, isDone: Boolean): MandaUI =
     MandaUI(
         name = name,
-        darkColor = colors.first,
-        lightColor = colors.second,
+        color = colors.second,
         isDone = isDone,
         originId = originId,
         id = id
@@ -27,8 +25,7 @@ fun MandaKey.asMandaUI(colors: Pair<Color,Color>, isDone: Boolean): MandaUI =
 fun MandaDetail.asMandaUI(colors: Pair<Color,Color>, isDone: Boolean): MandaUI =
     MandaUI(
         name = name,
-        darkColor = colors.first,
-        lightColor = colors.second,
+        color = colors.second,
         isDone = isDone,
         originId = originId,
         id = id

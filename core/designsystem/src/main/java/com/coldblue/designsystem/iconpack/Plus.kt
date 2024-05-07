@@ -16,34 +16,34 @@ public val IconPack.Plus: ImageVector
         if (_plus != null) {
             return _plus!!
         }
-        _plus = Builder(name = "Plus", defaultWidth = 24.0.dp, defaultHeight = 25.0.dp,
-                viewportWidth = 24.0f, viewportHeight = 25.0f).apply {
-            path(fill = SolidColor(Color(0xFF432ED1)), stroke = null, strokeLineWidth = 0.0f,
-                    strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
-                    pathFillType = NonZero) {
-                moveTo(12.0f, 0.0f)
-                lineTo(12.0f, 0.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 13.0f, 1.0f)
-                lineTo(13.0f, 24.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 12.0f, 25.0f)
-                lineTo(12.0f, 25.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 11.0f, 24.0f)
-                lineTo(11.0f, 1.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 12.0f, 0.0f)
+        _plus = Builder(name = "Plus", defaultWidth = 38.0.dp, defaultHeight = 39.0.dp,
+            viewportWidth = 38.0f, viewportHeight = 39.0f).apply {
+            path(fill = SolidColor(Color(0xFFBFC3C8)), stroke = null, strokeLineWidth = 0.0f,
+                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                pathFillType = NonZero) {
+                moveTo(19.0f, 0.0f)
+                lineTo(19.0f, 0.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 20.0f, 1.0f)
+                lineTo(20.0f, 38.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 19.0f, 39.0f)
+                lineTo(19.0f, 39.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 18.0f, 38.0f)
+                lineTo(18.0f, 1.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 19.0f, 0.0f)
                 close()
             }
-            path(fill = SolidColor(Color(0xFF432ED1)), stroke = null, strokeLineWidth = 0.0f,
-                    strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
-                    pathFillType = NonZero) {
-                moveTo(0.0f, 12.0f)
-                lineTo(0.0f, 12.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 1.0f, 11.0f)
-                lineTo(23.0f, 11.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 24.0f, 12.0f)
-                lineTo(24.0f, 12.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 23.0f, 13.0f)
-                lineTo(1.0f, 13.0f)
-                arcTo(1.0f, 1.0f, 0.0f, false, true, 0.0f, 12.0f)
+            path(fill = SolidColor(Color(0xFFBFC3C8)), stroke = null, strokeLineWidth = 0.0f,
+                strokeLineCap = Butt, strokeLineJoin = Miter, strokeLineMiter = 4.0f,
+                pathFillType = NonZero) {
+                moveTo(0.0f, 19.0f)
+                lineTo(0.0f, 19.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 1.0f, 18.0f)
+                lineTo(37.0f, 18.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 38.0f, 19.0f)
+                lineTo(38.0f, 19.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 37.0f, 20.0f)
+                lineTo(1.0f, 20.0f)
+                arcTo(1.0f, 1.0f, 0.0f, false, true, 0.0f, 19.0f)
                 close()
             }
         }

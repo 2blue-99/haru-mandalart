@@ -18,8 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,6 +50,7 @@ fun MandaKeyBox(
             color = if (isDone) HMColor.Background else color,
             text = name,
             style = HmStyle.text6,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -58,8 +58,7 @@ fun MandaKeyBox(
 @Composable
 fun MandaDetailBox(
     name: String,
-    darkColor: Color,
-    lightColor: Color,
+    color: Color,
     isDone: Boolean,
     onClick: () -> Unit
 ) {
@@ -70,42 +69,30 @@ fun MandaDetailBox(
             .fillMaxWidth()
             .aspectRatio(1F)
             .clip(RoundedCornerShape(8.dp))
-            .background(if (isDone) darkColor else lightColor)
+            .border(1.dp, color = color, RoundedCornerShape(8.dp))
+            .background(if (isDone) color else HMColor.Background)
     ) {
         Text(
             textAlign = TextAlign.Center,
             text = name,
             color = if (isDone) HMColor.Background else HMColor.Text,
             modifier = Modifier.padding(5.dp),
-            style = HmStyle.text6,
+            style = HmStyle.text4,
         )
     }
 }
 
 @Composable
 fun MandaEmptyBox(
-    color: Color = HMColor.SubLightText,
     onClick: () -> Unit
 ) {
-    val stroke = Stroke(
-        width = 6f,
-        pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(15f, 15f), phase = 0f)
-    )
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .clickable { onClick() }
             .fillMaxWidth()
             .aspectRatio(1F)
-            .border(1.dp, HMColor.Gray, RoundedCornerShape(8.dp))
-//            .clip(RoundedCornerShape(8.dp))
-//            .drawBehind {
-//                drawRoundRect(
-//                    color = color,
-//                    style = stroke,
-//                    cornerRadius = CornerRadius(8.dp.toPx())
-//                )
-//            }
+            .border(0.65.dp, HMColor.Gray, RoundedCornerShape(8.dp))
     ) {
         Icon(
             modifier = Modifier
