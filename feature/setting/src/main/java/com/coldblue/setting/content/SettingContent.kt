@@ -203,7 +203,7 @@ fun SettingContent(
                 if (loginState == LoginState.AuthenticatedLogin) {
                     SettingItem(
                         title = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
-                        color = HMColor.Dark.Red,
+                        color = HMColor.Manda.Red,
                         isLast = false,
                         isClickable = true,
                         onClick = {
@@ -298,7 +298,7 @@ fun ResignDialog(
         targetText = "",
         text = stringResource(id = R.string.delete_dialog_resign),
         confirmText = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
-        tintColor = HMColor.Dark.Red,
+        tintColor = HMColor.Manda.Red,
         onDismissRequest = {
             onDismiss()
         },
@@ -317,7 +317,7 @@ fun LogoutDialog(
         targetText = "",
         text = stringResource(id = R.string.delete_dialog_logout),
         confirmText = stringResource(id = R.string.setting_logout),
-        tintColor = HMColor.Dark.Red,
+        tintColor = HMColor.Manda.Red,
         onDismissRequest = {
             onDismiss()
         },
