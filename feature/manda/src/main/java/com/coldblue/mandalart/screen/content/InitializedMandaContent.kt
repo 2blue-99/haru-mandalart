@@ -21,17 +21,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -47,7 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -57,9 +54,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
+import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.Mandalart
-import com.coldblue.designsystem.iconpack.ZoomIn
-import com.coldblue.designsystem.iconpack.ZoomOut
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
@@ -77,12 +73,9 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
+import java.util.logging.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
-
-const val MAX_MANDA_KEY_SIZE = 8
-const val MAX_MANDA_DETAIL_SIZE = 64
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,7 +91,7 @@ fun InitializedMandaContent(
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
-    changeTodoRange : (Int) -> Unit,
+    changeTodoRange: (Int) -> Unit,
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -123,7 +116,9 @@ fun InitializedMandaContent(
         }
     }
 
-    LaunchedEffect(uiState.donePercentage) { percentage = uiState.donePercentage }
+    LaunchedEffect(uiState.mandaStatus.donePercentage) {
+        percentage = uiState.mandaStatus.donePercentage
+    }
 
 
     Column(
@@ -138,15 +133,16 @@ fun InitializedMandaContent(
         }
 
         MandaStatus(
-            finalName = uiState.finalManda.name,
-            donePercentage = uiState.donePercentage,
+            finalName = uiState.mandaStatus.finalManda.name,
+            percentageColor = uiState.mandaStatus.percentageColor,
+            donePercentage = uiState.mandaStatus.donePercentage,
             animateDonePercentage = animateDonePercentage.value
         ) {
             changeBottomSheet(
                 true,
                 MandaBottomSheetContentState.Insert(
                     MandaBottomSheetContentType.MandaFinal(
-                        mandaUI = uiState.finalManda
+                        mandaUI = uiState.mandaStatus.finalManda
                     )
                 )
             )
@@ -200,6 +196,7 @@ fun MandaTitle(
 @Composable
 fun MandaStatus(
     finalName: String,
+    percentageColor: Color,
     donePercentage: Float,
     animateDonePercentage: Float,
     onClickTitle: () -> Unit
@@ -236,7 +233,7 @@ fun MandaStatus(
                         .fillMaxWidth()
                         .height(10.dp)
                         .clip(RoundedCornerShape(7.dp)),
-                    color = HMColor.Primary,
+                    color = percentageColor,
                     trackColor = HMColor.Gray
                 )
             }
@@ -252,19 +249,20 @@ fun Mandalart(
 ) {
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
+
     var translateX by remember { mutableFloatStateOf(0f) }
     var translateY by remember { mutableFloatStateOf(0f) }
+
     var isZoom by remember { mutableStateOf(false) }
     var isGesture by remember { mutableStateOf(false) }
     var direction by remember { mutableStateOf(MandaGestureState.Down) }
 
     var mandaSize by remember { mutableStateOf(Size.Zero) }
-
     val widthList = listOf(mandaSize.width, 0f, -mandaSize.width)
     val heightList = listOf(mandaSize.height, 0f, -mandaSize.height)
 
     val dampingRatio = 0.8f // 클수록 스프링 효과 감소
-    val stiffness = 1200f // 클수록 빨리 확대, 축소
+    val stiffness = 1600f // 클수록 빨리 확대, 축소
 
     val animatedScaleX by animateFloatAsState(
         targetValue = scaleX,
@@ -317,22 +315,22 @@ fun Mandalart(
         scaleY = 3f
         when (direction) {
             MandaGestureState.Left -> {
-                if(translateX < mandaSize.width)
+                if (translateX < mandaSize.width)
                     translateX += mandaSize.width
             }
 
             MandaGestureState.Right -> {
-                if(translateX > -mandaSize.width)
+                if (translateX > -mandaSize.width)
                     translateX -= mandaSize.width
             }
 
             MandaGestureState.Up -> {
-                if(translateY < mandaSize.height)
+                if (translateY < mandaSize.height)
                     translateY += mandaSize.height
             }
 
             MandaGestureState.Down -> {
-                if(translateY > -mandaSize.height)
+                if (translateY > -mandaSize.height)
                     translateY -= mandaSize.height
             }
         }
@@ -340,13 +338,13 @@ fun Mandalart(
 
     fun zoomController(index: Int) {
         changeCurrentIndex(index)
-        if(index != -1){
+        if (index != -1) {
             isZoom = true
             scaleX = 3f
             scaleY = 3f
             translateX += widthList[index % 3]
             translateY += heightList[index / 3]
-        }else{
+        } else {
             isZoom = false
             scaleX = 1f
             scaleY = 1f
@@ -355,52 +353,24 @@ fun Mandalart(
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        floatingActionButton = {
-            FloatingActionButton(
-                shape = CircleShape,
-                containerColor = if (isZoom) HMColor.Background else HMColor.Primary,
-                modifier = Modifier.border(
-                    if (isZoom) 2.5.dp else 0.dp,
-                    HMColor.Primary,
-                    CircleShape
-                ),
-                onClick = {
-                    if (isZoom)
-                        zoomController(-1)
-                    else
-                        zoomController(1)
-                }) {
-                if (isZoom)
-                    Icon(
-                        imageVector = IconPack.ZoomOut,
-                        tint = HMColor.Primary,
-                        contentDescription = ""
-                    )
-                else
-                    Icon(
-                        imageVector = IconPack.ZoomIn,
-                        tint = HMColor.Background,
-                        contentDescription = ""
-                    )
-            }
-        },
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .fillMaxHeight()
     ) {
-        Column(
+        LazyColumn(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .padding(it)
-                .fillMaxHeight()
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .border(1.5.dp, HMColor.DarkGray, shape = RoundedCornerShape(8.dp))
         ) {
-            LazyColumn(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .border(1.5.dp, HMColor.DarkGray, shape = RoundedCornerShape(8.dp))
-            ) {
-                item {
+            item {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = HMColor.Background
+                ) {
                     Column(
                         modifier = Modifier
                             .graphicsLayer(
@@ -436,7 +406,8 @@ fun Mandalart(
                                             .weight(1f)
                                             .padding(horizontal = 5.dp)
                                     ) {
-                                        when (val bigBox = mandaStateList[keyColumn + keyRow * 3]) {
+                                        when (val bigBox =
+                                            mandaStateList[keyColumn + keyRow * 3]) {
                                             is MandaState.Empty -> {
                                                 Box(
                                                     modifier = Modifier.fillMaxSize()
@@ -528,7 +499,8 @@ fun Mandalart(
                                                                     }
 
                                                                     is MandaType.Detail -> {
-                                                                        val data = smallBox.mandaUI
+                                                                        val data =
+                                                                            smallBox.mandaUI
                                                                         Box(
                                                                             modifier = Modifier
                                                                                 .weight(1f)
@@ -573,7 +545,36 @@ fun Mandalart(
                                 }
                             }
                         }
-
+                    }
+                    if (isZoom) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f),
+                            contentAlignment = Alignment.BottomEnd,
+                        ) {
+                            Surface(
+                                color = HMColor.Background,
+                                modifier = Modifier
+                                    .border(
+                                        2.dp,
+                                        HMColor.DarkGray,
+                                        RoundedCornerShape(topStart = 18f, bottomEnd = 18f)
+                                    )
+                                    .clickable(enabled = true) {
+                                        zoomController(-1)
+                                    }
+                            ) {
+                                Icon(
+                                    imageVector = IconPack.Back,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .padding(10.dp),
+                                    tint = HMColor.Primary,
+                                    contentDescription = "Zoom"
+                                )
+                            }
+                        }
                     }
                 }
             }

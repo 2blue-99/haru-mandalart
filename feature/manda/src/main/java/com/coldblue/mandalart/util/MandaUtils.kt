@@ -16,8 +16,13 @@ object MandaUtils {
     fun getTagList(): List<String> =
         stringArrayResource(id = R.array.tags).toList()
 
-    fun calculateDonePercentage(mandaDetails: List<MandaDetail>): Float {
-        return (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
+    fun calculateDonePercentage(index : Int, mandaDetails: List<MandaDetail>): Float {
+        if(index == 4)
+            return (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
+        else {
+            val rangeList = mandaDetails.slice(9 * index..8 + 9 * index)
+            return (rangeList.count { it.isDone } / rangeList.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
+        }
     }
 
     fun transformToMandaList(
