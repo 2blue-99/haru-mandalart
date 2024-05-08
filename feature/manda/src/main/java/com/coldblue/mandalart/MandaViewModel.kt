@@ -75,7 +75,6 @@ class MandaViewModel @Inject constructor(
                         percentageColor = MandaUtils.matchingPercentageColor(curIndex, mandaStateList),
                         donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
                     )
-                    Logger.d(mandaStatus)
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,

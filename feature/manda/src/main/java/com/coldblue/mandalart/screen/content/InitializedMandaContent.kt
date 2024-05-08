@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -150,6 +151,7 @@ fun InitializedMandaContent(
 
         Mandalart(
             mandaStateList = uiState.mandaStateList,
+            curIndex = uiState.currentIndex,
             changeBottomSheet = changeBottomSheet,
             changeCurrentIndex = changeCurrentIndex
         )
@@ -244,9 +246,13 @@ fun MandaStatus(
 @Composable
 fun Mandalart(
     mandaStateList: List<MandaState>,
+    curIndex: Int,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit,
     changeCurrentIndex: (Int) -> Unit
 ) {
+    var currentIndex by remember { mutableIntStateOf(curIndex) }
+    LaunchedEffect(curIndex){ currentIndex = curIndex }
+
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
 
@@ -309,29 +315,33 @@ fun Mandalart(
     }
 
     fun gestureController() {
-//        changeCurrentIndex(index)
         isGesture = true
         scaleX = 3f
         scaleY = 3f
         when (direction) {
             MandaGestureState.Left -> {
-                if (translateX < mandaSize.width)
+                if (translateX < mandaSize.width) {
                     translateX += mandaSize.width
+                    changeCurrentIndex(currentIndex-1)
+                }
             }
-
             MandaGestureState.Right -> {
-                if (translateX > -mandaSize.width)
+                if (translateX > -mandaSize.width) {
                     translateX -= mandaSize.width
+                    changeCurrentIndex(currentIndex+1)
+                }
             }
-
             MandaGestureState.Up -> {
-                if (translateY < mandaSize.height)
+                if (translateY < mandaSize.height) {
                     translateY += mandaSize.height
+                    changeCurrentIndex(currentIndex-3)
+                }
             }
-
             MandaGestureState.Down -> {
-                if (translateY > -mandaSize.height)
+                if (translateY > -mandaSize.height) {
                     translateY -= mandaSize.height
+                    changeCurrentIndex(currentIndex+3)
+                }
             }
         }
     }
