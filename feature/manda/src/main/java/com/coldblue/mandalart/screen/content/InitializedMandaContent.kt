@@ -73,7 +73,7 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
-import java.util.logging.Logger
+import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -128,12 +128,12 @@ fun InitializedMandaContent(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
 
-        MandaTitle {
+        MandaTopBar {
             navigateToSetting()
         }
 
         MandaStatus(
-            finalName = uiState.mandaStatus.finalManda.name,
+            titleName = uiState.mandaStatus.titleManda.name,
             percentageColor = uiState.mandaStatus.percentageColor,
             donePercentage = uiState.mandaStatus.donePercentage,
             animateDonePercentage = animateDonePercentage.value
@@ -142,7 +142,7 @@ fun InitializedMandaContent(
                 true,
                 MandaBottomSheetContentState.Insert(
                     MandaBottomSheetContentType.MandaFinal(
-                        mandaUI = uiState.mandaStatus.finalManda
+                        mandaUI = uiState.mandaStatus.titleManda
                     )
                 )
             )
@@ -157,7 +157,7 @@ fun InitializedMandaContent(
 }
 
 @Composable
-fun MandaTitle(
+fun MandaTopBar(
     navigateToSetting: () -> Unit
 ) {
     Row(
@@ -195,7 +195,7 @@ fun MandaTitle(
 
 @Composable
 fun MandaStatus(
-    finalName: String,
+    titleName: String,
     percentageColor: Color,
     donePercentage: Float,
     animateDonePercentage: Float,
@@ -208,9 +208,9 @@ fun MandaStatus(
     ) {
 
         ClickableText(
-            text = AnnotatedString("\" $finalName \""),
+            text = AnnotatedString("\" $titleName \""),
             onClick = { onClickTitle() },
-            style = HmStyle.text24.copy(color = HMColor.Primary),
+            style = HmStyle.text24.copy(color = percentageColor),
         )
 
         Column(
@@ -220,10 +220,10 @@ fun MandaStatus(
                 Text(
                     text = stringResource(
                         id = R.string.initialized_done_percentage,
-                        ((donePercentage * 100).roundToInt())
+                        "${((donePercentage * 100).roundToInt())}%"
                     ),
                     style = HmStyle.text12,
-                    color = HMColor.Primary,
+                    color = percentageColor,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.End
                 )

@@ -1,9 +1,7 @@
 package com.coldblue.mandalart
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.domain.manda.DeleteMandaAllUseCase
 import com.coldblue.domain.manda.DeleteMandaDetailUseCase
 import com.coldblue.domain.manda.DeleteMandaKeyUseCase
@@ -28,7 +26,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -59,6 +56,9 @@ class MandaViewModel @Inject constructor(
     private val _todoRange = MutableStateFlow(0)
     val todoRange: StateFlow<Int> get() = _todoRange
 
+    private val _mandaBottomSheetUIState = MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
+    val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
+
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
@@ -69,13 +69,13 @@ class MandaViewModel @Inject constructor(
                     currentIndex,
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
-                    val index = curIndex
                     val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     val mandaStatus = MandaStatus(
-                        finalManda = (mandaStateList[4] as MandaState.Exist).mandaUIList[4].mandaUI,
-                        percentageColor = if (index == 4) HMColor.Primary else (mandaStateList[index] as MandaState.Exist).mandaUIList[4].mandaUI.color,
-                        donePercentage = MandaUtils.calculateDonePercentage(curIndex, mandaDetails)
+                        titleManda = MandaUtils.matchingTitleManda(curIndex, mandaStateList),
+                        percentageColor = MandaUtils.matchingPercentageColor(curIndex, mandaStateList),
+                        donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
                     )
+                    Logger.d(mandaStatus)
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
@@ -95,15 +95,13 @@ class MandaViewModel @Inject constructor(
                 flowOf(MandaUIState.UnInitializedSuccess)
             }
         }.catch {
+            Logger.d("ERR")
             MandaUIState.Error(it.message ?: "Error")
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = MandaUIState.Loading
         )
-
-    private val _mandaBottomSheetUIState = MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
-    val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
 
     fun changeBottomSheet(isShow: Boolean, uiState: MandaBottomSheetContentState?) {
         if (isShow && uiState != null) {
@@ -156,6 +154,7 @@ class MandaViewModel @Inject constructor(
     }
 
     fun changeCurrentIndex(index: Int) {
+        Logger.d(index)
         _currentIndex.value = index
     }
 

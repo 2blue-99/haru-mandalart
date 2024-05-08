@@ -4,7 +4,7 @@
     // Initialized
     <string name="initialized_key_goal">핵심 목표 : </string>
     <string name="initialized_detail_goal">세부 목표 : </string>
-    <string name="initialized_done_percentage">달성률 : %1$d</string>
+    <string name="initialized_done_percentage">달성률 : %1$s</string>
 
     // Uninitialized
     <string name="unInitialized_title">지금 당신은,\n무엇을 이루고 싶으신가요?</string>
