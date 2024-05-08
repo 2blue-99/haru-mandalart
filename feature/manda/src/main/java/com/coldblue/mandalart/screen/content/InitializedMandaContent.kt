@@ -267,8 +267,12 @@ fun Mandalart(
     val widthList = listOf(mandaSize.width, 0f, -mandaSize.width)
     val heightList = listOf(mandaSize.height, 0f, -mandaSize.height)
 
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+
     val dampingRatio = 0.8f // 클수록 스프링 효과 감소
     val stiffness = 1600f // 클수록 빨리 확대, 축소
+    val gestureAccuracy = 100f
 
     val animatedScaleX by animateFloatAsState(
         targetValue = scaleX,
@@ -301,49 +305,65 @@ fun Mandalart(
 
     fun dragStartDetector(dragAmount: Offset) {
         val (x, y) = dragAmount
+        Logger.d("$x $y")
         if (abs(x) > abs(y)) {
             when {
-                x > 0 -> direction = MandaGestureState.Left
-                x < 0 -> direction = MandaGestureState.Right
+                x > 0 -> {
+                    offsetX += x
+                    direction = MandaGestureState.Left
+                }
+                x < 0 -> {
+                    offsetX += x
+                    direction = MandaGestureState.Right
+                }
             }
         } else {
             when {
-                y > 0 -> direction = MandaGestureState.Up
-                y < 0 -> direction = MandaGestureState.Down
+                y > 0 -> {
+                    offsetY += y
+                    direction = MandaGestureState.Up
+                }
+                y < 0 -> {
+                    offsetY += y
+                    direction = MandaGestureState.Down
+                }
             }
         }
     }
 
     fun gestureController() {
+        Logger.d("$offsetX $offsetY")
         isGesture = true
         scaleX = 3f
         scaleY = 3f
         when (direction) {
             MandaGestureState.Left -> {
-                if (translateX < mandaSize.width) {
+                if (offsetX > gestureAccuracy && translateX < mandaSize.width) {
                     translateX += mandaSize.width
                     changeCurrentIndex(currentIndex-1)
                 }
             }
             MandaGestureState.Right -> {
-                if (translateX > -mandaSize.width) {
+                if (offsetX < -gestureAccuracy && translateX > -mandaSize.width) {
                     translateX -= mandaSize.width
                     changeCurrentIndex(currentIndex+1)
                 }
             }
             MandaGestureState.Up -> {
-                if (translateY < mandaSize.height) {
+                if (offsetY > gestureAccuracy && translateY < mandaSize.height) {
                     translateY += mandaSize.height
                     changeCurrentIndex(currentIndex-3)
                 }
             }
             MandaGestureState.Down -> {
-                if (translateY > -mandaSize.height) {
+                if (offsetY < -gestureAccuracy && translateY > -mandaSize.height) {
                     translateY -= mandaSize.height
                     changeCurrentIndex(currentIndex+3)
                 }
             }
         }
+        offsetX = 0f
+        offsetY = 0f
     }
 
     fun zoomController(index: Int) {
@@ -365,7 +385,6 @@ fun Mandalart(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .fillMaxHeight()
     ) {
         LazyColumn(
@@ -383,12 +402,6 @@ fun Mandalart(
                 ) {
                     Column(
                         modifier = Modifier
-                            .graphicsLayer(
-                                scaleX = animatedScaleX,
-                                scaleY = animatedScaleY,
-                                translationX = animatedTranslateX,
-                                translationY = animatedTranslateY,
-                            )
                             .pointerInput(isZoom) {
                                 if (isZoom)
                                     detectDragGestures(
@@ -401,6 +414,12 @@ fun Mandalart(
                                         }
                                     )
                             }
+                            .graphicsLayer(
+                                scaleX = animatedScaleX,
+                                scaleY = animatedScaleY,
+                                translationX = animatedTranslateX,
+                                translationY = animatedTranslateY,
+                            )
                             .onGloballyPositioned {
                                 mandaSize = it.size.toSize()
                             }
