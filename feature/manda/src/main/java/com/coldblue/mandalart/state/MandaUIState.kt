@@ -11,7 +11,7 @@ sealed interface MandaUIState {
         val keyMandaCnt: Int,
         val detailMandaCnt: Int,
         val mandaStatus: MandaStatus,
-        val mandaStateList: List<MandaState>,
+        val mandaList: List<MandaState>,
         val mandaKeyList: List<String>,
         val currentIndex: Int,
         val todoRange: Int,

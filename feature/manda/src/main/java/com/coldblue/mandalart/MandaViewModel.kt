@@ -15,7 +15,6 @@ import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
-import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaStatus
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
@@ -70,17 +69,17 @@ class MandaViewModel @Inject constructor(
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
                     Logger.d(curIndex)
-                    val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
+                    val mandaList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     val mandaStatus = MandaStatus(
-                        titleManda = MandaUtils.matchingTitleManda(curIndex, mandaStateList),
-                        percentageColor = MandaUtils.matchingPercentageColor(curIndex, mandaStateList),
+                        titleManda = MandaUtils.matchingTitleManda(curIndex, mandaList),
+                        statusColor = MandaUtils.matchingPercentageColor(curIndex, mandaList),
                         donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
                     )
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
                         mandaStatus = mandaStatus,
-                        mandaStateList = mandaStateList,
+                        mandaList = mandaList,
                         mandaKeyList = mandaKeys.map { it.name },
                         currentIndex = curIndex,
                         todoRange = todoRange,
