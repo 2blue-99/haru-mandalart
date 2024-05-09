@@ -69,6 +69,7 @@ class MandaViewModel @Inject constructor(
                     currentIndex,
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
+                    Logger.d(curIndex)
                     val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     val mandaStatus = MandaStatus(
                         titleManda = MandaUtils.matchingTitleManda(curIndex, mandaStateList),
@@ -94,7 +95,6 @@ class MandaViewModel @Inject constructor(
                 flowOf(MandaUIState.UnInitializedSuccess)
             }
         }.catch {
-            Logger.d("ERR")
             MandaUIState.Error(it.message ?: "Error")
         }.stateIn(
             scope = viewModelScope,

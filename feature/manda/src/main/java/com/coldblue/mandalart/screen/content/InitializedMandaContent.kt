@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -49,9 +50,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
@@ -74,7 +77,6 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -203,17 +205,36 @@ fun MandaStatus(
     animateDonePercentage: Float,
     onClickTitle: () -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        ClickableText(
-            text = AnnotatedString("\" $titleName \""),
-            onClick = { onClickTitle() },
-            style = HmStyle.text24.copy(color = percentageColor),
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "\"",
+                style = HmStyle.text24,
+                color = HMColor.Primary
+            )
+            ClickableText(
+                modifier = Modifier.widthIn(max = (screenWidth-60).dp),
+                text = AnnotatedString(titleName),
+                onClick = { onClickTitle() },
+                style = HmStyle.text24.copy(color = percentageColor),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = "\"",
+                style = HmStyle.text24,
+                color = HMColor.Primary
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -305,7 +326,6 @@ fun Mandalart(
 
     fun dragStartDetector(dragAmount: Offset) {
         val (x, y) = dragAmount
-        Logger.d("$x $y")
         if (abs(x) > abs(y)) {
             when {
                 x > 0 -> {
@@ -332,7 +352,6 @@ fun Mandalart(
     }
 
     fun gestureController() {
-        Logger.d("$offsetX $offsetY")
         isGesture = true
         scaleX = 3f
         scaleY = 3f
@@ -360,6 +379,9 @@ fun Mandalart(
                     translateY -= mandaSize.height
                     changeCurrentIndex(currentIndex+3)
                 }
+            }
+            MandaGestureState.ZoomOut -> {
+
             }
         }
         offsetX = 0f
@@ -403,7 +425,7 @@ fun Mandalart(
                     Column(
                         modifier = Modifier
                             .pointerInput(isZoom) {
-                                if (isZoom)
+                                if (isZoom) {
                                     detectDragGestures(
                                         onDrag = { change, dragAmount ->
                                             change.consume()
@@ -413,6 +435,8 @@ fun Mandalart(
                                             gestureController()
                                         }
                                     )
+
+                                }
                             }
                             .graphicsLayer(
                                 scaleX = animatedScaleX,
