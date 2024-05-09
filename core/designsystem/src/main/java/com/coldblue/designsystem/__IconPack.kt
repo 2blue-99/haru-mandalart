@@ -1,6 +1,7 @@
 package com.coldblue.designsystem
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.Check
 import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Home
@@ -22,6 +23,6 @@ public val IconPack.AllIcons: ____KtList<ImageVector>
     if (__AllIcons != null) {
       return __AllIcons!!
     }
-    __AllIcons= listOf(Check, History, Home, Manda, Newzoomin, Newzoomout, Plus, ZoomIn, ZoomOut, Mandalart)
+    __AllIcons= listOf(Back, Check, History, Home, Manda, Newzoomin, Newzoomout, Plus, ZoomIn, ZoomOut, Mandalart)
     return __AllIcons!!
   }

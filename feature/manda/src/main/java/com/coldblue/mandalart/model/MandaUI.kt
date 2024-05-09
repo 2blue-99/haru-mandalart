@@ -6,7 +6,7 @@ import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 
 data class MandaUI(
-    val name: String = "",
+    val name: String = "목표를 추가해 주세요!",
     var color: Color = HMColor.SubLightText,
     var isDone: Boolean = false,
     var originId: Int = 0,
