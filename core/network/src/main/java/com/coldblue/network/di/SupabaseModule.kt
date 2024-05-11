@@ -5,12 +5,14 @@ import com.coldblue.network.SupabaseDataSource
 import com.coldblue.network.SupabaseDataSourceImpl
 import com.coldblue.network.datasource.MandaDetailDataSource
 import com.coldblue.network.datasource.MandaKeyDataSource
+import com.coldblue.network.datasource.MandaTodoDataSource
 import com.coldblue.network.datasource.NoticeDataSource
 import com.coldblue.network.datasource.SurveyDataSource
 import com.coldblue.network.datasource.TodoDataSource
 import com.coldblue.network.datasource.UpdateNoteDataSource
 import com.coldblue.network.datasourceImpl.MandaDetailDataSourceImpl
 import com.coldblue.network.datasourceImpl.MandaKeyDataSourceImpl
+import com.coldblue.network.datasourceImpl.MandaTodoDataSourceImpl
 import com.coldblue.network.datasourceImpl.NoticeDataSourceImpl
 import com.coldblue.network.datasourceImpl.SurveyDataSourceImpl
 import com.coldblue.network.datasourceImpl.TodoDataSourceImpl
@@ -77,6 +79,12 @@ object SupabaseModule {
     @Provides
     fun provideNoticeDataSource(client: SupabaseClient): NoticeDataSource =
         NoticeDataSourceImpl(client)
+
+    @Singleton
+    @Provides
+    fun provideMandaTodoDataSource(client: SupabaseClient): MandaTodoDataSource =
+        MandaTodoDataSourceImpl(client)
+
 
     @Singleton
     @Provides

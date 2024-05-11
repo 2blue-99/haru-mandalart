@@ -9,7 +9,9 @@ import com.coldblue.domain.manda.GetDetailMandaUseCase
 import com.coldblue.domain.manda.GetKeyMandaUseCase
 import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
+import com.coldblue.domain.todo.GetMandaTodoUseCase
 import com.coldblue.domain.todo.GetTodoUseCase
+import com.coldblue.domain.todo.UpsertMandaTodoUseCase
 import com.coldblue.domain.todo.UpsertTodoUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
@@ -21,6 +23,7 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTodo
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,8 +50,8 @@ class MandaViewModel @Inject constructor(
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
-//    val getTodoUseCase: GetTodoUseCase,
-//    val upsertTodoUseCase: UpsertTodoUseCase,
+    val getMandaTodoUseCase: GetMandaTodoUseCase,
+    val upsertMandaTodoUseCase: UpsertMandaTodoUseCase
 ) : ViewModel() {
 
     private val _currentIndex = MutableStateFlow(4)
@@ -57,13 +60,14 @@ class MandaViewModel @Inject constructor(
     private val _todoRange = MutableStateFlow(0)
     val todoRange: StateFlow<Int> get() = _todoRange
 
-    private val _mandaBottomSheetUIState = MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
+    private val _mandaBottomSheetUIState =
+        MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
     val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
 
     init {
-        val d = getKeyMandaUseCase()
         viewModelScope.launch {
-            Logger.d(d.first())
+//            upsertMandaTodoUseCase(MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false))
+//            upsertMandaTodoUseCase(MandaTodo("2번투구", false, false, null, LocalDate.now(), 1, false))
 
         }
     }
@@ -74,14 +78,17 @@ class MandaViewModel @Inject constructor(
                 combine(
                     getKeyMandaUseCase(),
                     getDetailMandaUseCase(),
-//                    getTodoUseCase(LocalDate.now()),
+                    getMandaTodoUseCase(),
                     currentIndex,
                     todoRange
-                ) { mandaKeys, mandaDetails, curIndex, todoRange ->
+                ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
                     val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     val mandaStatus = MandaStatus(
                         titleManda = MandaUtils.matchingTitleManda(curIndex, mandaStateList),
-                        percentageColor = MandaUtils.matchingPercentageColor(curIndex, mandaStateList),
+                        percentageColor = MandaUtils.matchingPercentageColor(
+                            curIndex,
+                            mandaStateList
+                        ),
                         donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
                     )
                     MandaUIState.InitializedSuccess(
@@ -92,7 +99,7 @@ class MandaViewModel @Inject constructor(
                         mandaKeyList = mandaKeys.map { it.name },
                         currentIndex = curIndex,
                         todoRange = todoRange,
-                        todoList = emptyList(),
+                        todoList = todoList,
                         todoCnt = 2,
                         doneTodoCnt = 3
                     )

@@ -21,8 +21,11 @@ class SupabaseDataSourceImpl @Inject constructor(
                     NetworkTodo::user_id eq user.id
                 }
             }
-
-
+            client.postgrest["mandaTodo"].delete {
+                filter {
+                    NetworkTodo::user_id eq user.id
+                }
+            }
             client.postgrest["mandaKey"].delete {
                 filter {
                     NetworkMandaKey::user_id eq user.id
@@ -36,14 +39,14 @@ class SupabaseDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun refresh(token:String):Flow<Boolean> {
+    override suspend fun refresh(token: String): Flow<Boolean> {
         return try {
-            if (client.auth.currentAccessTokenOrNull()==null){
+            if (client.auth.currentAccessTokenOrNull() == null) {
                 client.auth.retrieveUser(token)
                 client.auth.refreshCurrentSession()
             }
-            flow {emit(true) }
-        }catch (e:Exception){
+            flow { emit(true) }
+        } catch (e: Exception) {
             flow { emit(false) }
 
         }
