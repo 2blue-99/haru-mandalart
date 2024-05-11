@@ -19,10 +19,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text2.BasicTextField2
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,9 +34,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.Back
+import com.coldblue.designsystem.iconpack.Circle
 import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -100,6 +107,8 @@ fun InitializedMandaContent(
 
 
 ) {
+
+
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
@@ -171,6 +180,7 @@ fun InitializedMandaContent(
             upsertMandaTodo = upsertMandaTodo,
             changeRange = changeTodoRange
         )
+
     }
 }
 
