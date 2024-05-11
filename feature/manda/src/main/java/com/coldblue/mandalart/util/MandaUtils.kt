@@ -131,21 +131,24 @@ object MandaUtils {
     fun getTagList(): List<String> =
         stringArrayResource(id = R.array.tags).toList()
 
-    fun calculatePercentage(index : Int, mandaDetails: List<MandaDetail>): Float {
-        return when(index){
-            -1, 4 -> (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
+    fun calculatePercentage(index: Int, mandaDetails: List<MandaDetail>): Float {
+        return when (index) {
+            -1, 4 -> (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() }
+                ?: 0f
+
             else -> {
                 val rangeList = mandaDetails.filter { it.id in 9 * index..8 + 9 * index }
-                (rangeList.count { it.isDone } / rangeList.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
+                (rangeList.count { it.isDone } / rangeList.size.toFloat()).takeIf { !it.isNaN() }
+                    ?: 0f
             }
         }
     }
 
     fun matchingPercentageColor(index: Int, list: List<MandaState>): Color {
-        return when(index){
+        return when (index) {
             -1, 4 -> HMColor.Primary
             else -> {
-                when(val target = list[index]){
+                when (val target = list[index]) {
                     is MandaState.Exist -> target.mandaUIList[index].mandaUI.color
                     is MandaState.Empty -> HMColor.Gray
                 }
@@ -153,11 +156,21 @@ object MandaUtils {
         }
     }
 
-    fun matchingTitleManda(index: Int, list: List<MandaState>): MandaUI{
-        return when(index){
+    fun currentColorList(list: List<MandaState>): List<Color?> {
+        val colorList = list.map {
+            when (it) {
+                is MandaState.Exist -> { it.mandaUIList[4].mandaUI.color }
+                is MandaState.Empty -> { null }
+            }
+        }
+        return colorList
+    }
+
+    fun matchingTitleManda(index: Int, list: List<MandaState>): MandaUI {
+        return when (index) {
             -1, 4 -> (list[4] as MandaState.Exist).mandaUIList[4].mandaUI
             else -> {
-                when(val target = list[index]){
+                when (val target = list[index]) {
                     is MandaState.Exist -> target.mandaUIList[4].mandaUI
                     is MandaState.Empty -> MandaUI(id = target.id)
                 }

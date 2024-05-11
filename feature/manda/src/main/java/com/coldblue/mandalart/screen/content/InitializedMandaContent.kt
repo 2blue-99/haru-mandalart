@@ -71,6 +71,7 @@ import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.util.MandaUtils.currentColorList
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.todo.MandaTodoList
@@ -157,6 +158,7 @@ fun InitializedMandaContent(
             changeCurrentIndex = changeCurrentIndex
         )
         MandaTodoList(
+            colorList = currentColorList(uiState.mandaStateList),
             currentIndex = uiState.currentIndex,
             todoRange = uiState.todoRange,
             todoList = uiState.todoList,

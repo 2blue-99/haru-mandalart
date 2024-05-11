@@ -168,7 +168,6 @@ class MandaViewModel @Inject constructor(
     }
 
     fun changeCurrentIndex(index: Int) {
-        Logger.d(index)
         _currentIndex.value = index
     }
 

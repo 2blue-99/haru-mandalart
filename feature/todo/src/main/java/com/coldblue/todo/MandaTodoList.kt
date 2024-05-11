@@ -46,6 +46,7 @@ import java.time.LocalDate
 
 @Composable
 fun MandaTodoList(
+    colorList: List<Color?>,
     currentIndex: Int,
     todoRange: Int,
     todoList: List<MandaTodo>,
@@ -70,18 +71,23 @@ fun MandaTodoList(
                 .fillMaxWidth()
         ) {
             items(todoList) {
-                MandaTodoItem(it, currentIndex)
+                MandaTodoItem(
+                    it,
+                    currentIndex,
+                    if (currentIndex != -1) colorList[it.mandaIndex - 1]
+                        ?: HMColor.Gray else HMColor.Gray
+                )
             }
         }
     }
 }
 
 @Composable
-fun MandaTodoItem(mandaTodo: MandaTodo, currentIndex: Int) {
-
+fun MandaTodoItem(mandaTodo: MandaTodo, currentIndex: Int, color: Color) {
     Row(
         modifier = Modifier
-            .fillMaxWidth().fillMaxHeight()
+            .fillMaxWidth()
+            .fillMaxHeight()
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.Gray)
@@ -89,20 +95,24 @@ fun MandaTodoItem(mandaTodo: MandaTodo, currentIndex: Int) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        CircleCheckbox(false){
+        CircleCheckbox(color, false) {
 
         }
         Text(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(0.8f),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(0.8f),
             text = mandaTodo.title,
             style = HmStyle.text16,
             maxLines = 2
         )
         Box(
-            modifier = Modifier.padding(end = 0.dp)
-                .width(12.dp).height(60.dp)
+            modifier = Modifier
+                .padding(end = 0.dp)
+                .width(12.dp)
+                .height(60.dp)
                 .background(
-                    HMColor.SurveyYellow, shape = RoundedCornerShape(
+                    color, shape = RoundedCornerShape(
                         topStart = CornerSize(0.dp),
                         topEnd = CornerSize(8.dp),
                         bottomEnd = CornerSize(8.dp),
@@ -118,19 +128,28 @@ fun MandaTodoItem(mandaTodo: MandaTodo, currentIndex: Int) {
 }
 
 @Composable
-fun CircleCheckbox(selected: Boolean, enabled: Boolean = true, onChecked: () -> Unit) {
+fun CircleCheckbox(
+    color: Color,
+    selected: Boolean,
+    enabled: Boolean = true,
+    onChecked: () -> Unit
+) {
 
     val imageVector = if (selected) Icons.Filled.CheckCircle else IconPack.Circle
-    val tint = if (selected) HMColor.SurveyYellow.copy(alpha = 0.8f) else HMColor.Gray
-    val background = if (selected) HMColor.SurveyYellow else Color.Black
+    val tint = if (selected) color.copy(alpha = 0.8f) else HMColor.Gray
+    val background = if (selected) color else Color.Black
 
-    IconButton(onClick = { onChecked() },
+    IconButton(
+        onClick = { onChecked() },
         modifier = Modifier.offset(x = 4.dp, y = 4.dp),
-        enabled = enabled) {
+        enabled = enabled
+    ) {
 
-        Icon(imageVector = imageVector, tint = tint,
+        Icon(
+            imageVector = imageVector, tint = tint,
             modifier = Modifier.background(background, shape = CircleShape),
-            contentDescription = "checkbox")
+            contentDescription = "checkbox"
+        )
     }
 }
 
@@ -145,6 +164,7 @@ fun MandaTodoItemPreview() {
 //            upsertMandaTodoUseCase(MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false))
 
     MandaTodoList(
+        listOf(HMColor.Manda.Red, HMColor.Manda.Orange),
         1, 2, listOf(
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
