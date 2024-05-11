@@ -91,6 +91,16 @@ class MandaViewModel @Inject constructor(
                         ),
                         donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
                     )
+
+                    val curIndexTodoList =
+                        if (curIndex != 4 && curIndex != -1) todoList.filter { it.mandaIndex == curIndex } else todoList
+
+                    val curDateRangeTodoList = when (todoRange) {
+                        1 -> curIndexTodoList
+                        2 -> curIndexTodoList
+                        else -> curIndexTodoList
+                    }
+
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
@@ -99,9 +109,9 @@ class MandaViewModel @Inject constructor(
                         mandaKeyList = mandaKeys.map { it.name },
                         currentIndex = curIndex,
                         todoRange = todoRange,
-                        todoList = todoList,
-                        todoCnt = 2,
-                        doneTodoCnt = 3
+                        todoList = curDateRangeTodoList,
+                        todoCnt = curDateRangeTodoList.count { !it.isDone },
+                        doneTodoCnt = curDateRangeTodoList.count { it.isDone }
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")
@@ -173,5 +183,11 @@ class MandaViewModel @Inject constructor(
 
     fun changeTodoRange(index: Int) {
         _todoRange.value = index
+    }
+
+    fun upsertMandaTodo(mandaTodo: MandaTodo) {
+        viewModelScope.launch {
+            upsertMandaTodoUseCase(mandaTodo)
+        }
     }
 }

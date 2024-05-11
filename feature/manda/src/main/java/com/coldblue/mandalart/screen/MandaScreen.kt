@@ -28,6 +28,7 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.state.MandaUpdateDialogState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTodo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
@@ -86,7 +87,8 @@ fun MandaScreen(
             changeBottomSheet = mandaViewModel::changeBottomSheet,
             navigateToSetting = navigateToSetting,
             changeCurrentIndex = mandaViewModel::changeCurrentIndex,
-            changeTodoRange = mandaViewModel::changeTodoRange
+            changeTodoRange = mandaViewModel::changeTodoRange,
+            upsertMandaTodo = mandaViewModel::upsertMandaTodo
         )
     }
 }
@@ -106,6 +108,8 @@ fun MandaContentWithState(
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (Int) -> Unit,
+    upsertMandaTodo:(MandaTodo)->Unit
+
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {
@@ -137,6 +141,7 @@ fun MandaContentWithState(
                 navigateToSetting = navigateToSetting,
                 changeCurrentIndex = changeCurrentIndex,
                 changeTodoRange = changeTodoRange,
+                upsertMandaTodo = upsertMandaTodo
             )
 
         }

@@ -74,6 +74,7 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils.currentColorList
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
 import com.colddelight.mandalart.R
 import com.orhanobut.logger.Logger
@@ -95,6 +96,9 @@ fun InitializedMandaContent(
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (Int) -> Unit,
+    upsertMandaTodo:(MandaTodo)->Unit
+
+
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -163,7 +167,8 @@ fun InitializedMandaContent(
             todoRange = uiState.todoRange,
             todoList = uiState.todoList,
             doneTodoCnt = uiState.doneTodoCnt,
-            todoCnt = uiState.todoCnt
+            todoCnt = uiState.todoCnt,
+            upsertMandaTodo = upsertMandaTodo
         )
     }
 }

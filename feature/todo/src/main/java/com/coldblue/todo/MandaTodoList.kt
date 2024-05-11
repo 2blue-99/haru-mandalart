@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
@@ -51,7 +54,8 @@ fun MandaTodoList(
     todoRange: Int,
     todoList: List<MandaTodo>,
     todoCnt: Int,
-    doneTodoCnt: Int
+    doneTodoCnt: Int,
+    upsertMandaTodo: (MandaTodo) -> Unit
 ) {
     Column {
 
@@ -65,44 +69,77 @@ fun MandaTodoList(
             TodoRangeSelector()
             Text(text = "Todo:$todoCnt")
         }
+
         LazyColumn(
             modifier = Modifier
                 .height(200.dp)
                 .fillMaxWidth()
         ) {
-            items(todoList) {
-                MandaTodoItem(
-                    it,
-                    currentIndex,
-                    if (currentIndex != -1) colorList[it.mandaIndex - 1]
-                        ?: HMColor.Gray else HMColor.Gray
-                )
+            if (todoList.isEmpty()) {
+                item {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 40.dp),
+                        textAlign = TextAlign.Center,
+                        text = "Todo를 추가해 주세요!",
+                        style = HmStyle.text20,
+                        color = HMColor.SubLightText
+                    )
+                }
+
+            } else {
+                items(todoList.filter { !it.isDone }) { todo ->
+                    MandaTodoItem(
+                        todo,
+                        currentIndex,
+                        colorList[todo.mandaIndex] ?: HMColor.Gray , upsertMandaTodo
+                    )
+                }
+                item {
+                    Text(text = "완료됨")
+                }
+                items(todoList.filter { it.isDone }) { todo ->
+                    MandaTodoItem(
+                        todo,
+                        currentIndex,
+                        colorList[todo.mandaIndex] ?: HMColor.Gray , upsertMandaTodo
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun MandaTodoItem(mandaTodo: MandaTodo, currentIndex: Int, color: Color) {
+fun MandaTodoItem(
+    mandaTodo: MandaTodo,
+    currentIndex: Int,
+    color: Color,
+    upsertMandaTodo: (MandaTodo) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(HMColor.Gray)
+            .background(HMColor.LiteGray)
             .clickable { },
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        CircleCheckbox(color, false) {
-
+        CircleCheckbox(color, mandaTodo.isDone) {
+            upsertMandaTodo(mandaTodo.copy(isDone = !mandaTodo.isDone))
         }
+
         Text(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(0.8f),
             text = mandaTodo.title,
+            color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
+            textDecoration = if (mandaTodo.isDone) TextDecoration.LineThrough else null,
             style = HmStyle.text16,
             maxLines = 2
         )
@@ -136,8 +173,8 @@ fun CircleCheckbox(
 ) {
 
     val imageVector = if (selected) Icons.Filled.CheckCircle else IconPack.Circle
-    val tint = if (selected) color.copy(alpha = 0.8f) else HMColor.Gray
-    val background = if (selected) color else Color.Black
+    val tint = if (selected) color.copy(alpha = 0.8f) else HMColor.LiteGray
+    val background = if (selected) HMColor.LiteGray else Color.Black
 
     IconButton(
         onClick = { onChecked() },
@@ -166,10 +203,10 @@ fun MandaTodoItemPreview() {
     MandaTodoList(
         listOf(HMColor.Manda.Red, HMColor.Manda.Orange),
         1, 2, listOf(
-            MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
+            MandaTodo("1번투구", true, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
-        ), 3, 3
+        ), 3, 3, {}
     )
 
 }
