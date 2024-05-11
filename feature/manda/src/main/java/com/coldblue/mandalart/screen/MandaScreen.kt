@@ -14,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.MandaViewModel
 import com.coldblue.mandalart.UpdateNoteViewModel
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
@@ -106,8 +108,13 @@ fun MandaContentWithState(
     changeTodoRange: (Int) -> Unit,
 ) {
     when (mandaUIState) {
-        is MandaUIState.Loading -> {}
-        is MandaUIState.Error -> {}
+        is MandaUIState.Loading -> {
+            Text(text = "로딩", style = HmStyle.text24)
+        }
+        is MandaUIState.Error -> {
+            Text(text = "에러", style = HmStyle.text24)
+
+        }
         is MandaUIState.UnInitializedSuccess -> {
             UnInitializedMandaContent(
                 updateInitState = updateInitState,

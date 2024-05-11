@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -46,8 +47,8 @@ class MandaViewModel @Inject constructor(
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
-    val getTodoUseCase: GetTodoUseCase,
-    val upsertTodoUseCase: UpsertTodoUseCase,
+//    val getTodoUseCase: GetTodoUseCase,
+//    val upsertTodoUseCase: UpsertTodoUseCase,
 ) : ViewModel() {
 
     private val _currentIndex = MutableStateFlow(4)
@@ -59,16 +60,24 @@ class MandaViewModel @Inject constructor(
     private val _mandaBottomSheetUIState = MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
     val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
 
+    init {
+        val d = getKeyMandaUseCase()
+        viewModelScope.launch {
+            Logger.d(d.first())
+
+        }
+    }
+
     val mandaUiState: StateFlow<MandaUIState> =
         getMandaInitStateUseCase().flatMapLatest { state ->
             if (state) {
                 combine(
                     getKeyMandaUseCase(),
                     getDetailMandaUseCase(),
-                    getTodoUseCase(LocalDate.now()),
+//                    getTodoUseCase(LocalDate.now()),
                     currentIndex,
                     todoRange
-                ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
+                ) { mandaKeys, mandaDetails, curIndex, todoRange ->
                     val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     val mandaStatus = MandaStatus(
                         titleManda = MandaUtils.matchingTitleManda(curIndex, mandaStateList),
@@ -83,9 +92,9 @@ class MandaViewModel @Inject constructor(
                         mandaKeyList = mandaKeys.map { it.name },
                         currentIndex = curIndex,
                         todoRange = todoRange,
-                        todoList = todoList,
-                        todoCnt = todoList.map { it.isDone }.size,
-                        doneTodoCnt = todoList.map { !it.isDone }.size,
+                        todoList = emptyList(),
+                        todoCnt = 2,
+                        doneTodoCnt = 3
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")
@@ -94,7 +103,6 @@ class MandaViewModel @Inject constructor(
                 flowOf(MandaUIState.UnInitializedSuccess)
             }
         }.catch {
-            Logger.d("ERR")
             MandaUIState.Error(it.message ?: "Error")
         }.stateIn(
             scope = viewModelScope,

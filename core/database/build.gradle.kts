@@ -5,6 +5,15 @@ plugins {
 
 android {
     namespace = "com.coldblue.database"
+    defaultConfig{
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+
+    }
+
 }
 
 dependencies {

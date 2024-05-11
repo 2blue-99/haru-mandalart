@@ -1,5 +1,6 @@
 package com.coldblue.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -11,12 +12,14 @@ import com.coldblue.database.dao.CurrentGroupDao
 import com.coldblue.database.dao.AppDao
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.database.dao.MandaKeyDao
+import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.database.dao.TodoGroupDao
 import com.coldblue.database.entity.AlarmEntity
 import com.coldblue.database.entity.CurrentGroupEntity
 import com.coldblue.database.entity.MandaDetailEntity
 import com.coldblue.database.entity.MandaKeyEntity
+import com.coldblue.database.entity.MandaTodoEntity
 import com.coldblue.database.entity.TodoEntity
 import com.coldblue.database.entity.TodoGroupEntity
 
@@ -28,12 +31,13 @@ import com.coldblue.database.entity.TodoGroupEntity
         MandaDetailEntity::class,
         TodoEntity::class,
         TodoGroupEntity::class,
+        MandaTodoEntity::class,
     ],
-    version = 1,
-    exportSchema = false
+    version = 2,
+    exportSchema = true,
 )
 
-@TypeConverters(LocalDateConvert::class, LocalDateTimeConverter::class, LocalTimeConverter::class,)
+@TypeConverters(LocalDateConvert::class, LocalDateTimeConverter::class, LocalTimeConverter::class)
 abstract class AppDataBase : RoomDatabase() {
     abstract fun alarmDao(): AlarmDao
     abstract fun currentGroupDao(): CurrentGroupDao
@@ -42,5 +46,6 @@ abstract class AppDataBase : RoomDatabase() {
     abstract fun todoDao(): TodoDao
     abstract fun todoGroupDao(): TodoGroupDao
     abstract fun haruMandalrtDao(): AppDao
+    abstract fun mandaTodoDao(): MandaTodoDao
 
 }
