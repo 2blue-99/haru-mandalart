@@ -1,12 +1,9 @@
 package com.coldblue.network
 
-import com.coldblue.network.model.NetWorkTodoGroup
-import com.coldblue.network.model.NetworkCurrentGroup
 import com.coldblue.network.model.NetworkMandaDetail
 import com.coldblue.network.model.NetworkMandaKey
 import com.coldblue.network.model.NetworkTodo
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.SessionStatus
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.flow.Flow
@@ -24,16 +21,8 @@ class SupabaseDataSourceImpl @Inject constructor(
                     NetworkTodo::user_id eq user.id
                 }
             }
-            client.postgrest["todogroup"].delete {
-                filter {
-                    NetWorkTodoGroup::user_id eq user.id
-                }
-            }
-            client.postgrest["currentGroup"].delete {
-                filter {
-                    NetworkCurrentGroup::user_id eq user.id
-                }
-            }
+
+
             client.postgrest["mandaKey"].delete {
                 filter {
                     NetworkMandaKey::user_id eq user.id
