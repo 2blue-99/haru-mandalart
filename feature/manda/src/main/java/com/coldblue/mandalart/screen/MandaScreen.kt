@@ -123,7 +123,7 @@ fun MandaContentWithState(
         }
 
         is MandaUIState.InitializedSuccess -> {
-            Text(text = "현재 위치${mandaUIState.todoList}")
+            Text(text = "현재 위치${mandaUIState.currentIndex}")
             InitializedMandaContent(
                 uiState = mandaUIState,
                 mandaBottomSheetUIState = mandaBottomSheetUiState,

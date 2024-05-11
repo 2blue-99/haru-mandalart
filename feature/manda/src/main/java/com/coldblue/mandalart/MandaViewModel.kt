@@ -67,7 +67,7 @@ class MandaViewModel @Inject constructor(
     init {
         viewModelScope.launch {
 //            upsertMandaTodoUseCase(MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false))
-//            upsertMandaTodoUseCase(MandaTodo("2번투구", false, false, null, LocalDate.now(), 1, false))
+//            upsertMandaTodoUseCase(MandaTodo("3번투두 굉장히 긴것이다 이것을 how? 보여주는가 그것은 네이버에도 나와있지 않다 캡틴잭 화이팅 나는 간다 어디든 하하하하하하 이것은 최고의 투두이다 ", false, false, null, LocalDate.now(), 3, false))
 
         }
     }

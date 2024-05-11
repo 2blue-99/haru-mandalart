@@ -73,6 +73,7 @@ import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.todo.MandaTodoList
 import com.colddelight.mandalart.R
 import com.orhanobut.logger.Logger
 import kotlin.math.abs
@@ -154,6 +155,13 @@ fun InitializedMandaContent(
             curIndex = uiState.currentIndex,
             changeBottomSheet = changeBottomSheet,
             changeCurrentIndex = changeCurrentIndex
+        )
+        MandaTodoList(
+            currentIndex = uiState.currentIndex,
+            todoRange = uiState.todoRange,
+            todoList = uiState.todoList,
+            doneTodoCnt = uiState.doneTodoCnt,
+            todoCnt = uiState.todoCnt
         )
     }
 }
@@ -384,8 +392,7 @@ fun Mandalart(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxHeight()
+
     ) {
         LazyColumn(
             horizontalAlignment = Alignment.Start,

@@ -8,4 +8,6 @@ android {
 
 dependencies {
     implementation(libs.playStore.update)
+    implementation(project(":feature:todo"))
+
 }

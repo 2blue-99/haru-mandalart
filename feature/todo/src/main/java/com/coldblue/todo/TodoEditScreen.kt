@@ -282,8 +282,6 @@ fun TodoEditContent(
                         clickableState = titleText.isNotEmpty(),
                         modifier = Modifier.weight(1F)
                     ) {
-                        Logger.d(myTime.getAmPmHour())
-                        Logger.d(date)
                         upsertTodo(
                             todo.copy(
                                 title = titleText,
