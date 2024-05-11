@@ -1,41 +1,37 @@
 package com.coldblue.todo
 
-import android.graphics.fonts.FontStyle
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,32 +40,32 @@ import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.Circle
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.model.DateRange
 import com.coldblue.model.MandaTodo
+import com.coldblue.model.ToggleInfo
 import java.time.LocalDate
 
 @Composable
 fun MandaTodoList(
     colorList: List<Color?>,
     currentIndex: Int,
-    todoRange: Int,
+    todoRange: DateRange,
     todoList: List<MandaTodo>,
     todoCnt: Int,
     doneTodoCnt: Int,
-    upsertMandaTodo: (MandaTodo) -> Unit
+    upsertMandaTodo: (MandaTodo) -> Unit,
+    changeRange: (DateRange) -> Unit
 ) {
     Column {
-
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TodoRangeSelector()
-            Text(text = "Todo:$todoCnt")
+            TodoRangeSelector(todoRange, changeRange)
+            Text(text = "Todo:$todoCnt", style = HmStyle.text16, fontWeight = FontWeight.Bold)
         }
-
         LazyColumn(
             modifier = Modifier
                 .height(200.dp)
@@ -93,7 +89,7 @@ fun MandaTodoList(
                     MandaTodoItem(
                         todo,
                         currentIndex,
-                        colorList[todo.mandaIndex] ?: HMColor.Gray , upsertMandaTodo
+                        colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
                     )
                 }
                 item {
@@ -103,7 +99,7 @@ fun MandaTodoList(
                     MandaTodoItem(
                         todo,
                         currentIndex,
-                        colorList[todo.mandaIndex] ?: HMColor.Gray , upsertMandaTodo
+                        colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
                     )
                 }
             }
@@ -191,8 +187,56 @@ fun CircleCheckbox(
 }
 
 @Composable
-fun TodoRangeSelector() {
-    Text(text = "오늘, 이번주, 전체")
+fun TodoRangeSelector(todoRange: DateRange, changeRange: (DateRange) -> Unit) {
+    val dateRangeButtons = remember {
+        mutableStateListOf(
+            ToggleInfo(
+                isChecked = todoRange == DateRange.DAY,
+                text = "오늘",
+                dateRange = DateRange.DAY
+            ), ToggleInfo(
+                isChecked = todoRange == DateRange.WEEK,
+                text = "이번주",
+                dateRange = DateRange.WEEK
+            ),
+            ToggleInfo(
+                isChecked = todoRange == DateRange.ALL,
+                text = "전체",
+                dateRange = DateRange.ALL
+            )
+        )
+    }
+    LazyRow {
+        items(dateRangeButtons) { group ->
+            SelectButton(group) { dateRange ->
+                changeRange(dateRange)
+                dateRangeButtons.replaceAll {
+                    it.copy(isChecked = it.text == group.text)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
+    Surface(
+        color = if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background,
+        contentColor = HMColor.Primary,
+        shape = CircleShape,
+        modifier = Modifier
+            .padding(end = 8.dp)
+            .clip(CircleShape)
+            .clickable {
+                onClick(toggleInfo.dateRange)
+            }
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 6.dp, horizontal = 16.dp),
+            text = toggleInfo.text,
+            color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray
+        )
+    }
 }
 
 @Preview
@@ -202,11 +246,11 @@ fun MandaTodoItemPreview() {
 
     MandaTodoList(
         listOf(HMColor.Manda.Red, HMColor.Manda.Orange),
-        1, 2, listOf(
+        1, DateRange.DAY, listOf(
             MandaTodo("1번투구", true, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
-        ), 3, 3, {}
+        ), 3, 3, {},{}
     )
 
 }

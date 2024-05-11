@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -72,6 +71,7 @@ import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils.currentColorList
+import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
@@ -95,8 +95,8 @@ fun InitializedMandaContent(
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
-    changeTodoRange: (Int) -> Unit,
-    upsertMandaTodo:(MandaTodo)->Unit
+    changeTodoRange: (DateRange) -> Unit,
+    upsertMandaTodo: (MandaTodo) -> Unit
 
 
 ) {
@@ -168,7 +168,8 @@ fun InitializedMandaContent(
             todoList = uiState.todoList,
             doneTodoCnt = uiState.doneTodoCnt,
             todoCnt = uiState.todoCnt,
-            upsertMandaTodo = upsertMandaTodo
+            upsertMandaTodo = upsertMandaTodo,
+            changeRange = changeTodoRange
         )
     }
 }
@@ -266,7 +267,7 @@ fun Mandalart(
     changeCurrentIndex: (Int) -> Unit
 ) {
     var currentIndex by remember { mutableIntStateOf(curIndex) }
-    LaunchedEffect(curIndex){ currentIndex = curIndex }
+    LaunchedEffect(curIndex) { currentIndex = curIndex }
 
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
@@ -327,6 +328,7 @@ fun Mandalart(
                     offsetX += x
                     direction = MandaGestureState.Left
                 }
+
                 x < 0 -> {
                     offsetX += x
                     direction = MandaGestureState.Right
@@ -338,6 +340,7 @@ fun Mandalart(
                     offsetY += y
                     direction = MandaGestureState.Up
                 }
+
                 y < 0 -> {
                     offsetY += y
                     direction = MandaGestureState.Down
@@ -355,25 +358,28 @@ fun Mandalart(
             MandaGestureState.Left -> {
                 if (offsetX > gestureAccuracy && translateX < mandaSize.width) {
                     translateX += mandaSize.width
-                    changeCurrentIndex(currentIndex-1)
+                    changeCurrentIndex(currentIndex - 1)
                 }
             }
+
             MandaGestureState.Right -> {
                 if (offsetX < -gestureAccuracy && translateX > -mandaSize.width) {
                     translateX -= mandaSize.width
-                    changeCurrentIndex(currentIndex+1)
+                    changeCurrentIndex(currentIndex + 1)
                 }
             }
+
             MandaGestureState.Up -> {
                 if (offsetY > gestureAccuracy && translateY < mandaSize.height) {
                     translateY += mandaSize.height
-                    changeCurrentIndex(currentIndex-3)
+                    changeCurrentIndex(currentIndex - 3)
                 }
             }
+
             MandaGestureState.Down -> {
                 if (offsetY < -gestureAccuracy && translateY > -mandaSize.height) {
                     translateY -= mandaSize.height
-                    changeCurrentIndex(currentIndex+3)
+                    changeCurrentIndex(currentIndex + 3)
                 }
             }
         }

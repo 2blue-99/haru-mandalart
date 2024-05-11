@@ -26,6 +26,7 @@ import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.state.MandaUpdateDialogState
+import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
@@ -107,7 +108,7 @@ fun MandaContentWithState(
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
-    changeTodoRange: (Int) -> Unit,
+    changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo:(MandaTodo)->Unit
 
 ) {
@@ -127,7 +128,7 @@ fun MandaContentWithState(
         }
 
         is MandaUIState.InitializedSuccess -> {
-            Text(text = "현재 위치${mandaUIState.currentIndex}")
+            Text(text = "현재 위치${mandaUIState.currentIndex} ${mandaUIState.todoRange}")
             InitializedMandaContent(
                 uiState = mandaUIState,
                 mandaBottomSheetUIState = mandaBottomSheetUiState,
