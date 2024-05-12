@@ -12,11 +12,11 @@ object HMColor {
     val NegativeText = Color(0xFFB93B50)
     val Gray = Color(0xFFD9DBE3)
     val DarkGray = Color(0xFFB8BBC0)
+    val LiteGray = Color(0xFFFAFAFA)
     val Background = Color(0xFFFFFFFF)
     val SurveyGreen = Color(0xFF167263)
     val SurveyYellow = Color(0xFFA7741B)
     val Box = Color(0xFFF2F4F8)
-
 
     object Manda {
         val Pink = Color(0xFFBF7EB8)

@@ -1,12 +1,9 @@
 package com.coldblue.network
 
-import com.coldblue.network.model.NetWorkTodoGroup
-import com.coldblue.network.model.NetworkCurrentGroup
 import com.coldblue.network.model.NetworkMandaDetail
 import com.coldblue.network.model.NetworkMandaKey
 import com.coldblue.network.model.NetworkTodo
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.SessionStatus
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.flow.Flow
@@ -24,14 +21,9 @@ class SupabaseDataSourceImpl @Inject constructor(
                     NetworkTodo::user_id eq user.id
                 }
             }
-            client.postgrest["todogroup"].delete {
+            client.postgrest["mandaTodo"].delete {
                 filter {
-                    NetWorkTodoGroup::user_id eq user.id
-                }
-            }
-            client.postgrest["currentGroup"].delete {
-                filter {
-                    NetworkCurrentGroup::user_id eq user.id
+                    NetworkTodo::user_id eq user.id
                 }
             }
             client.postgrest["mandaKey"].delete {
@@ -47,14 +39,14 @@ class SupabaseDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun refresh(token:String):Flow<Boolean> {
+    override suspend fun refresh(token: String): Flow<Boolean> {
         return try {
-            if (client.auth.currentAccessTokenOrNull()==null){
+            if (client.auth.currentAccessTokenOrNull() == null) {
                 client.auth.retrieveUser(token)
                 client.auth.refreshCurrentSession()
             }
-            flow {emit(true) }
-        }catch (e:Exception){
+            flow { emit(true) }
+        } catch (e: Exception) {
             flow { emit(false) }
 
         }

@@ -6,6 +6,7 @@ import com.coldblue.database.dao.CurrentGroupDao
 import com.coldblue.database.dao.AppDao
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.database.dao.MandaKeyDao
+import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.database.dao.TodoDao
 import com.coldblue.database.dao.TodoGroupDao
 import dagger.Module
@@ -46,6 +47,10 @@ object DaoModule {
     @Provides
     fun provideTodoGroupDao(dataBase: AppDataBase): TodoGroupDao =
         dataBase.todoGroupDao()
+    @Singleton
+    @Provides
+    fun provideMandaTodoDao(dataBase: AppDataBase): MandaTodoDao =
+        dataBase.mandaTodoDao()
 
     @Singleton
     @Provides

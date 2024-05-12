@@ -10,6 +10,8 @@ import com.coldblue.data.repository.notice.NoticeRepository
 import com.coldblue.data.repository.notice.NoticeRepositoryImpl
 import com.coldblue.data.repository.survey.SurveyRepository
 import com.coldblue.data.repository.survey.SurveyRepositoryImpl
+import com.coldblue.data.repository.todo.MandaTodoRepository
+import com.coldblue.data.repository.todo.MandaTodoRepositoryImpl
 import com.coldblue.data.repository.todo.TodoRepository
 import com.coldblue.data.repository.todo.TodoRepositoryImpl
 import com.coldblue.data.repository.user.UserRepository
@@ -57,6 +59,11 @@ interface RepositoryModule {
     ): SurveyRepository
 
     @Binds
+    fun bindMandaTodoRepository(
+        mandaTodoRepository: MandaTodoRepositoryImpl
+    ): MandaTodoRepository
+
+    @Binds
     fun bindUserPreferencesRepo(
         userPreferencesRepo: UserRepositoryImpl
     ): UserRepository
@@ -65,6 +72,7 @@ interface RepositoryModule {
     fun bindLoginHelperRepo(
         loginHelper: LoginHelperImpl
     ): LoginHelper
+
 
     @Binds
     fun bindsNetworkMonitor(

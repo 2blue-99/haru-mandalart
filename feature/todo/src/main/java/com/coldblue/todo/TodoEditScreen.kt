@@ -48,7 +48,6 @@ import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Todo
-import com.coldblue.model.ToggleInfo
 import com.coldblue.todo.uistate.TodoEditUiState
 import com.orhanobut.logger.Logger
 import java.time.LocalDate
@@ -129,14 +128,7 @@ fun TodoEditContent(
 
 
 
-    val dateButtons = remember {
-        mutableStateListOf(
-            ToggleInfo(todoDate.isMatch(0), "오늘", plus = 0),
-            ToggleInfo(todoDate.isMatch(1), "내일", plus = 1),
-            ToggleInfo(todoDate.isMatch(7), "다음주", plus = 7),
-            ToggleInfo(todoDate.isNotMatch(), "직접입력"),
-        )
-    }
+
 
     LaunchedEffect(date) {
         selectDate(date)
@@ -233,9 +225,7 @@ fun TodoEditContent(
                 Text(text = date.getDisplayShort())
 
                 Row {
-                    dateButtons.forEach { button ->
 
-                    }
                 }
 
             }
@@ -282,8 +272,6 @@ fun TodoEditContent(
                         clickableState = titleText.isNotEmpty(),
                         modifier = Modifier.weight(1F)
                     ) {
-                        Logger.d(myTime.getAmPmHour())
-                        Logger.d(date)
                         upsertTodo(
                             todo.copy(
                                 title = titleText,

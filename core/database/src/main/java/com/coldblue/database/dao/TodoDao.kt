@@ -5,12 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.coldblue.database.entity.CurrentGroupEntity
-import com.coldblue.database.entity.CurrentGroupWithName
 import com.coldblue.database.entity.TodoEntity
-import com.coldblue.database.entity.TodoGroupEntity
 import com.coldblue.database.entity.TodoWithGroupName
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 

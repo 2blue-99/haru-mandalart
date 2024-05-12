@@ -9,8 +9,8 @@ import com.coldblue.domain.manda.GetDetailMandaUseCase
 import com.coldblue.domain.manda.GetKeyMandaUseCase
 import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
-import com.coldblue.domain.todo.GetTodoUseCase
-import com.coldblue.domain.todo.UpsertTodoUseCase
+import com.coldblue.domain.todo.GetMandaTodoUseCase
+import com.coldblue.domain.todo.UpsertMandaTodoUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
@@ -18,9 +18,10 @@ import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaStatus
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
+import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
-import com.orhanobut.logger.Logger
+import com.coldblue.model.MandaTodo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +32,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,17 +48,18 @@ class MandaViewModel @Inject constructor(
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
-    val getTodoUseCase: GetTodoUseCase,
-    val upsertTodoUseCase: UpsertTodoUseCase,
+    val getMandaTodoUseCase: GetMandaTodoUseCase,
+    val upsertMandaTodoUseCase: UpsertMandaTodoUseCase
 ) : ViewModel() {
 
     private val _currentIndex = MutableStateFlow(4)
     val currentIndex: StateFlow<Int> get() = _currentIndex
 
-    private val _todoRange = MutableStateFlow(0)
-    val todoRange: StateFlow<Int> get() = _todoRange
+    private val _todoRange = MutableStateFlow(DateRange.DAY)
+    val todoRange: StateFlow<DateRange> get() = _todoRange
 
-    private val _mandaBottomSheetUIState = MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
+    private val _mandaBottomSheetUIState =
+        MutableStateFlow<MandaBottomSheetUIState>(MandaBottomSheetUIState.Down)
     val mandaBottomSheetUIState: StateFlow<MandaBottomSheetUIState> get() = _mandaBottomSheetUIState
 
     val mandaUiState: StateFlow<MandaUIState> =
@@ -64,7 +68,7 @@ class MandaViewModel @Inject constructor(
                 combine(
                     getKeyMandaUseCase(),
                     getDetailMandaUseCase(),
-                    getTodoUseCase(LocalDate.now()),
+                    getMandaTodoUseCase(),
                     currentIndex,
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
@@ -74,6 +78,20 @@ class MandaViewModel @Inject constructor(
                         statusColor = MandaUtils.matchingPercentageColor(curIndex, mandaList),
                         donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
                     )
+
+                    val curIndexTodoList =
+                        if (curIndex != 4 && curIndex != -1) todoList.filter { it.mandaIndex == curIndex } else todoList
+
+                    val curDateRangeTodoList = when (todoRange) {
+                        DateRange.DAY -> curIndexTodoList.filter { it.date == LocalDate.now() }
+                        DateRange.WEEK -> {
+                            val startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                            val endOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+                            curIndexTodoList.filter { it.date.isAfter(startOfWeek) && it.date.isBefore(endOfWeek) }
+                        }
+                        else -> curIndexTodoList
+                    }
+
                     MandaUIState.InitializedSuccess(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
@@ -82,9 +100,9 @@ class MandaViewModel @Inject constructor(
                         mandaKeyList = mandaKeys.map { it.name },
                         currentIndex = curIndex,
                         todoRange = todoRange,
-                        todoList = todoList,
-                        todoCnt = todoList.map { it.isDone }.size,
-                        doneTodoCnt = todoList.map { !it.isDone }.size,
+                        todoList = curDateRangeTodoList,
+                        todoCnt = curDateRangeTodoList.count { !it.isDone },
+                        doneTodoCnt = curDateRangeTodoList.count { it.isDone }
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")
@@ -151,11 +169,16 @@ class MandaViewModel @Inject constructor(
     }
 
     fun changeCurrentIndex(index: Int) {
-        Logger.d(index)
         _currentIndex.value = index
     }
 
-    fun changeTodoRange(index: Int) {
-        _todoRange.value = index
+    fun changeTodoRange(dateRange: DateRange) {
+        _todoRange.value = dateRange
+    }
+
+    fun upsertMandaTodo(mandaTodo: MandaTodo) {
+        viewModelScope.launch {
+            upsertMandaTodoUseCase(mandaTodo)
+        }
     }
 }

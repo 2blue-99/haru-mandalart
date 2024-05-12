@@ -3,20 +3,14 @@ package com.coldblue.model
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class Todo(
+data class MandaTodo(
     val title: String,
-    val content: String? = null,
     val isDone: Boolean = false,
+    val isAlarm: Boolean = false,
     val time: LocalTime? = null,
     val date: LocalDate = LocalDate.now(),
-    val todoGroupId: Int? = null,
-    val groupName: String = "",
+    val mandaIndex: Int,
     val isDel: Boolean = false,
-    val originGroupId: Int,
     val originId: Int = 0,
     val id: Int = 0,
 )
-
-enum class DateRange {
-    DAY, WEEK, ALL
-}

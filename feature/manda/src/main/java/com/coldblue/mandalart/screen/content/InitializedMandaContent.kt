@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -81,8 +81,12 @@ import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.util.MandaUtils.currentColorList
+import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTodo
+import com.coldblue.todo.MandaTodoList
 import com.colddelight.mandalart.R
 import java.util.logging.Logger
 import kotlin.math.abs
@@ -102,15 +106,19 @@ fun InitializedMandaContent(
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
-    changeTodoRange: (Int) -> Unit,
+    changeTodoRange: (DateRange) -> Unit,
+    upsertMandaTodo: (MandaTodo) -> Unit
+
+
 ) {
+
+
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
-
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
@@ -165,6 +173,18 @@ fun InitializedMandaContent(
             changeBottomSheet = changeBottomSheet,
             changeCurrentIndex = changeCurrentIndex
         )
+        MandaTodoList(
+            colorList = currentColorList(uiState.mandaStateList),
+            currentIndex = uiState.currentIndex,
+            todoRange = uiState.todoRange,
+            todoList = uiState.todoList,
+            doneTodoCnt = uiState.doneTodoCnt,
+            todoCnt = uiState.todoCnt,
+            upsertMandaTodo = upsertMandaTodo,
+            changeRange = changeTodoRange,
+        )
+
+
     }
 }
 
@@ -284,7 +304,6 @@ fun Mandalart(
 ) {
     var currentIndex by remember { mutableIntStateOf(curIndex) }
     LaunchedEffect(curIndex) { currentIndex = curIndex }
-
     var currentMandaList = remember {
         mutableStateListOf<MandaState>().apply {
             addAll(mandaList)
@@ -441,8 +460,7 @@ fun Mandalart(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxHeight()
+
     ) {
         LazyColumn(
             horizontalAlignment = Alignment.Start,

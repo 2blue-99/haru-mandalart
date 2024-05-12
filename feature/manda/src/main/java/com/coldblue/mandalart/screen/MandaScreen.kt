@@ -14,8 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.MandaViewModel
 import com.coldblue.mandalart.UpdateNoteViewModel
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
@@ -24,8 +26,10 @@ import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.state.MandaUpdateDialogState
+import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTodo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
@@ -84,7 +88,8 @@ fun MandaScreen(
             changeBottomSheet = mandaViewModel::changeBottomSheet,
             navigateToSetting = navigateToSetting,
             changeCurrentIndex = mandaViewModel::changeCurrentIndex,
-            changeTodoRange = mandaViewModel::changeTodoRange
+            changeTodoRange = mandaViewModel::changeTodoRange,
+            upsertMandaTodo = mandaViewModel::upsertMandaTodo
         )
     }
 }
@@ -103,11 +108,18 @@ fun MandaContentWithState(
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
-    changeTodoRange: (Int) -> Unit,
+    changeTodoRange: (DateRange) -> Unit,
+    upsertMandaTodo:(MandaTodo)->Unit
+
 ) {
     when (mandaUIState) {
-        is MandaUIState.Loading -> {}
-        is MandaUIState.Error -> {}
+        is MandaUIState.Loading -> {
+            Text(text = "로딩", style = HmStyle.text24)
+        }
+        is MandaUIState.Error -> {
+            Text(text = "에러", style = HmStyle.text24)
+
+        }
         is MandaUIState.UnInitializedSuccess -> {
             UnInitializedMandaContent(
                 updateInitState = updateInitState,
@@ -116,7 +128,7 @@ fun MandaContentWithState(
         }
 
         is MandaUIState.InitializedSuccess -> {
-            Text(text = "현재 위치${mandaUIState.currentIndex}")
+            Text(text = "현재 위치${mandaUIState.currentIndex} ${mandaUIState.todoRange}")
             InitializedMandaContent(
                 uiState = mandaUIState,
                 mandaBottomSheetUIState = mandaBottomSheetUiState,
@@ -130,6 +142,7 @@ fun MandaContentWithState(
                 navigateToSetting = navigateToSetting,
                 changeCurrentIndex = changeCurrentIndex,
                 changeTodoRange = changeTodoRange,
+                upsertMandaTodo = upsertMandaTodo
             )
 
         }
