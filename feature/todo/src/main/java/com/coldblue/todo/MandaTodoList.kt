@@ -35,6 +35,7 @@ import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -462,7 +463,7 @@ fun CustomTimePickerDialog(
 
                 TimePicker(
                     state = timePickerState,
-                    modifier = Modifier.padding(top = 10.dp)
+                    modifier = Modifier.padding(top = 10.dp),
                 )
 
                 Row(
