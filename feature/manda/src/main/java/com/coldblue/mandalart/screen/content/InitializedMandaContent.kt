@@ -4,10 +4,15 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -37,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,10 +55,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
@@ -74,7 +84,7 @@ import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
+import java.util.logging.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -135,7 +145,7 @@ fun InitializedMandaContent(
 
         MandaStatus(
             titleName = uiState.mandaStatus.titleManda.name,
-            percentageColor = uiState.mandaStatus.percentageColor,
+            statusColor = uiState.mandaStatus.statusColor,
             donePercentage = uiState.mandaStatus.donePercentage,
             animateDonePercentage = animateDonePercentage.value
         ) {
@@ -150,7 +160,7 @@ fun InitializedMandaContent(
         }
 
         Mandalart(
-            mandaStateList = uiState.mandaStateList,
+            mandaList = uiState.mandaList,
             curIndex = uiState.currentIndex,
             changeBottomSheet = changeBottomSheet,
             changeCurrentIndex = changeCurrentIndex
@@ -198,22 +208,43 @@ fun MandaTopBar(
 @Composable
 fun MandaStatus(
     titleName: String,
-    percentageColor: Color,
+    statusColor: Color,
     donePercentage: Float,
     animateDonePercentage: Float,
     onClickTitle: () -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(30.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        ClickableText(
-            text = AnnotatedString("\" $titleName \""),
-            onClick = { onClickTitle() },
-            style = HmStyle.text24.copy(color = percentageColor),
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "\"",
+                style = HmStyle.text24,
+                color = statusColor
+            )
+            ClickableText(
+                modifier = Modifier.widthIn(max = (screenWidth - 60).dp),
+                text = AnnotatedString(titleName.ifEmpty {
+                    stringResource(id = R.string.initialized_empty_title)
+                }),
+                onClick = { onClickTitle() },
+                style = HmStyle.text24.copy(color = statusColor),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = "\"",
+                style = HmStyle.text24,
+                color = statusColor
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -225,7 +256,7 @@ fun MandaStatus(
                         "${((donePercentage * 100).roundToInt())}%"
                     ),
                     style = HmStyle.text12,
-                    color = percentageColor,
+                    color = statusColor,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.End
                 )
@@ -235,7 +266,7 @@ fun MandaStatus(
                         .fillMaxWidth()
                         .height(10.dp)
                         .clip(RoundedCornerShape(7.dp)),
-                    color = percentageColor,
+                    color = statusColor,
                     trackColor = HMColor.Gray
                 )
             }
@@ -243,15 +274,26 @@ fun MandaStatus(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Mandalart(
-    mandaStateList: List<MandaState>,
+    mandaList: List<MandaState>,
     curIndex: Int,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit,
     changeCurrentIndex: (Int) -> Unit
 ) {
     var currentIndex by remember { mutableIntStateOf(curIndex) }
-    LaunchedEffect(curIndex){ currentIndex = curIndex }
+    LaunchedEffect(curIndex) { currentIndex = curIndex }
+
+    var currentMandaList = remember {
+        mutableStateListOf<MandaState>().apply {
+            addAll(mandaList)
+        }
+    }
+    LaunchedEffect(mandaList){
+        currentMandaList.clear()
+        currentMandaList.addAll(mandaList)
+    }
 
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
@@ -269,6 +311,9 @@ fun Mandalart(
 
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
+
+    var dragOffsetX by remember { mutableStateOf(0f) }
+    var dragOffsetY by remember { mutableStateOf(0f) }
 
     val dampingRatio = 0.8f // 클수록 스프링 효과 감소
     val stiffness = 1600f // 클수록 빨리 확대, 축소
@@ -305,13 +350,13 @@ fun Mandalart(
 
     fun dragStartDetector(dragAmount: Offset) {
         val (x, y) = dragAmount
-        Logger.d("$x $y")
         if (abs(x) > abs(y)) {
             when {
                 x > 0 -> {
                     offsetX += x
                     direction = MandaGestureState.Left
                 }
+
                 x < 0 -> {
                     offsetX += x
                     direction = MandaGestureState.Right
@@ -323,6 +368,7 @@ fun Mandalart(
                     offsetY += y
                     direction = MandaGestureState.Up
                 }
+
                 y < 0 -> {
                     offsetY += y
                     direction = MandaGestureState.Down
@@ -332,7 +378,6 @@ fun Mandalart(
     }
 
     fun gestureController() {
-        Logger.d("$offsetX $offsetY")
         isGesture = true
         scaleX = 3f
         scaleY = 3f
@@ -340,26 +385,33 @@ fun Mandalart(
             MandaGestureState.Left -> {
                 if (offsetX > gestureAccuracy && translateX < mandaSize.width) {
                     translateX += mandaSize.width
-                    changeCurrentIndex(currentIndex-1)
+                    changeCurrentIndex(currentIndex - 1)
                 }
             }
+
             MandaGestureState.Right -> {
                 if (offsetX < -gestureAccuracy && translateX > -mandaSize.width) {
                     translateX -= mandaSize.width
-                    changeCurrentIndex(currentIndex+1)
+                    changeCurrentIndex(currentIndex + 1)
                 }
             }
+
             MandaGestureState.Up -> {
                 if (offsetY > gestureAccuracy && translateY < mandaSize.height) {
                     translateY += mandaSize.height
-                    changeCurrentIndex(currentIndex-3)
+                    changeCurrentIndex(currentIndex - 3)
                 }
             }
+
             MandaGestureState.Down -> {
                 if (offsetY < -gestureAccuracy && translateY > -mandaSize.height) {
                     translateY -= mandaSize.height
-                    changeCurrentIndex(currentIndex+3)
+                    changeCurrentIndex(currentIndex + 3)
                 }
+            }
+
+            MandaGestureState.ZoomOut -> {
+
             }
         }
         offsetX = 0f
@@ -383,6 +435,11 @@ fun Mandalart(
         }
     }
 
+    fun dragController(index: Int){
+        dragOffsetX = 0f
+        dragOffsetY = 0f
+    }
+
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -403,7 +460,7 @@ fun Mandalart(
                     Column(
                         modifier = Modifier
                             .pointerInput(isZoom) {
-                                if (isZoom)
+                                if (isZoom) {
                                     detectDragGestures(
                                         onDrag = { change, dragAmount ->
                                             change.consume()
@@ -413,6 +470,8 @@ fun Mandalart(
                                             gestureController()
                                         }
                                     )
+
+                                }
                             }
                             .graphicsLayer(
                                 scaleX = animatedScaleX,
@@ -436,7 +495,7 @@ fun Mandalart(
                                             .padding(horizontal = 5.dp)
                                     ) {
                                         when (val bigBox =
-                                            mandaStateList[keyColumn + keyRow * 3]) {
+                                            currentMandaList[keyColumn + keyRow * 3]) {
                                             is MandaState.Empty -> {
                                                 Box(
                                                     modifier = Modifier.fillMaxSize()
@@ -563,6 +622,25 @@ fun Mandalart(
                                                 .background(Color.Transparent)
                                                 .fillMaxWidth()
                                                 .aspectRatio(1F)
+//                                                .pointerInput(Unit) {
+//                                                    detectDragGesturesAfterLongPress(
+//                                                        onDrag = { change, dragAmount ->
+//                                                            change.consume()
+//                                                            dragOffsetX += dragAmount.x
+//                                                            dragOffsetY += dragAmount.y
+//                                                            com.orhanobut.logger.Logger.d("$dragOffsetX  $dragOffsetY")
+//                                                        },
+//                                                        onDragEnd = {
+//                                                            dragController(keyColumn + keyRow * 3)
+//                                                            com.orhanobut.logger.Logger.d("END")
+//                                                        }
+//                                                    )
+//                                                }
+//                                                .onGloballyPositioned {
+//                                                    it.boundsInWindow().let {
+//                                                        com.orhanobut.logger.Logger.d("Click")
+//                                                    }
+//                                                }
                                                 .clickable {
                                                     if (!isZoom) {
                                                         zoomController(keyColumn + keyRow * 3)
@@ -590,7 +668,7 @@ fun Mandalart(
                                         HMColor.DarkGray,
                                         RoundedCornerShape(topStart = 18f, bottomEnd = 18f)
                                     )
-                                    .clickable(enabled = true) {
+                                    .clickable(true) {
                                         zoomController(-1)
                                     }
                             ) {

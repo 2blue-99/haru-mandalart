@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
@@ -45,12 +46,13 @@ fun MandaKeyBox(
             .background(if (isDone) color else HMColor.Background)
     ) {
         Text(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(4.dp),
             textAlign = TextAlign.Center,
             color = if (isDone) HMColor.Background else color,
             text = name,
             style = HmStyle.text6,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -69,15 +71,16 @@ fun MandaDetailBox(
             .fillMaxWidth()
             .aspectRatio(1F)
             .clip(RoundedCornerShape(8.dp))
-            .border(1.dp, color = color, RoundedCornerShape(8.dp))
+            .border(0.65.dp, color = color, RoundedCornerShape(8.dp))
             .background(if (isDone) color else HMColor.Background)
     ) {
         Text(
             textAlign = TextAlign.Center,
             text = name,
             color = if (isDone) HMColor.Background else HMColor.Text,
-            modifier = Modifier.padding(5.dp),
-            style = HmStyle.text4,
+            modifier = Modifier.padding(2.dp),
+            style = HmStyle.text6,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
