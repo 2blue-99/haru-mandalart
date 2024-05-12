@@ -72,13 +72,10 @@ class MandaViewModel @Inject constructor(
                     currentIndex,
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
-                    val mandaStateList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
+                    val mandaList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     val mandaStatus = MandaStatus(
-                        titleManda = MandaUtils.matchingTitleManda(curIndex, mandaStateList),
-                        percentageColor = MandaUtils.matchingPercentageColor(
-                            curIndex,
-                            mandaStateList
-                        ),
+                        titleManda = MandaUtils.matchingTitleManda(curIndex, mandaList),
+                        statusColor = MandaUtils.matchingPercentageColor(curIndex, mandaList),
                         donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
                     )
 
@@ -99,7 +96,7 @@ class MandaViewModel @Inject constructor(
                         keyMandaCnt = mandaKeys.size - 1,
                         detailMandaCnt = mandaDetails.size,
                         mandaStatus = mandaStatus,
-                        mandaStateList = mandaStateList,
+                        mandaList = mandaList,
                         mandaKeyList = mandaKeys.map { it.name },
                         currentIndex = curIndex,
                         todoRange = todoRange,

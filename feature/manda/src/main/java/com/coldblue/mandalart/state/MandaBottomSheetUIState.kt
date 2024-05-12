@@ -47,7 +47,7 @@ sealed interface MandaBottomSheetContentType {
         override val maxLen = mandaDetailMaxLen
     }
 }
-const val mandaFinalMaxLen = 12
-const val mandaKeyMaxLen = 12
+const val mandaFinalMaxLen = 20
+const val mandaKeyMaxLen = 20
 const val mandaDetailMaxLen = 20
 

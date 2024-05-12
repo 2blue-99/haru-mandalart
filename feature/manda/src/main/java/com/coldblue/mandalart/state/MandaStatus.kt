@@ -5,6 +5,6 @@ import com.coldblue.mandalart.model.MandaUI
 
 data class MandaStatus(
     val titleManda: MandaUI,
-    val percentageColor: Color,
+    val statusColor: Color,
     val donePercentage: Float
 )
