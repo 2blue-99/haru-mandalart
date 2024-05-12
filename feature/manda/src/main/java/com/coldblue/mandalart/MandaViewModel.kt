@@ -68,7 +68,6 @@ class MandaViewModel @Inject constructor(
                     currentIndex,
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
-                    Logger.d(curIndex)
                     val mandaList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
                     val mandaStatus = MandaStatus(
                         titleManda = MandaUtils.matchingTitleManda(curIndex, mandaList),

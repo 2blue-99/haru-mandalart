@@ -55,6 +55,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -286,9 +287,12 @@ fun Mandalart(
 
     var currentMandaList = remember {
         mutableStateListOf<MandaState>().apply {
-            com.orhanobut.logger.Logger.d("Recompose")
             addAll(mandaList)
         }
+    }
+    LaunchedEffect(mandaList){
+        currentMandaList.clear()
+        currentMandaList.addAll(mandaList)
     }
 
     var scaleX by remember { mutableFloatStateOf(1f) }
@@ -429,6 +433,11 @@ fun Mandalart(
             translateX = 0f
             translateY = 0f
         }
+    }
+
+    fun dragController(index: Int){
+        dragOffsetX = 0f
+        dragOffsetY = 0f
     }
 
     Column(
@@ -613,14 +622,25 @@ fun Mandalart(
                                                 .background(Color.Transparent)
                                                 .fillMaxWidth()
                                                 .aspectRatio(1F)
-                                                .pointerInput(Unit) {
-                                                    detectDragGesturesAfterLongPress { change, dragAmount ->
-                                                        change.consume()
-                                                        dragOffsetX += dragAmount.x
-                                                        dragOffsetY += dragAmount.y
-                                                        com.orhanobut.logger.Logger.d("$dragOffsetX  $dragOffsetY")
-                                                    }
-                                                }
+//                                                .pointerInput(Unit) {
+//                                                    detectDragGesturesAfterLongPress(
+//                                                        onDrag = { change, dragAmount ->
+//                                                            change.consume()
+//                                                            dragOffsetX += dragAmount.x
+//                                                            dragOffsetY += dragAmount.y
+//                                                            com.orhanobut.logger.Logger.d("$dragOffsetX  $dragOffsetY")
+//                                                        },
+//                                                        onDragEnd = {
+//                                                            dragController(keyColumn + keyRow * 3)
+//                                                            com.orhanobut.logger.Logger.d("END")
+//                                                        }
+//                                                    )
+//                                                }
+//                                                .onGloballyPositioned {
+//                                                    it.boundsInWindow().let {
+//                                                        com.orhanobut.logger.Logger.d("Click")
+//                                                    }
+//                                                }
                                                 .clickable {
                                                     if (!isZoom) {
                                                         zoomController(keyColumn + keyRow * 3)
