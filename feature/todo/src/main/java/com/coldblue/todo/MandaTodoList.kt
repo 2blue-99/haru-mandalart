@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -79,6 +80,14 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
+fun getDisplayTime(time: LocalTime?): String {
+    return if (time != null) {
+        "${time.hour}:${time.minute}에 알림"
+    } else {
+        ""
+    }
+}
+
 @Composable
 fun MandaTodoList(
     colorList: List<Color?>,
@@ -113,13 +122,15 @@ fun MandaTodoList(
             }
         )
     }
+
+
     if (timePickerState) {
         CustomTimePickerDialog(
             LocalTime.now().hour, LocalTime.now().minute,
             { timePickerState = false },
             { h, m ->
                 myTimeState =
-                    MyTime(h, m, "${h}:${m}에 알림", LocalTime.now().withMinute(h).withMinute(m))
+                    MyTime(h, m, "${h}:${m}에 알림", LocalTime.of(h, m))
                 timePickerState = false
             }
         )
@@ -148,7 +159,7 @@ fun MandaTodoList(
                                 .fillMaxWidth()
                                 .padding(top = 40.dp),
                             textAlign = TextAlign.Center,
-                            text = if (colorList[currentIndex] != null) "Todo를 추가해 주세요!" else "작은목표 없",
+                            text = if (currentIndex != -1 && colorList[currentIndex] != null) "Todo를 추가해 주세요!" else "Todo를 추가해 주세요!",
                             style = HmStyle.text20,
                             color = HMColor.SubLightText
                         )
@@ -159,7 +170,8 @@ fun MandaTodoList(
                         MandaTodoItem(
                             todo,
                             currentIndex,
-                            colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
+                            colorList[todo.mandaIndex] ?: HMColor.Gray,
+                            upsertMandaTodo,
                         )
                     }
                     item {
@@ -169,7 +181,8 @@ fun MandaTodoList(
                         MandaTodoItem(
                             todo,
                             currentIndex,
-                            colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
+                            colorList[todo.mandaIndex] ?: HMColor.Gray,
+                            upsertMandaTodo,
                         )
                     }
                 }
@@ -200,8 +213,17 @@ fun MandaTodoItem(
     mandaTodo: MandaTodo,
     currentIndex: Int,
     color: Color,
-    upsertMandaTodo: (MandaTodo) -> Unit
+    upsertMandaTodo: (MandaTodo) -> Unit,
 ) {
+    var todoDialogState by remember { mutableStateOf(false) }
+
+    if (todoDialogState) {
+        TodoDialog(
+            { todoDialogState = false },
+            mandaTodo,
+            upsertMandaTodo,
+        )
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -209,7 +231,10 @@ fun MandaTodoItem(
             .padding(vertical = 8.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
-            .clickable { },
+            .clickable {
+//                onclick()
+                todoDialogState = true
+            },
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
@@ -429,29 +454,150 @@ fun TodoInput(
 
 }
 
-data class CustomDatePickerDialogState(
-    var selectedDate: String? = null,
-    var isShowDialog: Boolean = false,
-    val onClickConfirm: (yyyyMMdd: String) -> Unit = {},
-    val onClickCancel: () -> Unit = {},
-)
-
-data class CustomTimePickerDialogState(
-    var selectedHour: Int? = null,
-    var selectedMinute: Int? = null,
-    var isShowDialog: Boolean = false,
-    val onClickConfirm: (hour: Int, minute: Int) -> Unit,
-    val onClickCancel: () -> Unit,
+@Composable
+fun TodoDialog(
+    onClickCancel: () -> Unit,
+    mandaTodo: MandaTodo,
+    upsertMandaTodo: (MandaTodo) -> Unit,
 ) {
-    val selectedHHmm: String?
-        get() {
-            return if (selectedHour != null && selectedMinute != null) {
-                val time = String.format("%02d%02d", selectedHour, selectedMinute)
-                time
-            } else {
-                null
+    var timePickerState by remember { mutableStateOf(false) }
+    var datePickerState by remember { mutableStateOf(false) }
+
+    if (datePickerState) {
+        CustomDatePickerDialog(
+            LocalDateTime.of(mandaTodo.date, LocalTime.now()).toMillis(),
+            { datePickerState = false },
+            {
+                datePickerState = false
+                upsertMandaTodo(
+                    mandaTodo.copy(
+                        date = LocalDate.parse(
+                            it,
+                            DateTimeFormatter.BASIC_ISO_DATE
+                        )
+                    )
+                )
             }
+        )
+    }
+    if (timePickerState) {
+        CustomTimePickerDialog(
+            if (mandaTodo.time != null) mandaTodo.time?.hour else LocalTime.now().hour,
+            if (mandaTodo.time != null) mandaTodo.time?.minute else LocalTime.now().minute,
+            { timePickerState = false },
+            { h, m ->
+                timePickerState = false
+                upsertMandaTodo(mandaTodo.copy(time = LocalTime.of(h, m)))
+            }
+        )
+    }
+    Dialog(
+        onDismissRequest = { onClickCancel() },
+    ) {
+        Card(
+            shape = RoundedCornerShape(8.dp),
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .width(300.dp)
+                    .height(200.dp)
+                    .background(HMColor.Background)
+                    .padding(8.dp)
+
+            ) {
+
+                item {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "${mandaTodo.title}", style = HmStyle.text16
+                    )
+                }
+                item {
+                    val isDateSet = mandaTodo.date == null
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { datePickerState = true }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val color =
+                            if (isDateSet) HMColor.DarkGray else HMColor.Primary
+                        val text =
+                            if (isDateSet) "날짜 추가" else mandaTodo.date.toString()
+                        val textColor =
+                            if (isDateSet) HMColor.DarkGray else HMColor.Text
+                        Icon(
+                            imageVector = IconPack.Calendar,
+                            contentDescription = "",
+                            tint = color,
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(text, color = textColor)
+                    }
+                }
+                item {
+                    val isTimeSet = mandaTodo.time != null
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { timePickerState = true }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val color =
+                            if (isTimeSet) HMColor.Primary else HMColor.DarkGray
+                        val text =
+                            if (isTimeSet) getDisplayTime(mandaTodo.time) else "알림 추가"
+                        val textColor =
+                            if (isTimeSet) HMColor.Text else HMColor.DarkGray
+                        Icon(
+                            imageVector = IconPack.Alarm,
+                            contentDescription = "",
+                            tint = color,
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(text, color = textColor)
+                        if (isTimeSet) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        upsertMandaTodo(mandaTodo.copy(time = null))
+                                    },
+                                imageVector = Icons.Rounded.Clear,
+                                contentDescription = "",
+                                tint = HMColor.Primary,
+                            )
+                        }
+                    }
+                }
+                item {
+                    IconButton(onClick = {
+                        onClickCancel()
+                        upsertMandaTodo(mandaTodo.copy(isDel = true))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "",
+                            tint = HMColor.NegativeText,
+                        )
+                    }
+                }
+
+
+            }
+
         }
+    }
+
+}
+
+@Preview
+@Composable
+fun TodoDialogPreview() {
+    TodoDialog({}, MandaTodo("내용입니ㅏ 내용입니ㅏ 내용입니ㅏ 내용입니ㅏ내용입니ㅏ", mandaIndex = 2), {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
