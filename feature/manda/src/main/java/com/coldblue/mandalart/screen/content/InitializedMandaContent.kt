@@ -174,7 +174,7 @@ fun InitializedMandaContent(
             changeCurrentIndex = changeCurrentIndex
         )
         MandaTodoList(
-            colorList = currentColorList(uiState.mandaStateList),
+            colorList = currentColorList(uiState.mandaList),
             currentIndex = uiState.currentIndex,
             todoRange = uiState.todoRange,
             todoList = uiState.todoList,
