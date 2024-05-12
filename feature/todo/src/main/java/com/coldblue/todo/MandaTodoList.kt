@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -20,13 +22,21 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -37,21 +47,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.iconpack.Circle
+import com.coldblue.designsystem.iconpack.todo.AddSquare
+import com.coldblue.designsystem.iconpack.todo.Alarm
+import com.coldblue.designsystem.iconpack.todo.Calendar
+import com.coldblue.designsystem.iconpack.todo.Circle
+import com.coldblue.designsystem.iconpack.todo.CircleCheck
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.ToggleInfo
 import com.orhanobut.logger.Logger
+import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun MandaTodoList(
@@ -62,8 +83,30 @@ fun MandaTodoList(
     todoCnt: Int,
     doneTodoCnt: Int,
     upsertMandaTodo: (MandaTodo) -> Unit,
-    changeRange: (DateRange) -> Unit
+    changeRange: (DateRange) -> Unit,
 ) {
+    var datePickerState by remember { mutableStateOf(false) }
+    var timePickerState by remember { mutableStateOf(false) }
+
+    if (datePickerState) {
+        CustomDatePickerDialog(
+            LocalDate.now().toString(),
+            { datePickerState = false },
+            {
+                Logger.d(it)
+            }
+        )
+    }
+    if (timePickerState) {
+        CustomTimePickerDialog(
+            1, 20,
+            { timePickerState = false },
+            { a, b ->
+                Logger.d("$a $b")
+            }
+        )
+    }
+
     Column {
         Row(
             modifier = Modifier
@@ -74,45 +117,58 @@ fun MandaTodoList(
             TodoRangeSelector(todoRange, changeRange)
             Text(text = "Todo:$todoCnt", style = HmStyle.text16, fontWeight = FontWeight.Bold)
         }
-        LazyColumn(
-            modifier = Modifier
-                .height(150.dp)
-                .fillMaxWidth()
-        ) {
-            if (todoList.isEmpty()) {
-                item {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 40.dp),
-                        textAlign = TextAlign.Center,
-                        text = "Todo를 추가해 주세요!",
-                        style = HmStyle.text20,
-                        color = HMColor.SubLightText
-                    )
-                }
+        Box(modifier = Modifier.fillMaxHeight()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            ) {
+                if (todoList.isEmpty()) {
+                    item {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 40.dp),
+                            textAlign = TextAlign.Center,
+                            text = if (colorList[currentIndex] != null) "Todo를 추가해 주세요!" else "작은목표 없",
+                            style = HmStyle.text20,
+                            color = HMColor.SubLightText
+                        )
+                    }
 
-            } else {
-                items(todoList.filter { !it.isDone }) { todo ->
-                    MandaTodoItem(
-                        todo,
-                        currentIndex,
-                        colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
-                    )
-                }
-                item {
-                    Text(text = "완료됨")
-                }
-                items(todoList.filter { it.isDone }) { todo ->
-                    MandaTodoItem(
-                        todo,
-                        currentIndex,
-                        colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
-                    )
+                } else {
+                    items(todoList.filter { !it.isDone }) { todo ->
+                        MandaTodoItem(
+                            todo,
+                            currentIndex,
+                            colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
+                        )
+                    }
+                    item {
+                        Text(text = "완료됨")
+                    }
+                    items(todoList.filter { it.isDone }) { todo ->
+                        MandaTodoItem(
+                            todo,
+                            currentIndex,
+                            colorList[todo.mandaIndex] ?: HMColor.Gray, upsertMandaTodo
+                        )
+                    }
                 }
             }
+
+            if (currentIndex != -1 && currentIndex != 4 && colorList[currentIndex] != null) {
+                Column {
+                    Spacer(modifier = Modifier.weight(1f))
+                    TodoInput(
+                        upsertMandaTodo,
+                        currentIndex,
+                        { datePickerState = true },
+                        { timePickerState = true })
+                }
+            }
+
         }
-        TodoInput()
     }
 }
 
@@ -177,9 +233,9 @@ fun CircleCheckbox(
     onChecked: () -> Unit
 ) {
 
-    val imageVector = if (selected) Icons.Filled.CheckCircle else IconPack.Circle
-    val tint = if (selected) color.copy(alpha = 0.8f) else HMColor.LiteGray
-    val background = if (selected) HMColor.LiteGray else Color.Black
+    val imageVector = if (selected) IconPack.CircleCheck else IconPack.Circle
+    val tint = if (selected) color.copy(alpha = 0.8f) else HMColor.Text
+    val background = if (selected) HMColor.LiteGray else HMColor.LiteGray
 
     IconButton(
         onClick = { onChecked() },
@@ -196,51 +252,242 @@ fun CircleCheckbox(
 }
 
 @Composable
-fun TodoInput() {
+fun TodoInput(
+    upsertMandaTodo: (MandaTodo) -> Unit,
+    currentIndex: Int,
+    showDatePicker: () -> Unit,
+    showTimePicker: () -> Unit
+
+) {
     var text by remember { mutableStateOf("") }
 
     val hintVisible by remember {
         derivedStateOf { text.isEmpty() }
     }
-    BasicTextField(
-        modifier = Modifier
-            .fillMaxWidth(),
-        value = text, onValueChange = { text = it },
-        maxLines = 1,
-        singleLine = true,
-        decorationBox = { innerTextField ->
+    val focusManager = LocalFocusManager.current
+    Column() {
+        if (!hintVisible) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = HMColor.Box, shape = RoundedCornerShape(size = 8.dp))
-                    .padding(all = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(bottom = 8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "",
-                    tint = HMColor.Gray,
-                )
-                Box(modifier = Modifier.fillMaxWidth(0.9f)) {
-                    if (hintVisible) {
-                        Text(
-                            text = "Todo 추가", color = HMColor.Gray
-                        )
-                    }
-                    innerTextField()
+                IconButton(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(HMColor.Box),
+                    onClick = { showDatePicker() }) {
+                    Icon(
+                        imageVector = IconPack.Calendar,
+                        contentDescription = "",
+                        tint = HMColor.Text,
+                    )
                 }
+                Spacer(modifier = Modifier.width(16.dp))
+                IconButton(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(HMColor.Box),
+                    onClick = { showTimePicker() }) {
+                    Icon(
+                        imageVector = IconPack.Alarm,
+                        contentDescription = "",
+                        tint = HMColor.Text,
+                    )
+                }
+            }
+        }
 
-                Icon(
-                    modifier = Modifier.clickable { Logger.d("클릭이요") },
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "",
-                    tint = HMColor.Gray,
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = text, onValueChange = { text = it },
+            maxLines = 1,
+            singleLine = true,
+            decorationBox = { innerTextField ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = HMColor.Box, shape = RoundedCornerShape(size = 8.dp))
+                        .padding(all = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(0.9f)) {
+                        if (hintVisible) {
+                            Text(
+                                text = "Todo 추가", color = HMColor.Gray
+                            )
+                        }
+                        innerTextField()
+                    }
+                    Icon(
+                        modifier = Modifier.clickable(enabled = !hintVisible) {
+                            upsertMandaTodo(MandaTodo(title = text, mandaIndex = currentIndex))
+                            text = ""
+                            focusManager.clearFocus()
+                        },
+                        imageVector = IconPack.AddSquare,
+                        contentDescription = "",
+                        tint = if (hintVisible) HMColor.Gray else HMColor.Primary,
+                    )
+
+                }
+            },
+        )
+
+    }
+
+}
+
+data class CustomDatePickerDialogState(
+    var selectedDate: String? = null,
+    var isShowDialog: Boolean = false,
+    val onClickConfirm: (yyyyMMdd: String) -> Unit = {},
+    val onClickCancel: () -> Unit = {},
+)
+
+data class CustomTimePickerDialogState(
+    var selectedHour: Int? = null,
+    var selectedMinute: Int? = null,
+    var isShowDialog: Boolean = false,
+    val onClickConfirm: (hour: Int, minute: Int) -> Unit,
+    val onClickCancel: () -> Unit,
+) {
+    val selectedHHmm: String?
+        get() {
+            return if (selectedHour != null && selectedMinute != null) {
+                val time = String.format("%02d%02d", selectedHour, selectedMinute)
+                time
+            } else {
+                null
+            }
+        }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomDatePickerDialog(
+    selectedDate: String?,
+    onClickCancel: () -> Unit,
+    onClickConfirm: (yyyyMMdd: String) -> Unit
+) {
+    DatePickerDialog(
+        onDismissRequest = { onClickCancel() },
+        confirmButton = {},
+        colors = DatePickerDefaults.colors(
+            containerColor = Color.White
+        ),
+        shape = RoundedCornerShape(6.dp)
+    ) {
+        val datePickerState = rememberDatePickerState(
+            yearRange = 2023..2024,
+            initialDisplayMode = DisplayMode.Picker,
+            initialSelectedDateMillis = selectedDate?.let {
+                val formatter = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }
+                formatter.parse(it)?.time
+                    ?: System.currentTimeMillis()
+            } ?: System.currentTimeMillis(),
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    return true
+                }
+            })
+
+        DatePicker(
+            state = datePickerState,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            Button(onClick = {
+                onClickCancel()
+            }) {
+                Text(text = "취소")
+            }
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Button(onClick = {
+                datePickerState.selectedDateMillis?.let { selectedDateMillis ->
+                    val yyyyMMdd = SimpleDateFormat(
+                        "yyyyMMdd",
+                        Locale.getDefault()
+                    ).format(Date(selectedDateMillis))
+
+                    onClickConfirm(yyyyMMdd)
+                }
+            }) {
+                Text(text = "확인")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomTimePickerDialog(
+    selectedHour: Int?,
+    selectedMinute: Int?,
+    onClickCancel: () -> Unit,
+    onClickConfirm: (hour: Int, minute: Int) -> Unit
+) {
+    val timePickerState = rememberTimePickerState(
+        initialHour = selectedHour ?: 0,
+        initialMinute = selectedMinute ?: 0,
+        is24Hour = false
+    )
+    Dialog(
+        onDismissRequest = { onClickCancel() },
+    ) {
+        Card(
+            shape = RoundedCornerShape(8.dp), // Card의 모든 꼭지점에 8.dp의 둥근 모서리 적용
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(300.dp)
+                    .wrapContentHeight()
+                    .background(
+                        color = Color.White,
+                    )
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                Text(text = "시간을 선택해주세요.")
+
+                Spacer(modifier = Modifier.width(15.dp))
+
+                TimePicker(
+                    state = timePickerState,
+                    modifier = Modifier.padding(top = 10.dp)
                 )
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Button(onClick = {
+                        onClickCancel()
+                    }) {
+                        Text(text = "취소")
+                    }
+
+                    Spacer(modifier = Modifier.width(5.dp))
+
+                    Button(onClick = {
+                        val hour = timePickerState.hour
+                        val minute = timePickerState.minute
+                        onClickConfirm(hour, minute)
+                    }) {
+                        Text(text = "확인")
+                    }
+                }
             }
-        },
-    )
+        }
+    }
 }
 
 @Composable
@@ -303,11 +550,13 @@ fun MandaTodoItemPreview() {
 
     MandaTodoList(
         listOf(HMColor.Manda.Red, HMColor.Manda.Orange),
-        1, DateRange.DAY, listOf(
+        1, DateRange.DAY,
+        listOf(
             MandaTodo("1번투구", true, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
-        ), 3, 3, {}, {}
+        ),
+        3, 3, {}, {},
     )
 
 }
