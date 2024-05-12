@@ -7,7 +7,7 @@ import com.coldblue.data.util.getAmPmHour
 import com.coldblue.data.util.toDate
 import com.coldblue.domain.todo.GetTodoUseCase
 import com.coldblue.domain.todo.UpsertTodoUseCase
-import com.coldblue.model.MyTime
+import com.coldblue.model.MyTime2
 import com.coldblue.model.Todo
 import com.coldblue.todo.uistate.DATE
 import com.coldblue.todo.uistate.DEFAULT_TODO
@@ -21,8 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -50,7 +48,7 @@ class TodoEditViewModel @Inject constructor(
     val todoEditUiState: StateFlow<TodoEditUiState> =
         todoFlow.map { todo, ->
             val title = if (titleTmp == DEFAULT_TODO.toString()) "" else titleTmp ?: ""
-            val time = Gson().fromJson(myTime, MyTime::class.java)
+            val time = Gson().fromJson(myTime, MyTime2::class.java)
             TodoEditUiState.Success(
                 todo = todo.copy(
                     title = title,

@@ -1,6 +1,6 @@
 package com.coldblue.data.util
 
-import com.coldblue.model.MyTime
+import com.coldblue.model.MyTime2
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -35,13 +35,13 @@ fun LocalTime.getDisplayName(): String {
     }
 }
 
-fun MyTime.getAmPmHour(): LocalTime {
+fun MyTime2.getAmPmHour(): LocalTime {
     val ampmHour = if (ampm == "오전") hour.toAm() else hour.toPm()
     return LocalTime.now().withHour(ampmHour).withMinute(minute)
 }
 
-fun LocalTime.asMyTime(): MyTime {
-    return MyTime(
+fun LocalTime.asMyTime(): MyTime2 {
+    return MyTime2(
         ampm = if (isAm()) "오전" else "오후",
         hour = if (isAm()) hour.getAm() else hour.getPm(),
         minute = minute
