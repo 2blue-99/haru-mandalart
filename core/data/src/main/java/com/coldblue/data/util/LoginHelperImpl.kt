@@ -33,8 +33,7 @@ class LoginHelperImpl @Inject constructor(
                     LoginState.NoneAuthLogin
                 else
                     LoginState.AuthenticatedLogin
-            } else if(isStarted && !isExplain)
-                LoginState.Explain
+            }
             else
                 LoginState.Logout
         }.catch {
@@ -48,7 +47,7 @@ class LoginHelperImpl @Inject constructor(
         userDataSource.updateStarted(true)
     }
 
-    override suspend fun setLoginSucceeded() {
+    override suspend fun login() {
         userDataSource.updateToken(client.auth.currentAccessTokenOrNull() ?: "")
         userDataSource.updateEmail(client.auth.currentUserOrNull()?.email ?: "")
         userDataSource.updateStarted(true)

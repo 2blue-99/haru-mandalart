@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
-                            LoginState.Explain -> ExplainScreen()
                             LoginState.NoneAuthLogin -> HMApp()
                             LoginState.AuthenticatedLogin -> syncHelper.initialize().also { HMApp() }
                             LoginState.Logout -> LoginScreen()

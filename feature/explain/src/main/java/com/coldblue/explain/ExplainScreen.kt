@@ -27,7 +27,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -119,7 +118,7 @@ fun ExplainScreen(
                     val current = pageState.currentPage
                     if (current == 3) {
                         fadeAlpha.fadeOutScreen()
-                        explainViewModel.updateExplainState()
+                        explainViewModel.finishedExplain()
                     }
                     else
                         pageState.animateScrollToPage(pageState.currentPage + 1)

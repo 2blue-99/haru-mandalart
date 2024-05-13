@@ -37,16 +37,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.explain.ExplainScreen
 import com.coldblue.login.state.LoginUiState
 import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
     val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
+    val explainState by loginViewModel.explainState.collectAsStateWithLifecycle()
     var openDialog by remember { mutableStateOf(false) }
 
     when (val state = loginUiState) {
@@ -57,7 +59,9 @@ fun LoginScreen(
                 Toast.LENGTH_SHORT
             ).show()
         }
-        else -> {}
+        else -> {
+
+        }
     }
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(
         onResult = { result -> loginViewModel.checkLoginState(result) },
@@ -76,6 +80,10 @@ fun LoginScreen(
                 loginViewModel.loginWithOutAuth()
             }
         )
+    }
+
+    if(explainState){
+        ExplainScreen()
     }
 
 

@@ -2,6 +2,7 @@ package com.coldblue.explain
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coldblue.domain.auth.LoginSucceededUseCase
 import com.coldblue.domain.user.GetExplainStateUseCase
 import com.coldblue.domain.user.UpdateExplainStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class ExplainViewModel @Inject constructor(
     getExplainStateUseCase: GetExplainStateUseCase,
     private val updateExplainStateUseCase: UpdateExplainStateUseCase,
+    private val loginSucceededUseCase: LoginSucceededUseCase,
 ) : ViewModel() {
 
     val mandaExplainUIState: StateFlow<Boolean> =
@@ -24,9 +26,10 @@ class ExplainViewModel @Inject constructor(
             initialValue = false
         )
 
-    fun updateExplainState(){
+    fun finishedExplain(){
         viewModelScope.launch {
             updateExplainStateUseCase(true)
+            loginSucceededUseCase()
         }
     }
 }
