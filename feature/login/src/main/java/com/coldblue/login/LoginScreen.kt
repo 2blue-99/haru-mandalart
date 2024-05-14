@@ -39,6 +39,9 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.explain.ExplainScreen
 import com.coldblue.login.state.LoginUiState
+import com.orhanobut.logger.Logger
+import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
+import io.github.jan.supabase.compose.auth.composable.NativeSignInState
 import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
 @Composable
@@ -48,8 +51,8 @@ fun LoginScreen(
     val context = LocalContext.current
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
     val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
-    val explainState by loginViewModel.explainState.collectAsStateWithLifecycle()
     var openDialog by remember { mutableStateOf(false) }
+    var openExplain by remember { mutableStateOf(false) }
 
     when (val state = loginUiState) {
         is LoginUiState.Fail -> {
@@ -64,11 +67,15 @@ fun LoginScreen(
         }
     }
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(
-        onResult = { result -> loginViewModel.checkLoginState(result) },
+        onResult = { result ->
+            loginViewModel.checkLoginState(result)
+            if(result is NativeSignInResult.Success)
+                openExplain = true
+        },
         fallback = { }
     )
 
-    if(openDialog){
+    if (openDialog) {
         HMTextDialog(
             targetText = "",
             text = stringResource(id = R.string.login_non_member_notice),
@@ -82,65 +89,71 @@ fun LoginScreen(
         )
     }
 
-    if(explainState){
+    if(openExplain){
         ExplainScreen()
-    }
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(20.dp),
-    ) {
+    }else{
         Column(
             modifier = Modifier
-                .weight(7f)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(20.dp),
         ) {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .aspectRatio(1f),
-                painter = painterResource(id = R.drawable.app_icon),
-                contentDescription = "앱 아이콘"
-            )
             Column(
-                Modifier.fillMaxWidth(0.4f)
+                modifier = Modifier
+                    .weight(7f)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(text = stringResource(id = R.string.login_haru), style = HmStyle.text30, color = HMColor.Primary)
-                Text(text = stringResource(id = R.string.login_mandalart), style = HmStyle.text30, color = HMColor.Primary)
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .aspectRatio(1f),
+                    painter = painterResource(id = R.drawable.app_icon),
+                    contentDescription = "앱 아이콘"
+                )
+                Column(
+                    Modifier.fillMaxWidth(0.4f)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.login_haru),
+                        style = HmStyle.text30,
+                        color = HMColor.Primary
+                    )
+                    Text(
+                        text = stringResource(id = R.string.login_mandalart),
+                        style = HmStyle.text30,
+                        color = HMColor.Primary
+                    )
+                }
             }
-        }
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 30.dp),
-                verticalArrangement = Arrangement.spacedBy(15.dp)
+            Box(
+                contentAlignment = Alignment.BottomCenter,
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 30.dp),
+                    verticalArrangement = Arrangement.spacedBy(15.dp)
+                ) {
 
-                LoginButton {
-                    if (networkState) {
-                        authState.startFlow()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            R.string.login_check_connecting,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    LoginButton {
+                        if (networkState) {
+                            authState.startFlow()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                R.string.login_check_connecting,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    NotMemberLoginButton {
+                        openDialog = true
                     }
                 }
-                NotMemberLoginButton {
-                    openDialog = true
-                }
             }
         }
-
     }
 }
 

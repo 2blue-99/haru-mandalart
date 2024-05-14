@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -44,20 +45,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.colddelight.explain.R
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExplainScreen(
-    explainViewModel: ExplainViewModel = hiltViewModel()
+    explainViewModel: ExplainViewModel = hiltViewModel(),
 ) {
-//    val mandaExplainUiState by explainViewModel.mandaExplainUIState.collectAsStateWithLifecycle()
+    val mandaExplainUiState by explainViewModel.mandaExplainUIState.collectAsStateWithLifecycle()
     val pageState = rememberPagerState(pageCount = { 4 })
     val fadeAlpha = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()

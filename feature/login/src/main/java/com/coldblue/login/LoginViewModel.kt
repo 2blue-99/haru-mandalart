@@ -2,6 +2,7 @@ package com.coldblue.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.coldblue.domain.auth.GetComposeAuthUseCase
 import com.coldblue.domain.auth.LoginSucceededUseCase
 import com.coldblue.domain.auth.LoginWithOutAuthUseCase
@@ -27,7 +28,6 @@ class LoginViewModel @Inject constructor(
     private val getComposeAuthUseCase: GetComposeAuthUseCase,
     private val loginSucceededUseCase: LoginSucceededUseCase,
     getNetworkStateUseCase: GetNetworkStateUseCase,
-    private val getExplainStateUseCase: GetExplainStateUseCase
 ) : ViewModel() {
 
     private val _loginState = MutableStateFlow<LoginUiState>(LoginUiState.None)
@@ -41,28 +41,14 @@ class LoginViewModel @Inject constructor(
         initialValue = false
     )
 
-    var _explainState: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val explainState: StateFlow<Boolean> get() = _explainState
-//    val explainState: StateFlow<Boolean> = getExplainStateUseCase().map {
-//        it
-//    }.stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.WhileSubscribed(5_000),
-//        initialValue = false
-//    )
-
     fun getComposeAuth() = getComposeAuthUseCase()
 
     fun checkLoginState(result: NativeSignInResult) {
-
         when (result) {
             is NativeSignInResult.Success -> {
                 _loginState.value = LoginUiState.Success
                 viewModelScope.launch {
-                    if(getExplainStateUseCase().first())
                         loginSucceededUseCase()
-                    else
-                        _explainState.value = true
                 }
             }
 
@@ -77,11 +63,9 @@ class LoginViewModel @Inject constructor(
                     else -> {}
                 }
             }
-
             else -> {}
         }
     }
-
 
     fun loginWithOutAuth() {
         viewModelScope.launch {
