@@ -1,5 +1,6 @@
 package com.coldblue.explain
 
+import android.content.IntentSender.OnFinished
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
@@ -59,13 +60,14 @@ import kotlin.math.absoluteValue
 @Composable
 fun ExplainScreen(
     explainViewModel: ExplainViewModel = hiltViewModel(),
+    onFinished: () -> Unit,
 ) {
-    val mandaExplainUiState by explainViewModel.mandaExplainUIState.collectAsStateWithLifecycle()
     val pageState = rememberPagerState(pageCount = { 4 })
     val fadeAlpha = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
+        explainViewModel.updateExplainState()
         fadeAlpha.fadeInScreen()
     }
 
@@ -121,7 +123,7 @@ fun ExplainScreen(
                     val current = pageState.currentPage
                     if (current == 3) {
                         fadeAlpha.fadeOutScreen()
-                        explainViewModel.finishedExplain()
+                        onFinished()
                     }
                     else
                         pageState.animateScrollToPage(pageState.currentPage + 1)

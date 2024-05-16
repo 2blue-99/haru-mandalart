@@ -1,6 +1,7 @@
 package com.coldblue.mandalart.screen
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.explain.ExplainScreen
 import com.coldblue.mandalart.MandaViewModel
 import com.coldblue.mandalart.UpdateNoteViewModel
 import com.coldblue.mandalart.screen.content.InitializedMandaContent
@@ -45,8 +47,11 @@ fun MandaScreen(
     val mandaUpdateUiState by updateNoteViewModel.mandaUpdateDialogUIState.collectAsStateWithLifecycle()
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
     val bottomSheetUiState by mandaViewModel.mandaBottomSheetUIState.collectAsStateWithLifecycle()
+    val explainUIState by mandaViewModel.explainUIState.collectAsStateWithLifecycle()
     val focus = LocalFocusManager.current
     val context = LocalContext.current
+
+    Log.e("TAG", "explainUIState: $explainUIState", )
 
     when (val uiState = mandaUpdateUiState) {
         is MandaUpdateDialogState.Show -> {
@@ -57,40 +62,45 @@ fun MandaScreen(
             )
         }
 
-        else -> { /*TODO  인터넷 연결 X */
-        }
+        is MandaUpdateDialogState.Error -> {}
+        is MandaUpdateDialogState.Hide -> {}
     }
 
     LaunchedEffect(Unit) {
+        mandaViewModel.updateExplainState()
         checkUpdate(context) { updateNoteViewModel.getUpdateNote() }
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    focus.clearFocus()
-                })
-            }
-    ) {
-        MandaContentWithState(
-            mandaUIState = mandaUiState,
-            mandaBottomSheetUiState = bottomSheetUiState,
-            updateInitState = mandaViewModel::updateMandaInitState,
-            upsertFinalManda = mandaViewModel::upsertMandaFinal,
-            upsertMandaKey = mandaViewModel::upsertMandaKey,
-            upsertMandaDetail = mandaViewModel::upsertMandaDetail,
-            deleteMandaKey = mandaViewModel::deleteMandaKey,
-            deleteMandaDetail = mandaViewModel::deleteMandaDetail,
-            deleteMandaAll = mandaViewModel::deleteMandaAll,
-            changeBottomSheet = mandaViewModel::changeBottomSheet,
-            navigateToSetting = navigateToSetting,
-            changeCurrentIndex = mandaViewModel::changeCurrentIndex,
-            changeTodoRange = mandaViewModel::changeTodoRange,
-            upsertMandaTodo = mandaViewModel::upsertMandaTodo
-        )
+    if (!explainUIState) {
+        ExplainScreen { mandaViewModel.updateExplainState() }
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        focus.clearFocus()
+                    })
+                }
+        ) {
+            MandaContentWithState(
+                mandaUIState = mandaUiState,
+                mandaBottomSheetUiState = bottomSheetUiState,
+                updateInitState = mandaViewModel::updateMandaInitState,
+                upsertFinalManda = mandaViewModel::upsertMandaFinal,
+                upsertMandaKey = mandaViewModel::upsertMandaKey,
+                upsertMandaDetail = mandaViewModel::upsertMandaDetail,
+                deleteMandaKey = mandaViewModel::deleteMandaKey,
+                deleteMandaDetail = mandaViewModel::deleteMandaDetail,
+                deleteMandaAll = mandaViewModel::deleteMandaAll,
+                changeBottomSheet = mandaViewModel::changeBottomSheet,
+                navigateToSetting = navigateToSetting,
+                changeCurrentIndex = mandaViewModel::changeCurrentIndex,
+                changeTodoRange = mandaViewModel::changeTodoRange,
+                upsertMandaTodo = mandaViewModel::upsertMandaTodo
+            )
+        }
     }
 }
 
@@ -109,17 +119,19 @@ fun MandaContentWithState(
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
-    upsertMandaTodo:(MandaTodo)->Unit
+    upsertMandaTodo: (MandaTodo) -> Unit
 
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {
             Text(text = "로딩", style = HmStyle.text24)
         }
+
         is MandaUIState.Error -> {
             Text(text = "에러", style = HmStyle.text24)
 
         }
+
         is MandaUIState.UnInitializedSuccess -> {
             UnInitializedMandaContent(
                 updateInitState = updateInitState,
@@ -128,7 +140,6 @@ fun MandaContentWithState(
         }
 
         is MandaUIState.InitializedSuccess -> {
-            Text(text = "현재 위치${mandaUIState.currentIndex} ${mandaUIState.todoRange}")
             InitializedMandaContent(
                 uiState = mandaUIState,
                 mandaBottomSheetUIState = mandaBottomSheetUiState,

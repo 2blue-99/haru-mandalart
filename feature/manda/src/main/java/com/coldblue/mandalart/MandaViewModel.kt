@@ -1,5 +1,6 @@
 package com.coldblue.mandalart
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.manda.DeleteMandaAllUseCase
@@ -11,6 +12,7 @@ import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.todo.GetMandaTodoUseCase
 import com.coldblue.domain.todo.UpsertMandaTodoUseCase
+import com.coldblue.domain.user.GetExplainStateUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -49,8 +52,12 @@ class MandaViewModel @Inject constructor(
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
     val getMandaTodoUseCase: GetMandaTodoUseCase,
-    val upsertMandaTodoUseCase: UpsertMandaTodoUseCase
+    val upsertMandaTodoUseCase: UpsertMandaTodoUseCase,
+    val getExplainStateUseCase: GetExplainStateUseCase
 ) : ViewModel() {
+
+    private val _explainUIState = MutableStateFlow(true)
+    val explainUIState: StateFlow<Boolean> get() = _explainUIState
 
     private val _currentIndex = MutableStateFlow(4)
     val currentIndex: StateFlow<Int> get() = _currentIndex
@@ -179,6 +186,12 @@ class MandaViewModel @Inject constructor(
     fun upsertMandaTodo(mandaTodo: MandaTodo) {
         viewModelScope.launch {
             upsertMandaTodoUseCase(mandaTodo)
+        }
+    }
+
+    fun updateExplainState(){
+        viewModelScope.launch {
+            _explainUIState.emit(getExplainStateUseCase().first())
         }
     }
 }

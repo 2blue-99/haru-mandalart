@@ -12,8 +12,8 @@ fun NavController.navigateToExplain(navOptions: NavOptions? = null){
     this.navigate(explainRoute, navOptions)
 }
 
-fun NavGraphBuilder.explainScreen(navigateToExplain: () -> Unit){
-    composable(route = explainRoute){
-        ExplainScreen()
-    }
-}
+//fun NavGraphBuilder.explainScreen(navigateToExplain: () -> Unit){
+//    composable(route = explainRoute){
+//        ExplainScreen()
+//    }
+//}

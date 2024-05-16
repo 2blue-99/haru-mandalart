@@ -62,14 +62,18 @@ fun LoginScreen(
                 Toast.LENGTH_SHORT
             ).show()
         }
-        else -> {
 
+        is LoginUiState.Success -> {
+            Toast.makeText(context, stringResource(id = R.string.login_success), Toast.LENGTH_SHORT)
+                .show()
         }
+
+        is LoginUiState.None -> {}
     }
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(
         onResult = { result ->
             loginViewModel.checkLoginState(result)
-            if(result is NativeSignInResult.Success)
+            if (result is NativeSignInResult.Success)
                 openExplain = true
         },
         fallback = { }
@@ -89,68 +93,64 @@ fun LoginScreen(
         )
     }
 
-    if(openExplain){
-        ExplainScreen()
-    }else{
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(20.dp),
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .padding(20.dp),
+                .weight(7f)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth(0.4f)
+                    .aspectRatio(1f),
+                painter = painterResource(id = R.drawable.app_icon),
+                contentDescription = "앱 아이콘"
+            )
+            Column(
+                Modifier.fillMaxWidth(0.4f)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.login_haru),
+                    style = HmStyle.text30,
+                    color = HMColor.Primary
+                )
+                Text(
+                    text = stringResource(id = R.string.login_mandalart),
+                    style = HmStyle.text30,
+                    color = HMColor.Primary
+                )
+            }
+        }
+        Box(
+            contentAlignment = Alignment.BottomCenter,
         ) {
             Column(
                 modifier = Modifier
-                    .weight(7f)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .aspectRatio(1f),
-                    painter = painterResource(id = R.drawable.app_icon),
-                    contentDescription = "앱 아이콘"
-                )
-                Column(
-                    Modifier.fillMaxWidth(0.4f)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.login_haru),
-                        style = HmStyle.text30,
-                        color = HMColor.Primary
-                    )
-                    Text(
-                        text = stringResource(id = R.string.login_mandalart),
-                        style = HmStyle.text30,
-                        color = HMColor.Primary
-                    )
-                }
-            }
-            Box(
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 30.dp),
-                    verticalArrangement = Arrangement.spacedBy(15.dp)
-                ) {
 
-                    LoginButton {
-                        if (networkState) {
-                            authState.startFlow()
-                        } else {
-                            Toast.makeText(
-                                context,
-                                R.string.login_check_connecting,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                LoginButton {
+                    if (networkState) {
+                        authState.startFlow()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            R.string.login_check_connecting,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    NotMemberLoginButton {
-                        openDialog = true
-                    }
+                }
+                NotMemberLoginButton {
+                    openDialog = true
                 }
             }
         }

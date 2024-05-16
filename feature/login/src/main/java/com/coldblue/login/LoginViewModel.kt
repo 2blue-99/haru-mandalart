@@ -8,6 +8,7 @@ import com.coldblue.domain.auth.LoginSucceededUseCase
 import com.coldblue.domain.auth.LoginWithOutAuthUseCase
 import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.domain.user.GetExplainStateUseCase
+import com.coldblue.domain.user.UpdateExplainStateUseCase
 import com.coldblue.login.exception.exceptionHandler
 import com.coldblue.login.state.LoginExceptionState
 import com.coldblue.login.state.LoginUiState
@@ -24,9 +25,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginWithOutAuthUseCase: LoginWithOutAuthUseCase,
     private val getComposeAuthUseCase: GetComposeAuthUseCase,
+    private val loginWithOutAuthUseCase: LoginWithOutAuthUseCase,
     private val loginSucceededUseCase: LoginSucceededUseCase,
+    private val updateExplainStateUseCase: UpdateExplainStateUseCase,
     getNetworkStateUseCase: GetNetworkStateUseCase,
 ) : ViewModel() {
 
@@ -48,7 +50,8 @@ class LoginViewModel @Inject constructor(
             is NativeSignInResult.Success -> {
                 _loginState.value = LoginUiState.Success
                 viewModelScope.launch {
-                        loginSucceededUseCase()
+                    loginSucceededUseCase()
+                    updateExplainStateUseCase(true)
                 }
             }
 

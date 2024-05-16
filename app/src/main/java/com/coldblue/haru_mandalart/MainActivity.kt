@@ -35,9 +35,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
-import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.designsystem.theme.HarumandalartTheme
-import com.coldblue.explain.ExplainScreen
+import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.login.LoginScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -72,7 +71,9 @@ class MainActivity : ComponentActivity() {
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
                             LoginState.NoneAuthLogin -> HMApp()
-                            LoginState.AuthenticatedLogin -> syncHelper.initialize().also { HMApp() }
+                            LoginState.AuthenticatedLogin -> {
+                                syncHelper.initialize().also { HMApp() }
+                            }
                             LoginState.Logout -> LoginScreen()
                             LoginState.Loading -> {}
                         }

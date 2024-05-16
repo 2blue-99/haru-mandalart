@@ -1,5 +1,6 @@
 package com.coldblue.explain
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.auth.LoginSucceededUseCase
@@ -14,22 +15,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExplainViewModel @Inject constructor(
-    getExplainStateUseCase: GetExplainStateUseCase,
     private val updateExplainStateUseCase: UpdateExplainStateUseCase,
-    private val loginSucceededUseCase: LoginSucceededUseCase,
 ) : ViewModel() {
 
-    val mandaExplainUIState: StateFlow<Boolean> =
-        getExplainStateUseCase().stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false
-        )
-
-    fun finishedExplain(){
+    fun updateExplainState(){
         viewModelScope.launch {
             updateExplainStateUseCase(true)
-            loginSucceededUseCase()
         }
     }
 }
