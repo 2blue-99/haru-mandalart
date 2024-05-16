@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.coldblue.data.repository.manda.MandaDetailRepository
 import com.coldblue.data.repository.manda.MandaKeyRepository
+import com.coldblue.data.repository.todo.MandaTodoRepository
 import com.coldblue.data.repository.user.UserRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -21,6 +22,7 @@ class SyncReadWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     @Assisted private val mandaKeyRepository: MandaKeyRepository,
     @Assisted private val mandaDetailRepository: MandaDetailRepository,
+    @Assisted private val mandaTodoRepository: MandaTodoRepository,
     @Assisted private val userRepository: UserRepository,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
@@ -29,7 +31,9 @@ class SyncReadWorker @AssistedInject constructor(
             val syncedSucceed = awaitAll(
                 async { mandaKeyRepository.syncRead() },
                 async { mandaDetailRepository.syncRead() },
-            ).all { it }
+                async { mandaTodoRepository.syncWrite() },
+
+                ).all { it }
 
             if (syncedSucceed) {
                 Result.success()

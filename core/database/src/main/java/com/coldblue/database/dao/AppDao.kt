@@ -17,7 +17,7 @@ interface AppDao {
         deleteAllAlarm()
     }
 
-    @Query("DELETE FROM todo")
+    @Query("DELETE FROM manda_todo")
     suspend fun deleteAllTodo()
 
     @Query("DELETE FROM ALARM")
