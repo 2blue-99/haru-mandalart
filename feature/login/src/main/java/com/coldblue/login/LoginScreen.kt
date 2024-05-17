@@ -37,17 +37,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.explain.ExplainScreen
 import com.coldblue.login.state.LoginUiState
+import com.orhanobut.logger.Logger
+import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
+import io.github.jan.supabase.compose.auth.composable.NativeSignInState
 import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val loginUiState by loginViewModel.loginState.collectAsStateWithLifecycle()
     val networkState by loginViewModel.isOnline.collectAsStateWithLifecycle()
     var openDialog by remember { mutableStateOf(false) }
+    var openExplain by remember { mutableStateOf(false) }
 
     when (val state = loginUiState) {
         is LoginUiState.Fail -> {
@@ -57,14 +62,24 @@ fun LoginScreen(
                 Toast.LENGTH_SHORT
             ).show()
         }
-        else -> {}
+
+        is LoginUiState.Success -> {
+            Toast.makeText(context, stringResource(id = R.string.login_success), Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        is LoginUiState.None -> {}
     }
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(
-        onResult = { result -> loginViewModel.checkLoginState(result) },
+        onResult = { result ->
+            loginViewModel.checkLoginState(result)
+            if (result is NativeSignInResult.Success)
+                openExplain = true
+        },
         fallback = { }
     )
 
-    if(openDialog){
+    if (openDialog) {
         HMTextDialog(
             targetText = "",
             text = stringResource(id = R.string.login_non_member_notice),
@@ -77,7 +92,6 @@ fun LoginScreen(
             }
         )
     }
-
 
     Column(
         modifier = Modifier
@@ -102,8 +116,16 @@ fun LoginScreen(
             Column(
                 Modifier.fillMaxWidth(0.4f)
             ) {
-                Text(text = stringResource(id = R.string.login_haru), style = HmStyle.text30, color = HMColor.Primary)
-                Text(text = stringResource(id = R.string.login_mandalart), style = HmStyle.text30, color = HMColor.Primary)
+                Text(
+                    text = stringResource(id = R.string.login_haru),
+                    style = HmStyle.text30,
+                    color = HMColor.Primary
+                )
+                Text(
+                    text = stringResource(id = R.string.login_mandalart),
+                    style = HmStyle.text30,
+                    color = HMColor.Primary
+                )
             }
         }
         Box(
@@ -132,7 +154,6 @@ fun LoginScreen(
                 }
             }
         }
-
     }
 }
 

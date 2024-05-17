@@ -3,6 +3,7 @@ package com.coldblue.haru_mandalart.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.coldblue.explain.navigation.navigateToExplain
 import com.coldblue.haru_mandalart.ui.HMAppState
 import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaRoute
@@ -29,10 +30,9 @@ fun HMNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        loginScreen(navigateToTodo = navController::navigateToTodo)
-//        todoScreen(navigateToTodoEdit = navController::navigateToTodoEdit)
-//        todoEditScreen(onDismissRequest = navController::popBackStack)
-//        tutorialScreen(navigateToManda = navController::navigateToManda)
+        loginScreen(
+            navigateToExplain = navController::navigateToExplain
+        )
         mandaScreen(
             navigateToSetting = navController::navigateToSetting
         )

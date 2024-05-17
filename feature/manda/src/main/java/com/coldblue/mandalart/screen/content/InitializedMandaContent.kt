@@ -304,6 +304,7 @@ fun Mandalart(
 ) {
     var currentIndex by remember { mutableIntStateOf(curIndex) }
     LaunchedEffect(curIndex) { currentIndex = curIndex }
+
     var currentMandaList = remember {
         mutableStateListOf<MandaState>().apply {
             addAll(mandaList)

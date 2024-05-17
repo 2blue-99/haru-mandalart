@@ -8,4 +8,5 @@ android {
 
 dependencies {
     implementation(libs.supabase.compose.auth)
+    implementation(project(":feature:explain"))
 }
