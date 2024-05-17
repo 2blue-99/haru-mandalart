@@ -8,6 +8,7 @@ import com.coldblue.domain.auth.GetAuthStateUseCase
 import com.coldblue.domain.auth.GetComposeAuthUseCase
 import com.coldblue.domain.auth.LoginSucceededUseCase
 import com.coldblue.domain.auth.LogoutUseCase
+import com.coldblue.domain.manda.DeleteMandaAllUseCase
 import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.domain.setting.GetVersionUseCase
 import com.coldblue.domain.setting.ShowContactUseCase
@@ -41,7 +42,7 @@ class SettingViewModel @Inject constructor(
     private val showContactUseCase: ShowContactUseCase,
     private val showOssUseCase: ShowOssUseCase,
     private val showPlayStoreUseCase: ShowPlayStoreUseCase,
-
+    private val deleteMandaAllUseCase: DeleteMandaAllUseCase
     ) : ViewModel() {
     val isOnline: StateFlow<Boolean> = getNetworkStateUseCase().map {
         it
@@ -73,7 +74,6 @@ class SettingViewModel @Inject constructor(
 
 
     fun getComposeAuth() = getComposeAuthUseCase()
-
 
     fun checkLoginState(result: NativeSignInResult) {
         when (result) {
@@ -114,6 +114,12 @@ class SettingViewModel @Inject constructor(
     fun updateAlarmState(state: Boolean) {
         viewModelScope.launch {
             updateAlarmStateUseCase(state)
+        }
+    }
+
+    fun deleteAllManda(){
+        viewModelScope.launch {
+            deleteMandaAllUseCase()
         }
     }
 }
