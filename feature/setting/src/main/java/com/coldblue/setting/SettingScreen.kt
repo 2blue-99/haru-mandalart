@@ -34,7 +34,6 @@ fun SettingScreen(
             .fillMaxSize()
     ) {
         SettingContentWithState(
-            initManda = settingViewModel::initManda,
             navigateToNotice = navigateToNotice,
             navigateToSurvey = navigateToSurvey,
             navigateToBackStack = navigateToBackStack,
@@ -50,6 +49,7 @@ fun SettingScreen(
             alarm = alarm,
             networkState = networkState,
             loginState = loginState,
+            initManda = settingViewModel::initManda,
         )
     }
 }

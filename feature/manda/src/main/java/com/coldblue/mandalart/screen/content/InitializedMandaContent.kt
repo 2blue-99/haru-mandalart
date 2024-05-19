@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.screen.content
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -49,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -69,6 +71,7 @@ import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.explain.fadeInScreen
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.screen.MandaBottomSheet
 import com.coldblue.mandalart.screen.MandaDetailBox
@@ -111,14 +114,15 @@ fun InitializedMandaContent(
 
 
 ) {
-
-
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+    val fadeAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit){ fadeAlpha.fadeInScreen() }
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
@@ -143,13 +147,11 @@ fun InitializedMandaContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .alpha(fadeAlpha.value),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-
-        MandaTopBar {
-            navigateToSetting()
-        }
+        MandaTopBar { navigateToSetting() }
 
         MandaStatus(
             titleName = uiState.mandaStatus.titleManda.name,
