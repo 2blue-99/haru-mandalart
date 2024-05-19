@@ -17,7 +17,7 @@ import com.coldblue.domain.setting.ShowPlayStoreUseCase
 import com.coldblue.domain.user.GetAlarmStateUseCase
 import com.coldblue.domain.user.GetEmailUseCase
 import com.coldblue.domain.user.UpdateAlarmStateUseCase
-import com.orhanobut.logger.Logger
+import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
 import kotlinx.coroutines.flow.SharingStarted
@@ -42,7 +42,8 @@ class SettingViewModel @Inject constructor(
     private val showContactUseCase: ShowContactUseCase,
     private val showOssUseCase: ShowOssUseCase,
     private val showPlayStoreUseCase: ShowPlayStoreUseCase,
-    private val deleteMandaAllUseCase: DeleteMandaAllUseCase
+    private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
+    private val updateMandaInitStateUseCase: UpdateMandaInitStateUseCase
     ) : ViewModel() {
     val isOnline: StateFlow<Boolean> = getNetworkStateUseCase().map {
         it
@@ -117,9 +118,10 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun deleteAllManda(){
+    fun initManda(){
         viewModelScope.launch {
             deleteMandaAllUseCase()
+            updateMandaInitStateUseCase(false)
         }
     }
 }
