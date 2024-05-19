@@ -1,5 +1,6 @@
 package com.coldblue.explain
 
+import android.content.IntentSender.OnFinished
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.LinearEasing
@@ -45,25 +46,28 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMText
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.colddelight.explain.R
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExplainScreen(
-    explainViewModel: ExplainViewModel = hiltViewModel()
+    explainViewModel: ExplainViewModel = hiltViewModel(),
+    onFinished: () -> Unit,
 ) {
-//    val mandaExplainUiState by explainViewModel.mandaExplainUIState.collectAsStateWithLifecycle()
     val pageState = rememberPagerState(pageCount = { 4 })
     val fadeAlpha = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
+        explainViewModel.updateExplainState()
         fadeAlpha.fadeInScreen()
     }
 
@@ -119,7 +123,7 @@ fun ExplainScreen(
                     val current = pageState.currentPage
                     if (current == 3) {
                         fadeAlpha.fadeOutScreen()
-                        explainViewModel.updateExplainState()
+                        onFinished()
                     }
                     else
                         pageState.animateScrollToPage(pageState.currentPage + 1)
