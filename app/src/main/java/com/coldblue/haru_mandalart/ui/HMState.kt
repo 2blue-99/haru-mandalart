@@ -17,9 +17,6 @@ import com.coldblue.notice.navigation.noticeRoute
 import com.coldblue.setting.navigation.settingRoute
 import com.coldblue.survey.navigation.surveyDetailRoute
 import com.coldblue.survey.navigation.surveyRoute
-import com.coldblue.todo.navigation.navigateToTodo
-import com.coldblue.todo.navigation.todoRoute
-import com.orhanobut.logger.Logger
 
 @Composable
 fun rememberHMState(
@@ -76,7 +73,6 @@ class HMAppState(
             when (route) {
                 historyRoute -> navController.navigateToHistory(navOptions)
                 mandaRoute -> navController.navigateToManda(navOptions)
-                todoRoute -> navController.navigateToTodo(navOptions)
             }
         }
     }

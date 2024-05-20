@@ -11,26 +11,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//@AndroidEntryPoint
-//class BootCompletedReceiver : BroadcastReceiver() {
-//    @Inject
-//    lateinit var alarmScheduler: AlarmScheduler
-//
-//    @Inject
-//    lateinit var alarmDao: AlarmDao
-//
-//    override fun onReceive(context: Context?, intent: Intent?) {
-//        if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-////            addAllAlarm()
-//        }
-//    }
-//
-//    private fun addAllAlarm(){
-//        CoroutineScope(Dispatchers.IO).launch {
-//            alarmDao.getAllAlarm().forEach {
-//                alarmScheduler.add(it.asDomain())
-//            }
-//        }
-//    }
-//
-//}
+@AndroidEntryPoint
+class BootCompletedReceiver : BroadcastReceiver() {
+    @Inject
+    lateinit var alarmScheduler: AlarmScheduler
+
+    @Inject
+    lateinit var alarmDao: AlarmDao
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
+            addAllAlarm()
+        }
+    }
+
+    private fun addAllAlarm(){
+        CoroutineScope(Dispatchers.IO).launch {
+            alarmDao.getAllAlarm().forEach {
+                alarmScheduler.add(it.asDomain())
+            }
+        }
+    }
+
+}

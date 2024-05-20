@@ -44,8 +44,8 @@ class TodoNotificationServiceImpl @Inject constructor(
 
     companion object {
         const val CHANNEL_ID = "todo_channel"
-        const val CHANNEL_NAME = "오늘 할 일"
+        const val CHANNEL_NAME = "Todo"
         const val IMPORTANCE = NotificationManager.IMPORTANCE_HIGH
-        const val description = "오늘 일정에서 계획된 시간이 지났음에도 완료가 안된 할 일에 대한 알림을 받습니다."
+        const val description = "Todo알림을 받습니다."
     }
 }

@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -50,7 +48,6 @@ import com.coldblue.history.ControllerTimeState
 import com.coldblue.history.ControllerWeek
 import com.coldblue.history.HistoryUiState
 import com.coldblue.model.Todo
-import com.coldblue.todo.TodoItem
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
@@ -117,33 +114,7 @@ fun HistoryContent(
 
             TitleText(text = stringResource(id = R.string.history_record))
 
-            if (historyUiState.todoList.isEmpty())
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 40.dp),
-                    textAlign = TextAlign.Center,
-                    text = stringResource(id = R.string.history_record_empty),
-                    style = HmStyle.text20,
-                    color = HMColor.SubLightText
-                )
-            else
-                LazyColumn(
-                    Modifier
-                        .fillMaxSize()
-                        .background(HMColor.Background),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(historyUiState.todoList) {
-                        TodoItem(
-                            todo = it,
-                            onTodoToggle = toggleTodo,
-                            showSheet = {},
-                            navigateToTodoEdit = navigateToTodoEdit,
-                            date = date
-                        )
-                    }
-                }
+
         }
     }
 }
