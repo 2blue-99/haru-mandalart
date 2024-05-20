@@ -123,7 +123,7 @@ object MandaUtils {
             HMColor.Manda.Green -> 4
             HMColor.Manda.Blue -> 5
             HMColor.Manda.Mint -> 6
-            else -> 0
+            else -> -1
         }
     }
 

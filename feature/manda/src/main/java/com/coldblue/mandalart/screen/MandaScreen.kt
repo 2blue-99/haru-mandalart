@@ -51,8 +51,6 @@ fun MandaScreen(
     val focus = LocalFocusManager.current
     val context = LocalContext.current
 
-    Log.e("TAG", "explainUIState: $explainUIState", )
-
     when (val uiState = mandaUpdateUiState) {
         is MandaUpdateDialogState.Show -> {
             UpdateDialog(
