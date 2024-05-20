@@ -105,14 +105,11 @@ fun InitializedMandaContent(
     upsertMandaDetail: (MandaDetail) -> Unit,
     deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
-    deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
-
-
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -129,6 +126,7 @@ fun InitializedMandaContent(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
             sheetState = sheetState,
             mandaKeyList = uiState.mandaKeyList,
+            usedColorList = listOf(), //TODO
             upsertMandaFinal = upsertMandaFinal,
             upsertMandaKey = upsertMandaKey,
             upsertMandaDetail = upsertMandaDetail,
