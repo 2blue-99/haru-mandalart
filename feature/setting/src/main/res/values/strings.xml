@@ -6,9 +6,11 @@
     // Dialog
     <string name="delete_dialog_resign">탈퇴하면 모든 데이터가 완전히 삭제돼요.</string>
     <string name="delete_dialog_logout">정말 로그아웃할까요?</string>
+    <string name="delete_dialog_init">정말 초기화할까요?</string>
 
     // Screen
     <string name="setting_title">설정</string>
+    <string name="setting_mandalart">만다라트</string>
     <string name="setting_general">일반</string>
     <string name="setting_notice">공지사항</string>
     <string name="setting_feedback">피드백</string>
@@ -23,6 +25,7 @@
     <string name="setting_logout">로그아웃</string>
     <string name="setting_cancel">취소</string>
     <string name="setting_account">현재계정</string>
+    <string name="setting_init">초기화</string>
     <string name="setting_notification">알림</string>
 
     // Exception

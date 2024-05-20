@@ -17,7 +17,6 @@ fun SettingScreen(
     navigateToSurvey: () -> Unit,
     navigateToBackStack: () -> Unit,
     settingViewModel: SettingViewModel = hiltViewModel(),
-
     ) {
     val email by settingViewModel.email.collectAsStateWithLifecycle()
     val alarm by settingViewModel.alarm.collectAsStateWithLifecycle()
@@ -50,6 +49,7 @@ fun SettingScreen(
             alarm = alarm,
             networkState = networkState,
             loginState = loginState,
+            initManda = settingViewModel::initManda,
         )
     }
 }
@@ -71,6 +71,7 @@ fun SettingContentWithState(
     alarm: Boolean,
     networkState: Boolean,
     loginState: LoginState,
+    initManda: () -> Unit,
 ) {
 
     SettingContent(
@@ -88,6 +89,7 @@ fun SettingContentWithState(
         email,
         alarm,
         networkState,
-        loginState
+        loginState,
+        initManda
     )
 }
