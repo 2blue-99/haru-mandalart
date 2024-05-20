@@ -7,6 +7,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.coldblue.designsystem.component.HMAnimation.slideToLeft
+import com.coldblue.designsystem.component.HMAnimation.slideToRight
 import com.coldblue.setting.SettingScreen
 
 const val settingRoute = "Setting"
@@ -22,18 +24,8 @@ fun NavGraphBuilder.settingScreen(
 ) {
     composable(
         route = settingRoute,
-        enterTransition = {
-            return@composable slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Start,
-                tween(400)
-            )
-        },
-        popEnterTransition = {
-            return@composable slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.End,
-                tween(400)
-            )
-        }
+        enterTransition = { slideToLeft() },
+        popEnterTransition = { slideToRight() }
     ) {
         SettingScreen(
             navigateToNotice,

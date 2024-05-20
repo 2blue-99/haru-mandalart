@@ -21,7 +21,7 @@ fun NavGraphBuilder.mandaScreen(
     composable(
         route = mandaRoute,
         popEnterTransition = {
-            return@composable slideIntoContainer(
+            slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.End,
                 tween(400)
             )

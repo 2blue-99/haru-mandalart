@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.coldblue.designsystem.component.HMAnimation.slideToLeft
 import com.coldblue.notice.NoticeScreen
 
 const val noticeRoute = "Notice"
@@ -19,12 +20,7 @@ fun NavGraphBuilder.noticeScreen(
 ){
     composable(
         route = noticeRoute,
-        enterTransition = {
-            return@composable slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Start,
-                tween(400)
-            )
-        },
+        enterTransition = { slideToLeft() },
     ){
         NoticeScreen(
             navigateToBackStack = navigateToBackStack

@@ -10,4 +10,5 @@ android {
 dependencies {
     debugApi(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.navigation.compose)
 }

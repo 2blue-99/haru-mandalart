@@ -8,6 +8,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.coldblue.designsystem.component.HMAnimation.slideToLeft
 import com.coldblue.survey.SurveyDetailScreen
 import com.coldblue.survey.SurveyScreen
 import com.orhanobut.logger.Logger
@@ -29,12 +30,7 @@ fun NavGraphBuilder.surveyScreen(
 ) {
     composable(
         route = surveyRoute,
-        enterTransition = {
-            return@composable slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Start,
-                tween(400)
-            )
-        }
+        enterTransition = { slideToLeft() }
     ) {
         SurveyScreen(
             navigateToSurveyDetail,
