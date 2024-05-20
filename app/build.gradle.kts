@@ -64,6 +64,4 @@ dependencies {
     implementation(libs.androidx.work.ktx)
     implementation (libs.play.services.oss.licenses)
     implementation(libs.androidx.core.splashscreen)
-
-
 }

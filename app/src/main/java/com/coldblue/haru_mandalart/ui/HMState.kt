@@ -63,11 +63,6 @@ class HMAppState(
         }
     }
 
-    fun popBackStack() {
-        navController.popBackStack()
-        Logger.d("뒤로가기임")
-    }
-
     fun navigateToTopLevelDestination(route: String) {
         if (navController.currentDestination?.route != route) {
             navController.popBackStack()
