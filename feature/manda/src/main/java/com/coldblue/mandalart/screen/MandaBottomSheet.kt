@@ -1,7 +1,6 @@
 package com.coldblue.mandalart.screen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,22 +11,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,13 +51,13 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
-import com.coldblue.mandalart.model.MandaColorInfo
 import com.coldblue.mandalart.model.asMandaDetail
 import com.coldblue.mandalart.model.asMandaKey
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,6 +65,7 @@ fun MandaBottomSheet(
     mandaBottomSheetContentState: MandaBottomSheetContentState,
     sheetState: SheetState,
     mandaKeyList: List<String>,
+    usedColorIndexList: List<Int>,
     upsertMandaFinal: (MandaKey) -> Unit,
     upsertMandaKey: (MandaKey) -> Unit,
     upsertMandaDetail: (MandaDetail) -> Unit,
@@ -76,11 +80,31 @@ fun MandaBottomSheet(
     val otherMandaKeyList =
         mandaKeyList - listOf(mandaBottomSheetContentState.mandaBottomSheetContentType.mandaUI.name).toSet()
 
+    var colorList = listOf(
+        HMColor.Manda.Pink,
+        HMColor.Manda.Red,
+        HMColor.Manda.Orange,
+        HMColor.Manda.Yellow,
+        HMColor.Manda.Green,
+        HMColor.Manda.Blue,
+        HMColor.Manda.Mint,
+        HMColor.Manda.Purple
+    )
+
+    Logger.d(MandaUtils.colorToIndex(mandaUI.color))
+    Logger.d(usedColorIndexList)
 
     var inputText by remember { mutableStateOf(mandaUI.name) }
     var keyNameText by remember { mutableStateOf("") }
 
-    var colorIndex by remember { mutableIntStateOf(MandaUtils.colorToIndex(mandaUI.color)) }
+    // insert : 사용안한거 선택 / 만약 다 사용중일 경우엔 첫번째꺼 선택
+    // update : 클릭된거 선택
+    var colorIndex by remember {
+        val color = MandaUtils.colorToIndex(mandaUI.color)
+        val ableList = colorList.indices.filter { !usedColorIndexList.contains(it) }
+        val index = if(ableList.isEmpty()) 0 else if(color == -1) ableList.first() else color
+        mutableIntStateOf(index)
+    }
 
     var buttonClickableState by remember { mutableStateOf(mandaUI.name.isNotBlank()) }
     var doneCheckedState by remember { mutableStateOf(mandaUI.isDone) }
@@ -153,7 +177,13 @@ fun MandaBottomSheet(
                     Spacer(modifier = Modifier.height(70.dp))
 
                 is MandaBottomSheetContentType.MandaKey ->
-                    MandaBottomSheetColor(colorIndex) { colorIndex = it }
+                    MandaBottomSheetColor(
+                        colorList,
+                        colorIndex,
+                        usedColorIndexList,
+                    ) {
+                        colorIndex = it
+                    }
 
                 is MandaBottomSheetContentType.MandaDetail ->
                     MandaBottomSheetDone(doneCheckedState) { doneCheckedState = it }
@@ -162,7 +192,10 @@ fun MandaBottomSheet(
             when (mandaBottomSheetContentState) {
 
                 is MandaBottomSheetContentState.Insert -> {
-                    HMButton(text = stringResource(id = com.coldblue.designsystem.R.string.all_save), clickableState = buttonClickableState) {
+                    HMButton(
+                        text = stringResource(id = com.coldblue.designsystem.R.string.all_save),
+                        clickableState = buttonClickableState
+                    ) {
                         when (contentType) {
 
                             is MandaBottomSheetContentType.MandaFinal ->
@@ -268,25 +301,12 @@ fun MandaBottomSheet(
 
 @Composable
 fun MandaBottomSheetColor(
-    initColorIndex: Int,
+    colorList: List<Color>,
+    colorIndex: Int,
+    usedColorList: List<Int>,
     onClick: (Int) -> Unit
 ) {
-    val colorInfoListState = remember {
-        mutableStateListOf(
-            MandaColorInfo(HMColor.Manda.Pink, false, 0),
-            MandaColorInfo(HMColor.Manda.Red, false, 1),
-            MandaColorInfo(HMColor.Manda.Orange, false, 2),
-            MandaColorInfo(HMColor.Manda.Yellow, false, 3),
-            MandaColorInfo(HMColor.Manda.Green, false, 4),
-            MandaColorInfo(HMColor.Manda.Blue, false, 5),
-            MandaColorInfo(HMColor.Manda.Mint, false, 6),
-            MandaColorInfo(HMColor.Manda.Purple, false, 7)
-        )
-    }
-    colorInfoListState[initColorIndex].isChecked = true
-
     val screenWidth = LocalConfiguration.current.screenWidthDp
-
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -298,7 +318,7 @@ fun MandaBottomSheetColor(
             fontWeight = FontWeight.Bold
         )
         LazyColumn {
-            items(colorInfoListState.size / 4) { column ->
+            items(colorList.size / 4) { column ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
@@ -311,18 +331,15 @@ fun MandaBottomSheetColor(
                                 .aspectRatio(1f)
                                 .padding(5.dp)
                         ) {
-                            RoundButton(colorInfoListState[btnIndex]) {
+                            HMColorButton(
+                                color = colorList[btnIndex],
+                                isUsed = usedColorList.contains(btnIndex),
+                                isClick = btnIndex == colorIndex,
+                            ) {
                                 onClick(btnIndex)
-                                colorInfoListState.forEachIndexed { colorIndex, colorInfo ->
-                                    if (colorIndex == btnIndex)
-                                        colorInfoListState[btnIndex] =
-                                            colorInfoListState[btnIndex].copy(isChecked = true)
-                                    else
-                                        colorInfo.isChecked = false
-                                }
                             }
-
                         }
+
                     }
                 }
             }
@@ -331,29 +348,67 @@ fun MandaBottomSheetColor(
 }
 
 @Composable
-fun RoundButton(
-    colorInfo: MandaColorInfo,
+fun HMColorButton(
+    color: Color,
+    isUsed: Boolean,
+    isClick: Boolean,
     onClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                if (colorInfo.isChecked) colorInfo.color else Color.Transparent,
-                shape = CircleShape
-            ),
-        contentAlignment = Alignment.Center
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.Transparent
     ) {
         Button(
-            modifier = Modifier.fillMaxSize(fraction = 0.8f),
-            onClick = {
-                onClick()
-            },
+            modifier = Modifier.fillMaxSize(),
+            onClick = { onClick() },
             shape = CircleShape,
-            border = if (colorInfo.isChecked) BorderStroke(2.dp, HMColor.Background) else null,
-            colors = ButtonDefaults.buttonColors(containerColor = colorInfo.color)
-        ) { }
+            colors = ButtonDefaults.buttonColors(containerColor = color)
+        ) {}
+        if (isUsed) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    tint = HMColor.Background,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .size(50.dp),
+                    contentDescription = "Used"
+                )
+            }
+        }
+        if (isClick) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .padding(5.dp)
+                    .border(3.dp, HMColor.Background, CircleShape)
+            ) {}
+        }
     }
+
+
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(
+//                if (colorInfo.isChecked) colorInfo.color else Color.Transparent,
+//                shape = CircleShape
+//            ),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Button(
+//            modifier = Modifier.fillMaxSize(fraction = 0.8f),
+//            onClick = {
+//                onClick()
+//            },
+//            shape = CircleShape,
+//            border = if (colorInfo.isChecked) BorderStroke(2.dp, HMColor.Background) else null,
+//            colors = ButtonDefaults.buttonColors(containerColor = colorInfo.color)
+//        ) { }
+//    }
 }
 
 @Composable
@@ -419,7 +474,7 @@ fun MandaBottomSheetDone(
             Text(
                 text = if (checkedState)
                     stringResource(id = R.string.bottom_sheet_achieve) else
-                        stringResource(id = R.string.bottom_sheet_not_achieve),
+                    stringResource(id = R.string.bottom_sheet_not_achieve),
                 style = HmStyle.text12,
                 color = HMColor.Text,
             )
@@ -432,12 +487,16 @@ fun MandaBottomSheetDone(
 
 @Preview
 @Composable
-fun BottomSheetPreview() {
-    MandaBottomSheetDone(false) {}
+fun RoundButtonPreview() {
+    HMColorButton(
+        HMColor.Manda.Pink,
+        true,
+        true,
+    ) {}
 }
 
-@Preview
-@Composable
-fun AlertDialogPreview() {
-    MandaKeyDialog("asdads", onDisMiss = {}, onDelete = {})
-}
+//@Preview
+//@Composable
+//fun AlertDialogPreview() {
+//    MandaKeyDialog("asdads", onDisMiss = {}, onDelete = {})
+//}

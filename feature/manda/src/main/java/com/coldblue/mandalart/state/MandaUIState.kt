@@ -3,7 +3,6 @@ package com.coldblue.mandalart.state
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaTodo
-import com.coldblue.model.Todo
 
 sealed interface MandaUIState {
     data object Loading : MandaUIState
@@ -15,6 +14,7 @@ sealed interface MandaUIState {
         val mandaStatus: MandaStatus,
         val mandaList: List<MandaState>,
         val mandaKeyList: List<String>,
+        val usedColorIndexList: List<Int>,
         val currentIndex: Int,
         val todoRange: DateRange,
         val todoList: List<MandaTodo>,

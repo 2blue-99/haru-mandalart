@@ -51,8 +51,6 @@ fun MandaScreen(
     val focus = LocalFocusManager.current
     val context = LocalContext.current
 
-    Log.e("TAG", "explainUIState: $explainUIState", )
-
     when (val uiState = mandaUpdateUiState) {
         is MandaUpdateDialogState.Show -> {
             UpdateDialog(
@@ -93,7 +91,6 @@ fun MandaScreen(
                 upsertMandaDetail = mandaViewModel::upsertMandaDetail,
                 deleteMandaKey = mandaViewModel::deleteMandaKey,
                 deleteMandaDetail = mandaViewModel::deleteMandaDetail,
-                deleteMandaAll = mandaViewModel::deleteMandaAll,
                 changeBottomSheet = mandaViewModel::changeBottomSheet,
                 navigateToSetting = navigateToSetting,
                 changeCurrentIndex = mandaViewModel::changeCurrentIndex,
@@ -114,7 +111,6 @@ fun MandaContentWithState(
     upsertMandaDetail: (MandaDetail) -> Unit,
     deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
-    deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
@@ -148,7 +144,6 @@ fun MandaContentWithState(
                 upsertMandaDetail = upsertMandaDetail,
                 deleteMandaKey = deleteMandaKey,
                 deleteMandaDetail = deleteMandaDetail,
-                deleteMandaAll = deleteMandaAll,
                 changeBottomSheet = changeBottomSheet,
                 navigateToSetting = navigateToSetting,
                 changeCurrentIndex = changeCurrentIndex,

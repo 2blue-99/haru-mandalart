@@ -1,6 +1,5 @@
 package com.coldblue.mandalart
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.manda.DeleteMandaAllUseCase
@@ -80,6 +79,7 @@ class MandaViewModel @Inject constructor(
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
                     val mandaList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
+                    val usedColorIndexList = mandaKeys.filter { it.id != 5 }.map { it.colorIndex }.toSet().toList()
                     val mandaStatus = MandaStatus(
                         titleManda = MandaUtils.matchingTitleManda(curIndex, mandaList),
                         statusColor = MandaUtils.matchingPercentageColor(curIndex, mandaList),
@@ -105,6 +105,7 @@ class MandaViewModel @Inject constructor(
                         mandaStatus = mandaStatus,
                         mandaList = mandaList,
                         mandaKeyList = mandaKeys.map { it.name },
+                        usedColorIndexList = usedColorIndexList,
                         currentIndex = curIndex,
                         todoRange = todoRange,
                         todoList = curDateRangeTodoList,
