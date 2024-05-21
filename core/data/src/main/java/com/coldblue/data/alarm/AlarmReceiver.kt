@@ -31,7 +31,6 @@ class AlarmReceiver : BroadcastReceiver() {
 
         CoroutineScope(Dispatchers.IO).launch {
             alarmDao.deleteAlarm(id)
-            Logger.d(alarmDao.getAllAlarm())
             if(userRepository.isAlarm.first())
                 showNotification(text)
         }

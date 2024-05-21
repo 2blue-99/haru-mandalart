@@ -16,7 +16,6 @@ import com.coldblue.survey.navigation.navigateToSurvey
 import com.coldblue.survey.navigation.navigateToSurveyDetail
 import com.coldblue.survey.navigation.surveyDetailScreen
 import com.coldblue.survey.navigation.surveyScreen
-import com.coldblue.todo.navigation.navigateToTodo
 
 @Composable
 fun HMNavHost(

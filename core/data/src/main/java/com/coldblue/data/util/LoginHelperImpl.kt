@@ -40,7 +40,6 @@ class LoginHelperImpl @Inject constructor(
             LoginState.Logout
         }
 
-    override val initPermissionState: Flow<Boolean> = userDataSource.permissionInitState
 
     override fun getComposeAuth(): ComposeAuth = client.composeAuth
     override suspend fun loginWithOutAuth() {
@@ -68,7 +67,7 @@ class LoginHelperImpl @Inject constructor(
         logout()
     }
 
-    override suspend fun updatePermissionInitState(state: Boolean) {
-        userDataSource.updatePermissionInitState(state)
+    override suspend fun updateAlarmState(state: Boolean) {
+        userDataSource.updateAlarm(state)
     }
 }

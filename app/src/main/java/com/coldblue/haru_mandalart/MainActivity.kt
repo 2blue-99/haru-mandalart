@@ -4,9 +4,12 @@ import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
@@ -16,8 +19,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,11 +67,15 @@ class MainActivity : ComponentActivity() {
         splashScreen()
 
         setContent {
+            CheckPermission()
             HarumandalartTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+//                    Button(onClick = { this.openAppSettings() }) {
+//                        Text(text = "dddd")
+//                    }
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
@@ -74,6 +83,7 @@ class MainActivity : ComponentActivity() {
                             LoginState.AuthenticatedLogin -> {
                                 syncHelper.initialize().also { HMApp() }
                             }
+
                             LoginState.Logout -> LoginScreen()
                             LoginState.Loading -> {}
                         }
@@ -82,6 +92,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 
     private fun splashScreen() {
         splashScreen.setOnExitAnimationListener { splashScreenView ->
@@ -118,14 +129,17 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun CheckPermission() {
         val context = LocalContext.current
-        val rejectAlarmMessage = stringResource(R.string.app_reject_alarm)
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
-                if (!isGranted)
-                    Toast.makeText(context, rejectAlarmMessage, Toast.LENGTH_SHORT).show()
-                CoroutineScope(Dispatchers.IO).launch {
-                    loginHelper.updatePermissionInitState(true)
+                if (isGranted) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        loginHelper.updateAlarmState(true)
+                    }
+                } else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        loginHelper.updateAlarmState(false)
+                    }
                 }
             }
         )
@@ -136,9 +150,7 @@ class MainActivity : ComponentActivity() {
                         Manifest.permission.POST_NOTIFICATIONS
                     ) == PackageManager.PERMISSION_DENIED
                 ) {
-                    if (!loginHelper.initPermissionState.first()) {
-                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
+                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
         }
@@ -161,4 +173,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+fun Activity.openAppSettings() {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts("package", packageName, null)
+    ).also(::startActivity)
 }

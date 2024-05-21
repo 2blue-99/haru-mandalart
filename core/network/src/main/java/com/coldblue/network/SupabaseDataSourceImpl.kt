@@ -36,6 +36,11 @@ class SupabaseDataSourceImpl @Inject constructor(
                     NetworkMandaDetail::user_id eq user.id
                 }
             }
+            client.postgrest["mandaTodo"].delete {
+                filter {
+                    NetworkMandaDetail::user_id eq user.id
+                }
+            }
         }
     }
 

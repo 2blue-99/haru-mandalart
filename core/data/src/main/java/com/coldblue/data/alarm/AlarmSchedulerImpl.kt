@@ -19,7 +19,6 @@ class AlarmSchedulerImpl @Inject constructor(
 ) : AlarmScheduler {
 
     override suspend fun add(item: AlarmItem) {
-
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(TODO_TITLE, item.title)
             putExtra(TODO_ID, item.id)
@@ -56,7 +55,6 @@ class AlarmSchedulerImpl @Inject constructor(
 
     override suspend fun cancelAll() {
         alarmDao.getAllAlarm().forEach {
-            Logger.d(it)
             cancel(it.id)
         }
     }
