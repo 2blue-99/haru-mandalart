@@ -1,13 +1,11 @@
 package com.coldblue.mandalart.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
+import com.coldblue.designsystem.component.HMNavigateAnimation.slideToLeftExit
+import com.coldblue.designsystem.component.HMNavigateAnimation.slideToRightEnter
 import com.coldblue.mandalart.screen.MandaScreen
 
 const val mandaRoute = "Manda"
@@ -20,12 +18,8 @@ fun NavGraphBuilder.mandaScreen(
 ){
     composable(
         route = mandaRoute,
-        popEnterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.End,
-                tween(400)
-            )
-        }
+        exitTransition = { slideToLeftExit() },
+        popEnterTransition = { slideToRightEnter() }
     ){
         MandaScreen(
             navigateToSetting = navigateToSetting,

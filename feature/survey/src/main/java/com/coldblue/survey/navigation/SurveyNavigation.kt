@@ -1,17 +1,15 @@
 package com.coldblue.survey.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.coldblue.designsystem.component.HMAnimation.slideToLeft
+import com.coldblue.designsystem.component.HMNavigateAnimation.slideToLeftEnter
+import com.coldblue.designsystem.component.HMNavigateAnimation.slideToRightExit
 import com.coldblue.survey.SurveyDetailScreen
 import com.coldblue.survey.SurveyScreen
-import com.orhanobut.logger.Logger
 
 const val surveyRoute = "Survey"
 const val surveyDetailRoute = "SurveyDetail"
@@ -30,7 +28,8 @@ fun NavGraphBuilder.surveyScreen(
 ) {
     composable(
         route = surveyRoute,
-        enterTransition = { slideToLeft() }
+        enterTransition = { slideToLeftEnter() },
+        exitTransition = { slideToRightExit() },
     ) {
         SurveyScreen(
             navigateToSurveyDetail,

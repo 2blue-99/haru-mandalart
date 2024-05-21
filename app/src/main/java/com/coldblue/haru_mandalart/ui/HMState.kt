@@ -30,7 +30,6 @@ fun rememberHMState(
 class HMAppState(
     val navController: NavHostController
 ) {
-
 //    val bottomNavDestination: List<TopLevelDestination> =
 //        listOf(TopLevelDestination.MANDA, TopLevelDestination.TODO, TopLevelDestination.HISTORY)
 

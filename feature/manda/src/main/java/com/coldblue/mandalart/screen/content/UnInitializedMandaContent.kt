@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.screen.content
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -13,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,12 +26,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMChip
+import com.coldblue.designsystem.component.HMNavigateAnimation.fadeOutScreen
 import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.state.mandaFinalMaxLen
 import com.coldblue.mandalart.util.MandaUtils.getTagList
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
+import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -36,13 +41,16 @@ fun UnInitializedMandaContent(
     updateInitState: (Boolean) -> Unit,
     insertFinalManda: (MandaKey) -> Unit
 ) {
+    val fadeAlpha = remember { Animatable(1f) }
     var inputText by remember { mutableStateOf("") }
     var buttonClickableState by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 40.dp, start = 24.dp, end = 24.dp, bottom = 16.dp),
+            .padding(top = 40.dp, start = 24.dp, end = 24.dp, bottom = 16.dp)
+            .alpha(fadeAlpha.value),
         verticalArrangement = Arrangement.spacedBy(20.dp)
 
     ) {
@@ -83,8 +91,11 @@ fun UnInitializedMandaContent(
             modifier = Modifier.weight(0.1f),
             clickableState = buttonClickableState
         ) {
-            updateInitState(true)
-            insertFinalManda(MandaKey(id = 5, name = inputText))
+            coroutineScope.launch {
+                fadeAlpha.fadeOutScreen()
+                insertFinalManda(MandaKey(id = 5, name = inputText))
+                updateInitState(true)
+            }
         }
     }
 }

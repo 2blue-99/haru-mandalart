@@ -3,6 +3,8 @@ package com.coldblue.haru_mandalart.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.coldblue.designsystem.component.HMNavigateAnimation.noneEnter
+import com.coldblue.designsystem.component.HMNavigateAnimation.noneExit
 import com.coldblue.explain.navigation.navigateToExplain
 import com.coldblue.haru_mandalart.ui.HMAppState
 import com.coldblue.login.navigation.loginScreen
@@ -27,18 +29,19 @@ fun HMNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = modifier
+        modifier = modifier,
+        enterTransition = { noneEnter() },
+        exitTransition = { noneExit() },
+        popEnterTransition = { noneEnter() },
+        popExitTransition = { noneExit() }
+
     ) {
-        loginScreen(
-            navigateToExplain = navController::navigateToExplain
-        )
+//        loginScreen(
+//            navigateToExplain = navController::navigateToExplain
+//        )
         mandaScreen(
             navigateToSetting = navController::navigateToSetting
         )
-//        historyScreen(
-//            navigateToSetting = navController::navigateToSetting,
-//            navigateToTodoEdit = navController::navigateToTodoEdit
-//        )
         settingScreen(
             navigateToNotice = navController::navigateToNotice,
             navigateToSurvey = navController::navigateToSurvey,
@@ -54,6 +57,5 @@ fun HMNavHost(
         surveyDetailScreen(
             navigateToBackStack = navController::popBackStack
         )
-
     }
 }

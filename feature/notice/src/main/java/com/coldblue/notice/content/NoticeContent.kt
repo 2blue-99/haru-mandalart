@@ -48,17 +48,11 @@ import com.coldblue.model.Notice
 fun NoticeContent(
     noticeList: List<Notice>,
     getNotice: (id: Int) -> Unit,
-    navigateToBackStack: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        item {
-            HMTopBar(title = "공지사항") {
-                navigateToBackStack()
-            }
-        }
         items(noticeList) {
             NoticeItem(it, getNotice)
         }
@@ -131,7 +125,6 @@ fun NoticeItem(
 fun NoticePreview() {
     NoticeContent(
         getNotice = {},
-        navigateToBackStack = {},
         noticeList = listOf(
             Notice(
                 1,

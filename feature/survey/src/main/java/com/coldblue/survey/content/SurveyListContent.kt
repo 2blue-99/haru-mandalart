@@ -34,17 +34,11 @@ import com.coldblue.model.Survey
 fun SurveyListContent(
     surveyList: List<Survey>,
     navigateToSurveyDetail: (id: Int) -> Unit,
-    navigateToBackstack: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        item{
-            HMTopBar(title = "기능 제안하기") {
-                navigateToBackstack()
-            }
-        }
         items(surveyList) {
             SurveyItem(it, navigateToSurveyDetail)
         }
@@ -143,6 +137,5 @@ fun SurveyListContentPreview() {
             Survey(3, "다크모드 지원", "개발예정", "2024-06-13", 0, "만ㅋ크크크제거", "관리자", false),
         ),
         {},
-        {}
     )
 }
