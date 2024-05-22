@@ -106,7 +106,7 @@ fun MandaTodoList(
                         Locale("ko")
                     )
                 )
-                dateState = MyDate(displayText = displayText, date = inputDate)
+                dateState =MyDate(displayText = displayText, date = inputDate)
                 datePickerState = false
             }
         )
@@ -119,7 +119,7 @@ fun MandaTodoList(
             { timePickerState = false },
             { h, m ->
                 myTimeState =
-                    MyTime(h, m, "${h}:${m}에 알림", LocalTime.of(h, m))
+                    MyTime(h, m, toDisplayTime(h,m), LocalTime.of(h, m))
                 timePickerState = false
             }
         )

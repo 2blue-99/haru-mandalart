@@ -65,7 +65,22 @@ fun toMyTime(time: LocalTime?): MyTime? {
     val h = time?.hour ?: LocalTime.now().hour
     val m = time?.minute ?: LocalTime.now().minute
     return if (time == null) null else
-        MyTime(h, m, "${h}:${m}에 알림", LocalTime.of(h, m))
+        MyTime(h, m, toDisplayTime(h, m), LocalTime.of(h, m))
+}
+
+fun toDisplayTime(h: Int, m: Int): String {
+
+    if (h < 12) {
+        return "오전 ${h}:${m}에 알림"
+    } else {
+        if (h == 12) {
+            return "오후 ${h}:${m}에 알림"
+
+        } else {
+            return "오후 ${h - 12}:${m}에 알림"
+        }
+
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,7 +124,7 @@ fun TodoBottomSheet(
             { timePickerState = false },
             { h, m ->
                 timePickerState = false
-                myTimeState = MyTime(h, m, "${h}:${m}에 알림", LocalTime.of(h, m))
+                myTimeState = MyTime(h, m, toDisplayTime(h, m), LocalTime.of(h, m))
             }
         )
     }
