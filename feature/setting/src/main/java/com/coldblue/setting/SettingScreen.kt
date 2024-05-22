@@ -32,10 +32,10 @@ fun SettingScreen(
     )
     if (permissionDialogState) {
         HMTextDialog(
-            targetText = "",
-            text = "알림하려먼 권한 켜야함 ",
+            targetText = "알림권한",
+            text = "을 허용해 주세요",
             confirmText = "설정이동",
-            tintColor = HMColor.Manda.Red,
+            tintColor = HMColor.Primary,
             onDismissRequest = {
                 settingViewModel.hidePermissionDialog()
             },
