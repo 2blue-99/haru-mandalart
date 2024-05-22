@@ -198,7 +198,7 @@ fun MandaTodoList(
                                 }
                             }
                         }
-                        if (showDoneTodo){
+                        if (showDoneTodo) {
                             items(todoList.filter { it.isDone }) { todo ->
                                 MandaTodoItem(
                                     todo,
@@ -226,6 +226,10 @@ fun MandaTodoList(
                         { timePickerState = true },
                         { myTimeState = null },
                         { dateState = null },
+                        {
+                            dateState = null
+                            myTimeState = null
+                        }
                     )
                 }
             }
@@ -244,7 +248,7 @@ fun MandaTodoItem(
     var todoDialogState by remember { mutableStateOf(false) }
 
     if (todoDialogState) {
-        TodoDialog(
+        TodoBottomSheet(
             { todoDialogState = false },
             mandaTodo,
             upsertMandaTodo,
@@ -335,6 +339,7 @@ fun TodoInput(
     showTimePicker: () -> Unit,
     clearTimeState: () -> Unit,
     clearDateState: () -> Unit,
+    clearDateAndTime: () -> Unit
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -348,7 +353,6 @@ fun TodoInput(
                 modifier = Modifier
                     .padding(bottom = 8.dp)
             ) {
-
                 Surface(
                     color = HMColor.Box,
                     contentColor = HMColor.Text,
@@ -465,6 +469,7 @@ fun TodoInput(
                                 )
                             )
                             text = ""
+                            clearDateAndTime()
                             focusManager.clearFocus()
                         },
                         imageVector = IconPack.AddSquare,
@@ -537,8 +542,6 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
 @Preview
 @Composable
 fun MandaTodoItemPreview() {
-//            upsertMandaTodoUseCase(MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false))
-
     MandaTodoList(
         listOf(HMColor.Manda.Red, HMColor.Manda.Orange),
         1, DateRange.DAY,
