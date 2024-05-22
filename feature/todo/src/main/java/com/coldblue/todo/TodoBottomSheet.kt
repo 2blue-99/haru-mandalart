@@ -43,10 +43,30 @@ import com.coldblue.designsystem.iconpack.todo.Calendar
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
+import com.coldblue.model.MyDate
+import com.coldblue.model.MyTime
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+fun toMyDate(date: LocalDate): MyDate {
+    val displayText = date.format(
+        DateTimeFormatter.ofPattern(
+            "M월 d일(E)",
+            Locale("ko")
+        )
+    )
+    return MyDate(displayText = displayText, date = date)
+}
+
+fun toMyTime(time: LocalTime?): MyTime? {
+    val h = time?.hour ?: LocalTime.now().hour
+    val m = time?.minute ?: LocalTime.now().minute
+    return if (time == null) null else
+        MyTime(h, m, "${h}:${m}에 알림", LocalTime.of(h, m))
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +75,10 @@ fun TodoBottomSheet(
     mandaTodo: MandaTodo,
     upsertMandaTodo: (MandaTodo) -> Unit,
 ) {
+    var dateState by remember { mutableStateOf<MyDate>(toMyDate(mandaTodo.date)) }
+    var myTimeState by remember { mutableStateOf<MyTime?>(toMyTime(mandaTodo.time)) }
+
+
     var timePickerState by remember { mutableStateOf(false) }
     var datePickerState by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -63,29 +87,29 @@ fun TodoBottomSheet(
 
     if (datePickerState) {
         CustomDatePickerDialog(
-            LocalDateTime.of(mandaTodo.date, LocalTime.now()).toMillis(),
+            LocalDateTime.of(dateState.date, LocalTime.now()).toMillis(),
             { datePickerState = false },
             {
                 datePickerState = false
-                upsertMandaTodo(
-                    mandaTodo.copy(
-                        date = LocalDate.parse(
-                            it,
-                            DateTimeFormatter.BASIC_ISO_DATE
-                        )
+                val inputDate = LocalDate.parse(it, DateTimeFormatter.BASIC_ISO_DATE)
+                val displayText = inputDate.format(
+                    DateTimeFormatter.ofPattern(
+                        "M월 d일(E)",
+                        Locale("ko")
                     )
                 )
+                dateState = MyDate(displayText = displayText, date = inputDate)
             }
         )
     }
     if (timePickerState) {
         CustomTimePickerDialog(
-            if (mandaTodo.time != null) mandaTodo.time?.hour else LocalTime.now().hour,
-            if (mandaTodo.time != null) mandaTodo.time?.minute else LocalTime.now().minute,
+            myTimeState?.time?.hour,
+            myTimeState?.time?.minute,
             { timePickerState = false },
             { h, m ->
                 timePickerState = false
-                upsertMandaTodo(mandaTodo.copy(time = LocalTime.of(h, m)))
+                myTimeState = MyTime(h, m, "${h}:${m}에 알림", LocalTime.of(h, m))
             }
         )
     }
@@ -113,7 +137,7 @@ fun TodoBottomSheet(
             ) {
                 HMTextField(inputText = text, maxLen = -1) { text = it }
 
-                val isDateSet = mandaTodo.date == null
+                val isDateSet = dateState == null
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -124,7 +148,7 @@ fun TodoBottomSheet(
                     val color =
                         if (isDateSet) HMColor.DarkGray else HMColor.Primary
                     val dateText =
-                        if (isDateSet) "날짜 추가" else mandaTodo.date.toString()
+                        if (isDateSet) "날짜 추가" else dateState.displayText
                     val textColor =
                         if (isDateSet) HMColor.DarkGray else HMColor.Text
                     Icon(
@@ -136,7 +160,7 @@ fun TodoBottomSheet(
                     Text(dateText, color = textColor)
                 }
 
-                val isTimeSet = mandaTodo.time != null
+                val isTimeSet = myTimeState != null
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -147,8 +171,7 @@ fun TodoBottomSheet(
                 ) {
                     val color =
                         if (isTimeSet) HMColor.Primary else HMColor.DarkGray
-                    val timeText =
-                        if (isTimeSet) getDisplayTime(mandaTodo.time) else "알림 추가"
+                    val timeText = myTimeState?.displayText ?: "알림 추가"
                     val textColor =
                         if (isTimeSet) HMColor.Text else HMColor.DarkGray
                     Row {
@@ -167,7 +190,8 @@ fun TodoBottomSheet(
                                 .size(20.dp)
                                 .clip(CircleShape)
                                 .clickable {
-                                    upsertMandaTodo(mandaTodo.copy(time = null))
+                                    myTimeState = null
+//                                    upsertMandaTodo(mandaTodo.copy(time = null))
                                 },
                             imageVector = Icons.Rounded.Clear,
                             contentDescription = "",
@@ -208,7 +232,13 @@ fun TodoBottomSheet(
                         .weight(1f),
                 ) {
                     onClickCancel()
-                    upsertMandaTodo(mandaTodo.copy(title = text))
+                    upsertMandaTodo(
+                        mandaTodo.copy(
+                            title = text,
+                            time = myTimeState?.time,
+                            date = dateState.date
+                        )
+                    )
                 }
             }
         }

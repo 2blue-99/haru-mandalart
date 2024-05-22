@@ -13,7 +13,7 @@ interface UserRepository {
     suspend fun updateToken(token: String)
     suspend fun updateEmail(email: String)
     suspend fun updateExplain(state: Boolean)
-    suspend fun updateAlarm(state: Boolean)
+    suspend fun updateAlarm(state: Boolean):Boolean
     suspend fun updateMandaInitState(state: Boolean)
     suspend fun refresh()
 }
