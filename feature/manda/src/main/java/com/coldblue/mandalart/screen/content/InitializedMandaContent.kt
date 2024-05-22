@@ -65,7 +65,6 @@ import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.explain.fadeInScreen
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.screen.MandaBottomSheet
 import com.coldblue.mandalart.screen.MandaDetailBox
@@ -110,10 +109,6 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
-    val fadeAlpha = remember { Animatable(0f) }
-
-    LaunchedEffect(Unit){ fadeAlpha.fadeInScreen() }
-
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
@@ -138,8 +133,7 @@ fun InitializedMandaContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .alpha(fadeAlpha.value),
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         MandaTopBar { navigateToSetting() }
