@@ -120,12 +120,9 @@ fun MandaContentWithState(
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {
-            Text(text = "로딩", style = HmStyle.text24)
         }
 
         is MandaUIState.Error -> {
-            Text(text = "에러", style = HmStyle.text24)
-
         }
 
         is MandaUIState.UnInitializedSuccess -> {

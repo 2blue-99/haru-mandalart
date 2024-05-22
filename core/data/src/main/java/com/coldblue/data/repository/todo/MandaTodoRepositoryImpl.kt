@@ -5,22 +5,17 @@ import com.coldblue.data.mapper.MandaTodoMapper.asDomain
 import com.coldblue.data.mapper.MandaTodoMapper.asEntity
 import com.coldblue.data.mapper.MandaTodoMapper.asNetworkModel
 import com.coldblue.data.mapper.MandaTodoMapper.asSyncedEntity
-import com.coldblue.data.mapper.asEntity
-import com.coldblue.data.mapper.asNetworkModel
-import com.coldblue.data.mapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.isPassed
 import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
 import com.coldblue.model.MandaTodo
-import com.coldblue.model.Todo
 import com.coldblue.network.datasource.MandaTodoDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
