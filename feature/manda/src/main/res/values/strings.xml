@@ -2,8 +2,8 @@
 <resources>
 
     // Initialized
-    <string name="initialized_key_goal">핵심 목표 : </string>
-    <string name="initialized_detail_goal">세부 목표 : </string>
+    <string name="initialized_key_goal">작은 목표 : </string>
+    <string name="initialized_detail_goal">할 일 : </string>
     <string name="initialized_done_percentage">달성률 : %1$s</string>
     <string name="initialized_empty_title">목표를 추가해 주세요!</string>
 
@@ -12,8 +12,8 @@
     <string name="unInitialized_goal_realization">목표 구체화 하기</string>
 
     // Dialog
-    <string name="dialog_main_title"> 이(가) 포함된 세부목표는 전부 삭제돼요.</string>
-    <string name="dialog_notice">핵심목표 " %1$s " 을(를) 삭제하면 포함된 세부목표가 전부 삭제돼요.</string>
+    <string name="dialog_main_title"> 에 포함된 할 일은 전부 삭제돼요.</string>
+    <string name="dialog_notice">작은 목표 " %1$s " 을(를) 삭제하면 포함된 할 일이 전부 삭제돼요.</string>
     <string name="dialog_title">업데이트</string>
     <string name="dialog_cancel">취소</string>
 
