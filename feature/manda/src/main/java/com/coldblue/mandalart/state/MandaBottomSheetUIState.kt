@@ -43,7 +43,7 @@ sealed interface MandaBottomSheetContentType {
     data class MandaDetail(
         override val mandaUI: MandaUI
     ) : MandaBottomSheetContentType {
-        override val title = "할 일"
+        override val title = "계획"
         override val maxLen = mandaDetailMaxLen
     }
 }
