@@ -69,8 +69,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 fun getDisplayTime(time: LocalTime?): String {
+
     return if (time != null) {
-        "${time.hour}:${time.minute}에 알림"
+        val padM = time.minute.toString().padStart(2, '0')
+        "${time.hour}:${padM}에 알림"
     } else {
         ""
     }
