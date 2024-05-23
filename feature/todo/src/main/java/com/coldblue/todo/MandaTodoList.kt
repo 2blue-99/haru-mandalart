@@ -379,7 +379,7 @@ fun TodoInput(
                         Icon(
                             imageVector = IconPack.Calendar,
                             contentDescription = "",
-                            tint = HMColor.Text,
+                            tint = HMColor.Primary,
                         )
                         if (date != null) {
                             Text(
@@ -419,7 +419,7 @@ fun TodoInput(
                         Icon(
                             imageVector = IconPack.Alarm,
                             contentDescription = "",
-                            tint = HMColor.Text,
+                            tint = HMColor.Primary,
                         )
                         if (myTime != null) {
                             Text(
