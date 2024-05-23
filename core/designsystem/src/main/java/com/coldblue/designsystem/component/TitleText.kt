@@ -54,12 +54,6 @@ fun CenterTitleText(text: String) {
 
 @Preview
 @Composable
-fun TitleTextPreView() {
-    TitleText("오늘 할 일")
-}
-
-@Preview
-@Composable
 fun CenterTitleTextPreView() {
     CenterTitleText("하루,만다라트")
 }

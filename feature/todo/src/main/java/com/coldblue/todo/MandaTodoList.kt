@@ -294,12 +294,12 @@ fun MandaTodoItem(
             }
             Text(
                 modifier = Modifier
-                    .padding(vertical = 8.dp)
+                    .padding(4.dp).padding(bottom = 2.dp)
                     .fillMaxWidth(0.85f),
                 text = mandaTodo.title,
                 color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
                 textDecoration = if (mandaTodo.isDone) TextDecoration.LineThrough else null,
-                style = HmStyle.text16,
+                style = HmStyle.text14,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -311,17 +311,6 @@ fun MandaTodoItem(
                 )
             }
         }
-        Text(
-            modifier = Modifier
-                .padding(4.dp).padding(bottom = 2.dp)
-                .fillMaxWidth(0.95f),
-            text = mandaTodo.title,
-            color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
-            textDecoration = if (mandaTodo.isDone) TextDecoration.LineThrough else null,
-            style = HmStyle.text14,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
         Box(
             modifier = Modifier
                 .padding(end = 0.dp)
@@ -395,10 +384,9 @@ fun TodoInput(
                 Surface(
                     color = HMColor.Box,
                     contentColor = HMColor.Text,
-                    shape = CircleShape,
                     modifier = Modifier
                         .padding(end = 8.dp)
-                        .clip(CircleShape)
+                        .clip(RoundedCornerShape(8.dp))
                         .clickable {
                             showDatePicker()
                         }
@@ -435,10 +423,9 @@ fun TodoInput(
                 Surface(
                     color = HMColor.Box,
                     contentColor = HMColor.Text,
-                    shape = CircleShape,
                     modifier = Modifier
                         .padding(end = 8.dp)
-                        .clip(CircleShape)
+                        .clip(RoundedCornerShape(8.dp))
                         .clickable {
                             showTimePicker()
                         }
@@ -568,9 +555,9 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
     Surface(
         color = if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background,
         contentColor = HMColor.Primary,
-        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(end = 8.dp)
+            .clip(RoundedCornerShape(8.dp))
             .clickable {
                 onClick(toggleInfo.dateRange)
             }
