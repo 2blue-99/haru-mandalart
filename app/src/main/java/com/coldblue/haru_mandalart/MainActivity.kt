@@ -18,6 +18,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +45,7 @@ import com.coldblue.data.util.SettingHelper
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.login.LoginScreen
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +57,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var loginHelper: LoginHelper
-    
+
     @Inject
     lateinit var syncHelper: SyncHelper
 
@@ -92,6 +94,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onRestart() {
+        super.onRestart()
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_DENIED
+        ) {
+            CoroutineScope(Dispatchers.IO).launch {
+                loginHelper.updateAlarmState(true)
+            }
+        }
+    }
 
     private fun splashScreen() {
         splashScreen.setOnExitAnimationListener { splashScreenView ->

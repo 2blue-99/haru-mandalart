@@ -1,6 +1,7 @@
 package com.coldblue.data.repository.user
 
 import com.coldblue.data.util.SettingHelper
+import com.coldblue.database.dao.AppDao
 import com.coldblue.datastore.UserDataSource
 import com.coldblue.network.SupabaseDataSource
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +11,7 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
     private val supabaseDataSource: SupabaseDataSource,
-    private val settingHelper: SettingHelper
+    private val settingHelper: SettingHelper,
 ) : UserRepository {
     override val token: Flow<String> = userDataSource.token
     override val email: Flow<String> = userDataSource.email
@@ -21,6 +22,8 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun updateToken(token: String) {
         userDataSource.updateToken(token)
     }
+
+
 
     override suspend fun updateEmail(email: String) {
         userDataSource.updateEmail(email)

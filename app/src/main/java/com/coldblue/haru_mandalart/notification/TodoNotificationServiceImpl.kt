@@ -32,7 +32,7 @@ class TodoNotificationServiceImpl @Inject constructor(
         )
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(com.coldblue.data.R.drawable.notification_icon)
-            .setContentTitle(R.string.notice_title.toString())
+            .setContentTitle("Todo 알림")
             .setContentText(text)
             .setContentIntent(activityPendingIntent)
             .setVibrate(LongArray(1)) // 사이즈는 영향 X

@@ -62,12 +62,10 @@ fun LoginScreen(
                 Toast.LENGTH_SHORT
             ).show()
         }
-
         is LoginUiState.Success -> {
-            Toast.makeText(context, stringResource(id = R.string.login_success), Toast.LENGTH_SHORT)
-                .show()
+//            Toast.makeText(context, stringResource(id = R.string.login_success), Toast.LENGTH_SHORT)
+//                .show()
         }
-
         is LoginUiState.None -> {}
     }
     val authState = loginViewModel.getComposeAuth().rememberSignInWithGoogle(

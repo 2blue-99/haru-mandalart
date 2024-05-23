@@ -7,6 +7,7 @@ import java.time.LocalDate
 
 interface MandaTodoRepository: Syncable {
     suspend fun upsertMandaTodo(mandaTodo: MandaTodo)
+    suspend fun deleteAllMandaTodo()
 
     fun getMandaTodo(): Flow<List<MandaTodo>>
 }
