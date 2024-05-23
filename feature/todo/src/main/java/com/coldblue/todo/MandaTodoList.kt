@@ -1,6 +1,7 @@
 package com.coldblue.todo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -169,6 +170,7 @@ fun MandaTodoList(
                                 color = HMColor.LiteGray,
                                 contentColor = HMColor.Text,
                                 modifier = Modifier
+                                    .padding(top = 6.dp)
                                     .clip(RoundedCornerShape(8.dp))
                                     .clickable {
                                         showDoneTodo = !showDoneTodo
@@ -523,10 +525,9 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
     Surface(
         color = if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background,
         contentColor = HMColor.Primary,
-        shape = CircleShape,
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(end = 8.dp)
-            .clip(CircleShape)
             .clickable {
                 onClick(toggleInfo.dateRange)
             }
