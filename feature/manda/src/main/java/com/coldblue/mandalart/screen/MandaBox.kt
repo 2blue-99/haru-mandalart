@@ -38,11 +38,11 @@ fun MandaKeyBox(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .fillMaxWidth()
             .aspectRatio(1F)
             .border(BorderStroke(1.5.dp, color), RoundedCornerShape(8.dp))
-            .clip(RoundedCornerShape(8.dp))
             .background(if (isDone) color else HMColor.Background)
     ) {
         Text(
@@ -67,10 +67,10 @@ fun MandaDetailBox(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .fillMaxWidth()
             .aspectRatio(1F)
-            .clip(RoundedCornerShape(8.dp))
             .border(0.65.dp, color = color, RoundedCornerShape(8.dp))
             .background(if (isDone) color else HMColor.Background)
     ) {
@@ -92,6 +92,7 @@ fun MandaEmptyBox(
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .fillMaxWidth()
             .aspectRatio(1F)
