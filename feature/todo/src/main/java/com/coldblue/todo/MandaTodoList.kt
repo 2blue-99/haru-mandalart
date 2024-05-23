@@ -320,8 +320,8 @@ fun CircleCheckbox(
 ) {
 
     val imageVector = if (selected) IconPack.CircleCheck else IconPack.Circle
-    val tint = if (selected) color.copy(alpha = 0.8f) else HMColor.Text
-    val background = if (selected) HMColor.LiteGray else HMColor.LiteGray
+    val tint = if (selected) HMColor.Background else HMColor.Text
+    val background = if (selected) color else HMColor.LiteGray
 
     IconButton(
         onClick = { onChecked() },
@@ -329,8 +329,9 @@ fun CircleCheckbox(
     ) {
 
         Icon(
-            imageVector = imageVector, tint = tint,
+            imageVector = imageVector,
             modifier = Modifier.background(background, shape = CircleShape),
+            tint = tint,
             contentDescription = "checkbox"
         )
     }
