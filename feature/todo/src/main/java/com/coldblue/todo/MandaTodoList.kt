@@ -538,9 +538,10 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
             }
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp).padding(bottom = 2.dp),
             text = toggleInfo.text,
-            color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray
+            color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray,
+            style = HmStyle.text14
         )
     }
 }
