@@ -134,7 +134,7 @@ fun InitializedMandaContent(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         MandaTopBar { navigateToSetting() }
 
@@ -223,7 +223,7 @@ fun MandaStatus(
     val screenWidth = LocalConfiguration.current.screenWidthDp
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(

@@ -1,6 +1,7 @@
 package com.coldblue.todo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.coldblue.data.util.toMillis
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.todo.AddSquare
@@ -182,6 +184,7 @@ fun MandaTodoList(
                                 color = HMColor.LiteGray,
                                 contentColor = HMColor.Text,
                                 modifier = Modifier
+                                    .padding(top = 6.dp)
                                     .clip(RoundedCornerShape(8.dp))
                                     .clickable {
                                         showDoneTodo = !showDoneTodo
@@ -189,10 +192,10 @@ fun MandaTodoList(
                             ) {
                                 Row(
                                     modifier = Modifier.padding(
-                                        vertical = 6.dp,
+                                        vertical = 4.dp,
                                         horizontal = 8.dp
                                     ),
-                                    verticalAlignment = Alignment.CenterVertically
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     if (showDoneTodo) {
                                         Icon(
@@ -207,7 +210,11 @@ fun MandaTodoList(
                                             tint = HMColor.Text,
                                         )
                                     }
-                                    Text(text = "완료됨 $doneTodoCnt")
+                                    Text(
+                                        text = "완료 $doneTodoCnt",
+                                        style = HmStyle.text14,
+                                        modifier = Modifier.padding(bottom = 2.dp)
+                                    )
                                 }
                             }
                         }
@@ -271,14 +278,14 @@ fun MandaTodoItem(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 6.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
             .clickable {
                 todoDialogState = true
             },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -304,12 +311,22 @@ fun MandaTodoItem(
                 )
             }
         }
-
+        Text(
+            modifier = Modifier
+                .padding(4.dp).padding(bottom = 2.dp)
+                .fillMaxWidth(0.95f),
+            text = mandaTodo.title,
+            color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
+            textDecoration = if (mandaTodo.isDone) TextDecoration.LineThrough else null,
+            style = HmStyle.text14,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
         Box(
             modifier = Modifier
                 .padding(end = 0.dp)
                 .width(12.dp)
-                .height(50.dp)
+                .height(48.dp)
                 .background(
                     color, shape = RoundedCornerShape(
                         topStart = CornerSize(0.dp),
@@ -335,16 +352,17 @@ fun CircleCheckbox(
 ) {
 
     val imageVector = if (selected) IconPack.CircleCheck else IconPack.Circle
-    val tint = if (selected) color.copy(alpha = 0.8f) else HMColor.Text
-    val background = if (selected) HMColor.LiteGray else HMColor.LiteGray
+    val tint = if (selected) HMColor.Background else HMColor.Text
+    val background = if (selected) color else HMColor.LiteGray
 
     IconButton(
         onClick = { onChecked() },
         enabled = enabled
     ) {
         Icon(
-            imageVector = imageVector, tint = tint,
+            imageVector = imageVector,
             modifier = Modifier.background(background, shape = CircleShape),
+            tint = tint,
             contentDescription = "checkbox"
         )
     }
@@ -392,7 +410,7 @@ fun TodoInput(
                         Icon(
                             imageVector = IconPack.Calendar,
                             contentDescription = "",
-                            tint = HMColor.Text,
+                            tint = HMColor.Primary,
                         )
                         if (date != null) {
                             Text(
@@ -432,7 +450,7 @@ fun TodoInput(
                         Icon(
                             imageVector = IconPack.Alarm,
                             contentDescription = "",
-                            tint = HMColor.Text,
+                            tint = HMColor.Primary,
                         )
                         if (myTime != null) {
                             Text(
@@ -550,18 +568,18 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
     Surface(
         color = if (toggleInfo.isChecked) HMColor.Primary else HMColor.Background,
         contentColor = HMColor.Primary,
-        shape = CircleShape,
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(end = 8.dp)
-            .clip(CircleShape)
             .clickable {
                 onClick(toggleInfo.dateRange)
             }
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp).padding(bottom = 2.dp),
             text = toggleInfo.text,
-            color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray
+            color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray,
+            style = HmStyle.text14
         )
     }
 }
