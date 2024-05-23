@@ -13,7 +13,6 @@
 
     // Dialog
     <string name="dialog_main_title"> 에 포함된 계획과 Todo는 전부 삭제돼요.</string>
-    <string name="dialog_notice">작은 목표 " %1$s " 을(를) 삭제하면 포함된 계획이 전부 삭제돼요.</string>
     <string name="dialog_title">업데이트</string>
     <string name="dialog_cancel">취소</string>
 
