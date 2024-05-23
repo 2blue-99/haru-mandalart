@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +26,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -43,16 +41,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMTextField
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.mandalart.state.MandaBottomSheetContentState
-import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.model.asMandaDetail
 import com.coldblue.mandalart.model.asMandaKey
+import com.coldblue.mandalart.state.MandaBottomSheetContentState
+import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
@@ -388,70 +386,6 @@ fun HMColorButton(
             ) {}
         }
     }
-
-
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(
-//                if (colorInfo.isChecked) colorInfo.color else Color.Transparent,
-//                shape = CircleShape
-//            ),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Button(
-//            modifier = Modifier.fillMaxSize(fraction = 0.8f),
-//            onClick = {
-//                onClick()
-//            },
-//            shape = CircleShape,
-//            border = if (colorInfo.isChecked) BorderStroke(2.dp, HMColor.Background) else null,
-//            colors = ButtonDefaults.buttonColors(containerColor = colorInfo.color)
-//        ) { }
-//    }
-}
-
-@Composable
-fun MandaKeyDialog(
-    name: String,
-    onDisMiss: () -> Unit,
-    onDelete: () -> Unit
-) {
-    AlertDialog(
-        containerColor = HMColor.Background,
-        onDismissRequest = { onDisMiss() },
-        text = {
-            Text(
-                text = stringResource(id = R.string.dialog_notice, name),
-                style = HmStyle.text16,
-                color = HMColor.Text
-            )
-        },
-        dismissButton = {
-            TextButton(onClick = { onDisMiss() }) {
-                Text(
-                    text = stringResource(id = R.string.dialog_cancel),
-                    style = HmStyle.text16,
-                    color = HMColor.Text,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                onDelete()
-                onDisMiss()
-            }) {
-                Text(
-                    text = stringResource(id = R.string.bottom_sheet_delete),
-                    style = HmStyle.text16,
-                    color = HMColor.NegativeText,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        },
-        shape = RoundedCornerShape(8.dp)
-    )
 }
 
 @Composable
