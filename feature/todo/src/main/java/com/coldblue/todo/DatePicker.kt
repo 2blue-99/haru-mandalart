@@ -20,6 +20,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.theme.HMColor
 import java.text.SimpleDateFormat
@@ -61,15 +62,17 @@ fun CustomDatePickerDialog(
             horizontalArrangement = Arrangement.End,
         ) {
             Button(
+                shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = HMColor.Gray),
                 onClick = {
-                onClickCancel()
-            }) {
-                Text(text = "취소")
+                    onClickCancel()
+                }) {
+                Text(text = "취소", fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.width(12.dp))
 
             Button(
+                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.padding(end = 16.dp),
                 onClick = {
                     datePickerState.selectedDateMillis?.let { selectedDateMillis ->
@@ -81,7 +84,7 @@ fun CustomDatePickerDialog(
                         onClickConfirm(yyyyMMdd)
                     }
                 }) {
-                Text(text = "확인")
+                Text(text = "확인", fontWeight = FontWeight.Bold)
             }
         }
     }
