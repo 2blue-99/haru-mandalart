@@ -25,31 +25,38 @@ import com.coldblue.designsystem.theme.HmStyle
 @Composable
 fun HMTextField(
     inputText: String = "",
-    maxLen: Int,
+    maxLen: Int = -1,
     onChangeText: (String) -> Unit = {}
 ) {
     var text by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(inputText){ text = inputText }
+    LaunchedEffect(inputText) { text = inputText }
 
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = text,
         onValueChange = {
-            if (it.length <= maxLen) {
+            if (maxLen != -1) {
+                if (it.length <= maxLen) {
+                    text = it
+                    onChangeText(text)
+                }
+            } else {
                 text = it
                 onChangeText(text)
             }
         },
         supportingText = {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End,
-                text = "${text.length} / $maxLen",
-                style = HmStyle.text12
-            )
+            if (maxLen!=-1){
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.End,
+                    text = "${text.length} / $maxLen",
+                    style = HmStyle.text12
+                )
+            }
         },
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = HMColor.Primary,

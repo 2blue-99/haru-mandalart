@@ -1,5 +1,6 @@
 package com.coldblue.data.repository.user
 
+import com.coldblue.data.util.SettingHelper
 import com.coldblue.datastore.UserDataSource
 import com.coldblue.network.SupabaseDataSource
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,7 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
     private val supabaseDataSource: SupabaseDataSource,
+    private val settingHelper: SettingHelper
 ) : UserRepository {
     override val token: Flow<String> = userDataSource.token
     override val email: Flow<String> = userDataSource.email
@@ -28,15 +30,20 @@ class UserRepositoryImpl @Inject constructor(
         userDataSource.updateExplain(state)
     }
 
-    override suspend fun updateAlarm(state: Boolean) {
-        userDataSource.updateAlarm(state)
+    override suspend fun updateAlarm(state: Boolean): Boolean {
+        if (settingHelper.checkAlarmPermission()) {
+            userDataSource.updateAlarm(state)
+            return true
+        } else {
+            return false
+        }
     }
 
     override suspend fun updateMandaInitState(state: Boolean) {
         userDataSource.updateMandaInitState(state)
     }
 
-    override suspend fun refresh(){
+    override suspend fun refresh() {
         userDataSource.token.flatMapLatest {
             supabaseDataSource.refresh(it)
         }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coldblue.data.util.LoginState
 import com.coldblue.designsystem.component.BottomSpacer
+import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.component.TopSpacer
@@ -71,12 +73,14 @@ fun SettingContent(
                     onResign = logout
                 )
             }
+
             DialogType.Resign -> {
                 ResignDialog(
                     onDismiss = { openDialog = openDialog.copy(false) },
                     deleteUser = deleteUser
                 )
             }
+
             DialogType.Init -> {
                 InitDialog(
                     onDismiss = { openDialog = openDialog.copy(false) },
@@ -119,6 +123,11 @@ fun SettingContent(
                 SettingTile(stringResource(id = R.string.setting_general)) {
                     SettingItem(title = stringResource(id = R.string.setting_account)) {
                         Text(text = email)
+                    }
+                    SettingItem(title = "알림") {
+                        HMSwitch(checked = alarm) {
+                            onChangeAlarmState(!alarm)
+                        }
                     }
                     SettingItem(
                         title = stringResource(id = R.string.setting_notice),

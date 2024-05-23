@@ -31,10 +31,11 @@ class AlarmReceiver : BroadcastReceiver() {
 
         CoroutineScope(Dispatchers.IO).launch {
             alarmDao.deleteAlarm(id)
-            if(userRepository.isAlarm.first())
+            if (userRepository.isAlarm.first())
                 showNotification(text)
         }
     }
+
     private fun showNotification(text: String) {
         todoNotificationService.showNotification(text)
     }

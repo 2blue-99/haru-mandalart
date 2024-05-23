@@ -6,6 +6,6 @@ interface SettingHelper {
     fun showOss()
     fun showContact()
     fun showPlayStore()
-
-
+    fun checkAlarmPermission():Boolean
+    fun showAppInfo()
 }

@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
+import com.coldblue.data.util.SettingHelper
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.login.LoginScreen
@@ -54,7 +55,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var loginHelper: LoginHelper
-
+    
     @Inject
     lateinit var syncHelper: SyncHelper
 
@@ -73,9 +74,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    Button(onClick = { this.openAppSettings() }) {
-//                        Text(text = "dddd")
-//                    }
+
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
@@ -175,9 +174,4 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun Activity.openAppSettings() {
-    Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", packageName, null)
-    ).also(::startActivity)
-}
+

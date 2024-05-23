@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import com.coldblue.data.alarm.TodoNotificationService
 import com.coldblue.haru_mandalart.MainActivity
 import com.coldblue.haru_mandalart.R
+import com.orhanobut.logger.Logger
 import javax.inject.Inject
 
 class TodoNotificationServiceImpl @Inject constructor(
@@ -19,6 +20,7 @@ class TodoNotificationServiceImpl @Inject constructor(
 
     @SuppressLint("ResourceType")
     override fun showNotification(text: String) {
+        Logger.d("알림 옴")
 
         val activityIntent = Intent(context, MainActivity::class.java)
 

@@ -11,6 +11,7 @@ import com.coldblue.domain.auth.LogoutUseCase
 import com.coldblue.domain.manda.DeleteMandaAllUseCase
 import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.domain.setting.GetVersionUseCase
+import com.coldblue.domain.setting.ShowAppInfoUseCase
 import com.coldblue.domain.setting.ShowContactUseCase
 import com.coldblue.domain.setting.ShowOssUseCase
 import com.coldblue.domain.setting.ShowPlayStoreUseCase
@@ -18,10 +19,14 @@ import com.coldblue.domain.user.GetAlarmStateUseCase
 import com.coldblue.domain.user.GetEmailUseCase
 import com.coldblue.domain.user.UpdateAlarmStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
+import com.coldblue.setting.state.SettingUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -43,36 +48,29 @@ class SettingViewModel @Inject constructor(
     private val showOssUseCase: ShowOssUseCase,
     private val showPlayStoreUseCase: ShowPlayStoreUseCase,
     private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
-    private val updateMandaInitStateUseCase: UpdateMandaInitStateUseCase
-    ) : ViewModel() {
-    val isOnline: StateFlow<Boolean> = getNetworkStateUseCase().map {
-        it
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false
-    )
+    private val updateMandaInitStateUseCase: UpdateMandaInitStateUseCase,
+    private val showAppInfoUseCase: ShowAppInfoUseCase
+) : ViewModel() {
 
-    val loginWithOutAuth = getAuthStateUseCase().map {
-        it
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = LoginState.Loading
-    )
+    val settingUIState: StateFlow<SettingUIState> =
+        combine(
+            getNetworkStateUseCase(),
+            getAuthStateUseCase(),
+            getEmailUseCase(),
+            getAlarmStateUseCase()
+        ) { isOnline, loginWithOutAuth, email, isAlarm ->
+            SettingUIState.Success(isOnline, loginWithOutAuth, email, isAlarm)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = SettingUIState.Loading
+        )
+
     val versionName = getVersionUseCase()
 
-    val email = getEmailUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ""
-    )
-    val alarm = getAlarmStateUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = false
-    )
 
+    private val _permissionDialogState = MutableStateFlow<Boolean>(false)
+    val permissionDialogState: StateFlow<Boolean> get() = _permissionDialogState
 
     fun getComposeAuth() = getComposeAuthUseCase()
 
@@ -114,11 +112,22 @@ class SettingViewModel @Inject constructor(
 
     fun updateAlarmState(state: Boolean) {
         viewModelScope.launch {
-            updateAlarmStateUseCase(state)
+            if (!updateAlarmStateUseCase(state)) {
+                _permissionDialogState.value = true
+            }
         }
     }
 
-    fun initManda(){
+    fun hidePermissionDialog() {
+        _permissionDialogState.value = false
+    }
+
+    fun showAppInfo() {
+        showAppInfoUseCase()
+    }
+
+
+    fun initManda() {
         viewModelScope.launch {
             deleteMandaAllUseCase()
             updateMandaInitStateUseCase(false)
