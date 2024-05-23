@@ -17,12 +17,7 @@ class SurveyDataSourceImpl @Inject constructor(
 ) : SurveyDataSource {
     override suspend fun getSurveyList(): List<NetworkSurvey> {
         return try {
-            client.postgrest["survey"].select {
-                order(
-                    column = "date",
-                    order = Order.DESCENDING
-                )
-            }.decodeList<NetworkSurvey>()
+            client.postgrest["survey"].select {}.decodeList<NetworkSurvey>()
         } catch (e: Exception) {
             emptyList()
         }

@@ -41,6 +41,8 @@ class MandaKeyRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllMandaDetail() {
         mandaKeyDao.deleteAllMandaKey()
+        syncHelper.syncWrite()
+
     }
 
     override fun isInit(): Flow<Boolean> {
