@@ -18,7 +18,11 @@ object DatabaseModule {
 
     val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("CREATE TABLE `manda_todo` (`id` INTEGER NOT NULL, `title` TEXT  NOT NULL," +
+            database.execSQL("DROP TABLE current_group")
+            database.execSQL("DROP TABLE todo")
+            database.execSQL("DROP TABLE todo_group")
+            database.execSQL(
+                "CREATE TABLE `manda_todo` (`id` INTEGER NOT NULL, `title` TEXT  NOT NULL," +
                     "`manda_index` INTEGER NOT NULL," +
                     "`is_done` INTEGER NOT NULL," +
                     "`is_alarm` INTEGER NOT NULL," +
@@ -28,7 +32,8 @@ object DatabaseModule {
                     "`is_sync` INTEGER  NOT NULL," +
                     "`is_del` INTEGER NOT NULL," +
                     "`update_time` TEXT NOT NULL," +
-                    " PRIMARY KEY(`id`))")
+                    " PRIMARY KEY(`id`))"
+            )
         }
     }
     @Singleton

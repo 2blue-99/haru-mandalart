@@ -12,8 +12,6 @@ import com.coldblue.data.repository.survey.SurveyRepository
 import com.coldblue.data.repository.survey.SurveyRepositoryImpl
 import com.coldblue.data.repository.todo.MandaTodoRepository
 import com.coldblue.data.repository.todo.MandaTodoRepositoryImpl
-import com.coldblue.data.repository.todo.TodoRepository
-import com.coldblue.data.repository.todo.TodoRepositoryImpl
 import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.data.repository.user.UserRepositoryImpl
 import com.coldblue.data.util.ConnectivityManagerNetworkHelper
@@ -42,11 +40,6 @@ interface RepositoryModule {
     fun bindsUpdateNoteRepo(
         updateNoteRepo: UpdateNoteRepositoryImpl
     ): UpdateNoteRepository
-
-    @Binds
-    fun bindTodoRepository(
-        todoRepository: TodoRepositoryImpl
-    ): TodoRepository
 
     @Binds
     fun bindNoticeRepository(

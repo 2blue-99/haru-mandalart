@@ -3,9 +3,11 @@ package com.coldblue.mandalart.screen
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -120,12 +122,23 @@ fun MandaContentWithState(
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {
-            Text(text = "로딩", style = HmStyle.text24)
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Loading..", style = HmStyle.text18)
+            }
         }
 
         is MandaUIState.Error -> {
-            Text(text = "에러", style = HmStyle.text24)
-
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Error..", style = HmStyle.text18)
+            }
         }
 
         is MandaUIState.UnInitializedSuccess -> {

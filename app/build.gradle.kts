@@ -45,12 +45,10 @@ dependencies {
     implementation(project(":feature:manda"))
     implementation(project(":feature:tutorial"))
     implementation(project(":feature:setting"))
-    implementation(project(":feature:history"))
     implementation(project(":feature:login"))
     implementation(project(":feature:notice"))
     implementation(project(":feature:survey"))
     implementation(project(":feature:explain"))
-
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))

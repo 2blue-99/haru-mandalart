@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "8b29d35dadee2669af182cc465e386a3",
+    "identityHash": "2a72748251ac206a7d5b58c3b7370359",
     "entities": [
       {
         "tableName": "alarm",
@@ -29,74 +29,6 @@
         ],
         "primaryKey": {
           "autoGenerate": false,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "current_group",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`todo_group_id` INTEGER NOT NULL, `origin_group_id` INTEGER NOT NULL, `index` INTEGER NOT NULL, `date` TEXT NOT NULL, `is_sync` INTEGER NOT NULL, `is_del` INTEGER NOT NULL, `update_time` TEXT NOT NULL, `origin_id` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "todoGroupId",
-            "columnName": "todo_group_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "originGroupId",
-            "columnName": "origin_group_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "index",
-            "columnName": "index",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "date",
-            "columnName": "date",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isSync",
-            "columnName": "is_sync",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isDel",
-            "columnName": "is_del",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "updateTime",
-            "columnName": "update_time",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "originId",
-            "columnName": "origin_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
           "columnNames": [
             "id"
           ]
@@ -223,142 +155,6 @@
         "foreignKeys": []
       },
       {
-        "tableName": "todo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `content` TEXT, `is_done` INTEGER NOT NULL, `time` INTEGER, `date` TEXT NOT NULL, `origin_group_id` INTEGER NOT NULL, `todo_group_id` INTEGER, `origin_id` INTEGER NOT NULL, `is_sync` INTEGER NOT NULL, `is_del` INTEGER NOT NULL, `update_time` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "title",
-            "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "content",
-            "columnName": "content",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "isDone",
-            "columnName": "is_done",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "time",
-            "columnName": "time",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "date",
-            "columnName": "date",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "originGroupId",
-            "columnName": "origin_group_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "todoGroupId",
-            "columnName": "todo_group_id",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "originId",
-            "columnName": "origin_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isSync",
-            "columnName": "is_sync",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isDel",
-            "columnName": "is_del",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "updateTime",
-            "columnName": "update_time",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "todo_group",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `origin_id` INTEGER NOT NULL, `is_sync` INTEGER NOT NULL, `is_del` INTEGER NOT NULL, `update_time` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "originId",
-            "columnName": "origin_id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isSync",
-            "columnName": "is_sync",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isDel",
-            "columnName": "is_del",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "updateTime",
-            "columnName": "update_time",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
         "tableName": "manda_todo",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `manda_index` INTEGER NOT NULL, `is_done` INTEGER NOT NULL, `is_alarm` INTEGER NOT NULL, `time` INTEGER, `date` TEXT NOT NULL, `origin_id` INTEGER NOT NULL, `is_sync` INTEGER NOT NULL, `is_del` INTEGER NOT NULL, `update_time` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
@@ -442,7 +238,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8b29d35dadee2669af182cc465e386a3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2a72748251ac206a7d5b58c3b7370359')"
     ]
   }
 }
