@@ -7,6 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.coldblue.designsystem.component.HMNavigateAnimation.slideToLeftEnter
+import com.coldblue.designsystem.component.HMNavigateAnimation.slideToLeftExit
+import com.coldblue.designsystem.component.HMNavigateAnimation.slideToRightEnter
 import com.coldblue.designsystem.component.HMNavigateAnimation.slideToRightExit
 import com.coldblue.survey.SurveyDetailScreen
 import com.coldblue.survey.SurveyScreen
@@ -29,7 +31,9 @@ fun NavGraphBuilder.surveyScreen(
     composable(
         route = surveyRoute,
         enterTransition = { slideToLeftEnter() },
-        exitTransition = { slideToRightExit() },
+        popExitTransition = { slideToRightExit() },
+        exitTransition = { slideToLeftExit() },
+        popEnterTransition = { slideToRightEnter() }
     ) {
         SurveyScreen(
             navigateToSurveyDetail,
@@ -44,11 +48,12 @@ fun NavGraphBuilder.surveyDetailScreen(
     composable(route = "$surveyDetailRoute/{id}",
         arguments = listOf(
             navArgument("id") { type = NavType.IntType }
-        )
+        ),
+        enterTransition = { slideToLeftEnter() },
+        exitTransition = { slideToRightExit() }
     ) {
         SurveyDetailScreen(
             navigateToBackStack = navigateToBackStack
         )
     }
 }
-

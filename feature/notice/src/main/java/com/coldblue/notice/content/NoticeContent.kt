@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,7 +65,7 @@ fun NoticeItem(
     notice: Notice,
     getNotice: (id: Int) -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,7 +114,11 @@ fun NoticeItem(
                 .background(HMColor.Box)
                 .padding(16.dp)
         ) {
-            Text(text = notice.content)
+            Text(
+                text = notice.content,
+                style = HmStyle.text12,
+                color = HMColor.SubDarkText
+            )
         }
     }
     HorizontalDivider(color = HMColor.Box)
