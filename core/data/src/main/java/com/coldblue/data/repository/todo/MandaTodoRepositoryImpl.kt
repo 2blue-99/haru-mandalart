@@ -6,6 +6,7 @@ import com.coldblue.data.mapper.MandaTodoMapper.asEntity
 import com.coldblue.data.mapper.MandaTodoMapper.asNetworkModel
 import com.coldblue.data.mapper.MandaTodoMapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.isPassed
 import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
@@ -30,6 +31,12 @@ class MandaTodoRepositoryImpl @Inject constructor(
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
         mandaTodo.syncAlarm()
         syncHelper.syncWrite()
+    }
+
+    override suspend fun deleteAllMandaTodo() {
+        mandaTodoDao.deleteAllMandaTodo(getUpdateTime())
+        syncHelper.syncWrite()
+
     }
 
     override fun getMandaTodo(): Flow<List<MandaTodo>> {

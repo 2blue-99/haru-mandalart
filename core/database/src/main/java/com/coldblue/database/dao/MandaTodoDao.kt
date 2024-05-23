@@ -14,6 +14,8 @@ interface MandaTodoDao {
     @Query("SELECT * FROM manda_todo WHERE is_del = 0")
     fun getMandaTodo(): Flow<List<MandaTodoEntity>>
 
+    @Query("Update manda_todo Set is_del = 1, is_Sync = 0, update_time = :date")
+    suspend fun deleteAllMandaTodo(date: String)
 
     @Transaction
     fun getMandaTodoIdByOriginIds(originIds: List<Int>): List<Int?> {
