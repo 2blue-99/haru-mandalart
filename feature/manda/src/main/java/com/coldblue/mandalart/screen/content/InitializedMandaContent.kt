@@ -647,6 +647,7 @@ fun Mandalart(
 //                                                        com.orhanobut.logger.Logger.d("Click")
 //                                                    }
 //                                                }
+                                                .clip(RoundedCornerShape(8.dp))
                                                 .clickable {
                                                     if (!isZoom) {
                                                         zoomController(keyColumn + keyRow * 3)

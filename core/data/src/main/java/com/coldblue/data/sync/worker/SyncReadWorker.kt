@@ -31,7 +31,7 @@ class SyncReadWorker @AssistedInject constructor(
             val syncedSucceed = awaitAll(
                 async { mandaKeyRepository.syncRead() },
                 async { mandaDetailRepository.syncRead() },
-                async { mandaTodoRepository.syncWrite() },
+                async { mandaTodoRepository.syncRead() },
 
                 ).all { it }
 

@@ -70,14 +70,15 @@ fun toMyTime(time: LocalTime?): MyTime? {
 
 fun toDisplayTime(h: Int, m: Int): String {
 
+    val padM = m.toString().padStart(2, '0')
     if (h < 12) {
-        return "오전 ${h}:${m}에 알림"
+        return "오전 ${h}:${padM}에 알림"
     } else {
         if (h == 12) {
-            return "오후 ${h}:${m}에 알림"
+            return "오후 ${h}:${padM}에 알림"
 
         } else {
-            return "오후 ${h - 12}:${m}에 알림"
+            return "오후 ${h - 12}:${padM}에 알림"
         }
 
     }

@@ -37,7 +37,6 @@ import com.coldblue.model.MandaTodo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.orhanobut.logger.Logger
 
 
 @Composable

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,6 +63,8 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.model.MyDate
 import com.coldblue.model.MyTime
 import com.coldblue.model.ToggleInfo
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -68,8 +72,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 fun getDisplayTime(time: LocalTime?): String {
+
     return if (time != null) {
-        "${time.hour}:${time.minute}에 알림"
+        val padM = time.minute.toString().padStart(2, '0')
+        "${time.hour}:${padM}에 알림"
     } else {
         ""
     }
@@ -94,6 +100,8 @@ fun MandaTodoList(
 
     var showDoneTodo by remember { mutableStateOf(true) }
 
+    val scrollState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     if (datePickerState) {
         CustomDatePickerDialog(
             LocalDateTime.now().toMillis(),
@@ -106,7 +114,7 @@ fun MandaTodoList(
                         Locale("ko")
                     )
                 )
-                dateState =MyDate(displayText = displayText, date = inputDate)
+                dateState = MyDate(displayText = displayText, date = inputDate)
                 datePickerState = false
             }
         )
@@ -119,7 +127,7 @@ fun MandaTodoList(
             { timePickerState = false },
             { h, m ->
                 myTimeState =
-                    MyTime(h, m, toDisplayTime(h,m), LocalTime.of(h, m))
+                    MyTime(h, m, toDisplayTime(h, m), LocalTime.of(h, m))
                 timePickerState = false
             }
         )
@@ -132,14 +140,19 @@ fun MandaTodoList(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TodoRangeSelector(todoRange, changeRange)
+            TodoRangeSelector(todoRange, changeRange, {
+                scope.launch {
+                    scrollState.scrollToItem(0)
+                }
+            })
             Text(text = "Todo:$todoCnt", style = HmStyle.text16, fontWeight = FontWeight.Bold)
         }
         Box(modifier = Modifier.fillMaxHeight()) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                state = scrollState
             ) {
                 if (todoList.isEmpty()) {
                     item {
@@ -264,29 +277,39 @@ fun MandaTodoItem(
             .clickable {
                 todoDialogState = true
             },
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
-        CircleCheckbox(color, mandaTodo.isDone) {
-            upsertMandaTodo(mandaTodo.copy(isDone = !mandaTodo.isDone))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CircleCheckbox(color, mandaTodo.isDone) {
+                upsertMandaTodo(mandaTodo.copy(isDone = !mandaTodo.isDone))
+            }
+            Text(
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth(0.85f),
+                text = mandaTodo.title,
+                color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
+                textDecoration = if (mandaTodo.isDone) TextDecoration.LineThrough else null,
+                style = HmStyle.text16,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (mandaTodo.time!=null){
+                Icon(
+                    imageVector = IconPack.Alarm,
+                    contentDescription = "",
+                    tint = HMColor.Primary,
+                )
+            }
         }
 
-        Text(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(0.95f),
-            text = mandaTodo.title,
-            color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
-            textDecoration = if (mandaTodo.isDone) TextDecoration.LineThrough else null,
-            style = HmStyle.text16,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
         Box(
             modifier = Modifier
                 .padding(end = 0.dp)
                 .width(12.dp)
-                .height(60.dp)
+                .height(50.dp)
                 .background(
                     color, shape = RoundedCornerShape(
                         topStart = CornerSize(0.dp),
@@ -317,10 +340,8 @@ fun CircleCheckbox(
 
     IconButton(
         onClick = { onChecked() },
-        modifier = Modifier.offset(x = 4.dp, y = 4.dp),
         enabled = enabled
     ) {
-
         Icon(
             imageVector = imageVector, tint = tint,
             modifier = Modifier.background(background, shape = CircleShape),
@@ -487,7 +508,11 @@ fun TodoInput(
 }
 
 @Composable
-fun TodoRangeSelector(todoRange: DateRange, changeRange: (DateRange) -> Unit) {
+fun TodoRangeSelector(
+    todoRange: DateRange,
+    changeRange: (DateRange) -> Unit,
+    scrollInit: () -> Unit
+) {
     val dateRangeButtons = remember {
         mutableStateListOf(
             ToggleInfo(
@@ -513,6 +538,8 @@ fun TodoRangeSelector(todoRange: DateRange, changeRange: (DateRange) -> Unit) {
                 dateRangeButtons.replaceAll {
                     it.copy(isChecked = it.text == group.text)
                 }
+                scrollInit()
+
             }
         }
     }
@@ -546,7 +573,7 @@ fun MandaTodoItemPreview() {
         listOf(HMColor.Manda.Red, HMColor.Manda.Orange),
         1, DateRange.DAY,
         listOf(
-            MandaTodo("1번투구", true, false, null, LocalDate.now(), 1, false),
+            MandaTodo("1번투구ffffffffffffffffffffffffffffffsdddddddddddd", true, false, LocalTime.now(), LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
         ),
