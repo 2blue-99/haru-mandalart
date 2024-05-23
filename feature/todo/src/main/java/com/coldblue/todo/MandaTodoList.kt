@@ -265,13 +265,14 @@ fun MandaTodoItem(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 6.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
             .clickable {
                 todoDialogState = true
             },
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         CircleCheckbox(color, mandaTodo.isDone) {
@@ -280,12 +281,12 @@ fun MandaTodoItem(
 
         Text(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(4.dp).padding(bottom = 2.dp)
                 .fillMaxWidth(0.95f),
             text = mandaTodo.title,
             color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
             textDecoration = if (mandaTodo.isDone) TextDecoration.LineThrough else null,
-            style = HmStyle.text16,
+            style = HmStyle.text14,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -293,7 +294,7 @@ fun MandaTodoItem(
             modifier = Modifier
                 .padding(end = 0.dp)
                 .width(12.dp)
-                .height(60.dp)
+                .height(48.dp)
                 .background(
                     color, shape = RoundedCornerShape(
                         topStart = CornerSize(0.dp),
@@ -324,7 +325,6 @@ fun CircleCheckbox(
 
     IconButton(
         onClick = { onChecked() },
-        modifier = Modifier.offset(x = 4.dp, y = 4.dp),
         enabled = enabled
     ) {
 
