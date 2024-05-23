@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,6 +64,7 @@ import com.coldblue.model.MyDate
 import com.coldblue.model.MyTime
 import com.coldblue.model.ToggleInfo
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -97,6 +100,8 @@ fun MandaTodoList(
 
     var showDoneTodo by remember { mutableStateOf(true) }
 
+    val scrollState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     if (datePickerState) {
         CustomDatePickerDialog(
             LocalDateTime.now().toMillis(),
@@ -109,7 +114,7 @@ fun MandaTodoList(
                         Locale("ko")
                     )
                 )
-                dateState =MyDate(displayText = displayText, date = inputDate)
+                dateState = MyDate(displayText = displayText, date = inputDate)
                 datePickerState = false
             }
         )
@@ -122,7 +127,7 @@ fun MandaTodoList(
             { timePickerState = false },
             { h, m ->
                 myTimeState =
-                    MyTime(h, m, toDisplayTime(h,m), LocalTime.of(h, m))
+                    MyTime(h, m, toDisplayTime(h, m), LocalTime.of(h, m))
                 timePickerState = false
             }
         )
@@ -135,14 +140,19 @@ fun MandaTodoList(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TodoRangeSelector(todoRange, changeRange)
+            TodoRangeSelector(todoRange, changeRange, {
+                scope.launch {
+                    scrollState.scrollToItem(0)
+                }
+            })
             Text(text = "Todo:$todoCnt", style = HmStyle.text16, fontWeight = FontWeight.Bold)
         }
         Box(modifier = Modifier.fillMaxHeight()) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                state = scrollState
             ) {
                 if (todoList.isEmpty()) {
                     item {
@@ -490,7 +500,11 @@ fun TodoInput(
 }
 
 @Composable
-fun TodoRangeSelector(todoRange: DateRange, changeRange: (DateRange) -> Unit) {
+fun TodoRangeSelector(
+    todoRange: DateRange,
+    changeRange: (DateRange) -> Unit,
+    scrollInit: () -> Unit
+) {
     val dateRangeButtons = remember {
         mutableStateListOf(
             ToggleInfo(
@@ -516,6 +530,8 @@ fun TodoRangeSelector(todoRange: DateRange, changeRange: (DateRange) -> Unit) {
                 dateRangeButtons.replaceAll {
                     it.copy(isChecked = it.text == group.text)
                 }
+                scrollInit()
+
             }
         }
     }
