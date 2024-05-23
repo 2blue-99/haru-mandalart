@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.coldblue.data.util.toMillis
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.todo.AddSquare
@@ -178,10 +179,10 @@ fun MandaTodoList(
                             ) {
                                 Row(
                                     modifier = Modifier.padding(
-                                        vertical = 6.dp,
+                                        vertical = 4.dp,
                                         horizontal = 8.dp
                                     ),
-                                    verticalAlignment = Alignment.CenterVertically
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     if (showDoneTodo) {
                                         Icon(
@@ -196,7 +197,11 @@ fun MandaTodoList(
                                             tint = HMColor.Text,
                                         )
                                     }
-                                    Text(text = "완료됨 $doneTodoCnt")
+                                    Text(
+                                        text = "완료 $doneTodoCnt",
+                                        style = HmStyle.text14,
+                                        modifier = Modifier.padding(bottom = 2.dp)
+                                    )
                                 }
                             }
                         }
