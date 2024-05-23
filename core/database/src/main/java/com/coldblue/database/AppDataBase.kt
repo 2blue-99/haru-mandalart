@@ -21,7 +21,7 @@ import com.coldblue.database.entity.MandaTodoEntity
         AlarmEntity::class,
         MandaKeyEntity::class,
         MandaDetailEntity::class,
-        MandaTodoEntity::class,
+        MandaTodoEntity::class
     ],
     version = 2,
     exportSchema = true,
