@@ -1,10 +1,11 @@
 package com.coldblue.mandalart.screen.content
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,24 +16,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -41,36 +39,30 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
-import com.coldblue.designsystem.component.HMTitleComponent
-import com.coldblue.designsystem.iconpack.Manda
+import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.Mandalart
-import com.coldblue.designsystem.iconpack.Plus
-import com.coldblue.designsystem.iconpack.ZoomIn
-import com.coldblue.designsystem.iconpack.ZoomOut
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
@@ -81,17 +73,19 @@ import com.coldblue.mandalart.screen.MandaKeyBox
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
+import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.util.MandaUtils.currentColorList
+import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTodo
+import com.coldblue.todo.MandaTodoList
 import com.colddelight.mandalart.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
-
-const val MAX_MANDA_KEY_SIZE = 8
-const val MAX_MANDA_DETAIL_SIZE = 64
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,9 +97,11 @@ fun InitializedMandaContent(
     upsertMandaDetail: (MandaDetail) -> Unit,
     deleteMandaKey: (Int, List<Int>) -> Unit,
     deleteMandaDetail: (Int) -> Unit,
-    deleteMandaAll: () -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
+    changeCurrentIndex: (Int) -> Unit,
+    changeTodoRange: (DateRange) -> Unit,
+    upsertMandaTodo: (MandaTodo) -> Unit
 ) {
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -113,13 +109,12 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
-
-
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
             sheetState = sheetState,
             mandaKeyList = uiState.mandaKeyList,
+            usedColorIndexList = uiState.usedColorIndexList,
             upsertMandaFinal = upsertMandaFinal,
             upsertMandaKey = upsertMandaKey,
             upsertMandaDetail = upsertMandaDetail,
@@ -130,56 +125,58 @@ fun InitializedMandaContent(
         }
     }
 
-    LaunchedEffect(uiState.donePercentage) { percentage = uiState.donePercentage }
+    LaunchedEffect(uiState.mandaStatus.donePercentage) {
+        percentage = uiState.mandaStatus.donePercentage
+    }
 
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-
-        MandaTitle{
-            navigateToSetting()
-        }
+        MandaTopBar { navigateToSetting() }
 
         MandaStatus(
-            finalName = uiState.finalManda.name,
-            keyMandaCnt = uiState.keyMandaCnt,
-            detailMandaCnt = uiState.detailMandaCnt,
-            donePercentage = uiState.donePercentage,
+            titleName = uiState.mandaStatus.titleManda.name,
+            statusColor = uiState.mandaStatus.statusColor,
+            donePercentage = uiState.mandaStatus.donePercentage,
             animateDonePercentage = animateDonePercentage.value
         ) {
             changeBottomSheet(
                 true,
                 MandaBottomSheetContentState.Insert(
                     MandaBottomSheetContentType.MandaFinal(
-                        mandaUI = uiState.finalManda
+                        mandaUI = uiState.mandaStatus.titleManda
                     )
                 )
             )
         }
 
         Mandalart(
-            mandaStateList = uiState.mandaStateList,
-            changeBottomSheet = changeBottomSheet
+            mandaList = uiState.mandaList,
+            curIndex = uiState.currentIndex,
+            changeBottomSheet = changeBottomSheet,
+            changeCurrentIndex = changeCurrentIndex
+        )
+        MandaTodoList(
+            colorList = currentColorList(uiState.mandaList),
+            currentIndex = uiState.currentIndex,
+            todoRange = uiState.todoRange,
+            todoList = uiState.todoList,
+            doneTodoCnt = uiState.doneTodoCnt,
+            todoCnt = uiState.todoCnt,
+            upsertMandaTodo = upsertMandaTodo,
+            changeRange = changeTodoRange,
         )
 
-//        Column(
-//            verticalArrangement = Arrangement.spacedBy(30.dp),
-//            modifier = Modifier
-//                .fillMaxSize()
-//        ) {
-//
-//
-//
-//        }
+
     }
 }
 
 @Composable
-fun MandaTitle(
+fun MandaTopBar(
     navigateToSetting: () -> Unit
 ) {
     Row(
@@ -217,62 +214,56 @@ fun MandaTitle(
 
 @Composable
 fun MandaStatus(
-    finalName: String,
-    keyMandaCnt: Int,
-    detailMandaCnt: Int,
+    titleName: String,
+    statusColor: Color,
     donePercentage: Float,
     animateDonePercentage: Float,
     onClickTitle: () -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        ClickableText(
-            text = AnnotatedString("\" $finalName \""),
-            onClick = { onClickTitle() },
-            style = HmStyle.text24.copy(color = HMColor.Primary),
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "\"",
+                style = HmStyle.text24,
+                color = statusColor
+            )
+            ClickableText(
+                modifier = Modifier.widthIn(max = (screenWidth - 60).dp),
+                text = AnnotatedString(titleName.ifEmpty {
+                    stringResource(id = R.string.initialized_empty_title)
+                }),
+                onClick = { onClickTitle() },
+                style = HmStyle.text24.copy(color = statusColor),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = "\"",
+                style = HmStyle.text24,
+                color = statusColor
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.initialized_key_goal),
-                        style = HmStyle.text16
-                    )
-                    Text(
-                        text = " $keyMandaCnt / $MAX_MANDA_KEY_SIZE",
-                        style = HmStyle.text16
-                    )
-                }
-                Row {
-                    Text(
-                        text = stringResource(id = R.string.initialized_detail_goal),
-                        style = HmStyle.text16
-                    )
-                    Text(
-                        text = " $detailMandaCnt / $MAX_MANDA_DETAIL_SIZE",
-                        style = HmStyle.text16
-                    )
-                }
-            }
             Column {
                 Text(
                     text = stringResource(
                         id = R.string.initialized_done_percentage,
-                        ((donePercentage * 100).roundToInt())
+                        "${((donePercentage * 100).roundToInt())}%"
                     ),
                     style = HmStyle.text12,
-                    color = HMColor.Primary,
+                    color = statusColor,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.End
                 )
@@ -281,8 +272,8 @@ fun MandaStatus(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(10.dp)
-                        .clip(RoundedCornerShape(2.dp)),
-                    color = HMColor.Primary,
+                        .clip(RoundedCornerShape(7.dp)),
+                    color = statusColor,
                     trackColor = HMColor.Gray
                 )
             }
@@ -290,22 +281,50 @@ fun MandaStatus(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Mandalart(
-    mandaStateList: List<MandaState>,
-    changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit
+    mandaList: List<MandaState>,
+    curIndex: Int,
+    changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit,
+    changeCurrentIndex: (Int) -> Unit
 ) {
+    var currentIndex by remember { mutableIntStateOf(curIndex) }
+    LaunchedEffect(curIndex) { currentIndex = curIndex }
+
+    var currentMandaList = remember {
+        mutableStateListOf<MandaState>().apply {
+            addAll(mandaList)
+        }
+    }
+    LaunchedEffect(mandaList){
+        currentMandaList.clear()
+        currentMandaList.addAll(mandaList)
+    }
+
     var scaleX by remember { mutableFloatStateOf(1f) }
     var scaleY by remember { mutableFloatStateOf(1f) }
-    var pivotX by remember { mutableFloatStateOf(0f) }
-    var pivotY by remember { mutableFloatStateOf(0f) }
+
+    var translateX by remember { mutableFloatStateOf(0f) }
+    var translateY by remember { mutableFloatStateOf(0f) }
+
     var isZoom by remember { mutableStateOf(false) }
     var isGesture by remember { mutableStateOf(false) }
-    var beforeDirection by remember { mutableIntStateOf(-1) }
-    var afterDirection by remember { mutableIntStateOf(-1) }
+    var direction by remember { mutableStateOf(MandaGestureState.Down) }
 
-    val dampingRatio = 1f // 클수록 스프링 효과 감소
-    val stiffness = 1000f // 클수록 빨리 확대, 축소
+    var mandaSize by remember { mutableStateOf(Size.Zero) }
+    val widthList = listOf(mandaSize.width, 0f, -mandaSize.width)
+    val heightList = listOf(mandaSize.height, 0f, -mandaSize.height)
+
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+
+    var dragOffsetX by remember { mutableStateOf(0f) }
+    var dragOffsetY by remember { mutableStateOf(0f) }
+
+    val dampingRatio = 0.8f // 클수록 스프링 효과 감소
+    val stiffness = 1600f // 클수록 빨리 확대, 축소
+    val gestureAccuracy = 100f
 
     val animatedScaleX by animateFloatAsState(
         targetValue = scaleX,
@@ -321,205 +340,153 @@ fun Mandalart(
             stiffness = stiffness
         ), label = ""
     )
-    val animatedPivotX by animateFloatAsState(
-        targetValue = pivotX,
+    val animatedTranslateX by animateFloatAsState(
+        targetValue = translateX,
         label = "",
         finishedListener = {
             isGesture = false
         }
     )
-    val animatedPivotY by animateFloatAsState(
-        targetValue = pivotY,
+    val animatedTranslateY by animateFloatAsState(
+        targetValue = translateY,
         label = "",
         finishedListener = {
             isGesture = false
         }
     )
-
-    fun zoomInAndOut(index: Int) {
-        when (index) {
-            0, 1, 3, 4 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 0f
-                pivotY = 0f
-                beforeDirection = 0
-            }
-
-            2, 5 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 1f
-                pivotY = 0f
-                beforeDirection = 1
-            }
-
-            6, 7 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 0f
-                pivotY = 1f
-                beforeDirection = 2
-            }
-
-            8 -> {
-                isZoom = true
-                scaleX = 1.5f
-                scaleY = 1.5f
-                pivotX = 1f
-                pivotY = 1f
-                beforeDirection = 3
-            }
-
-            // 축소
-            else -> {
-                isZoom = false
-                scaleX = 1.0f
-                scaleY = 1.0f
-            }
-        }
-    }
 
     fun dragStartDetector(dragAmount: Offset) {
         val (x, y) = dragAmount
         if (abs(x) > abs(y)) {
             when {
-                x > 0 -> {  // left
-                    if (beforeDirection == 1)
-                        afterDirection = 0
-                    else if (beforeDirection == 3)
-                        afterDirection = 2
+                x > 0 -> {
+                    offsetX += x
+                    direction = MandaGestureState.Left
                 }
 
-                x < 0 -> {  // right
-                    if (beforeDirection == 0)
-                        afterDirection = 1
-                    else if (beforeDirection == 2)
-                        afterDirection = 3
+                x < 0 -> {
+                    offsetX += x
+                    direction = MandaGestureState.Right
                 }
             }
         } else {
             when {
-                y > 0 -> {    // Top
-                    if (beforeDirection == 2)
-                        afterDirection = 0
-                    else if (beforeDirection == 3)
-                        afterDirection = 1
+                y > 0 -> {
+                    offsetY += y
+                    direction = MandaGestureState.Up
                 }
 
-                y < 0 -> {  // Bottom
-                    if (beforeDirection == 0)
-                        afterDirection = 2
-                    else if (beforeDirection == 1)
-                        afterDirection = 3
+                y < 0 -> {
+                    offsetY += y
+                    direction = MandaGestureState.Down
                 }
             }
         }
     }
 
-    fun dragEndDetector() {
+    fun gestureController() {
         isGesture = true
-        when (afterDirection) {
-            0 -> {
-                if (beforeDirection == 1)
-                    zoomInAndOut(0)
-                else if (beforeDirection == 2)
-                    zoomInAndOut(0)
+        scaleX = 3f
+        scaleY = 3f
+        when (direction) {
+            MandaGestureState.Left -> {
+                if (offsetX > gestureAccuracy && translateX < mandaSize.width) {
+                    translateX += mandaSize.width
+                    changeCurrentIndex(currentIndex - 1)
+                }
             }
 
-            1 -> {
-                if (beforeDirection == 0)
-                    zoomInAndOut(2)
-                else if (beforeDirection == 3)
-                    zoomInAndOut(2)
+            MandaGestureState.Right -> {
+                if (offsetX < -gestureAccuracy && translateX > -mandaSize.width) {
+                    translateX -= mandaSize.width
+                    changeCurrentIndex(currentIndex + 1)
+                }
             }
 
-            2 -> {
-                if (beforeDirection == 0)
-                    zoomInAndOut(6)
-                else if (beforeDirection == 3)
-                    zoomInAndOut(6)
+            MandaGestureState.Up -> {
+                if (offsetY > gestureAccuracy && translateY < mandaSize.height) {
+                    translateY += mandaSize.height
+                    changeCurrentIndex(currentIndex - 3)
+                }
             }
 
-            3 -> {
-                if (beforeDirection == 1)
-                    zoomInAndOut(8)
-                else if (beforeDirection == 2)
-                    zoomInAndOut(8)
+            MandaGestureState.Down -> {
+                if (offsetY < -gestureAccuracy && translateY > -mandaSize.height) {
+                    translateY -= mandaSize.height
+                    changeCurrentIndex(currentIndex + 3)
+                }
             }
+
+            MandaGestureState.ZoomOut -> {
+
+            }
+        }
+        offsetX = 0f
+        offsetY = 0f
+    }
+
+    fun zoomController(index: Int) {
+        changeCurrentIndex(index)
+        if (index != -1) {
+            isZoom = true
+            scaleX = 3f
+            scaleY = 3f
+            translateX += widthList[index % 3]
+            translateY += heightList[index / 3]
+        } else {
+            isZoom = false
+            scaleX = 1f
+            scaleY = 1f
+            translateX = 0f
+            translateY = 0f
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        floatingActionButton = {
-            FloatingActionButton(
-                shape = CircleShape,
-                containerColor = if (isZoom) HMColor.Background else HMColor.Primary,
-                modifier = Modifier.border(
-                    if (isZoom) 2.5.dp else 0.dp,
-                    HMColor.Primary,
-                    CircleShape
-                ),
-                onClick = {
-                    if (isZoom)
-                        zoomInAndOut(-1)
-                    else
-                        zoomInAndOut(1)
-                }) {
-                if (isZoom)
-                    Icon(
-                        imageVector = IconPack.ZoomOut,
-                        tint = HMColor.Primary,
-                        contentDescription = ""
-                    )
-                else
-                    Icon(
-                        imageVector = IconPack.ZoomIn,
-                        tint = HMColor.Background,
-                        contentDescription = ""
-                    )
-            }
-        },
+    fun dragController(index: Int){
+        dragOffsetX = 0f
+        dragOffsetY = 0f
+    }
+
+    Column(
+
     ) {
-        Column(
+        LazyColumn(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .padding(it)
-                .fillMaxHeight()
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .border(1.5.dp, HMColor.DarkGray, shape = RoundedCornerShape(8.dp))
         ) {
-            LazyColumn(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .border(0.1.dp, HMColor.Primary, shape = RoundedCornerShape(8.dp))
-            ) {
-                item {
+            item {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = HMColor.Background
+                ) {
                     Column(
                         modifier = Modifier
-                            .graphicsLayer(
-                                transformOrigin = TransformOrigin(
-                                    if (isGesture) animatedPivotX else pivotX,
-                                    if (isGesture) animatedPivotY else pivotY
-                                ),
-                                scaleX = animatedScaleX,
-                                scaleY = animatedScaleY,
-                            )
                             .pointerInput(isZoom) {
-                                if (isZoom)
+                                if (isZoom) {
                                     detectDragGestures(
                                         onDrag = { change, dragAmount ->
                                             change.consume()
                                             dragStartDetector(dragAmount)
                                         },
                                         onDragEnd = {
-                                            dragEndDetector()
+                                            gestureController()
                                         }
                                     )
+
+                                }
+                            }
+                            .graphicsLayer(
+                                scaleX = animatedScaleX,
+                                scaleY = animatedScaleY,
+                                translationX = animatedTranslateX,
+                                translationY = animatedTranslateY,
+                            )
+                            .onGloballyPositioned {
+                                mandaSize = it.size.toSize()
                             }
                     ) {
                         repeat(3) { keyRow ->
@@ -533,7 +500,8 @@ fun Mandalart(
                                             .weight(1f)
                                             .padding(horizontal = 5.dp)
                                     ) {
-                                        when (val bigBox = mandaStateList[keyColumn + keyRow * 3]) {
+                                        when (val bigBox =
+                                            currentMandaList[keyColumn + keyRow * 3]) {
                                             is MandaState.Empty -> {
                                                 Box(
                                                     modifier = Modifier.fillMaxSize()
@@ -571,9 +539,7 @@ fun Mandalart(
                                                                                 .weight(1f)
                                                                                 .padding(2.dp)
                                                                         ) {
-                                                                            MandaEmptyBox(
-                                                                                color = smallBox.mandaUI.darkColor
-                                                                            ) {
+                                                                            MandaEmptyBox {
                                                                                 changeBottomSheet(
                                                                                     true,
                                                                                     MandaBottomSheetContentState.Insert(
@@ -602,7 +568,7 @@ fun Mandalart(
                                                                         ) {
                                                                             MandaKeyBox(
                                                                                 name = smallBoxData.name,
-                                                                                color = smallBoxData.darkColor,
+                                                                                color = smallBoxData.color,
                                                                                 isDone = smallBoxData.isDone
                                                                             ) {
                                                                                 changeBottomSheet(
@@ -627,7 +593,8 @@ fun Mandalart(
                                                                     }
 
                                                                     is MandaType.Detail -> {
-                                                                        val data = smallBox.mandaUI
+                                                                        val data =
+                                                                            smallBox.mandaUI
                                                                         Box(
                                                                             modifier = Modifier
                                                                                 .weight(1f)
@@ -635,8 +602,7 @@ fun Mandalart(
                                                                         ) {
                                                                             MandaDetailBox(
                                                                                 name = data.name,
-                                                                                darkColor = data.darkColor,
-                                                                                lightColor = data.lightColor,
+                                                                                color = data.color,
                                                                                 isDone = data.isDone
                                                                             ) {
                                                                                 changeBottomSheet(
@@ -662,9 +628,29 @@ fun Mandalart(
                                                 .background(Color.Transparent)
                                                 .fillMaxWidth()
                                                 .aspectRatio(1F)
+//                                                .pointerInput(Unit) {
+//                                                    detectDragGesturesAfterLongPress(
+//                                                        onDrag = { change, dragAmount ->
+//                                                            change.consume()
+//                                                            dragOffsetX += dragAmount.x
+//                                                            dragOffsetY += dragAmount.y
+//                                                            com.orhanobut.logger.Logger.d("$dragOffsetX  $dragOffsetY")
+//                                                        },
+//                                                        onDragEnd = {
+//                                                            dragController(keyColumn + keyRow * 3)
+//                                                            com.orhanobut.logger.Logger.d("END")
+//                                                        }
+//                                                    )
+//                                                }
+//                                                .onGloballyPositioned {
+//                                                    it.boundsInWindow().let {
+//                                                        com.orhanobut.logger.Logger.d("Click")
+//                                                    }
+//                                                }
+                                                .clip(RoundedCornerShape(8.dp))
                                                 .clickable {
                                                     if (!isZoom) {
-                                                        zoomInAndOut(keyColumn + keyRow * 3)
+                                                        zoomController(keyColumn + keyRow * 3)
                                                     }
                                                 }
                                             )
@@ -673,7 +659,36 @@ fun Mandalart(
                                 }
                             }
                         }
-
+                    }
+                    if (isZoom) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f),
+                            contentAlignment = Alignment.BottomEnd,
+                        ) {
+                            Surface(
+                                color = HMColor.Background,
+                                modifier = Modifier
+                                    .border(
+                                        2.dp,
+                                        HMColor.DarkGray,
+                                        RoundedCornerShape(topStart = 18f, bottomEnd = 18f)
+                                    )
+                                    .clickable(true) {
+                                        zoomController(-1)
+                                    }
+                            ) {
+                                Icon(
+                                    imageVector = IconPack.Back,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .padding(10.dp),
+                                    tint = HMColor.Primary,
+                                    contentDescription = "Zoom"
+                                )
+                            }
+                        }
                     }
                 }
             }

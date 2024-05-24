@@ -28,7 +28,7 @@ sealed interface MandaBottomSheetContentType {
     data class MandaFinal(
         override val mandaUI: MandaUI
     ) : MandaBottomSheetContentType {
-        override val title = "최종 목표"
+        override val title = "목표"
         override val maxLen = mandaFinalMaxLen
     }
 
@@ -36,18 +36,18 @@ sealed interface MandaBottomSheetContentType {
         override val mandaUI: MandaUI,
         val groupIdList: List<Int>? = null
     ) : MandaBottomSheetContentType {
-        override val title = "핵심 목표"
+        override val title = "작은 목표"
         override val maxLen = mandaKeyMaxLen
     }
 
     data class MandaDetail(
         override val mandaUI: MandaUI
     ) : MandaBottomSheetContentType {
-        override val title = "세부 목표"
+        override val title = "계획"
         override val maxLen = mandaDetailMaxLen
     }
 }
-const val mandaFinalMaxLen = 12
-const val mandaKeyMaxLen = 12
+const val mandaFinalMaxLen = 20
+const val mandaKeyMaxLen = 20
 const val mandaDetailMaxLen = 20
 

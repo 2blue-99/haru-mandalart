@@ -9,18 +9,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.coldblue.haru_mandalart.navigation.TopLevelDestination
-import com.coldblue.history.navigation.historyRoute
-import com.coldblue.history.navigation.navigateToHistory
 import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.navigateToManda
 import com.coldblue.notice.navigation.noticeRoute
 import com.coldblue.setting.navigation.settingRoute
 import com.coldblue.survey.navigation.surveyDetailRoute
 import com.coldblue.survey.navigation.surveyRoute
-import com.coldblue.todo.navigation.navigateToTodo
-import com.coldblue.todo.navigation.todoRoute
-import com.orhanobut.logger.Logger
 
 @Composable
 fun rememberHMState(
@@ -34,7 +28,6 @@ fun rememberHMState(
 class HMAppState(
     val navController: NavHostController
 ) {
-
 //    val bottomNavDestination: List<TopLevelDestination> =
 //        listOf(TopLevelDestination.MANDA, TopLevelDestination.TODO, TopLevelDestination.HISTORY)
 
@@ -64,11 +57,6 @@ class HMAppState(
         }
     }
 
-    fun popBackStack() {
-        navController.popBackStack()
-        Logger.d("뒤로가기임")
-    }
-
     fun navigateToTopLevelDestination(route: String) {
         if (navController.currentDestination?.route != route) {
             navController.popBackStack()
@@ -80,9 +68,7 @@ class HMAppState(
                 restoreState = true
             }
             when (route) {
-                historyRoute -> navController.navigateToHistory(navOptions)
                 mandaRoute -> navController.navigateToManda(navOptions)
-                todoRoute -> navController.navigateToTodo(navOptions)
             }
         }
     }

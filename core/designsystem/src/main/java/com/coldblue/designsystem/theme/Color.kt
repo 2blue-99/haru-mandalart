@@ -11,13 +11,14 @@ object HMColor {
     val SubDarkText = Color(0xFF87898D)
     val NegativeText = Color(0xFFB93B50)
     val Gray = Color(0xFFD9DBE3)
+    val DarkGray = Color(0xFFB8BBC0)
+    val LiteGray = Color(0xFFFAFAFA)
     val Background = Color(0xFFFFFFFF)
     val SurveyGreen = Color(0xFF167263)
     val SurveyYellow = Color(0xFFA7741B)
     val Box = Color(0xFFF2F4F8)
 
-
-    object Dark {
+    object Manda {
         val Pink = Color(0xFFBF7EB8)
         val Red = Color(0xFFE17582)
         val Orange = Color(0xFFF497A9)
@@ -26,16 +27,5 @@ object HMColor {
         val Blue = Color(0xFF7B89C6)
         val Mint = Color(0xFF6EC7CF)
         val Purple = Color(0xFF8979BA)
-    }
-
-    object Light {
-        val Pink = Color(0xFFDBB4C7)
-        val Red = Color(0xFFFFD7DF)
-        val Orange = Color(0xFFF2AD86)
-        val Yellow = Color(0xFFFFF8B2)
-        val Green = Color(0xFFDDF7D0)
-        val Blue = Color(0xFFC5E3FD)
-        val Mint = Color(0xFF91DAD6)
-        val Purple = Color(0xFFCDB3DA)
     }
 }

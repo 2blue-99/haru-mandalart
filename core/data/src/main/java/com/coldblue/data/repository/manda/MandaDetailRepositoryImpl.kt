@@ -37,11 +37,14 @@ class MandaDetailRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllMandaDetail() {
         mandaDetailDao.deleteAllMandaDetail(getUpdateTime())
+        syncHelper.syncWrite()
+
     }
 
     override suspend fun syncRead(): Boolean {
         try {
-            val remoteNew = mandaDetailDataSource.getMandaDetail(updateTimeDataSource.mandaDetailUpdateTime.first())
+            val remoteNew =
+                mandaDetailDataSource.getMandaDetail(updateTimeDataSource.mandaDetailUpdateTime.first())
             val originIds = remoteNew.map { it.id }
             val todoIds = mandaDetailDao.getMandaDetailIdByOriginIds(originIds)
 

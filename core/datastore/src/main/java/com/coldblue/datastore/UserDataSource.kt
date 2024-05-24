@@ -9,7 +9,6 @@ interface UserDataSource {
     val isExplain: Flow<Boolean>
     val isAlarm: Flow<Boolean>
     val mandaInitState: Flow<Boolean>
-    val permissionInitState: Flow<Boolean>
 
 
     suspend fun updateToken(token: String)
@@ -18,6 +17,5 @@ interface UserDataSource {
     suspend fun updateExplain(state: Boolean)
     suspend fun updateAlarm(state: Boolean)
     suspend fun updateMandaInitState(state: Boolean)
-    suspend fun updatePermissionInitState(state: Boolean)
     suspend fun reset()
 }

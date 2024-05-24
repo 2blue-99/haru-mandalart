@@ -6,6 +6,6 @@ import javax.inject.Inject
 class LoginSucceededUseCase @Inject constructor(
     private val loginHelper: LoginHelper,
     ) {
-    suspend operator fun invoke() = loginHelper.setLoginSucceeded()
+    suspend operator fun invoke() = loginHelper.login()
 }
 

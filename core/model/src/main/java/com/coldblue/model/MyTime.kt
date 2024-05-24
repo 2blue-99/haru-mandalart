@@ -1,8 +1,10 @@
 package com.coldblue.model
 
+import java.time.LocalTime
+
 data class MyTime(
-    val ampm: String,
     val hour: Int,
     val minute: Int,
-    val isEdit: Boolean = false
+    val displayText: String,
+    val time: LocalTime
 )

@@ -1,216 +1,268 @@
 package com.coldblue.todo
 
-import android.net.Uri
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.coldblue.data.util.asMyTime
-import com.coldblue.data.util.getAmPmHour
+import com.coldblue.data.util.toMillis
+import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMButton
+import com.coldblue.designsystem.component.HMTextField
+import com.coldblue.designsystem.iconpack.todo.Alarm
+import com.coldblue.designsystem.iconpack.todo.Calendar
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.model.Todo
-import com.coldblue.todo.component.HMTimePicker
-import com.coldblue.todo.uistate.DEFAULT_TODO
-import com.google.gson.Gson
+import com.coldblue.model.MandaTodo
+import com.coldblue.model.MyDate
+import com.coldblue.model.MyTime
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
+fun toMyDate(date: LocalDate): MyDate {
+    val displayText = date.format(
+        DateTimeFormatter.ofPattern(
+            "M월 d일(E)",
+            Locale("ko")
+        )
+    )
+    return MyDate(displayText = displayText, date = date)
+}
+
+fun toMyTime(time: LocalTime?): MyTime? {
+    val h = time?.hour ?: LocalTime.now().hour
+    val m = time?.minute ?: LocalTime.now().minute
+    return if (time == null) null else
+        MyTime(h, m, toDisplayTime(h, m), LocalTime.of(h, m))
+}
+
+fun toDisplayTime(h: Int, m: Int): String {
+
+    val padM = m.toString().padStart(2, '0')
+    if (h < 12) {
+        return "오전 ${h}:${padM}에 알림"
+    } else {
+        if (h == 12) {
+            return "오후 ${h}:${padM}에 알림"
+
+        } else {
+            return "오후 ${h - 12}:${padM}에 알림"
+        }
+
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoBottomSheet(
-    todo: Todo,
-    upsertTodo: (Todo) -> Unit,
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
-    today: LocalDate,
-    navigateToTodoEdit: (Int, String, String, String) -> Unit
-
-
+    onClickCancel: () -> Unit,
+    mandaTodo: MandaTodo,
+    upsertMandaTodo: (MandaTodo) -> Unit,
 ) {
-    var onSwitch by remember { mutableStateOf(false) }
-    var myTime by remember { mutableStateOf(todo.time?.asMyTime() ?: LocalTime.now().asMyTime()) }
-
-    var toEdit by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        onSwitch = todo.time != null
-    }
-
-    var titleText by remember { mutableStateOf(todo.title) }
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    LaunchedEffect(onSwitch) {
-        sheetState.expand()
-    }
+    var dateState by remember { mutableStateOf<MyDate>(toMyDate(mandaTodo.date)) }
+    var myTimeState by remember { mutableStateOf<MyTime?>(toMyTime(mandaTodo.time)) }
 
 
-    DisposableEffect(toEdit) {
+    var timePickerState by remember { mutableStateOf(false) }
+    var datePickerState by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var text by remember { mutableStateOf(mandaTodo.title) }
 
-        onDispose {
-            if (toEdit) {
-                navigateToTodoEdit(
-                    if (todo.id == 0) DEFAULT_TODO else todo.id,
-                    titleText.ifEmpty { DEFAULT_TODO.toString() },
-                    Uri.encode(Gson().toJson(myTime.copy(isEdit = onSwitch))),
-                    today.toString()
+
+    if (datePickerState) {
+        CustomDatePickerDialog(
+            LocalDateTime.of(dateState.date, LocalTime.now()).toMillis(),
+            { datePickerState = false },
+            {
+                datePickerState = false
+                val inputDate = LocalDate.parse(it, DateTimeFormatter.BASIC_ISO_DATE)
+                val displayText = inputDate.format(
+                    DateTimeFormatter.ofPattern(
+                        "M월 d일(E)",
+                        Locale("ko")
+                    )
                 )
+                dateState = MyDate(displayText = displayText, date = inputDate)
             }
-        }
-
+        )
     }
+    if (timePickerState) {
+        CustomTimePickerDialog(
+            myTimeState?.time?.hour,
+            myTimeState?.time?.minute,
+            { timePickerState = false },
+            { h, m ->
+                timePickerState = false
+                myTimeState = MyTime(h, m, toDisplayTime(h, m), LocalTime.of(h, m))
+            }
+        )
+    }
+    ModalBottomSheet(
+        sheetState = sheetState,
+        containerColor = HMColor.Background,
+        onDismissRequest = { onClickCancel() },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 24.dp, end = 24.dp, top = 0.dp, bottom = 50.dp),
+            verticalArrangement = Arrangement.spacedBy(30.dp)
+        ) {
+            Text(
+                text = "Todo",
+                style = HmStyle.text20,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
 
-    Box() {
-        LazyColumn(Modifier.padding(bottom = 60.dp)) {
-            item {
-                // 할 일
-                Text(text = "이름", style = HmStyle.text16, fontWeight = FontWeight.Bold)
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = titleText,
-                    singleLine = true,
-                    onValueChange = {
-                        titleText = it
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            keyboardController?.hide()
-                        }
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = HMColor.Primary,
-                        containerColor = Color.Transparent
-                    ),
-                )
-            }
-            item {
-                HMTimePicker(
-                    myTime = myTime,
-                    onSwitch = onSwitch,
-                    onCheckedChange = {
-                        onSwitch = !onSwitch
-                    },
-                    onHourChange = { hour ->
-                        myTime = myTime.copy(hour = hour)
-                    },
-                    onMinuteChange = { minute -> myTime = myTime.copy(minute = minute) },
-                    onAmPmChange = { ampm -> myTime = myTime.copy(ampm = ampm) },
-                )
-            }
-            item {
-                ClickableText(
+            Column(
+                verticalArrangement = Arrangement.spacedBy((-5).dp)
+            ) {
+                HMTextField(inputText = text, maxLen = -1) { text = it }
+
+                val isDateSet = dateState == null
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    text = AnnotatedString("세부 항목 >"),
-                    style = HmStyle.text16.copy(
-                        color = HMColor.SubLightText,
-                        textAlign = TextAlign.End,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    onClick = {
-                        onDismissRequest()
-                        toEdit= true
+                        .clickable { datePickerState = true }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val color =
+                        if (isDateSet) HMColor.DarkGray else HMColor.Primary
+                    val dateText =
+                        if (isDateSet) "날짜 추가" else dateState.displayText
+                    val textColor =
+                        if (isDateSet) HMColor.DarkGray else HMColor.Text
+                    Icon(
+                        imageVector = IconPack.Calendar,
+                        contentDescription = "",
+                        tint = color,
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(dateText, color = textColor)
+                }
 
-                    })
-            }
-
-        }
-        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-            if (todo.id != 0) {
-
-                Row(Modifier.fillMaxWidth()) {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1F)
-                            .padding(end = 8.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = ButtonColors(
-                            contentColor = HMColor.Primary,
-                            containerColor = HMColor.Gray,
-                            disabledContentColor = HMColor.Gray,
-                            disabledContainerColor = HMColor.Primary,
-                        ),
-                        onClick = {
-                            upsertTodo(
-                                todo.copy(
-                                    isDel = true
-                                )
-                            )
-                            onDismissRequest()
-                        }
-                    ) {
-                        Text(
-                            text = "삭제",
-                            style = HmStyle.text16,
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            fontWeight = FontWeight.Bold
+                val isTimeSet = myTimeState != null
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { timePickerState = true }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    val color =
+                        if (isTimeSet) HMColor.Primary else HMColor.DarkGray
+                    val timeText = myTimeState?.displayText ?: "알림 추가"
+                    val textColor =
+                        if (isTimeSet) HMColor.Text else HMColor.DarkGray
+                    Row {
+                        Icon(
+                            imageVector = IconPack.Alarm,
+                            contentDescription = "",
+                            tint = color,
                         )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(timeText, color = textColor)
                     }
 
-                    HMButton(
-                        text = "수정",
-                        clickableState = titleText.isNotEmpty(),
-                        modifier = Modifier.weight(1F)
-                    ) {
-                        upsertTodo(
-                            todo.copy(
-                                title = titleText,
-                                time = if (onSwitch) myTime.getAmPmHour() else null,
-                                date = today
-                            )
+                    if (isTimeSet) {
+                        Icon(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(CircleShape)
+                                .clickable {
+                                    myTimeState = null
+//                                    upsertMandaTodo(mandaTodo.copy(time = null))
+                                },
+                            imageVector = Icons.Rounded.Clear,
+                            contentDescription = "",
+                            tint = HMColor.Primary,
                         )
-                        onDismissRequest()
                     }
                 }
-            } else {
-                HMButton(text = "저장", clickableState = titleText.isNotEmpty()) {
-                    upsertTodo(
-                        todo.copy(
-                            title = titleText,
-                            time = if (onSwitch) myTime.getAmPmHour() else null,
-                            date = today
+
+
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Button(
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .height(50.dp)
+                        .weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = HMColor.Gray),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {
+                        onClickCancel()
+                        upsertMandaTodo(mandaTodo.copy(isDel = true))
+                    }
+                ) {
+                    Text(
+                        text = "삭제",
+                        style = HmStyle.text16,
+                        color = HMColor.Primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                HMButton(
+                    text = stringResource(id = com.coldblue.designsystem.R.string.all_save),
+                    clickableState = text.isNotBlank(),
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .weight(1f),
+                ) {
+                    onClickCancel()
+                    upsertMandaTodo(
+                        mandaTodo.copy(
+                            title = text,
+                            time = myTimeState?.time,
+                            date = dateState.date
                         )
                     )
-                    onDismissRequest()
                 }
             }
         }
-
     }
+}
+
+@Preview
+@Composable
+fun TodoBottomSheetPreview() {
+    TodoBottomSheet({}, MandaTodo("내용입니ㅏ 내용입니ㅏ 내용입니ㅏ 내용입니ㅏ내용입니ㅏ", mandaIndex = 2), {})
 }

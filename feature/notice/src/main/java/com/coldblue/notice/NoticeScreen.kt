@@ -29,11 +29,13 @@ fun NoticeScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        HMTopBar(title = "공지사항") {
+            navigateToBackStack()
+        }
         NoticeScreenWithState(
             uiState = noticeUiState,
             getNotice = noticeViewModel::getNotice,
             getNoticeList = noticeViewModel::getNoticeList,
-            navigateToBackStack = navigateToBackStack
         )
     }
 }
@@ -43,7 +45,6 @@ fun NoticeScreenWithState(
     uiState: NoticeUiState,
     getNotice: (id: Int) -> Unit,
     getNoticeList: () -> Unit,
-    navigateToBackStack: () -> Unit
 ) {
     when (uiState) {
         is NoticeUiState.Loading -> {
@@ -63,7 +64,6 @@ fun NoticeScreenWithState(
             NoticeContent(
                 uiState.noticeList,
                 getNotice,
-                navigateToBackStack
             )
         }
     }

@@ -6,7 +6,7 @@ import javax.inject.Inject
 class UpdateAlarmStateUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(state: Boolean){
-        userRepository.updateAlarm(state)
+    suspend operator fun invoke(state: Boolean):Boolean{
+        return userRepository.updateAlarm(state)
     }
 }

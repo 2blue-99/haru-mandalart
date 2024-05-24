@@ -7,28 +7,18 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
+import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 
 object MandaUtils {
-    @Composable
-    fun getTagList(): List<String> =
-        stringArrayResource(id = R.array.tags).toList()
-
-    fun calculateDonePercentage(mandaDetails: List<MandaDetail>): Float {
-        return (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
-    }
 
     fun transformToMandaList(
         keys: List<MandaKey>,
         details: List<MandaDetail>
     ): List<MandaState> {
-
-        // 3X3 크기의 큰 박스 만들기
-        // key가 존재하는 곳은 3X3 크기의 작은 박스 만들어서 큰 박스에 넣기
-        // key 없는 곳은 Empty 박스를 큰 박스에 넣기
-        // 0번 인덱스부터 시작해서 4번째 박스는 키박스로 만들기
 
         val keyList = keys.toMutableList()
         val detailList = details.toMutableList()
@@ -45,9 +35,8 @@ object MandaUtils {
 
             if (keyIdList.contains(keyId)) {
                 val key = keyList.removeFirst()
-                val (darkColor, lightColor) = indexToDarkLightColor(key.colorIndex)
+                val color = indexToDarkLightColor(key.colorIndex)
                 val groupIdList = mutableListOf<Int>()
-                var isDone = true
                 // 디테일 만다라트가 하나라도 done이 아닐경우 false
                 // 디테일 만다라트가 하나도 없을 경우 false
 
@@ -64,21 +53,16 @@ object MandaUtils {
                                 mandaUI = MandaUI(
                                     id = detailId,
                                     name = detail.name,
-                                    darkColor = darkColor,
-                                    lightColor = lightColor,
+                                    color = color,
                                     originId = detail.originId,
                                     isDone = detail.isDone
                                 )
                             )
                         )
-
-                        if (!detail.isDone)
-                            isDone = false
-
                     } else {
                         smallList.add(
                             MandaType.None(
-                                mandaUI = MandaUI(id = detailId, darkColor = darkColor)
+                                mandaUI = MandaUI(id = detailId, color = color)
                             )
                         )
                     }
@@ -87,8 +71,8 @@ object MandaUtils {
                 val keyType = MandaType.Key(
                     mandaUI = MandaUI(
                         name = key.name,
-                        darkColor = if (keyId == 5) HMColor.Primary else darkColor,
-                        isDone = if(groupIdList.isEmpty() && keyId != 5) false else isDone,
+                        color = if (keyId == 5) HMColor.LightPrimary else color,
+                        isDone = keyId == 5,
                         originId = key.originId,
                         id = keyId
                     ),
@@ -117,29 +101,82 @@ object MandaUtils {
 
     }
 
-    private fun indexToDarkLightColor(index: Int): Pair<Color, Color> {
+    private fun indexToDarkLightColor(index: Int): Color {
         return when (index) {
-            0 -> Pair(HMColor.Dark.Pink, HMColor.Light.Pink)
-            1 -> Pair(HMColor.Dark.Red, HMColor.Light.Red)
-            2 -> Pair(HMColor.Dark.Orange, HMColor.Light.Orange)
-            3 -> Pair(HMColor.Dark.Yellow, HMColor.Light.Yellow)
-            4 -> Pair(HMColor.Dark.Green, HMColor.Light.Green)
-            5 -> Pair(HMColor.Dark.Blue, HMColor.Light.Blue)
-            6 -> Pair(HMColor.Dark.Mint, HMColor.Light.Mint)
-            else -> Pair(HMColor.Dark.Purple, HMColor.Light.Purple)
+            0 -> HMColor.Manda.Pink
+            1 -> HMColor.Manda.Red
+            2 -> HMColor.Manda.Orange
+            3 -> HMColor.Manda.Yellow
+            4 -> HMColor.Manda.Green
+            5 -> HMColor.Manda.Blue
+            6 -> HMColor.Manda.Mint
+            else -> HMColor.Manda.Purple
         }
     }
 
     fun colorToIndex(color: Color): Int {
         return when (color) {
-            HMColor.Dark.Pink -> 0
-            HMColor.Dark.Red -> 1
-            HMColor.Dark.Orange -> 2
-            HMColor.Dark.Yellow -> 3
-            HMColor.Dark.Green -> 4
-            HMColor.Dark.Blue -> 5
-            HMColor.Dark.Mint -> 6
-            else -> 0
+            HMColor.Manda.Pink -> 0
+            HMColor.Manda.Red -> 1
+            HMColor.Manda.Orange -> 2
+            HMColor.Manda.Yellow -> 3
+            HMColor.Manda.Green -> 4
+            HMColor.Manda.Blue -> 5
+            HMColor.Manda.Mint -> 6
+            else -> -1
         }
     }
+
+    @Composable
+    fun getTagList(): List<String> =
+        stringArrayResource(id = R.array.tags).toList()
+
+    fun calculatePercentage(index: Int, mandaDetails: List<MandaDetail>): Float {
+        return when (index) {
+            -1, 4 -> (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() }
+                ?: 0f
+
+            else -> {
+                val rangeList = mandaDetails.filter { it.id in 9 * index..8 + 9 * index }
+                (rangeList.count { it.isDone } / rangeList.size.toFloat()).takeIf { !it.isNaN() }
+                    ?: 0f
+            }
+        }
+    }
+
+    fun matchingPercentageColor(index: Int, list: List<MandaState>): Color {
+        return when (index) {
+            -1, 4 -> HMColor.Primary
+            else -> {
+                when (val target = list[index]) {
+                    is MandaState.Exist -> target.mandaUIList[index].mandaUI.color
+                    is MandaState.Empty -> HMColor.Gray
+                }
+            }
+        }
+    }
+
+    fun currentColorList(list: List<MandaState>): List<Color?> {
+        val colorList = list.map {
+            when (it) {
+                is MandaState.Exist -> { it.mandaUIList[4].mandaUI.color }
+                is MandaState.Empty -> { null }
+            }
+        }
+        return colorList
+    }
+
+    fun matchingTitleManda(index: Int, list: List<MandaState>): MandaUI {
+        return when (index) {
+            -1, 4 -> (list[4] as MandaState.Exist).mandaUIList[4].mandaUI
+            else -> {
+                when (val target = list[index]) {
+                    is MandaState.Exist -> target.mandaUIList[4].mandaUI
+                    is MandaState.Empty -> MandaUI(id = target.id)
+                }
+            }
+        }
+    }
+
+//    fun calculateMandaIndex
 }

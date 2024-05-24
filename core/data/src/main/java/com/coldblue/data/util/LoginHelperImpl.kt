@@ -27,28 +27,26 @@ class LoginHelperImpl @Inject constructor(
 
 
     override val isLogin: Flow<LoginState> =
-        combine(userDataSource.isStarted, userDataSource.isExplain, userDataSource.token) { isStarted, isExplain, token ->
-            if (isStarted && isExplain) {
+        combine(userDataSource.isStarted, userDataSource.token) { isStarted, token ->
+            if (isStarted) {
                 if (token.isBlank())
                     LoginState.NoneAuthLogin
                 else
                     LoginState.AuthenticatedLogin
-            } else if(isStarted && !isExplain)
-                LoginState.Explain
+            }
             else
                 LoginState.Logout
         }.catch {
             LoginState.Logout
         }
 
-    override val initPermissionState: Flow<Boolean> = userDataSource.permissionInitState
 
     override fun getComposeAuth(): ComposeAuth = client.composeAuth
     override suspend fun loginWithOutAuth() {
         userDataSource.updateStarted(true)
     }
 
-    override suspend fun setLoginSucceeded() {
+    override suspend fun login() {
         userDataSource.updateToken(client.auth.currentAccessTokenOrNull() ?: "")
         userDataSource.updateEmail(client.auth.currentUserOrNull()?.email ?: "")
         userDataSource.updateStarted(true)
@@ -69,7 +67,7 @@ class LoginHelperImpl @Inject constructor(
         logout()
     }
 
-    override suspend fun updatePermissionInitState(state: Boolean) {
-        userDataSource.updatePermissionInitState(state)
+    override suspend fun updateAlarmState(state: Boolean) {
+        userDataSource.updateAlarm(state)
     }
 }

@@ -34,11 +34,13 @@ fun SurveyScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        HMTopBar(title = "기능 제안하기") {
+            navigateToBackstack()
+        }
         SurveyScreenWithState(
             uiState = surveyUiState,
             navigateToSurveyDetail = navigateToSurveyDetail,
             getSurveyList = surveyViewModel::getSurveyList,
-            navigateToBackstack = navigateToBackstack
         )
     }
 }
@@ -48,7 +50,6 @@ fun SurveyScreenWithState(
     uiState: SurveyUiState,
     navigateToSurveyDetail: (id:Int) -> Unit,
     getSurveyList: () -> Unit,
-    navigateToBackstack: () -> Unit,
 ) {
     when (uiState) {
         is SurveyUiState.Loading -> {}
@@ -65,7 +66,6 @@ fun SurveyScreenWithState(
             SurveyListContent(
                 uiState.surveyList,
                 navigateToSurveyDetail,
-                navigateToBackstack
             )
         }
     }

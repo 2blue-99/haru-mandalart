@@ -4,9 +4,12 @@ import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
@@ -15,9 +18,12 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,10 +41,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
-import com.coldblue.haru_mandalart.ui.HMApp
+import com.coldblue.data.util.SettingHelper
 import com.coldblue.designsystem.theme.HarumandalartTheme
-import com.coldblue.explain.ExplainScreen
+import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.login.LoginScreen
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,22 +70,40 @@ class MainActivity : ComponentActivity() {
         splashScreen()
 
         setContent {
+            CheckPermission()
             HarumandalartTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     BackOnPressed()
                     loginHelper.isLogin.collectAsStateWithLifecycle(LoginState.Loading).value.let {
                         when (it) {
-                            LoginState.Explain -> ExplainScreen()
                             LoginState.NoneAuthLogin -> HMApp()
-                            LoginState.AuthenticatedLogin -> syncHelper.initialize().also { HMApp() }
+                            LoginState.AuthenticatedLogin -> {
+                                syncHelper.initialize().also { HMApp() }
+                            }
+
                             LoginState.Logout -> LoginScreen()
                             LoginState.Loading -> {}
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onRestart() {
+        super.onRestart()
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_DENIED
+        ) {
+            CoroutineScope(Dispatchers.IO).launch {
+                loginHelper.updateAlarmState(true)
             }
         }
     }
@@ -118,14 +143,17 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun CheckPermission() {
         val context = LocalContext.current
-        val rejectAlarmMessage = stringResource(R.string.app_reject_alarm)
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
-                if (!isGranted)
-                    Toast.makeText(context, rejectAlarmMessage, Toast.LENGTH_SHORT).show()
-                CoroutineScope(Dispatchers.IO).launch {
-                    loginHelper.updatePermissionInitState(true)
+                if (isGranted) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        loginHelper.updateAlarmState(true)
+                    }
+                } else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        loginHelper.updateAlarmState(false)
+                    }
                 }
             }
         )
@@ -136,9 +164,7 @@ class MainActivity : ComponentActivity() {
                         Manifest.permission.POST_NOTIFICATIONS
                     ) == PackageManager.PERMISSION_DENIED
                 ) {
-                    if (!loginHelper.initPermissionState.first()) {
-                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
+                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
         }
@@ -162,3 +188,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
