@@ -53,7 +53,7 @@ fun UpdateDialog(
         ) {
             Column(
                 modifier = Modifier.background(HMColor.Background),
-                verticalArrangement = Arrangement.spacedBy(30.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column(
@@ -78,7 +78,7 @@ fun UpdateDialog(
 
                 Text(
                     text = stringResource(id = R.string.update_note_dialog_content),
-                    style = HmStyle.text18,
+                    style = HmStyle.text16,
                     fontWeight = FontWeight.Bold,
                     color = HMColor.Text,
                 )
