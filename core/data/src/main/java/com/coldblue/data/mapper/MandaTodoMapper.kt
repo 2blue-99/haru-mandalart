@@ -29,7 +29,7 @@ object MandaTodoMapper {
                 time = mandaTodo.time.toTime(),
                 date = mandaTodo.date.toDate(),
                 isAlarm = mandaTodo.is_alarm,
-                id = mandaTodoIds[index] ?: mandaTodo.manda_index,
+                id = mandaTodoIds[index] ?: 0,
             )
         }
     }
