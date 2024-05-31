@@ -37,6 +37,7 @@ import com.coldblue.model.MandaTodo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.orhanobut.logger.Logger
 
 
 @Composable
@@ -171,17 +172,13 @@ private fun checkUpdate(
     context: Context,
     onUpdate: () -> Unit
 ) {
+    Logger.d("Start")
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
         // 업데이트 할게 있는지 체크
-        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-            // 몇번 물어봤는지 체크 + 업데이트 불가능하면 NULL
-            && (appUpdateInfo.clientVersionStalenessDays() ?: -1) >= 7
-            // 즉시, 유연한 업데이트 가능한지 체크
-            && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
-        ) {
+        if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+            Logger.d("Exsist")
             onUpdate()
         }
     }
