@@ -1,7 +1,6 @@
 package com.coldblue.data.repository.user
 
 import com.coldblue.data.util.SettingHelper
-import com.coldblue.database.dao.AppDao
 import com.coldblue.datastore.UserDataSource
 import com.coldblue.network.SupabaseDataSource
 import kotlinx.coroutines.flow.Flow
@@ -18,12 +17,11 @@ class UserRepositoryImpl @Inject constructor(
     override val isExplain: Flow<Boolean> = userDataSource.isExplain
     override val isAlarm: Flow<Boolean> = userDataSource.isAlarm
     override val isInit: Flow<Boolean> = userDataSource.mandaInitState
+    override val noteRequestDate: Flow<String> = userDataSource.noteRequestDate
 
     override suspend fun updateToken(token: String) {
         userDataSource.updateToken(token)
     }
-
-
 
     override suspend fun updateEmail(email: String) {
         userDataSource.updateEmail(email)
@@ -44,6 +42,10 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun updateMandaInitState(state: Boolean) {
         userDataSource.updateMandaInitState(state)
+    }
+
+    override suspend fun updateNoteRequestDate(date: String) {
+        userDataSource.updateNoteRequestDate(date)
     }
 
     override suspend fun refresh() {

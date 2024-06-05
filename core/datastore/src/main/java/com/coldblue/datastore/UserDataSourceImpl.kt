@@ -20,6 +20,7 @@ class UserDataSourceImpl @Inject constructor(
     private val explainKey = booleanPreferencesKey("explain")
     private val alarmKey = booleanPreferencesKey("alarm")
     private val mandaInitStateKey = booleanPreferencesKey("initManda")
+    private val noteRequestDateKey = stringPreferencesKey("noteRequestDate")
 
     override val token: Flow<String> =
         dataStore.data.map { preferences -> preferences[tokenKey] ?: "" }
@@ -33,14 +34,9 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.data.map { preferences -> preferences[alarmKey] ?: true }
     override val mandaInitState: Flow<Boolean> =
         dataStore.data.map { preferences -> preferences[mandaInitStateKey] ?: false }
+    override val noteRequestDate: Flow<String> =
+        dataStore.data.map { preferences -> preferences[noteRequestDateKey] ?: "1999-08-31" }
 
-    override suspend fun reset() {
-        dataStore.edit { preferences -> preferences[tokenKey] = "" }
-        dataStore.edit { preferences -> preferences[isStartedKey] = false }
-        dataStore.edit { preferences -> preferences[emailKey] = "비회원" }
-        dataStore.edit { preferences -> preferences[alarmKey] = false }
-        dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
-    }
 
     override suspend fun updateToken(token: String) {
         dataStore.edit { preferences ->
@@ -76,5 +72,19 @@ class UserDataSourceImpl @Inject constructor(
         dataStore.edit { preferences ->
             preferences[mandaInitStateKey] = state
         }
+    }
+
+    override suspend fun updateNoteRequestDate(date: String) {
+        dataStore.edit { preferences ->
+            preferences[noteRequestDateKey] = date
+        }
+    }
+
+    override suspend fun reset() {
+        dataStore.edit { preferences -> preferences[tokenKey] = "" }
+        dataStore.edit { preferences -> preferences[isStartedKey] = false }
+        dataStore.edit { preferences -> preferences[emailKey] = "비회원" }
+        dataStore.edit { preferences -> preferences[alarmKey] = false }
+        dataStore.edit { preferences -> preferences[mandaInitStateKey] = false }
     }
 }

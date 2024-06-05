@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NetworkMandaTodo(
     val id: Int = 0,
-    val manda_index: Int = 0,
+    val manda_index: Int,
     val title: String,
     val is_del: Boolean,
     val is_done: Boolean,
