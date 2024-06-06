@@ -45,6 +45,7 @@ fun MandaScreen(
     mandaViewModel: MandaViewModel = hiltViewModel(),
     updateNoteViewModel: UpdateNoteViewModel = hiltViewModel(),
     navigateToSetting: () -> Unit,
+    navigateToHistory: () -> Unit,
 ) {
     val mandaUpdateUiState by updateNoteViewModel.mandaUpdateDialogUIState.collectAsStateWithLifecycle()
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
@@ -95,6 +96,7 @@ fun MandaScreen(
                 deleteMandaDetail = mandaViewModel::deleteMandaDetail,
                 changeBottomSheet = mandaViewModel::changeBottomSheet,
                 navigateToSetting = navigateToSetting,
+                navigateToHistory = navigateToHistory,
                 changeCurrentIndex = mandaViewModel::changeCurrentIndex,
                 changeTodoRange = mandaViewModel::changeTodoRange,
                 upsertMandaTodo = mandaViewModel::upsertMandaTodo
@@ -115,6 +117,7 @@ fun MandaContentWithState(
     deleteMandaDetail: (Int) -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
+    navigateToHistory: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
@@ -159,6 +162,7 @@ fun MandaContentWithState(
                 deleteMandaDetail = deleteMandaDetail,
                 changeBottomSheet = changeBottomSheet,
                 navigateToSetting = navigateToSetting,
+                navigateToHistory = navigateToHistory,
                 changeCurrentIndex = changeCurrentIndex,
                 changeTodoRange = changeTodoRange,
                 upsertMandaTodo = upsertMandaTodo

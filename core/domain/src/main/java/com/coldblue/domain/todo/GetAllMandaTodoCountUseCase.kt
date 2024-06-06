@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetAllMandaTodoCountUseCase @Inject constructor(
     private val mandaTodoRepository: MandaTodoRepository
 ) {
-    suspend operator fun invoke(index: Int): List<Pair<Int,Int>> =
-        mandaTodoRepository.getAllMandaTodoCount(index)
+    suspend operator fun invoke(): List<Pair<Int,Int>> =
+        mandaTodoRepository.getAllMandaTodoCount()
 }

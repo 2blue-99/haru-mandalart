@@ -31,8 +31,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
         return mandaTodoDao.getMandaTodo().map { it.asDomain() }
     }
 
-    override suspend fun getAllMandaTodoCount(index: Int): List<Pair<Int, Int>> {
-        return mandaTodoDao.getAllMandaTodoCount(index)
+    override suspend fun getAllMandaTodoCount(): List<Pair<Int, Int>> {
+        return mandaTodoDao.getAllMandaTodoCount()
     }
 
     override fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodo>> {

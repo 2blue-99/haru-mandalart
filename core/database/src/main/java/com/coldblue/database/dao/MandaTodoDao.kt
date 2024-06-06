@@ -28,9 +28,9 @@ interface MandaTodoDao {
     fun getToWriteMandaTodos(updateTime: String): List<MandaTodoEntity>
 
     @Transaction
-    fun getAllMandaTodoCount(index: Int): List<Pair<Int, Int>>{
+    fun getAllMandaTodoCount(): List<Pair<Int, Int>>{
         val resultList = mutableListOf<Pair<Int, Int>>()
-        for(i in 1..9){
+        for(index in 0..8){
             val allCount = getMandaTodoIndexCount(index) ?: 0
             val doneCount = getMandaTodoIndexDoneCount(index) ?: 0
             resultList.add(Pair(allCount, doneCount))

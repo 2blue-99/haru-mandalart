@@ -8,7 +8,7 @@ import java.time.LocalDate
 interface MandaTodoRepository: Syncable {
     fun getMandaTodo(): Flow<List<MandaTodo>>
 
-    suspend fun getAllMandaTodoCount(index: Int): List<Pair<Int,Int>>
+    suspend fun getAllMandaTodoCount(): List<Pair<Int,Int>>
 
     fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodo>>
 
