@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.coldblue.database.entity.MandaTodoEntity
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -29,13 +30,19 @@ interface MandaTodoDao {
 
     @Transaction
     fun getAllMandaTodoCount(): List<Pair<Int, Int>>{
+
+        TODO() 여기를 쳐내야할듯
+
+        Logger.e("Start DAO")
+
         val resultList = mutableListOf<Pair<Int, Int>>()
         for(index in 0..8){
             val allCount = getMandaTodoIndexCount(index) ?: 0
             val doneCount = getMandaTodoIndexDoneCount(index) ?: 0
             resultList.add(Pair(allCount, doneCount))
+            Logger.d(resultList)
         }
-        return resultList
+        return resultList.toList()
     }
 
     @Query("SELECT COUNT(id) FROM manda_todo WHERE manda_index = :index AND is_del = 0")

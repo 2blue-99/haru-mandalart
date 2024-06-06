@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetMandaTodoByIndexUseCase @Inject constructor(
     private val mandaTodoRepository: MandaTodoRepository
 ) {
-    operator fun invoke(): Flow<List<MandaTodo>> =
-        mandaTodoRepository.getMandaTodo()
+    operator fun invoke(index: Int): Flow<List<MandaTodo>> =
+        mandaTodoRepository.getMandaTodoByIndex(index)
 }

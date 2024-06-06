@@ -176,7 +176,6 @@ private fun checkUpdate(
     context: Context,
     onUpdate: () -> Unit
 ) {
-    Logger.d("Start")
     val appUpdateManager = AppUpdateManagerFactory.create(context)
     val appUpdateInfoTask = appUpdateManager.appUpdateInfo
     appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->

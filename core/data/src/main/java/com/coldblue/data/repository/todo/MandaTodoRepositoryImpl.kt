@@ -32,6 +32,7 @@ class MandaTodoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllMandaTodoCount(): List<Pair<Int, Int>> {
+        co.touchlab.kermit.Logger.e("Start Data")
         return mandaTodoDao.getAllMandaTodoCount()
     }
 

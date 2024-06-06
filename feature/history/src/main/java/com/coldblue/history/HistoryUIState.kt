@@ -1,19 +1,19 @@
 package com.coldblue.history
 
-//sealed interface HistoryUiState {
-//    data object Loading : HistoryUiState
-//
-//    data class Error(val msg: String) : HistoryUiState
-//
-//    data class Success(
-//        val allTodoDayCnt: Int,
+sealed interface HistoryUIState {
+    data object Loading : HistoryUIState
+
+    data class Error(val msg: String) : HistoryUIState
+
+    data class Success(
+        val allTodoDayCnt: Int,
 //        val controllerList: List<ControllerWeek>,
 //        val todoYearList: List<Int>,
 //        val today: LocalDate,
 //        val todoList: List<Todo>,
-//    ) : HistoryUiState
-//
-//}
+    ) : HistoryUIState
+
+}
 //
 //data class ControllerWeek(
 //    val month: Int? = null,
