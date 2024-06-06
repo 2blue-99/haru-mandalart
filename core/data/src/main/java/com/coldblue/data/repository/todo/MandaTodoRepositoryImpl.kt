@@ -27,11 +27,25 @@ class MandaTodoRepositoryImpl @Inject constructor(
     private val updateTimeDataSource: UpdateTimeDataSource,
     private val alarmScheduler: AlarmScheduler,
 ) : MandaTodoRepository {
+    override fun getMandaTodo(): Flow<List<MandaTodo>> {
+        return mandaTodoDao.getMandaTodo().map { it.asDomain() }
+    }
+
+    override suspend fun getAllMandaTodoCount(index: Int): List<Pair<Int, Int>> {
+        return mandaTodoDao.getAllMandaTodoCount(index)
+    }
+
+    override fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodo>> {
+        return mandaTodoDao.getMandaTodoByIndex(index).map { it.asDomain() }
+    }
+
+
     override suspend fun upsertMandaTodo(mandaTodo: MandaTodo) {
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
         mandaTodo.syncAlarm()
         syncHelper.syncWrite()
     }
+
 
     override suspend fun deleteAllMandaTodo() {
         mandaTodoDao.deleteAllMandaTodo(getUpdateTime())
@@ -39,9 +53,6 @@ class MandaTodoRepositoryImpl @Inject constructor(
 
     }
 
-    override fun getMandaTodo(): Flow<List<MandaTodo>> {
-        return mandaTodoDao.getMandaTodo().map { it.asDomain() }
-    }
 
     override suspend fun syncRead(): Boolean {
         try {

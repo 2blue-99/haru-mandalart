@@ -14,9 +14,6 @@ interface MandaTodoDao {
     @Query("SELECT * FROM manda_todo WHERE is_del = 0")
     fun getMandaTodo(): Flow<List<MandaTodoEntity>>
 
-    @Query("Update manda_todo Set is_del = 1, is_Sync = 0, update_time = :date")
-    suspend fun deleteAllMandaTodo(date: String)
-
     @Transaction
     fun getMandaTodoIdByOriginIds(originIds: List<Int>): List<Int?> {
         return originIds.map { originId ->
@@ -27,6 +24,31 @@ interface MandaTodoDao {
     @Query("SELECT id FROM manda_todo WHERE origin_id = :originId")
     fun getMandaTodoIdByOriginId(originId: Int): Int?
 
+    @Query("SELECT * FROM manda_todo WHERE update_time > :updateTime AND is_sync=0")
+    fun getToWriteMandaTodos(updateTime: String): List<MandaTodoEntity>
+
+    @Transaction
+    fun getAllMandaTodoCount(index: Int): List<Pair<Int, Int>>{
+        val resultList = mutableListOf<Pair<Int, Int>>()
+        for(i in 1..9){
+            val allCount = getMandaTodoIndexCount(index) ?: 0
+            val doneCount = getMandaTodoIndexDoneCount(index) ?: 0
+            resultList.add(Pair(allCount, doneCount))
+        }
+        return resultList
+    }
+
+    @Query("SELECT COUNT(id) FROM manda_todo WHERE manda_index = :index AND is_del = 0")
+    fun getMandaTodoIndexCount(index: Int): Int?
+
+    @Query("SELECT COUNT(id) FROM manda_todo WHERE manda_index = :index AND is_del = 0 AND is_done = 1")
+    fun getMandaTodoIndexDoneCount(index: Int): Int?
+
+    @Query("SELECT * FROM manda_todo WHERE manda_index = :index AND is_del = 0")
+    fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodoEntity>>
+
+    @Query("Update manda_todo Set is_del = 1, is_Sync = 0, update_time = :date")
+    suspend fun deleteAllMandaTodo(date: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMandaTodo(mandaTodo: MandaTodoEntity)
@@ -34,6 +56,4 @@ interface MandaTodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMandaTodo(mandaTodo: List<MandaTodoEntity>)
 
-    @Query("SELECT * FROM manda_todo WHERE update_time > :updateTime AND is_sync=0")
-    fun getToWriteMandaTodos(updateTime: String): List<MandaTodoEntity>
 }
