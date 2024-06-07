@@ -1,19 +1,43 @@
 package com.coldblue.history
 
+import com.coldblue.model.MandaTodo
+
 sealed interface HistoryUIState {
     data object Loading : HistoryUIState
 
     data class Error(val msg: String) : HistoryUIState
 
     data class Success(
-        val allTodoDayCnt: Int,
+        //그래프 데이터
+        val title: String,
+
 //        val controllerList: List<ControllerWeek>,
 //        val todoYearList: List<Int>,
 //        val today: LocalDate,
 //        val todoList: List<Todo>,
     ) : HistoryUIState
-
 }
+
+data class Graph(
+    val allTodoGraph: List<Pair<Int,Int>>,
+
+)
+
+data class TitleBar(
+    val name: String,
+    val startDate: String,
+    val rank: Int,
+)
+
+//data class Controller(
+//
+//)
+//
+//data class Todo(
+//
+//)
+
+
 //
 //data class ControllerWeek(
 //    val month: Int? = null,

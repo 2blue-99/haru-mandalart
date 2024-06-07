@@ -8,6 +8,7 @@ import com.coldblue.data.mapper.MandaTodoMapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.isPassed
+import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
@@ -22,6 +23,7 @@ import javax.inject.Inject
 
 class MandaTodoRepositoryImpl @Inject constructor(
     private val mandaTodoDao: MandaTodoDao,
+    private val mandaKeyDao: MandaKeyDao,
     private val mandaTodoDataSource: MandaTodoDataSource,
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
@@ -31,9 +33,14 @@ class MandaTodoRepositoryImpl @Inject constructor(
         return mandaTodoDao.getMandaTodo().map { it.asDomain() }
     }
 
-    override suspend fun getAllMandaTodoCount(): List<Pair<Int, Int>> {
-        co.touchlab.kermit.Logger.e("Start Data")
-        return mandaTodoDao.getAllMandaTodoCount()
+    override suspend fun getAllMandaTodoGraph(): List<Pair<Int, Int>> {
+        // MandaKeyEntity 모양으로 옴
+        val name = mandaKeyDao.getMandaKeys().first()
+        // count에는 핵심 목표 포함 0~8
+        val count = mandaTodoDao.getAllMandaTodoCount()
+        Logger.d(name)
+        Logger.d(count)
+        return listOf(Pair(1,1))
     }
 
     override fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodo>> {

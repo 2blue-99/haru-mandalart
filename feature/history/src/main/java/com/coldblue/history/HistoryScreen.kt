@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.coldblue.model.MandaTodo
 
 @Composable
 fun HistoryScreen(
@@ -24,5 +25,7 @@ fun HistoryScreen(
         Button(onClick = { historyViewModel.changeMandaTodoIndex(3) }) {
             Text("index")
         }
+
+
     }
 }

@@ -12,7 +12,6 @@ class GetAllMandaTodoCountUseCase @Inject constructor(
     private val mandaTodoRepository: MandaTodoRepository
 ) {
     operator fun invoke(): Flow<List<Pair<Int, Int>>> = flow {
-        Logger.e("Start")
-        emit(mandaTodoRepository.getAllMandaTodoCount())
+        emit(mandaTodoRepository.getAllMandaTodoGraph())
     }
 }

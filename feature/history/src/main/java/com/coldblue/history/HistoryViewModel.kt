@@ -29,18 +29,18 @@ class HistoryViewModel @Inject constructor(
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> get() = _currentIndex
 
+    val mandaIndexTodo =
+        currentIndex.flatMapLatest { getMandaTodoByIndexUseCase(_currentIndex.value) }
+
+    // currentIndex 변경 -> TodoIndex 가져오기
+    // todo 업데이트 -> TodoIndex, TodoCount 가져오기
+
     val historyUIState: StateFlow<HistoryUIState> =
-        combine(
-            currentIndex,
-            getAllMandaTodoCountUseCase(),
-            getMandaTodoByIndexUseCase(currentIndex.value)
-        ) { index, allCount, mandaTodo ->
+        currentIndex.flatMapLatest { index ->
+            getMandaTodoByIndexUseCase(index).combine(getAllMandaTodoCountUseCase()) { a, b ->
 
-            Logger.d(index)
-            Logger.d(allCount)
-            Logger.d(mandaTodo)
-
-            HistoryUIState.Success(0)
+                HistoryUIState.Success(title = "")
+            }
         }.catch {
             HistoryUIState.Error(it.message ?: "Error")
         }.stateIn(
@@ -48,6 +48,23 @@ class HistoryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = HistoryUIState.Loading
         )
+
+//        combine(
+//            mandaIndexTodo,
+//            getAllMandaTodoCountUseCase(),
+//        ) { mandaTodo, allCount ->
+//
+//
+//            Logger.d(mandaTodo)
+//
+//            HistoryUIState.Success(mandaTodo)
+//        }.catch {
+//            HistoryUIState.Error(it.message ?: "Error")
+//        }.stateIn(
+//            scope = viewModelScope,
+//            started = SharingStarted.WhileSubscribed(5_000),
+//            initialValue = HistoryUIState.Loading
+//        )
 
     fun changeMandaTodoIndex(index: Int) {
         _currentIndex.value = index
