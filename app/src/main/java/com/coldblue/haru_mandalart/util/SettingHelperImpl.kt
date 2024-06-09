@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.coldblue.data.util.SettingHelper
+import com.coldblue.haru_mandalart.MainActivity
 import com.coldblue.haru_mandalart.R
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import javax.inject.Inject
@@ -18,9 +19,13 @@ import javax.inject.Inject
 class SettingHelperImpl @Inject constructor(
     val context: Context,
 ) : SettingHelper {
-
     override val versionName: String =
         context.packageManager.getPackageInfo(context.packageName, 0).versionName
+
+    override fun startApp() {
+        val intent = Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
 
 
     override fun showOss() {
