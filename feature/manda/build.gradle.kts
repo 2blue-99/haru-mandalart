@@ -10,4 +10,6 @@ dependencies {
     implementation(libs.playStore.update)
     implementation(project(":feature:todo"))
     implementation(project(":feature:explain"))
+    implementation( "androidx.glance:glance-appwidget:1.1.0-rc01" )
+    implementation( "androidx.glance:glance-material3:1.1.0-rc01" )
 }
