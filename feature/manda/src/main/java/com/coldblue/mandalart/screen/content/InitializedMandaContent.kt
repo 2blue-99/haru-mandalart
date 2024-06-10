@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.Back
+import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
@@ -99,6 +100,7 @@ fun InitializedMandaContent(
     deleteMandaDetail: (Int) -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
+    navigateToHistory: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
@@ -136,7 +138,10 @@ fun InitializedMandaContent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        MandaTopBar { navigateToSetting() }
+        MandaTopBar(
+            navigateToSetting = navigateToSetting,
+            navigateToHistory = navigateToHistory
+        )
 
         MandaStatus(
             titleName = uiState.mandaStatus.titleManda.name,
@@ -177,7 +182,8 @@ fun InitializedMandaContent(
 
 @Composable
 fun MandaTopBar(
-    navigateToSetting: () -> Unit
+    navigateToSetting: () -> Unit,
+    navigateToHistory: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -200,14 +206,25 @@ fun MandaTopBar(
                 color = HMColor.Primary,
             )
         }
-        IconButton(
-            onClick = { navigateToSetting() }) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = Icons.Default.Settings,
-                tint = HMColor.Primary,
-                contentDescription = ""
-            )
+        Row {
+            IconButton(
+                onClick = { navigateToHistory() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = IconPack.History,
+                    tint = HMColor.Primary,
+                    contentDescription = "history"
+                )
+            }
+            IconButton(
+                onClick = { navigateToSetting() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.Settings,
+                    tint = HMColor.Primary,
+                    contentDescription = "setting"
+                )
+            }
         }
     }
 }

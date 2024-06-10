@@ -7,6 +7,8 @@ import com.coldblue.designsystem.component.HMNavigateAnimation.noneEnter
 import com.coldblue.designsystem.component.HMNavigateAnimation.noneExit
 import com.coldblue.explain.navigation.navigateToExplain
 import com.coldblue.haru_mandalart.ui.HMAppState
+import com.coldblue.history.historyScreen
+import com.coldblue.history.navigateToHistory
 import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.mandaScreen
@@ -36,11 +38,12 @@ fun HMNavHost(
         popExitTransition = { noneExit() }
 
     ) {
-//        loginScreen(
-//            navigateToExplain = navController::navigateToExplain
-//        )
+        historyScreen (
+            navigateToBackStack = navController::popBackStack
+        )
         mandaScreen(
-            navigateToSetting = navController::navigateToSetting
+            navigateToSetting = navController::navigateToSetting,
+            navigateToHistory = navController::navigateToHistory
         )
         settingScreen(
             navigateToNotice = navController::navigateToNotice,

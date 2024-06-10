@@ -8,6 +8,7 @@ import com.coldblue.data.mapper.MandaTodoMapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.isPassed
+import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
@@ -22,16 +23,37 @@ import javax.inject.Inject
 
 class MandaTodoRepositoryImpl @Inject constructor(
     private val mandaTodoDao: MandaTodoDao,
+    private val mandaKeyDao: MandaKeyDao,
     private val mandaTodoDataSource: MandaTodoDataSource,
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
     private val alarmScheduler: AlarmScheduler,
 ) : MandaTodoRepository {
+    override fun getMandaTodo(): Flow<List<MandaTodo>> {
+        return mandaTodoDao.getMandaTodo().map { it.asDomain() }
+    }
+
+    override suspend fun getAllMandaTodoGraph(): List<Pair<Int, Int>> {
+        // MandaKeyEntity 모양으로 옴
+        val name = mandaKeyDao.getMandaKeys().first()
+        // count에는 핵심 목표 포함 0~8
+        val count = mandaTodoDao.getAllMandaTodoCount()
+        Logger.d(name)
+        Logger.d(count)
+        return listOf(Pair(1,1))
+    }
+
+    override fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodo>> {
+        return mandaTodoDao.getMandaTodoByIndex(index).map { it.asDomain() }
+    }
+
+
     override suspend fun upsertMandaTodo(mandaTodo: MandaTodo) {
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
         mandaTodo.syncAlarm()
         syncHelper.syncWrite()
     }
+
 
     override suspend fun deleteAllMandaTodo() {
         mandaTodoDao.deleteAllMandaTodo(getUpdateTime())
@@ -39,9 +61,6 @@ class MandaTodoRepositoryImpl @Inject constructor(
 
     }
 
-    override fun getMandaTodo(): Flow<List<MandaTodo>> {
-        return mandaTodoDao.getMandaTodo().map { it.asDomain() }
-    }
 
     override suspend fun syncRead(): Boolean {
         try {
