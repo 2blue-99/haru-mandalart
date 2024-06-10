@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":feature:notice"))
     implementation(project(":feature:survey"))
     implementation(project(":feature:explain"))
+    implementation(project(":feature:history"))
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
