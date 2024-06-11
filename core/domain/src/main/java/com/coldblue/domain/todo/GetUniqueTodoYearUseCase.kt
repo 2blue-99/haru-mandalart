@@ -3,12 +3,11 @@ package com.coldblue.domain.todo
 import com.coldblue.data.repository.todo.MandaTodoRepository
 import com.coldblue.model.MandaTodo
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GetMandaTodoByIndexUseCase @Inject constructor(
+class GetUniqueTodoYearUseCase @Inject constructor(
     private val mandaTodoRepository: MandaTodoRepository
 ) {
-    operator fun invoke(index: Int, year: String): Flow<List<MandaTodo>> =
-        mandaTodoRepository.getMandaTodoByIndexYear(index, year)
+    operator fun invoke(): Flow<List<String>> =
+        mandaTodoRepository.getUniqueTodoYear()
 }

@@ -12,12 +12,14 @@ import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.AlarmItem
+import com.coldblue.model.TodoGraph
 import com.coldblue.model.MandaTodo
 import com.coldblue.network.datasource.MandaTodoDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -33,18 +35,40 @@ class MandaTodoRepositoryImpl @Inject constructor(
         return mandaTodoDao.getMandaTodo().map { it.asDomain() }
     }
 
-    override suspend fun getAllMandaTodoGraph(): List<Pair<Int, Int>> {
-        // MandaKeyEntity 모양으로 옴
-        val name = mandaKeyDao.getMandaKeys().first()
-        // count에는 핵심 목표 포함 0~8
-        val count = mandaTodoDao.getAllMandaTodoCount()
-        Logger.d(name)
-        Logger.d(count)
-        return listOf(Pair(1,1))
+    /**
+     * MandaKey 데이터와
+     * 작은 목표 별 투두의 전체 & 달성 카운트를 가져와
+     * 9개의 값이 들어있는 HistoryGraph 로 변환
+     */
+    override suspend fun getMandaTodoGraph(): List<TodoGraph> {
+        val result = mutableListOf<TodoGraph>()
+        val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
+        val counts = mandaTodoDao.getAllMandaTodoCount()
+        for(i in 0..8){
+            val firstKey = mandaKeys.first()
+            result.add(
+                if(firstKey.id-1 == i){
+                    val todoData = counts[firstKey.id-1]
+                    mandaKeys.removeFirst()
+                    TodoGraph(
+                        name = firstKey.name,
+                        allCount = todoData.first,
+                        doneCount = todoData.second
+                    )
+                }else{
+                    TodoGraph()
+                }
+            )
+        }
+        return result
     }
 
-    override fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodo>> {
-        return mandaTodoDao.getMandaTodoByIndex(index).map { it.asDomain() }
+    override fun getMandaTodoByIndexYear(index: Int, year: String): Flow<List<MandaTodo>> {
+        return mandaTodoDao.getMandaTodoByIndexYear(index, year).map { it.asDomain() }
+    }
+
+    override fun getUniqueTodoYear(): Flow<List<String>> {
+        return mandaTodoDao.getUniqueTodoYear().map { it ?: listOf() }
     }
 
 
