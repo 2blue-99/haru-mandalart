@@ -49,7 +49,7 @@ fun HistoryContentWithState(
         is HistoryUIState.Error -> Text(text = uiState.msg)
         is HistoryUIState.Success ->
             HistoryContent(
-                historyUiState = uiState,
+                historyUIState = uiState,
                 navigateToBackStack = navigateToBackStack,
                 changeYear = changeYear,
                 changeDay = changeDay,

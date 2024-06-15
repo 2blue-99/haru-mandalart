@@ -1,19 +1,45 @@
 package com.coldblue.history
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.theme.HMColor
+import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
+import java.time.LocalDate
 
 @Composable
 fun HistoryContent(
-    historyUiState: HistoryUIState.Success,
+    historyUIState: HistoryUIState.Success,
     navigateToBackStack: () -> Unit,
     changeYear: (String) -> Unit,
     changeDay: (String) -> Unit,
@@ -30,7 +56,15 @@ fun HistoryContent(
 
         HistoryTitleBar()
 
-        HistoryController()
+
+
+        HistoryController(
+            today = ,
+            historyController = historyUIState.historyController,
+            todoYearList = ,
+            selectDate = ,
+            selectYear =
+        )
 
         HistoryTodo()
     }
@@ -49,7 +83,7 @@ fun HistoryTitleBar(){
 @Composable
 fun HistoryController(
     today: LocalDate,
-    controllerList: List<ControllerWeek>,
+    historyController: HistoryController,
     todoYearList: List<Int>,
     selectDate: (LocalDate) -> Unit,
     selectYear: (Int) -> Unit,
@@ -81,7 +115,7 @@ fun HistoryController(
                     sideText = "",
                     clickAble = false
                 ) {}
-                controllerList[0].controllerDayList.forEach {
+                historyController.controller.forEach {
                     if (it is ControllerDayState.Default)
                         ControllerBox(
                             containerColor = Color.Transparent,
@@ -96,7 +130,7 @@ fun HistoryController(
                     .background(HMColor.Background),
                 horizontalArrangement = Arrangement.Start
             ) {
-                itemsIndexed(controllerList.slice(1..<controllerList.size)) { weekIndex, controllerWeek ->
+                itemsIndexed(historyController.slice(1..<historyController.size)) { weekIndex, controllerWeek ->
                     Column(
                         modifier = Modifier.width((screenWidth / 16).dp),
                         verticalArrangement = Arrangement.Top
