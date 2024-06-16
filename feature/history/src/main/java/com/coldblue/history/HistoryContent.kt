@@ -22,21 +22,31 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.coldblue.designsystem.IconPack
+import com.coldblue.designsystem.iconpack.Check
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
+import com.coldblue.model.TodoGraph
 import java.time.LocalDate
 
 @Composable
@@ -54,7 +64,9 @@ fun HistoryContent(
             .padding(top = 16.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp)
     ) {
-        HistoryGraph()
+        HistoryGraph(
+            todoGraph = historyUIState.todoGraph
+        )
 
         HistoryTitleBar()
 
@@ -73,14 +85,57 @@ fun HistoryContent(
 }
 
 @Composable
-fun HistoryGraph(){
+fun HistoryGraph(
+    todoGraph: List<TodoGraph>
+){
+    val width = LocalConfiguration.current.screenWidthDp
+    val maxHeight = (width / 2.5).toInt()
 
+    val maxCount = todoGraph.maxOfOrNull { it.allCount } ?: 0
+    val weight = maxHeight / maxCount
 
+    var selected by remember { mutableIntStateOf(0) }
 
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        todoGraph.forEachIndexed{ index, it ->
+            GraphBar(
+                width = (width/8).dp,
+                height = maxHeight.dp,
+                allHeight = (it.allCount * weight).dp,
+                doneHeight = (it.doneCount * weight).dp,
+                allCount = it.allCount,
+                doneCount = it.doneCount,
+                name = it.name,
+                lightColor = HMColor.LightPrimary,
+                darkColor = HMColor.Primary,
+                selected = index == selected
+            )
+        }
+    }
 }
+
+@Preview
+@Composable
+fun HistoryGraphPreview(){
+    HistoryGraph(listOf(
+        TodoGraph("탈모", 80,60),
+        TodoGraph("탈모", 50,10),
+        TodoGraph("탈모", 80,60),
+        TodoGraph("탈모", 80,60),
+        TodoGraph("탈모", 80,60),
+        TodoGraph("탈모", 80,60),
+        TodoGraph("탈모", 80,60),
+        TodoGraph("탈모", 80,60),
+    ))
+}
+
 
 @Composable
 fun GraphBar(
+    width: Dp,
+    height: Dp,
     allHeight: Dp,
     doneHeight: Dp,
     allCount: Int,
@@ -93,13 +148,16 @@ fun GraphBar(
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(2.dp))
-            .background(color = if (selected) darkColor else Color.Transparent),
-        verticalArrangement = Arrangement.Center,
+            .background(color = if (selected) darkColor else Color.Transparent)
+            .width(width)
+            .height(height),
+        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
-
     ) {
         Row(
-            Modifier.padding(horizontal = 4.dp).padding(top = 4.dp),
+            Modifier
+                .padding(horizontal = 4.dp)
+                .padding(top = 4.dp),
             verticalAlignment = Alignment.Bottom
         ) {
             Box(
@@ -140,19 +198,25 @@ fun GraphBar(
             .height(0.4.dp)
             .fillMaxWidth()
             .background(HMColor.DarkGray))
-        if(selected){
-            Icon(imageVector = Icons.Default.Favorite, contentDescription = "Check")
-        }else{
-
+        Spacer(modifier = Modifier.height(8.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth().aspectRatio(2f),
+            contentAlignment = Alignment.Center
+        ) {
+            if(selected){
+                Icon(imageVector = IconPack.Check, tint = HMColor.Background, contentDescription = "Check")
+            }else{
+                Text(text = name, style = HmStyle.text10, color = darkColor, modifier = Modifier.padding(top=2.dp))
+            }
         }
     }
 }
 
-@Preview
-@Composable
-fun GraphBarPreview(){
-    GraphBar(60.dp,40.dp,40,30,"푸푸",HMColor.LightPrimary, HMColor.Primary, true)
-}
+//@Preview
+//@Composable
+//fun GraphBarPreview(){
+//    GraphBar(60.dp,40.dp,80.dp,40,30,"푸푸",HMColor.LightPrimary, HMColor.Primary, false)
+//}
 
 @Composable
 fun HistoryTitleBar(){
