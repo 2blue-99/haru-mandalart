@@ -53,7 +53,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
                     TodoGraph(
                         name = firstKey.name,
                         allCount = todoData.first,
-                        doneCount = todoData.second
+                        doneCount = todoData.second,
+                        colorIndex = firstKey.colorIndex
                     )
                 }else{
                     TodoGraph()

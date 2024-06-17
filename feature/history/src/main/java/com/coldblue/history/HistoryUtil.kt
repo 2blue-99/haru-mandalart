@@ -1,5 +1,7 @@
 package com.coldblue.history
 
+import androidx.compose.ui.graphics.Color
+import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
 import java.time.LocalDate
@@ -102,5 +104,31 @@ object HistoryUtil {
             !it.isDone
         }
         return result
+    }
+
+    fun indexToDarkColor(index: Int): Color {
+        return when (index) {
+            0 -> HMColor.DarkPastel.Pink
+            1 -> HMColor.DarkPastel.Red
+            2 -> HMColor.DarkPastel.Orange
+            3 -> HMColor.DarkPastel.Yellow
+            4 -> HMColor.DarkPastel.Green
+            5 -> HMColor.DarkPastel.Blue
+            6 -> HMColor.DarkPastel.Mint
+            else -> HMColor.DarkPastel.Purple
+        }
+    }
+
+    fun indexToLightColor(index: Int): Color {
+        return when (index) {
+            0 -> HMColor.LightPastel.Pink
+            1 -> HMColor.LightPastel.Red
+            2 -> HMColor.LightPastel.Orange
+            3 -> HMColor.LightPastel.Yellow
+            4 -> HMColor.LightPastel.Green
+            5 -> HMColor.LightPastel.Blue
+            6 -> HMColor.LightPastel.Mint
+            else -> HMColor.LightPastel.Purple
+        }
     }
 }
