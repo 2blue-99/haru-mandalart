@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -60,7 +62,8 @@ fun HistoryContent(
             .fillMaxSize()
             .background(HMColor.Background)
             .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(40.dp)
+        verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.Top),
+
     ) {
         HistoryGraph(
             todoGraph = historyUIState.todoGraph
@@ -96,7 +99,8 @@ fun HistoryGraph(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(HMColor.Primary),
         verticalAlignment = Alignment.Bottom
     ) {
         todoGraph.forEachIndexed{ index, it ->
@@ -106,7 +110,8 @@ fun HistoryGraph(
                 modifier = Modifier
                     .width((width/8).dp)
                     .clip(RoundedCornerShape(2.dp))
-                    .background(color = if (index == selected) darkColor else Color.Transparent),
+                    .background(color = if (index == selected) darkColor else Color.Transparent)
+                    .padding(vertical = 4.dp),
                 verticalArrangement = Arrangement.Bottom
             ){
                 GraphBarGroup(
@@ -128,7 +133,7 @@ fun HistoryGraph(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(6.dp),
+                        .aspectRatio(2f),
                     contentAlignment = Alignment.Center
                 ) {
                     if(index == selected){
