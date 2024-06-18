@@ -61,7 +61,8 @@ fun HistoryContent(
         modifier = Modifier
             .fillMaxSize()
             .background(HMColor.Background)
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+//            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+            .padding(vertical = 16.dp, horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.Top),
 
     ) {
@@ -99,49 +100,71 @@ fun HistoryGraph(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(HMColor.Primary),
-        verticalAlignment = Alignment.Bottom
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.Top
     ) {
         todoGraph.forEachIndexed{ index, it ->
             val darkColor = HistoryUtil.indexToDarkColor(it.colorIndex)
             val lightColor = HistoryUtil.indexToLightColor(it.colorIndex)
             Column(
                 modifier = Modifier
-                    .width((width/8).dp)
-                    .clip(RoundedCornerShape(2.dp))
+                    .weight(1f)
+                    .clip(RoundedCornerShape(4.dp))
                     .background(color = if (index == selected) darkColor else Color.Transparent)
-                    .padding(vertical = 4.dp),
-                verticalArrangement = Arrangement.Bottom
-            ){
-                GraphBarGroup(
-                    width = (width/8).dp,
-                    allHeight = (it.allCount*weight).dp,
-                    doneHeight = (it.doneCount*weight).dp,
-                    allCount = it.allCount,
-                    doneCount = it.doneCount,
-                    darkColor = darkColor,
-                    lightColor = lightColor,
-                    selected = index == selected
-                )
+                    .padding(top = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .height(height = maxHeight.dp)
+                        .padding(horizontal = 2.dp),
+                    verticalArrangement = Arrangement.Top
+                ){
+                    GraphBarGroup(
+                        height = maxHeight.dp,
+                        allHeight = (it.allCount*weight).dp,
+                        doneHeight = (it.doneCount*weight).dp,
+                        allCount = it.allCount,
+                        doneCount = it.doneCount,
+                        darkColor = darkColor,
+                        lightColor = lightColor,
+                        selected = index == selected
+                    )
+                }
 
                 Spacer(modifier = Modifier
-                .height(0.4.dp)
-                .fillMaxWidth()
-                .background(HMColor.DarkGray))
+                    .height(0.4.dp)
+                    .fillMaxWidth()
+                    .background(HMColor.SubDarkText))
 
-                Box(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(2f),
-                    contentAlignment = Alignment.Center
+                        .aspectRatio(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if(index == selected){
-                        Icon(imageVector = IconPack.Check, tint = HMColor.Background, contentDescription = "Check")
-                    }else{
-                        Text(text = it.name, style = HmStyle.text10, color = darkColor, modifier = Modifier.padding(top=2.dp))
+                    Spacer(modifier = Modifier
+                        .width(0.4.dp)
+                        .fillMaxHeight()
+                        .padding(vertical = 8.dp)
+                        .background(HMColor.Gray))
+                    Box(
+                        modifier = Modifier.padding(horizontal = 2.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if(index == selected){
+                            Icon(imageVector = IconPack.Check, tint = HMColor.Background, contentDescription = "Check")
+                        }else{
+                            Text(text = it.name, style = HmStyle.text10, color = darkColor, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        }
                     }
+                    Spacer(modifier = Modifier
+                        .width(0.4.dp)
+                        .fillMaxHeight()
+                        .padding(vertical = 8.dp)
+                        .background(HMColor.Gray))
                 }
+
             }
         }
     }
@@ -166,7 +189,7 @@ fun HistoryGraphPreview(){
 
 @Composable
 fun GraphBarGroup(
-    width: Dp,
+    height: Dp,
     allHeight: Dp,
     doneHeight: Dp,
     allCount: Int,
@@ -177,8 +200,7 @@ fun GraphBarGroup(
 ){
     Row(
         modifier = Modifier
-            .width(width)
-            .padding(horizontal = 4.dp)
+            .height(height)
             .offset(x = (1).dp),
         verticalAlignment = Alignment.Bottom
     ){
@@ -273,7 +295,7 @@ fun GraphBarGroup(
 @Preview
 @Composable
 fun GraphBarGroupPreview(){
-    GraphBarGroup(50.dp, 60.dp, 50.dp, 50,40,HMColor.Primary, HMColor.LightPrimary, true)
+    GraphBarGroup(100.dp, 60.dp, 50.dp, 50,40,HMColor.Primary, HMColor.LightPrimary, true)
 }
 
 @Composable
@@ -319,7 +341,7 @@ fun GraphBarPreview(){
 
 @Composable
 fun HistoryTitleBar(){
-
+    Text(text = "helo")
 }
 
 @Composable
