@@ -20,6 +20,7 @@ data class TitleBar(
     val name: String,
     val startDate: String,
     val rank: Int?,
+    val colorIndex: Int
 )
 
 data class HistoryController(

@@ -20,7 +20,7 @@ object HMColor {
 
     object DarkPastel {
         val Pink = Color(0xFFBF7EB8)
-        val Red = Color(0xFFE17582)
+        val Red = Color(0xFFE2707E)
         val Orange = Color(0xFFF497A9)
         val Yellow = Color(0xFFF9BC86)
         val Green = Color(0xFF9DD87E)
@@ -31,7 +31,7 @@ object HMColor {
 
     object LightPastel {
         val Pink = Color(0xFFEAB5E4)
-        val Red = Color(0xFFF9A9B2)
+        val Red = Color(0xFFE297A0)
         val Orange = Color(0xFFFFBECB)
         val Yellow = Color(0xFFF9D3B1)
         val Green = Color(0xFFC5F3AC)

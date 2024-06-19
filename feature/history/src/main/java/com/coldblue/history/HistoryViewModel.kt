@@ -48,7 +48,8 @@ class HistoryViewModel @Inject constructor(
                         val titleBar = TitleBar(
                             name = graphList[index].name,
                             startDate = todoList.first().date.toString(),
-                            rank = HistoryUtil.calculateRank(graphList, index)
+                            rank = HistoryUtil.calculateRank(graphList, index),
+                            colorIndex = graphList[index].colorIndex
                         )
                         val historyController = HistoryController(
                             allCount = graphList[index].allCount,

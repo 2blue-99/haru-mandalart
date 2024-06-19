@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,11 +45,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.coldblue.designsystem.IconPack
+import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.iconpack.Check
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
+import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
 @Composable
@@ -60,18 +65,29 @@ fun HistoryContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(HMColor.Background)
-//            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            .padding(vertical = 16.dp, horizontal = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.Top),
+            .background(HMColor.Background),
+        verticalArrangement = Arrangement.Top,
+//        verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.Top),
 
     ) {
+
+        HMTopBar(title = "기록") {
+            navigateToBackStack()
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         HistoryGraph(
             todoGraph = historyUIState.todoGraph
         )
 
-        HistoryTitleBar()
+        Spacer(modifier = Modifier.height(10.dp))
 
+        HistoryTitleBar(
+            titleBar = historyUIState.titleBar
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
 
 
 //        HistoryController(
@@ -94,13 +110,14 @@ fun HistoryGraph(
     val maxHeight = (width / 2.5).toInt()
     val maxCount = todoGraph.maxOfOrNull { it.allCount } ?: 0
     val weight = maxHeight / maxCount
-
-
     var selected by remember { mutableIntStateOf(0) }
+
+    Logger.d(todoGraph)
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.Top
     ) {
         todoGraph.forEachIndexed{ index, it ->
@@ -112,6 +129,7 @@ fun HistoryGraph(
                     .clip(RoundedCornerShape(4.dp))
                     .background(color = if (index == selected) darkColor else Color.Transparent)
                     .padding(top = 4.dp)
+                    .clickable { if (it.name != "") selected = index }
             ) {
                 Column(
                     modifier = Modifier
@@ -164,13 +182,11 @@ fun HistoryGraph(
                         .padding(vertical = 8.dp)
                         .background(HMColor.Gray))
                 }
-
             }
         }
     }
 }
 
-//@Preview(widthDp = 400, heightDp = 200)
 @Preview
 @Composable
 fun HistoryGraphPreview(){
@@ -332,16 +348,43 @@ fun GraphBarPreview(){
     GraphBar(100.dp, 50, true, HMColor.Primary)
 }
 
-
-//@Preview
-//@Composable
-//fun GraphBarPreview(){
-//    GraphBar(60.dp,40.dp,80.dp,40,30,"푸푸",HMColor.LightPrimary, HMColor.Primary, false)
-//}
-
 @Composable
-fun HistoryTitleBar(){
-    Text(text = "helo")
+fun HistoryTitleBar(
+    titleBar: TitleBar
+){
+    val width = LocalConfiguration.current.screenWidthDp + 300f
+    val color = HistoryUtil.indexToDarkColor(titleBar.colorIndex)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(color, HMColor.Background),
+                    startX = width,
+                )
+            )
+            .padding(vertical = 8.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Absolute.SpaceBetween
+    ) {
+        Column {
+            Text(text = titleBar.name, style = HmStyle.text46, color = HMColor.Background)
+            Text(text = titleBar.startDate, style = HmStyle.text10, color = HMColor.Background)
+        }
+        if(titleBar.rank != null)
+            when(titleBar.rank){
+                1 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
+                2 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
+                3 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
+                else -> {}
+            }
+    }
+}
+
+@Preview(widthDp = 400)
+@Composable
+fun HistoryTitleBarPreview(){
+    HistoryTitleBar(TitleBar(name = "Hello", startDate = "2024-10-10", rank = 1, colorIndex = 1))
 }
 
 @Composable
