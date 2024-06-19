@@ -1,27 +1,22 @@
 package com.coldblue.todo.widget
 
+import com.coldblue.domain.manda.GetKeyMandaUseCase
 import com.coldblue.domain.setting.StartAppUseCase
 import com.coldblue.domain.todo.GetMandaTodoUseCase
 import com.coldblue.domain.todo.UpsertMandaTodoUseCase
 import com.coldblue.model.MandaTodo
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TodoWidgetViewModel @Inject constructor(
     private val getMandaTodoUseCase: GetMandaTodoUseCase,
     private val upsertMandaTodoUseCase: UpsertMandaTodoUseCase,
-    private val startAppUseCase: StartAppUseCase
+    private val startAppUseCase: StartAppUseCase,
+    private val getKeyMandaUseCase: GetKeyMandaUseCase,
 ) {
-//    private val coroutineScope = MainScope()
-//    val todos = getMandaTodoUseCase().stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.WhileSubscribed(5_000),
-//        initialValue = emptyList()
-//    )
-    val todos = getMandaTodoUseCase()
-
-    val todo = getMandaTodoUseCase()
-
-    fun startApp(){
+    val todos = getMandaTodoUseCase().map { it.filter { !it.isDone } }
+    val mandaKeys = getKeyMandaUseCase()
+    fun startApp() {
         startAppUseCase()
     }
 
