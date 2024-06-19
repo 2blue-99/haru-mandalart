@@ -1,6 +1,7 @@
 package com.coldblue.history
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +40,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,6 +61,7 @@ import java.time.LocalDate
 fun HistoryContent(
     historyUIState: HistoryUIState.Success,
     navigateToBackStack: () -> Unit,
+    changeCurrentIndex: (Int) -> Unit,
     changeYear: (String) -> Unit,
     changeDay: (String) -> Unit,
     updateTodo: (MandaTodo) -> Unit,
@@ -67,18 +71,17 @@ fun HistoryContent(
             .fillMaxSize()
             .background(HMColor.Background),
         verticalArrangement = Arrangement.Top,
-//        verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.Top),
-
     ) {
 
         HMTopBar(title = "기록") {
             navigateToBackStack()
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         HistoryGraph(
-            todoGraph = historyUIState.todoGraph
+            todoGraph = historyUIState.todoGraph,
+            changeCurrentIndex = changeCurrentIndex
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -104,15 +107,17 @@ fun HistoryContent(
 
 @Composable
 fun HistoryGraph(
-    todoGraph: List<TodoGraph>
+    todoGraph: List<TodoGraph>,
+    changeCurrentIndex: (Int) -> Unit = {}
 ){
+    Logger.d(todoGraph)
+
     val width = LocalConfiguration.current.screenWidthDp
     val maxHeight = (width / 2.5).toInt()
     val maxCount = todoGraph.maxOfOrNull { it.allCount } ?: 0
     val weight = maxHeight / maxCount
     var selected by remember { mutableIntStateOf(0) }
 
-    Logger.d(todoGraph)
 
     Row(
         modifier = Modifier
@@ -129,7 +134,12 @@ fun HistoryGraph(
                     .clip(RoundedCornerShape(4.dp))
                     .background(color = if (index == selected) darkColor else Color.Transparent)
                     .padding(top = 4.dp)
-                    .clickable { if (it.name != "") selected = index }
+                    .clickable {
+                        if (it.name != "") {
+                            changeCurrentIndex(index)
+                            selected = index
+                        }
+                    }
             ) {
                 Column(
                     modifier = Modifier
@@ -214,6 +224,7 @@ fun GraphBarGroup(
     lightColor: Color,
     selected: Boolean,
 ){
+    val empty = allCount == 0 && doneCount == 0
     Row(
         modifier = Modifier
             .height(height)
@@ -230,7 +241,7 @@ fun GraphBarGroup(
                 height = allHeight,
                 count = allCount,
                 selected = selected,
-                color = lightColor
+                color = if(empty) Color.Transparent else lightColor
             )
         }
         Box(
@@ -243,7 +254,7 @@ fun GraphBarGroup(
                 height = doneHeight,
                 count = doneCount,
                 selected = selected,
-                color = darkColor
+                color = if(empty) Color.Transparent else darkColor
             )
         }
         Box(modifier = Modifier.weight(1f))
@@ -325,7 +336,7 @@ fun GraphBar(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Text(text = count.toString(), style = HmStyle.text8, color = HMColor.Background)
+        Text(text = count.toString(), style = HmStyle.text8, color = if (selected) HMColor.Background else color)
         Box(
             modifier = Modifier
                 .zIndex(0f)
@@ -352,32 +363,53 @@ fun GraphBarPreview(){
 fun HistoryTitleBar(
     titleBar: TitleBar
 ){
-    val width = LocalConfiguration.current.screenWidthDp + 300f
+    Logger.d(titleBar)
+
     val color = HistoryUtil.indexToDarkColor(titleBar.colorIndex)
+    val colors = arrayOf(0.7f to color, 1f to HMColor.Background)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(color, HMColor.Background),
-                    startX = width,
-                )
-            )
+            .background(brush = Brush.horizontalGradient(colorStops = colors,))
             .padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Absolute.SpaceBetween
     ) {
-        Column {
-            Text(text = titleBar.name, style = HmStyle.text46, color = HMColor.Background)
-            Text(text = titleBar.startDate, style = HmStyle.text10, color = HMColor.Background)
+        Column(
+            modifier = Modifier.weight(5f)
+        ) {
+            Text(text = titleBar.name, style = HmStyle.text40, color = HMColor.Background, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                text = if(titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할일을 추가해보세요!",
+                style = HmStyle.text10,
+                color = HMColor.Background
+            )
         }
-        if(titleBar.rank != null)
-            when(titleBar.rank){
-                1 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
-                2 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
-                3 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
-                else -> {}
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            if(titleBar.rank != null) {
+                when (titleBar.rank) {
+                    0 -> Image(
+                        painter = painterResource(id = com.coldblue.designsystem.R.drawable.gold),
+                        contentDescription = "gold"
+                    )
+                    1-> Image(
+                         painter = painterResource(id = com.coldblue.designsystem.R.drawable.silver),
+                        contentDescription = "silver"
+                    )
+                    2 -> Image(
+                        painter = painterResource(id = com.coldblue.designsystem.R.drawable.bronze),
+                        contentDescription = "bronze"
+                    )
+                    else -> {}
+                }
             }
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import com.coldblue.domain.todo.GetMandaTodoByIndexUseCase
 import com.coldblue.domain.todo.GetUniqueTodoYearUseCase
 import com.coldblue.domain.todo.UpsertMandaTodoUseCase
 import com.coldblue.model.MandaTodo
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,14 +48,14 @@ class HistoryViewModel @Inject constructor(
                     ) { graphList, todoList, yearList ->
                         val titleBar = TitleBar(
                             name = graphList[index].name,
-                            startDate = todoList.first().date.toString(),
+                            startDate = if(todoList.isNotEmpty()) HistoryUtil.dateToString(todoList.first().date.toString()) else "",
                             rank = HistoryUtil.calculateRank(graphList, index),
                             colorIndex = graphList[index].colorIndex
                         )
                         val historyController = HistoryController(
                             allCount = graphList[index].allCount,
                             doneCount = graphList[index].doneCount,
-                            donePercentage = (graphList[index].doneCount / graphList[index].allCount * 100),
+                            donePercentage = if(graphList[index].allCount != 0) (graphList[index].doneCount / graphList[index].allCount * 100) else 0,
                             continueDate = HistoryUtil.calculateContinueDate(todoList),
                             controller = HistoryUtil.makeController(
                                 year.toInt(),
@@ -67,6 +68,8 @@ class HistoryViewModel @Inject constructor(
                             historyController = historyController,
                             todo = todoList
                         )
+                    }.catch {
+                        Logger.d(it)
                     }
                 }
             }
@@ -86,7 +89,7 @@ class HistoryViewModel @Inject constructor(
         _currentDay.value = day
     }
 
-    fun changeMandaTodoIndex(index: Int) {
+    fun changeCurrentIndex(index: Int) {
         _currentIndex.value = index
     }
 

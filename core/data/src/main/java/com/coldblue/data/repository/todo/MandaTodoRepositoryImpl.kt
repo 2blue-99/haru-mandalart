@@ -65,7 +65,10 @@ class MandaTodoRepositoryImpl @Inject constructor(
     }
 
     override fun getMandaTodoByIndexYear(index: Int, year: String): Flow<List<MandaTodo>> {
-        return mandaTodoDao.getMandaTodoByIndexYear(index, year).map { it.asDomain() }
+        return mandaTodoDao.getMandaTodoByIndexYear(index, year).map {
+            if(it.isNullOrEmpty()) emptyList()
+            else it.asDomain()
+        }
     }
 
     override fun getUniqueTodoYear(): Flow<List<String>> {

@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
+import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
 object HistoryUtil {
@@ -90,6 +91,8 @@ object HistoryUtil {
     fun calculateRank(graph: List<TodoGraph>, currentIndex: Int): Int? {
         val sortedGraph = graph.sortedByDescending { it.doneCount }
         val index = sortedGraph.indexOf(graph[currentIndex])
+        Logger.d(sortedGraph)
+        Logger.d(index)
         if(index in 0..2){
             return index
         }else{
@@ -130,5 +133,10 @@ object HistoryUtil {
             6 -> HMColor.LightPastel.Mint
             else -> HMColor.LightPastel.Purple
         }
+    }
+
+    fun dateToString(date: String): String{
+        val (year, month, day) = date.split("-")
+        return "${year}년 ${month}월 ${day}일"
     }
 }
