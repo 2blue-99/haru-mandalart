@@ -7,11 +7,9 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
-import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
 
 object MandaUtils {
 
@@ -103,26 +101,26 @@ object MandaUtils {
 
     private fun indexToDarkLightColor(index: Int): Color {
         return when (index) {
-            0 -> HMColor.Manda.Pink
-            1 -> HMColor.Manda.Red
-            2 -> HMColor.Manda.Orange
-            3 -> HMColor.Manda.Yellow
-            4 -> HMColor.Manda.Green
-            5 -> HMColor.Manda.Blue
-            6 -> HMColor.Manda.Mint
-            else -> HMColor.Manda.Purple
+            0 -> HMColor.DarkPastel.Pink
+            1 -> HMColor.DarkPastel.Red
+            2 -> HMColor.DarkPastel.Orange
+            3 -> HMColor.DarkPastel.Yellow
+            4 -> HMColor.DarkPastel.Green
+            5 -> HMColor.DarkPastel.Blue
+            6 -> HMColor.DarkPastel.Mint
+            else -> HMColor.DarkPastel.Purple
         }
     }
 
     fun colorToIndex(color: Color): Int {
         return when (color) {
-            HMColor.Manda.Pink -> 0
-            HMColor.Manda.Red -> 1
-            HMColor.Manda.Orange -> 2
-            HMColor.Manda.Yellow -> 3
-            HMColor.Manda.Green -> 4
-            HMColor.Manda.Blue -> 5
-            HMColor.Manda.Mint -> 6
+            HMColor.DarkPastel.Pink -> 0
+            HMColor.DarkPastel.Red -> 1
+            HMColor.DarkPastel.Orange -> 2
+            HMColor.DarkPastel.Yellow -> 3
+            HMColor.DarkPastel.Green -> 4
+            HMColor.DarkPastel.Blue -> 5
+            HMColor.DarkPastel.Mint -> 6
             else -> -1
         }
     }

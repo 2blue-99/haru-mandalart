@@ -79,14 +79,14 @@ fun MandaBottomSheet(
         mandaKeyList - listOf(mandaBottomSheetContentState.mandaBottomSheetContentType.mandaUI.name).toSet()
 
     var colorList = listOf(
-        HMColor.Manda.Pink,
-        HMColor.Manda.Red,
-        HMColor.Manda.Orange,
-        HMColor.Manda.Yellow,
-        HMColor.Manda.Green,
-        HMColor.Manda.Blue,
-        HMColor.Manda.Mint,
-        HMColor.Manda.Purple
+        HMColor.DarkPastel.Pink,
+        HMColor.DarkPastel.Red,
+        HMColor.DarkPastel.Orange,
+        HMColor.DarkPastel.Yellow,
+        HMColor.DarkPastel.Green,
+        HMColor.DarkPastel.Blue,
+        HMColor.DarkPastel.Mint,
+        HMColor.DarkPastel.Purple
     )
 
     Logger.d(MandaUtils.colorToIndex(mandaUI.color))
@@ -118,7 +118,7 @@ fun MandaBottomSheet(
                 dialogState = false
                 onDisMiss()
             },
-            tintColor = HMColor.Manda.Red,
+            tintColor = HMColor.DarkPastel.Red,
             onConfirmation = {
                 deleteMandaKey(
                     mandaUI.id,
@@ -423,7 +423,7 @@ fun MandaBottomSheetDone(
 @Composable
 fun RoundButtonPreview() {
     HMColorButton(
-        HMColor.Manda.Pink,
+        HMColor.DarkPastel.Pink,
         true,
         true,
     ) {}

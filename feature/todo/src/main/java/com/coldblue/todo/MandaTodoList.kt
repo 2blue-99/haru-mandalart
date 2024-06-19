@@ -1,7 +1,6 @@
 package com.coldblue.todo
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -50,7 +48,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.coldblue.data.util.toMillis
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.todo.AddSquare
@@ -65,7 +62,6 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.model.MyDate
 import com.coldblue.model.MyTime
 import com.coldblue.model.ToggleInfo
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -575,7 +571,7 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
 @Composable
 fun MandaTodoItemPreview() {
     MandaTodoList(
-        listOf(HMColor.Manda.Red, HMColor.Manda.Orange),
+        listOf(HMColor.DarkPastel.Red, HMColor.DarkPastel.Orange),
         1, DateRange.DAY,
         listOf(
             MandaTodo("1번투구ffffffffffffffffffffffffffffffsdddddddddddd", true, false, LocalTime.now(), LocalDate.now(), 1, false),

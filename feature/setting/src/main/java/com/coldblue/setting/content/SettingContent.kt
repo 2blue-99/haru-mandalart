@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -234,7 +233,7 @@ fun SettingContent(
                     if (loginState == LoginState.AuthenticatedLogin) {
                         SettingItem(
                             title = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
-                            color = HMColor.Manda.Red,
+                            color = HMColor.DarkPastel.Red,
                             isLast = false,
                             isClickable = true,
                             onClick = {
@@ -331,7 +330,7 @@ fun ResignDialog(
         targetText = "",
         text = stringResource(id = R.string.delete_dialog_resign),
         confirmText = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
-        tintColor = HMColor.Manda.Red,
+        tintColor = HMColor.DarkPastel.Red,
         onDismissRequest = {
             onDismiss()
         },
@@ -350,7 +349,7 @@ fun LogoutDialog(
         targetText = "",
         text = stringResource(id = R.string.delete_dialog_logout),
         confirmText = stringResource(id = R.string.setting_logout),
-        tintColor = HMColor.Manda.Red,
+        tintColor = HMColor.DarkPastel.Red,
         onDismissRequest = {
             onDismiss()
         },
@@ -369,7 +368,7 @@ fun InitDialog(
         targetText = "",
         text = stringResource(id = R.string.delete_dialog_init),
         confirmText = stringResource(id = R.string.setting_init),
-        tintColor = HMColor.Manda.Red,
+        tintColor = HMColor.DarkPastel.Red,
         onDismissRequest = {
             onDismiss()
         },
