@@ -3,7 +3,8 @@ package com.coldblue.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetMandaTodoGraphUseCase
-import com.coldblue.domain.todo.GetMandaTodoByIndexUseCase
+import com.coldblue.domain.todo.GetDoneDateByIndexYearUseCase
+import com.coldblue.domain.todo.GetMandaTodoByIndexDateUseCase
 import com.coldblue.domain.todo.GetUniqueTodoYearUseCase
 import com.coldblue.domain.todo.UpsertMandaTodoUseCase
 import com.coldblue.model.MandaTodo
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val getMandaTodoByIndexYearUseCase: GetMandaTodoByIndexUseCase,
+    private val getDoneDateByIndexYearUseCase: GetDoneDateByIndexYearUseCase,
+    private val getMandaTodoByIndexDateUseCase: GetMandaTodoByIndexDateUseCase,
     private val getMandaTodoGraphUseCase: GetMandaTodoGraphUseCase,
     private val getUniqueTodoYearUseCase: GetUniqueTodoYearUseCase,
     private val upsertMandaTodoUseCase: UpsertMandaTodoUseCase
@@ -31,8 +33,8 @@ class HistoryViewModel @Inject constructor(
     private val _currentYear = MutableStateFlow(LocalDate.now().year.toString())
     val currentYear: StateFlow<String> get() = _currentYear
 
-    private val _currentDay = MutableStateFlow(LocalDate.now().dayOfMonth.toString())
-    val currentDay: StateFlow<String> get() = _currentDay
+    private val _currentDate = MutableStateFlow(LocalDate.now().dayOfMonth.toString())
+    val currentDate: StateFlow<String> get() = _currentDate
 
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> get() = _currentIndex
@@ -40,26 +42,29 @@ class HistoryViewModel @Inject constructor(
     val historyUIState: StateFlow<HistoryUIState> =
         currentIndex.flatMapLatest { index ->
             currentYear.flatMapLatest { year ->
-                currentDay.flatMapLatest { day ->
+                currentDate.flatMapLatest { date ->
                     combine(
                         getMandaTodoGraphUseCase(),
-                        getMandaTodoByIndexYearUseCase(index, year),
+                        getDoneDateByIndexYearUseCase(index, year),
+                        getMandaTodoByIndexDateUseCase(index, date),
                         getUniqueTodoYearUseCase()
-                    ) { graphList, todoList, yearList ->
+                    ) { graphList, doneDateList, todoList, yearList ->
                         val titleBar = TitleBar(
                             name = graphList[index].name,
-                            startDate = if(todoList.isNotEmpty()) HistoryUtil.dateToString(todoList.first().date.toString()) else "",
+                            startDate = if(doneDateList.isNotEmpty()) HistoryUtil.dateToString(doneDateList.first().toString()) else "",
                             rank = HistoryUtil.calculateRank(graphList, index),
                             colorIndex = graphList[index].colorIndex
                         )
                         val historyController = HistoryController(
+                            color = HistoryUtil.indexToDarkColor(graphList[index].colorIndex),
                             allCount = graphList[index].allCount,
                             doneCount = graphList[index].doneCount,
                             donePercentage = if(graphList[index].allCount != 0) (graphList[index].doneCount / graphList[index].allCount * 100) else 0,
-                            continueDate = HistoryUtil.calculateContinueDate(todoList),
+                            continueDate = if(doneDateList.isNotEmpty()) HistoryUtil.calculateContinueDate(doneDateList) else 0,
                             controller = HistoryUtil.makeController(
                                 year.toInt(),
-                                todoList.map { it.date }),
+                                doneDateList
+                            ),
                             years = yearList
                         )
                         HistoryUIState.Success(
@@ -86,7 +91,7 @@ class HistoryViewModel @Inject constructor(
     }
 
     fun changeDay(day: String) {
-        _currentDay.value = day
+        _currentDate.value = day
     }
 
     fun changeCurrentIndex(index: Int) {

@@ -1,5 +1,6 @@
 package com.coldblue.history
 
+import androidx.compose.ui.graphics.Color
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
 import java.time.LocalDate
@@ -24,6 +25,7 @@ data class TitleBar(
 )
 
 data class HistoryController(
+    val color: Color,
     val allCount: Int,
     val doneCount: Int,
     val donePercentage: Int,
