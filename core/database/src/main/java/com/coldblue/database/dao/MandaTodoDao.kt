@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.coldblue.database.entity.MandaTodoEntity
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -45,8 +44,12 @@ interface MandaTodoDao {
     @Query("SELECT COUNT(id) FROM manda_todo WHERE manda_index = :index AND is_del = 0 AND is_done = 1")
     suspend fun getMandaTodoIndexDoneCount(index: Int): Int?
 
-    @Query("SELECT * FROM manda_todo WHERE manda_index = :index AND is_del = 0")
-    fun getMandaTodoByIndex(index: Int): Flow<List<MandaTodoEntity>>
+    @Query("SELECT * FROM manda_todo WHERE manda_index = :index AND strftime('%Y', date) = :year AND is_del = 0")
+    fun getMandaTodoByIndexYear(index: Int, year: String): Flow<List<MandaTodoEntity>>
+
+    @Query("SELECT DISTINCT strftime('%Y', date) From manda_todo WHERE is_del = 0")
+    fun getUniqueTodoYear(): Flow<List<String>?>
+
 
     @Query("Update manda_todo Set is_del = 1, is_Sync = 0, update_time = :date")
     suspend fun deleteAllMandaTodo(date: String)
