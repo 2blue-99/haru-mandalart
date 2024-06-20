@@ -19,7 +19,6 @@ import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -64,9 +63,21 @@ class MandaTodoRepositoryImpl @Inject constructor(
         return result
     }
 
-    override fun getMandaTodoByIndexYear(index: Int, year: String): Flow<List<MandaTodo>> {
-        return mandaTodoDao.getMandaTodoByIndexYear(index, year).map { it.asDomain() }
+    override fun getDoneDateByIndexYear(index: Int, year: String): Flow<List<String>> {
+        return mandaTodoDao.getDoneDateByIndexYear(index, year)
     }
+
+    override fun getMandaTodoByIndexDate(index: Int, date: String): Flow<List<MandaTodo>> {
+        return mandaTodoDao.getMandaTodoByIndexDate(index, date).map { it.asDomain() }
+    }
+
+//    override fun getDoneDateByIndexYear(index: Int, year: String): Flow<List<String>> {
+//        return mandaTodoDao.getDoneDateByIndexYear(index, year).map {
+//            if(it.isNullOrEmpty()) emptyList()
+//            else it.asDomain()
+//        }
+//    }
+
 
     override fun getUniqueTodoYear(): Flow<List<String>> {
         return mandaTodoDao.getUniqueTodoYear().map { it ?: listOf() }

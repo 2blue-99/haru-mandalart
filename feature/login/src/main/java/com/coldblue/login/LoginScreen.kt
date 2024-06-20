@@ -37,11 +37,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.explain.ExplainScreen
 import com.coldblue.login.state.LoginUiState
-import com.orhanobut.logger.Logger
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
-import io.github.jan.supabase.compose.auth.composable.NativeSignInState
 import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
 
 @Composable
@@ -208,7 +205,7 @@ fun LoginButton(
         ) {
             Image(
                 modifier = Modifier.size(22.dp),
-                painter = painterResource(id = com.coldblue.designsystem.R.drawable.google_icon),
+                painter = painterResource(id = com.coldblue.designsystem.R.drawable.google),
                 contentDescription = null
             )
             Text(
