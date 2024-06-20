@@ -1,43 +1,39 @@
 package com.coldblue.todo.widget
 
 import android.content.Context
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
-import androidx.glance.action.ActionParameters
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CheckBox
 import androidx.glance.appwidget.CheckboxDefaults
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.action.ActionCallback
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.components.TitleBar
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
 import androidx.glance.color.ColorProvider
+import androidx.glance.layout.Alignment
+import androidx.glance.layout.Box
 import androidx.glance.layout.Row
-import androidx.glance.layout.padding
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.MandaTodo
-import com.orhanobut.logger.Logger
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class TodoWidget : GlanceAppWidget() {
@@ -51,15 +47,9 @@ class TodoWidget : GlanceAppWidget() {
 
         provideContent {
             GlanceTheme {
-                val isCheck = remember {
-                    mutableStateOf(false)
-                }
                 val scope = rememberCoroutineScope()
-                var todos by remember { mutableStateOf<List<MandaTodo>>(emptyList()) }
-                LaunchedEffect(Unit) {
-                    todos = viewModel.todo.first()
-                }
-//                val todos by viewModel.todos.collectAsStateWithLifecycle()
+                val todos by viewModel.todos.collectAsState(emptyList<MandaTodo>())
+                val mandaKeys by viewModel.mandaKeys.collectAsState(emptyList())
 
                 Scaffold(
                     modifier = GlanceModifier.clickable { viewModel.startApp() },
@@ -72,35 +62,24 @@ class TodoWidget : GlanceAppWidget() {
                     }
                 ) {
                     LazyColumn() {
-                        item {
-                            Row() {
-                                val checkText = if (isCheck.value) "Checked" else "Unchecked"
-                                CheckBox(
-                                    modifier = GlanceModifier.padding(16.dp),
-                                    checked = isCheck.value,
-                                    onCheckedChange = {
-                                        isCheck.value = !isCheck.value
-                                    },
-                                    text = checkText
-                                )
-                            }
-                        }
                         items(todos) {
-                            Row {
+                            val mandaKey = mandaKeys.firstOrNull { key -> key.id-1 == it.mandaIndex }
+                            val color = indexToColor(mandaKey?.colorIndex ?: -1)
+
+                            Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
                                 CheckBox(
                                     colors = CheckboxDefaults.colors(
                                         checkedColor = ColorProvider(
-                                            day = HMColor.Primary,
-                                            night = HMColor.Primary
+                                            day = color,
+                                            night = color
                                         ),
                                         uncheckedColor = ColorProvider(
-                                            day = HMColor.Primary,
-                                            night = HMColor.Primary
+                                            day = color,
+                                            night = color
                                         )
                                     ),
                                     checked = it.isDone,
                                     onCheckedChange = {
-//                                        actionRunCallback(UpsertTodoActionCallback::class.java)
                                         scope.launch {
                                             viewModel.upsertMandaTodo(
                                                 it.copy(
@@ -108,10 +87,10 @@ class TodoWidget : GlanceAppWidget() {
                                                 )
                                             )
                                             TodoWidget().update(context, id)
-                                            Logger.d("업데이트 요청")
                                         }
                                     }
                                 )
+                                Spacer(modifier = GlanceModifier.width(4.dp))
                                 Text(
                                     text = it.title,
                                     style = TextStyle(color = GlanceTheme.colors.onSurface)
@@ -131,14 +110,18 @@ class TodoWidget : GlanceAppWidget() {
         fun getTodoViewModel(): TodoWidgetViewModel
     }
 
-    object UpsertTodoActionCallback : ActionCallback {
-        override suspend fun onAction(
-            context: Context,
-            glanceId: GlanceId,
-            parameters: ActionParameters
-        ) {
-            TodoWidget().update(context, glanceId)
+    private fun indexToColor(index: Int): Color {
+        return when (index) {
+            0 -> HMColor.DarkPastel.Pink
+            1 -> HMColor.DarkPastel.Red
+            2 -> HMColor.DarkPastel.Orange
+            3 -> HMColor.DarkPastel.Yellow
+            4 -> HMColor.DarkPastel.Green
+            5 -> HMColor.DarkPastel.Blue
+            6 -> HMColor.DarkPastel.Mint
+            7 -> HMColor.DarkPastel.Purple
+            else -> HMColor.Gray
         }
-
     }
+
 }
