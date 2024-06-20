@@ -1,6 +1,7 @@
 package com.coldblue.history
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,20 +15,22 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,6 +41,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,6 +62,7 @@ import java.time.LocalDate
 fun HistoryContent(
     historyUIState: HistoryUIState.Success,
     navigateToBackStack: () -> Unit,
+    changeCurrentIndex: (Int) -> Unit,
     changeYear: (String) -> Unit,
     changeDay: (String) -> Unit,
     updateTodo: (MandaTodo) -> Unit,
@@ -67,18 +72,17 @@ fun HistoryContent(
             .fillMaxSize()
             .background(HMColor.Background),
         verticalArrangement = Arrangement.Top,
-//        verticalArrangement = Arrangement.spacedBy(40.dp, Alignment.Top),
-
     ) {
 
         HMTopBar(title = "기록") {
             navigateToBackStack()
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         HistoryGraph(
-            todoGraph = historyUIState.todoGraph
+            todoGraph = historyUIState.todoGraph,
+            changeCurrentIndex = changeCurrentIndex
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -87,16 +91,12 @@ fun HistoryContent(
             titleBar = historyUIState.titleBar
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
 
-//        HistoryController(
-//            today = ,
-//            historyController = historyUIState.historyController,
-//            todoYearList = ,
-//            selectDate = ,
-//            selectYear =
-//        )
+        HistoryController(
+            historyController = historyUIState.historyController,
+        )
 
         HistoryTodo()
     }
@@ -104,15 +104,17 @@ fun HistoryContent(
 
 @Composable
 fun HistoryGraph(
-    todoGraph: List<TodoGraph>
+    todoGraph: List<TodoGraph>,
+    changeCurrentIndex: (Int) -> Unit = {}
 ){
+    Logger.d(todoGraph)
+
     val width = LocalConfiguration.current.screenWidthDp
     val maxHeight = (width / 2.5).toInt()
     val maxCount = todoGraph.maxOfOrNull { it.allCount } ?: 0
     val weight = maxHeight / maxCount
     var selected by remember { mutableIntStateOf(0) }
 
-    Logger.d(todoGraph)
 
     Row(
         modifier = Modifier
@@ -129,7 +131,12 @@ fun HistoryGraph(
                     .clip(RoundedCornerShape(4.dp))
                     .background(color = if (index == selected) darkColor else Color.Transparent)
                     .padding(top = 4.dp)
-                    .clickable { if (it.name != "") selected = index }
+                    .clickable {
+                        if (it.name != "") {
+                            changeCurrentIndex(index)
+                            selected = index
+                        }
+                    }
             ) {
                 Column(
                     modifier = Modifier
@@ -214,6 +221,7 @@ fun GraphBarGroup(
     lightColor: Color,
     selected: Boolean,
 ){
+    val empty = allCount == 0 && doneCount == 0
     Row(
         modifier = Modifier
             .height(height)
@@ -230,7 +238,7 @@ fun GraphBarGroup(
                 height = allHeight,
                 count = allCount,
                 selected = selected,
-                color = lightColor
+                color = if(empty) Color.Transparent else lightColor
             )
         }
         Box(
@@ -243,7 +251,7 @@ fun GraphBarGroup(
                 height = doneHeight,
                 count = doneCount,
                 selected = selected,
-                color = darkColor
+                color = if(empty) Color.Transparent else darkColor
             )
         }
         Box(modifier = Modifier.weight(1f))
@@ -325,7 +333,7 @@ fun GraphBar(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Text(text = count.toString(), style = HmStyle.text8, color = HMColor.Background)
+        Text(text = count.toString(), style = HmStyle.text8, color = if (selected) HMColor.Background else color)
         Box(
             modifier = Modifier
                 .zIndex(0f)
@@ -352,32 +360,53 @@ fun GraphBarPreview(){
 fun HistoryTitleBar(
     titleBar: TitleBar
 ){
-    val width = LocalConfiguration.current.screenWidthDp + 300f
+    Logger.d(titleBar)
+
     val color = HistoryUtil.indexToDarkColor(titleBar.colorIndex)
+    val colors = arrayOf(0.7f to color, 1f to HMColor.Background)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(color, HMColor.Background),
-                    startX = width,
-                )
-            )
+            .background(brush = Brush.horizontalGradient(colorStops = colors,))
             .padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Absolute.SpaceBetween
     ) {
-        Column {
-            Text(text = titleBar.name, style = HmStyle.text46, color = HMColor.Background)
-            Text(text = titleBar.startDate, style = HmStyle.text10, color = HMColor.Background)
+        Column(
+            modifier = Modifier.weight(5f)
+        ) {
+            Text(text = titleBar.name, style = HmStyle.text40, color = HMColor.Background, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(
+                text = if(titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할일을 추가해보세요!",
+                style = HmStyle.text10,
+                color = HMColor.Background
+            )
         }
-        if(titleBar.rank != null)
-            when(titleBar.rank){
-                1 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
-                2 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
-                3 -> Icon(imageVector = Icons.Default.Favorite, contentDescription = "Rank")
-                else -> {}
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            if(titleBar.rank != null) {
+                when (titleBar.rank) {
+                    0 -> Image(
+                        painter = painterResource(id = com.coldblue.designsystem.R.drawable.gold),
+                        contentDescription = "gold"
+                    )
+                    1-> Image(
+                         painter = painterResource(id = com.coldblue.designsystem.R.drawable.silver),
+                        contentDescription = "silver"
+                    )
+                    2 -> Image(
+                        painter = painterResource(id = com.coldblue.designsystem.R.drawable.bronze),
+                        contentDescription = "bronze"
+                    )
+                    else -> {}
+                }
             }
+        }
     }
 }
 
@@ -389,18 +418,54 @@ fun HistoryTitleBarPreview(){
 
 @Composable
 fun HistoryController(
-    today: LocalDate,
-    historyController: HistoryController,
-    todoYearList: List<Int>,
-    selectDate: (LocalDate) -> Unit,
-    selectYear: (Int) -> Unit,
+    historyController: HistoryController
 ) {
-//    var clickedDate by remember { mutableStateOf(today) }
-//    var clickedYear by remember { mutableStateOf(today.year) }
-//
-//    val screenWidth = LocalConfiguration.current.screenWidthDp
-//    val presentLocalDate = LocalDate.now()
-//
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(imageVector = Icons.Default.CheckCircle, tint = historyController.color, contentDescription = "Check")
+                Text(text = "완료 ~~", color = HMColor.SubDarkText)
+                PercentageCircle(color = historyController.color, percentage = historyController.donePercentage)
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(imageVector = Icons.Default.ThumbUp, tint = historyController.color, contentDescription = "Check")
+                Text(text = "${historyController.continueDate}일 연속 Clear!", color = HMColor.SubDarkText)
+            }
+        }
+        Controller(
+            color = historyController.color,
+            historyController = historyController.controller,
+            todoYearList = historyController.years,
+            selectDate = {},
+            selectYear = {}
+        )
+
+        YearPicker(
+            yearList = historyController.years
+        )
+    }
+}
+
+@Composable
+fun YearPicker(
+    yearList: List<String>,
+){
+    val today = LocalDate.now()
+    var clickedYear by remember { mutableStateOf(today.year) }
+
 //    fun dateController(year: Int) {
 //        clickedYear = year
 //        if (year == presentLocalDate.year) {
@@ -411,156 +476,237 @@ fun HistoryController(
 //            selectDate(LocalDate.MIN)
 //        }
 //    }
-//
-//    Column {
-//        Row {
-//            Column(
-//                modifier = Modifier.width((screenWidth / 16).dp)
-//            ) {
-//                ControllerBox(
-//                    containerColor = Color.Transparent,
-//                    sideText = "",
-//                    clickAble = false
-//                ) {}
-//                historyController.controller.forEach {
-//                    if (it is ControllerDayState.Default)
-//                        ControllerBox(
-//                            containerColor = Color.Transparent,
-//                            sideText = it.dayWeek,
-//                            clickAble = false
-//                        ) {}
-//                }
-//            }
-//            LazyRow(
-//                Modifier
-//                    .fillMaxWidth()
-//                    .background(HMColor.Background),
-//                horizontalArrangement = Arrangement.Start
-//            ) {
-//                itemsIndexed(historyController.slice(1..<historyController.size)) { weekIndex, controllerWeek ->
-//                    Column(
-//                        modifier = Modifier.width((screenWidth / 16).dp),
-//                        verticalArrangement = Arrangement.Top
-//                    ) {
-//                        ControllerBox(
-//                            containerColor = Color.Transparent,
-//                            sideText = if (controllerWeek.month != null) stringResource(id = R.string.history_month, controllerWeek.month) else "",
-//                            clickAble = false
-//                        ) {}
-//
-//                        controllerWeek.controllerDayList.forEachIndexed { dayIndex, dayState ->
-//
-//                            when (dayState) {
-//
-//                                is ControllerDayState.Default -> {
-//                                    ControllerBox(
-//                                        containerColor = Color.Transparent,
-//                                        sideText = dayState.dayWeek,
-//                                        clickAble = false
-//                                    ) {}
-//                                }
-//
-//                                is ControllerDayState.Empty -> {
-//                                    when (val timeState = dayState.timeState) {
-//
-//                                        is ControllerTimeState.Past -> {
-//                                            ControllerBox(
-//                                                containerColor = HMColor.Gray,
-//                                                tintColor = HMColor.Gray,
-//                                                isClicked = clickedDate == timeState.date
-//                                            ) {
-//                                                selectDate(timeState.date)
-//                                                clickedDate = timeState.date
-//                                            }
-//                                        }
-//
-//                                        is ControllerTimeState.Present -> {
-//                                            ControllerBox(
-//                                                containerColor = HMColor.Gray,
-//                                                tintColor = HMColor.Gray,
-//                                                isClicked = clickedDate == timeState.date
-//                                            ) {
-//                                                selectDate(timeState.date)
-//                                                clickedDate = timeState.date
-//                                            }
-//                                        }
-//
-//                                        is ControllerTimeState.Future -> {
-//                                            ControllerBox(
-//                                                containerColor = HMColor.Box,
-//                                                tintColor = HMColor.Box,
-//                                                isClicked = clickedDate == timeState.date
-//                                            ) {
-//                                                selectDate(timeState.date)
-//                                                clickedDate = timeState.date
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//
-//                                is ControllerDayState.Exist -> {
-//                                    when (val timeState = dayState.timeState) {
-//
-//                                        is ControllerTimeState.Past -> {
-//                                            ControllerBox(
-//                                                containerColor = HMColor.Box,
-//                                                tintColor = HMColor.Primary,
-//                                                isExistTodo = true,
-//                                                isClicked = clickedDate == timeState.date
-//                                            ) {
-//                                                selectDate(timeState.date)
-//                                                clickedDate = timeState.date
-//                                            }
-//                                        }
-//
-//                                        is ControllerTimeState.Present -> {
-//                                            ControllerBox(
-//                                                containerColor = HMColor.Box,
-//                                                tintColor = HMColor.Primary,
-//                                                isExistTodo = true,
-//                                                isClicked = clickedDate == timeState.date
-//                                            ) {
-//                                                selectDate(timeState.date)
-//                                                clickedDate = timeState.date
-//                                            }
-//                                        }
-//
-//                                        is ControllerTimeState.Future -> {
-//                                            ControllerBox(
-//                                                containerColor = HMColor.Background,
-//                                                tintColor = HMColor.LightPrimary,
-//                                                isExistTodo = true,
-//                                                isClicked = clickedDate == timeState.date
-//                                            ) {
-//                                                selectDate(timeState.date)
-//                                                clickedDate = timeState.date
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        LazyRow(
-//            Modifier
-//                .fillMaxWidth()
-//                .background(HMColor.Background),
-//            horizontalArrangement = Arrangement.End
-//        ) {
-//            itemsIndexed(todoYearList) { index, year ->
-//                ControllerYearButton(
-//                    year = year,
-//                    isChecked = clickedYear == year,
-//                ) {
-//                    selectYear(year)
-//                    dateController(year)
-//                }
-//            }
+
+    LazyRow(
+        Modifier
+            .fillMaxWidth()
+            .background(HMColor.Background),
+        horizontalArrangement = Arrangement.End
+    ) {
+        itemsIndexed(yearList) { index, year ->
+            ControllerYearButton(
+                year = year,
+                isClicked = clickedYear.toString() == year,
+            ) {
+//                selectYear(year)
+//                dateController(year.toInt())
+            }
+        }
+    }
+}
+
+
+
+@Preview
+@Composable
+fun HistoryControllerPreview(){
+    HistoryController(
+        HistoryController(HMColor.Primary, 100, 50, 50, 1, listOf(), years = listOf())
+    )
+}
+
+@Composable
+fun PercentageCircle(
+    color: Color,
+    percentage: Int
+){
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(color)
+    ) {
+        Text(
+            modifier = Modifier.padding(4.dp),
+            text = percentage.toString(),
+            style = HmStyle.text10,
+            color = HMColor.Background
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PercentageCirclePreview(){
+    PercentageCircle(
+        HMColor.Primary, 30
+    )
+}
+
+@Composable
+fun Controller(
+    color: Color,
+    historyController: List<Controller>,
+    todoYearList: List<String>,
+    selectDate: (LocalDate) -> Unit,
+    selectYear: (String) -> Unit,
+){
+    val today = LocalDate.now()
+    var clickedDate by remember { mutableStateOf(today) }
+    var clickedYear by remember { mutableStateOf(today.year) }
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val presentLocalDate = LocalDate.now()
+
+    val dayOfWeekList = historyController.first()
+    val todoList = historyController.slice(1 until historyController.size)
+
+//    fun dateController(year: Int) {
+//        clickedYear = year
+//        if (year == presentLocalDate.year) {
+//            clickedDate = presentLocalDate
+//            selectDate(presentLocalDate)
+//        } else {
+//            clickedDate = LocalDate.MIN
+//            selectDate(LocalDate.MIN)
 //        }
 //    }
+
+
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(4.dp))
+            .border(1.dp, color, RoundedCornerShape(4.dp)),
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 4.dp)
+        ) {
+            // 요일 Column
+            Column(
+                // TODO  Weight(1f)
+                modifier = Modifier.width((screenWidth / 16).dp)
+            ) {
+                ControllerBox(
+                    containerColor = Color.Transparent,
+                    sideText = "",
+                    clickAble = false,
+                    onClick = {}
+                )
+                dayOfWeekList.controllerDayList.forEach {
+                    if (it is ControllerDayState.Default)
+                        ControllerBox(
+                            containerColor = Color.Transparent,
+                            sideText = it.dayWeek,
+                            clickAble = false,
+                            onClick = {}
+                        )
+                }
+            }
+            LazyRow(
+                Modifier
+                    .fillMaxWidth()
+                    .background(HMColor.Background),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                itemsIndexed(historyController.slice(1..<historyController.size)) { weekIndex, controllerWeek ->
+                    Column(
+                        modifier = Modifier.width((screenWidth / 16).dp),
+                        verticalArrangement = Arrangement.Top
+                    ) {
+                        ControllerBox(
+                            containerColor = Color.Transparent,
+                            sideText = if (controllerWeek.month != null) "${controllerWeek.month}월" else "",
+//                            sideText = if (controllerWeek.month != null) stringResource(id = R.string.history_month, controllerWeek.month) else "",
+                            clickAble = false
+                        ) {}
+
+                        controllerWeek.controllerDayList.forEachIndexed { dayIndex, dayState ->
+
+                            when (dayState) {
+
+                                is ControllerDayState.Default -> {
+                                    ControllerBox(
+                                        containerColor = Color.Transparent,
+                                        sideText = dayState.dayWeek,
+                                        clickAble = false
+                                    ) {}
+                                }
+
+                                is ControllerDayState.Empty -> {
+                                    when (val timeState = dayState.timeState) {
+
+                                        is ControllerTimeState.Past -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Gray,
+                                                tintColor = HMColor.Gray,
+                                                isClicked = clickedDate == timeState.date
+                                            ) {
+                                                selectDate(timeState.date)
+                                                clickedDate = timeState.date
+                                            }
+                                        }
+
+                                        is ControllerTimeState.Present -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Gray,
+                                                tintColor = HMColor.Gray,
+                                                isClicked = clickedDate == timeState.date
+                                            ) {
+                                                selectDate(timeState.date)
+                                                clickedDate = timeState.date
+                                            }
+                                        }
+
+                                        is ControllerTimeState.Future -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Box,
+                                                tintColor = HMColor.Box,
+                                                isClicked = clickedDate == timeState.date
+                                            ) {
+                                                selectDate(timeState.date)
+                                                clickedDate = timeState.date
+                                            }
+                                        }
+                                    }
+                                }
+
+                                is ControllerDayState.Exist -> {
+                                    when (val timeState = dayState.timeState) {
+
+                                        is ControllerTimeState.Past -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Box,
+                                                tintColor = HMColor.Primary,
+                                                isExistTodo = true,
+                                                isClicked = clickedDate == timeState.date
+                                            ) {
+                                                selectDate(timeState.date)
+                                                clickedDate = timeState.date
+                                            }
+                                        }
+
+                                        is ControllerTimeState.Present -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Box,
+                                                tintColor = HMColor.Primary,
+                                                isExistTodo = true,
+                                                isClicked = clickedDate == timeState.date
+                                            ) {
+                                                selectDate(timeState.date)
+                                                clickedDate = timeState.date
+                                            }
+                                        }
+
+                                        is ControllerTimeState.Future -> {
+                                            ControllerBox(
+                                                containerColor = HMColor.Background,
+                                                tintColor = HMColor.LightPrimary,
+                                                isExistTodo = true,
+                                                isClicked = clickedDate == timeState.date
+                                            ) {
+                                                selectDate(timeState.date)
+                                                clickedDate = timeState.date
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -638,25 +784,27 @@ fun ControllerBox(
 
 @Composable
 fun ControllerYearButton(
-    year: Int,
-    isChecked: Boolean,
+    year: String,
+    isClicked: Boolean,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .padding(3.dp)
             .clip(RoundedCornerShape(5.dp))
-            .background(if (isChecked) HMColor.Primary else HMColor.Gray)
+            .background(if (isClicked) HMColor.Primary else HMColor.Gray)
             .clickable { onClick() }
     ) {
         Text(
             modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
             text = year.toString(),
-            color = if (isChecked) HMColor.Background else HMColor.Text,
+            color = if (isClicked) HMColor.Background else HMColor.Text,
             style = HmStyle.text12
         )
     }
 }
+
+
 
 @Composable
 fun HistoryTodo(){

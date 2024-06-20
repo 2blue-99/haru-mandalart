@@ -29,6 +29,7 @@ fun HistoryScreen(
         HistoryContentWithState(
             uiState = historyUIState,
             navigateToBackStack = navigateToBackStack,
+            changeCurrentIndex = historyViewModel::changeCurrentIndex,
             changeYear = historyViewModel::changeYear,
             changeDay = historyViewModel::changeDay,
             updateTodo = historyViewModel::updateMandaTodo,
@@ -40,6 +41,7 @@ fun HistoryScreen(
 fun HistoryContentWithState(
     uiState: HistoryUIState,
     navigateToBackStack: () -> Unit,
+    changeCurrentIndex: (Int) -> Unit,
     changeYear: (String) -> Unit,
     changeDay: (String) -> Unit,
     updateTodo: (MandaTodo) -> Unit,
@@ -51,6 +53,7 @@ fun HistoryContentWithState(
             HistoryContent(
                 historyUIState = uiState,
                 navigateToBackStack = navigateToBackStack,
+                changeCurrentIndex = changeCurrentIndex,
                 changeYear = changeYear,
                 changeDay = changeDay,
                 updateTodo = updateTodo,

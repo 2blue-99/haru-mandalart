@@ -2,8 +2,8 @@ package com.coldblue.history
 
 import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
-import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
+import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
 object HistoryUtil {
@@ -13,7 +13,7 @@ object HistoryUtil {
      * 첫번째 : 요일 리스트(일 ~ 토 7개)
      * 나머자 : Week 리스트(7개)
      */
-    fun makeController(year: Int, todoList: List<LocalDate>): List<Controller> {
+    fun makeController(year: Int, todoList: List<String>): List<Controller> {
         val resultList = mutableListOf<Controller>()
         val weekList = mutableListOf<ControllerDayState>()
         val startDay = LocalDate.of(year, 1, 1)
@@ -37,7 +37,6 @@ object HistoryUtil {
                 weekList.add(ControllerDayState.Default())
             }
         }
-
         // 1~12월까지 size가 7인 리스트 추가
         // 하루 기준 Todo가 있는지 없는지 판단
         // 하나라도 달성 시 채워주기
@@ -48,9 +47,8 @@ object HistoryUtil {
                 break
             }
 
-
             // Todo가 존재하는 Day
-            if (todoList.contains(currentDay)) {
+            if (todoList.contains(currentDay.toString())) {
                 if (currentDay < today) {
                     weekList.add(ControllerDayState.Exist(ControllerTimeState.Past(currentDay)))
                 } else if(currentDay == today){
@@ -90,6 +88,8 @@ object HistoryUtil {
     fun calculateRank(graph: List<TodoGraph>, currentIndex: Int): Int? {
         val sortedGraph = graph.sortedByDescending { it.doneCount }
         val index = sortedGraph.indexOf(graph[currentIndex])
+        Logger.d(sortedGraph)
+        Logger.d(index)
         if(index in 0..2){
             return index
         }else{
@@ -97,11 +97,14 @@ object HistoryUtil {
         }
     }
 
-    fun calculateContinueDate(todo: List<MandaTodo>): Int{
+    fun calculateContinueDate(todo: List<String>): Int {
+        var presentDate = LocalDate.now().minusDays(1)
         var result = 0
-        todo.reversed().find {
+
+        for(date in todo.reversed()){
+            if(presentDate.toString() != date) break
+            presentDate = presentDate.minusDays(1)
             result++
-            !it.isDone
         }
         return result
     }
@@ -131,4 +134,10 @@ object HistoryUtil {
             else -> HMColor.LightPastel.Purple
         }
     }
+
+    fun dateToString(date: String): String{
+        val (year, month, day) = date.split("-")
+        return "${year}년 ${month}월 ${day}일"
+    }
+
 }
