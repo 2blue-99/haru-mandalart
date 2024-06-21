@@ -28,12 +28,12 @@ object HistoryUtil {
         for(dayOfWeek in dayOfWeekList){
             weekList.add(ControllerDayState.Default(dayOfWeek))
         }
-        resultList.add(Controller(month = null, controllerDayList = weekList.toList()))
+        resultList.add(Controller(month = "", controllerDayList = weekList.toList()))
         weekList.clear()
 
         // 첫 주에 시작하는 요일 위치를 맞추기 위해 빈값 삽입
-        if (startDayOfWeek != 1) {
-            repeat(startDayOfWeek - 1) {
+        if (startDayOfWeek != 7) {
+            repeat(startDayOfWeek) {
                 weekList.add(ControllerDayState.Default())
             }
         }
@@ -43,7 +43,7 @@ object HistoryUtil {
         while (true) {
             if (currentDay > endDay) {
                 // 아래서 계산한 12월 마지막 주 리스트 삽입 후 Break
-                resultList.add(Controller(month = null, controllerDayList = weekList.toList()))
+                resultList.add(Controller(month = "", controllerDayList = weekList.toList()))
                 break
             }
 
@@ -73,7 +73,7 @@ object HistoryUtil {
                 val controllerFirstMonth = if(monthByFirstDayOfWeek == 12) 1 else monthByFirstDayOfWeek
                 resultList.add(
                     Controller(
-                        month = if (currentMonth == controllerFirstMonth) null else currentDay.month.value,
+                        month = if (currentMonth == controllerFirstMonth) "" else currentDay.month.value.toString(),
                         controllerDayList = weekList.toList()
                     )
                 )

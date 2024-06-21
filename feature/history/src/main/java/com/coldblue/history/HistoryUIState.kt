@@ -1,6 +1,5 @@
 package com.coldblue.history
 
-import androidx.compose.ui.graphics.Color
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
 import java.time.LocalDate
@@ -25,7 +24,7 @@ data class TitleBar(
 )
 
 data class HistoryController(
-    val color: Color,
+    val colorIndex: Int,
     val allCount: Int,
     val doneCount: Int,
     val donePercentage: Int,
@@ -35,15 +34,16 @@ data class HistoryController(
 )
 
 data class Controller(
-    val month: Int? = null,
+    val month: String = "",
     val controllerDayList: List<ControllerDayState>,
 )
 
 sealed interface ControllerDayState {
+    // 공간 차지를 위한 빈 박스
     data class Default(val dayWeek: String = ""): ControllerDayState
-
+    // TODO가 없는 박스
     data class Empty(val timeState: ControllerTimeState): ControllerDayState
-
+    // TODO가 있는 박스
     data class Exist(val timeState: ControllerTimeState): ControllerDayState
 }
 

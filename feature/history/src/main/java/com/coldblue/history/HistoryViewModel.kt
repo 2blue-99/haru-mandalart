@@ -56,7 +56,7 @@ class HistoryViewModel @Inject constructor(
                             colorIndex = graphList[index].colorIndex
                         )
                         val historyController = HistoryController(
-                            color = HistoryUtil.indexToDarkColor(graphList[index].colorIndex),
+                            colorIndex = graphList[index].colorIndex,
                             allCount = graphList[index].allCount,
                             doneCount = graphList[index].doneCount,
                             donePercentage = if(graphList[index].allCount != 0) (graphList[index].doneCount / graphList[index].allCount * 100) else 0,
