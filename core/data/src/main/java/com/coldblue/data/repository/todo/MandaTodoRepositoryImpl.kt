@@ -6,6 +6,7 @@ import com.coldblue.data.mapper.MandaTodoMapper.asEntity
 import com.coldblue.data.mapper.MandaTodoMapper.asNetworkModel
 import com.coldblue.data.mapper.MandaTodoMapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.sync.TodoWidgetHelper
 import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.isPassed
 import com.coldblue.database.dao.MandaKeyDao
@@ -29,6 +30,7 @@ class MandaTodoRepositoryImpl @Inject constructor(
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
     private val alarmScheduler: AlarmScheduler,
+    private val todoWidgetHelper: TodoWidgetHelper
 ) : MandaTodoRepository {
     override fun getMandaTodo(): Flow<List<MandaTodo>> {
         return mandaTodoDao.getMandaTodo().map { it.asDomain() }
@@ -43,11 +45,11 @@ class MandaTodoRepositoryImpl @Inject constructor(
         val result = mutableListOf<TodoGraph>()
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
         val counts = mandaTodoDao.getAllMandaTodoCount()
-        for(i in 0..8){
+        for (i in 0..8) {
             val firstKey = mandaKeys.first()
             result.add(
-                if(firstKey.id-1 == i){
-                    val todoData = counts[firstKey.id-1]
+                if (firstKey.id - 1 == i) {
+                    val todoData = counts[firstKey.id - 1]
                     mandaKeys.removeFirst()
                     TodoGraph(
                         name = firstKey.name,
@@ -55,7 +57,7 @@ class MandaTodoRepositoryImpl @Inject constructor(
                         doneCount = todoData.second,
                         colorIndex = firstKey.colorIndex
                     )
-                }else{
+                } else {
                     TodoGraph()
                 }
             )
@@ -87,7 +89,9 @@ class MandaTodoRepositoryImpl @Inject constructor(
     override suspend fun upsertMandaTodo(mandaTodo: MandaTodo) {
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
         mandaTodo.syncAlarm()
+        todoWidgetHelper.widgetUpdate()
         syncHelper.syncWrite()
+
     }
 
 

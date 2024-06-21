@@ -3,8 +3,8 @@
     android:description="@string/notice_title"
     android:minHeight="128dp"
     android:minWidth="192dp"
-    android:minResizeWidth="192dp"
     android:minResizeHeight="128dp"
+    android:minResizeWidth="192dp"
     android:resizeMode="horizontal|vertical"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:widgetCategory="home_screen" />
