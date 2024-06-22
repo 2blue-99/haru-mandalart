@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,6 +55,7 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
+import com.coldblue.todo.MandaTodoItem
 import com.orhanobut.logger.Logger
 import java.time.LocalDate
 
@@ -97,7 +99,10 @@ fun HistoryContent(
             historyController = historyUIState.historyController,
         )
 
-        HistoryTodo()
+        HistoryTodo(
+            todoList = historyUIState.todo,
+            color = HistoryUtil.indexToDarkColor(historyUIState.titleBar.colorIndex)
+        )
     }
 }
 
@@ -812,7 +817,7 @@ fun ControllerYearButton(
         modifier = Modifier
             .padding(3.dp)
             .clip(RoundedCornerShape(4.dp))
-            .border(1.dp, if(!isClicked) color else Color.Transparent, RoundedCornerShape(4.dp))
+            .border(1.dp, if (!isClicked) color else Color.Transparent, RoundedCornerShape(4.dp))
             .background(if (isClicked) color else HMColor.Background)
             .clickable { onClick() }
     ) {
@@ -828,7 +833,16 @@ fun ControllerYearButton(
 
 
 @Composable
-fun HistoryTodo(){
-
+fun HistoryTodo(
+    todoList: List<MandaTodo>,
+    color: Color
+){
+    LazyRow(
+        modifier = Modifier.fillMaxWidth()
+    ){
+        itemsIndexed(todoList){index, todo ->
+            MandaTodoItem(mandaTodo = todo, currentIndex = index, color = color, upsertMandaTodo = {})
+        }
+    }
 }
 
