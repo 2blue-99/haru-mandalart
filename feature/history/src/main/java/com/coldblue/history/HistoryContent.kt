@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -58,6 +58,7 @@ import com.coldblue.model.TodoGraph
 import com.coldblue.todo.MandaTodoItem
 import com.orhanobut.logger.Logger
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun HistoryContent(
@@ -97,10 +98,12 @@ fun HistoryContent(
 
         HistoryController(
             historyController = historyUIState.historyController,
+            changeDay = changeDay,
+            changeYear = changeYear
         )
 
         HistoryTodo(
-            todoList = historyUIState.todo,
+            todoController = historyUIState.todoController,
             color = HistoryUtil.indexToDarkColor(historyUIState.titleBar.colorIndex)
         )
     }
@@ -110,7 +113,7 @@ fun HistoryContent(
 fun HistoryGraph(
     todoGraph: List<TodoGraph>,
     changeCurrentIndex: (Int) -> Unit = {}
-){
+) {
     Logger.d(todoGraph)
 
     val width = LocalConfiguration.current.screenWidthDp
@@ -126,7 +129,7 @@ fun HistoryGraph(
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.Top
     ) {
-        todoGraph.forEachIndexed{ index, it ->
+        todoGraph.forEachIndexed { index, it ->
             val darkColor = HistoryUtil.indexToDarkColor(it.colorIndex)
             val lightColor = HistoryUtil.indexToLightColor(it.colorIndex)
             Column(
@@ -147,11 +150,11 @@ fun HistoryGraph(
                         .height(height = maxHeight.dp)
                         .padding(horizontal = 2.dp),
                     verticalArrangement = Arrangement.Top
-                ){
+                ) {
                     GraphBarGroup(
                         height = maxHeight.dp,
-                        allHeight = (it.allCount*weight).dp,
-                        doneHeight = (it.doneCount*weight).dp,
+                        allHeight = (it.allCount * weight).dp,
+                        doneHeight = (it.doneCount * weight).dp,
                         allCount = it.allCount,
                         doneCount = it.doneCount,
                         darkColor = darkColor,
@@ -160,10 +163,12 @@ fun HistoryGraph(
                     )
                 }
 
-                Spacer(modifier = Modifier
-                    .height(0.4.dp)
-                    .fillMaxWidth()
-                    .background(HMColor.SubDarkText))
+                Spacer(
+                    modifier = Modifier
+                        .height(0.4.dp)
+                        .fillMaxWidth()
+                        .background(HMColor.SubDarkText)
+                )
 
                 Row(
                     modifier = Modifier
@@ -172,26 +177,40 @@ fun HistoryGraph(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Spacer(modifier = Modifier
-                        .width(0.4.dp)
-                        .fillMaxHeight()
-                        .padding(vertical = 8.dp)
-                        .background(HMColor.Gray))
+                    Spacer(
+                        modifier = Modifier
+                            .width(0.4.dp)
+                            .fillMaxHeight()
+                            .padding(vertical = 8.dp)
+                            .background(HMColor.Gray)
+                    )
                     Box(
                         modifier = Modifier.padding(horizontal = 2.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        if(index == selected){
-                            Icon(imageVector = IconPack.Check, tint = HMColor.Background, contentDescription = "Check")
-                        }else{
-                            Text(text = it.name, style = HmStyle.text10, color = darkColor, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        if (index == selected) {
+                            Icon(
+                                imageVector = IconPack.Check,
+                                tint = HMColor.Background,
+                                contentDescription = "Check"
+                            )
+                        } else {
+                            Text(
+                                text = it.name,
+                                style = HmStyle.text10,
+                                color = darkColor,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier
-                        .width(0.4.dp)
-                        .fillMaxHeight()
-                        .padding(vertical = 8.dp)
-                        .background(HMColor.Gray))
+                    Spacer(
+                        modifier = Modifier
+                            .width(0.4.dp)
+                            .fillMaxHeight()
+                            .padding(vertical = 8.dp)
+                            .background(HMColor.Gray)
+                    )
                 }
             }
         }
@@ -200,17 +219,19 @@ fun HistoryGraph(
 
 @Preview
 @Composable
-fun HistoryGraphPreview(){
-    HistoryGraph(listOf(
-        TodoGraph("탈모", 150,60,0),
-        TodoGraph("탈모", 50,10,1),
-        TodoGraph("탈모", 10,10,2),
-        TodoGraph("탈모", 30,20,3),
-        TodoGraph("탈모", 50,40,4),
-        TodoGraph("탈모", 10,5,5),
-        TodoGraph("탈모", 0,0,6),
-        TodoGraph("탈모", 15,5,7),
-    ))
+fun HistoryGraphPreview() {
+    HistoryGraph(
+        listOf(
+            TodoGraph("탈모", 150, 60, 0),
+            TodoGraph("탈모", 50, 10, 1),
+            TodoGraph("탈모", 10, 10, 2),
+            TodoGraph("탈모", 30, 20, 3),
+            TodoGraph("탈모", 50, 40, 4),
+            TodoGraph("탈모", 10, 5, 5),
+            TodoGraph("탈모", 0, 0, 6),
+            TodoGraph("탈모", 15, 5, 7),
+        )
+    )
 }
 
 
@@ -224,14 +245,14 @@ fun GraphBarGroup(
     darkColor: Color,
     lightColor: Color,
     selected: Boolean,
-){
+) {
     val empty = allCount == 0 && doneCount == 0
     Row(
         modifier = Modifier
             .height(height)
             .offset(x = (1).dp),
         verticalAlignment = Alignment.Bottom
-    ){
+    ) {
         Box(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier
@@ -242,7 +263,7 @@ fun GraphBarGroup(
                 height = allHeight,
                 count = allCount,
                 selected = selected,
-                color = if(empty) Color.Transparent else lightColor
+                color = if (empty) Color.Transparent else lightColor
             )
         }
         Box(
@@ -250,12 +271,12 @@ fun GraphBarGroup(
                 .weight(3f)
                 .offset(x = (-2).dp)
                 .zIndex(1f)
-        ){
+        ) {
             GraphBar(
                 height = doneHeight,
                 count = doneCount,
                 selected = selected,
-                color = if(empty) Color.Transparent else darkColor
+                color = if (empty) Color.Transparent else darkColor
             )
         }
         Box(modifier = Modifier.weight(1f))
@@ -322,8 +343,8 @@ fun GraphBarGroup(
 
 @Preview
 @Composable
-fun GraphBarGroupPreview(){
-    GraphBarGroup(100.dp, 60.dp, 50.dp, 50,40,HMColor.Primary, HMColor.LightPrimary, true)
+fun GraphBarGroupPreview() {
+    GraphBarGroup(100.dp, 60.dp, 50.dp, 50, 40, HMColor.Primary, HMColor.LightPrimary, true)
 }
 
 @Composable
@@ -332,12 +353,16 @@ fun GraphBar(
     count: Int,
     selected: Boolean,
     color: Color,
-){
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
-        Text(text = count.toString(), style = HmStyle.text8, color = if (selected) HMColor.Background else color)
+        Text(
+            text = count.toString(),
+            style = HmStyle.text8,
+            color = if (selected) HMColor.Background else color
+        )
         Box(
             modifier = Modifier
                 .zIndex(0f)
@@ -354,16 +379,17 @@ fun GraphBar(
         )
     }
 }
+
 @Preview(widthDp = 50)
 @Composable
-fun GraphBarPreview(){
+fun GraphBarPreview() {
     GraphBar(100.dp, 50, true, HMColor.Primary)
 }
 
 @Composable
 fun HistoryTitleBar(
     titleBar: TitleBar
-){
+) {
     Logger.d(titleBar)
 
     val color = HistoryUtil.indexToDarkColor(titleBar.colorIndex)
@@ -371,7 +397,7 @@ fun HistoryTitleBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(brush = Brush.horizontalGradient(colorStops = colors,))
+            .background(brush = Brush.horizontalGradient(colorStops = colors))
             .padding(vertical = 8.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Absolute.SpaceBetween
@@ -379,9 +405,15 @@ fun HistoryTitleBar(
         Column(
             modifier = Modifier.weight(5f)
         ) {
-            Text(text = titleBar.name, style = HmStyle.text40, color = HMColor.Background, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(
-                text = if(titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할일을 추가해보세요!",
+                text = titleBar.name,
+                style = HmStyle.text40,
+                color = HMColor.Background,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = if (titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할일을 추가해보세요!",
                 style = HmStyle.text10,
                 color = HMColor.Background
             )
@@ -393,20 +425,23 @@ fun HistoryTitleBar(
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            if(titleBar.rank != null) {
+            if (titleBar.rank != null) {
                 when (titleBar.rank) {
                     0 -> Image(
                         painter = painterResource(id = com.coldblue.designsystem.R.drawable.gold),
                         contentDescription = "gold"
                     )
-                    1-> Image(
-                         painter = painterResource(id = com.coldblue.designsystem.R.drawable.silver),
+
+                    1 -> Image(
+                        painter = painterResource(id = com.coldblue.designsystem.R.drawable.silver),
                         contentDescription = "silver"
                     )
+
                     2 -> Image(
                         painter = painterResource(id = com.coldblue.designsystem.R.drawable.bronze),
                         contentDescription = "bronze"
                     )
+
                     else -> {}
                 }
             }
@@ -416,13 +451,15 @@ fun HistoryTitleBar(
 
 @Preview(widthDp = 400)
 @Composable
-fun HistoryTitleBarPreview(){
+fun HistoryTitleBarPreview() {
     HistoryTitleBar(TitleBar(name = "Hello", startDate = "2024-10-10", rank = 1, colorIndex = 1))
 }
 
 @Composable
 fun HistoryController(
-    historyController: HistoryController
+    historyController: HistoryController,
+    changeDay: (String) -> Unit,
+    changeYear: (String) -> Unit
 ) {
     val color = HistoryUtil.indexToDarkColor(historyController.colorIndex)
 
@@ -441,7 +478,12 @@ fun HistoryController(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(imageVector = Icons.Default.CheckCircle, tint = color, modifier = Modifier.size(24.dp), contentDescription = "Check")
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    tint = color,
+                    modifier = Modifier.size(24.dp),
+                    contentDescription = "Check"
+                )
                 Text(text = "완료 ~~", color = HMColor.SubDarkText, style = HmStyle.text10)
 //                PercentageCircle(color = historyController.color, percentage = historyController.donePercentage)
             }
@@ -450,30 +492,39 @@ fun HistoryController(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(imageVector = Icons.Default.ThumbUp, tint = color, contentDescription = "Check")
-                Text(text = "${historyController.continueDate}일 연속 Clear!", color = HMColor.SubDarkText, style = HmStyle.text10)
+                Icon(
+                    imageVector = Icons.Default.ThumbUp,
+                    tint = color,
+                    contentDescription = "Check"
+                )
+                Text(
+                    text = "${historyController.continueDate}일 연속 Clear!",
+                    color = HMColor.SubDarkText,
+                    style = HmStyle.text10
+                )
             }
         }
         Controller(
             colorIndex = historyController.colorIndex,
             historyController = historyController.controller,
-            todoYearList = historyController.years,
-            selectDate = {},
-            selectYear = {}
+            selectDate = changeDay,
         )
 
         YearPicker(
             color = color,
-            yearList = historyController.years
+            yearList = historyController.years,
+            changeYear = changeYear
         )
     }
 }
 
 @Preview
 @Composable
-fun HistoryControllerPreview(){
+fun HistoryControllerPreview() {
     HistoryController(
-        HistoryController(1, 100, 50, 50, 1, listOf(), years = listOf())
+        HistoryController(1, 100, 50, 50, 1, listOf(), years = listOf()),
+        {},
+        {}
     )
 }
 
@@ -481,7 +532,8 @@ fun HistoryControllerPreview(){
 fun YearPicker(
     color: Color,
     yearList: List<String>,
-){
+    changeYear: (String) -> Unit
+) {
     val today = LocalDate.now()
     var clickedYear by remember { mutableStateOf(today.year) }
 
@@ -515,10 +567,11 @@ fun YearPicker(
 
 @Preview
 @Composable
-fun YearPickerPreview(){
+fun YearPickerPreview() {
     YearPicker(
         color = HMColor.DarkPastel.Red,
-        yearList = listOf("2024","2023","2022")
+        yearList = listOf("2024", "2023", "2022"),
+        {}
     )
 }
 
@@ -555,16 +608,14 @@ fun YearPickerPreview(){
 fun Controller(
     colorIndex: Int,
     historyController: List<Controller>,
-    todoYearList: List<String>,
-    selectDate: (LocalDate) -> Unit,
-    selectYear: (String) -> Unit,
-){
+    selectDate: (String) -> Unit,
+) {
     val today = LocalDate.now()
     var clickedDate by remember { mutableStateOf(today) }
-    var clickedYear by remember { mutableStateOf(today.year) }
+//    var clickedYear by remember { mutableStateOf(today.year) }
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    val presentLocalDate = LocalDate.now()
+//    val presentLocalDate = LocalDate.now()
 
     val dayOfWeekList = historyController.first()
     val todoList = historyController.slice(1 until historyController.size)
@@ -572,16 +623,16 @@ fun Controller(
     val darkColor = HistoryUtil.indexToDarkColor(colorIndex)
     val lightColor = HistoryUtil.indexToLightColor(colorIndex)
 
-    fun dateController(year: Int) {
-        clickedYear = year
-        if (year == presentLocalDate.year) {
-            clickedDate = presentLocalDate
-            selectDate(presentLocalDate)
-        } else {
-            clickedDate = LocalDate.MIN
-            selectDate(LocalDate.MIN)
-        }
-    }
+//    fun dateController(year: Int) {
+//        clickedYear = year
+//        if (year == presentLocalDate.year) {
+//            clickedDate = presentLocalDate
+//            selectDate(presentLocalDate.toString())
+//        } else {
+//            clickedDate = LocalDate.MIN
+//            selectDate(LocalDate.MIN.toString())
+//        }
+//    }
 
 
     Column(
@@ -617,13 +668,14 @@ fun Controller(
                         verticalArrangement = Arrangement.Top
                     ) {
                         // 상단 요일 Box
-                        ControllerTextBox(text = if(controller.month.isNotBlank()) "${controller.month}월" else "")
+                        ControllerTextBox(text = if (controller.month.isNotBlank()) "${controller.month}월" else "")
                         // 투두 Box
                         controller.controllerDayList.forEachIndexed { dayIndex, dayState ->
                             when (dayState) {
                                 is ControllerDayState.Default -> {
                                     ControllerBox()
                                 }
+
                                 is ControllerDayState.Empty -> {
                                     when (val timeState = dayState.timeState) {
 
@@ -633,7 +685,7 @@ fun Controller(
                                                 tintColor = darkColor,
                                                 isClicked = clickedDate == timeState.date,
                                             ) {
-                                                selectDate(timeState.date)
+                                                selectDate(timeState.date.toString())
                                                 clickedDate = timeState.date
                                             }
                                         }
@@ -644,7 +696,7 @@ fun Controller(
                                                 tintColor = darkColor,
                                                 isClicked = clickedDate == timeState.date
                                             ) {
-                                                selectDate(timeState.date)
+                                                selectDate(timeState.date.toString())
                                                 clickedDate = timeState.date
                                             }
                                         }
@@ -655,7 +707,7 @@ fun Controller(
                                                 tintColor = lightColor,
                                                 isClicked = clickedDate == timeState.date
                                             ) {
-                                                selectDate(timeState.date)
+                                                selectDate(timeState.date.toString())
                                                 clickedDate = timeState.date
                                             }
                                         }
@@ -672,7 +724,7 @@ fun Controller(
                                                 isExistTodo = true,
                                                 isClicked = clickedDate == timeState.date
                                             ) {
-                                                selectDate(timeState.date)
+                                                selectDate(timeState.date.toString())
                                                 clickedDate = timeState.date
                                             }
                                         }
@@ -684,7 +736,7 @@ fun Controller(
                                                 isExistTodo = true,
                                                 isClicked = clickedDate == timeState.date
                                             ) {
-                                                selectDate(timeState.date)
+                                                selectDate(timeState.date.toString())
                                                 clickedDate = timeState.date
                                             }
                                         }
@@ -696,7 +748,7 @@ fun Controller(
                                                 isExistTodo = true,
                                                 isClicked = clickedDate == timeState.date
                                             ) {
-                                                selectDate(timeState.date)
+                                                selectDate(timeState.date.toString())
                                                 clickedDate = timeState.date
                                             }
                                         }
@@ -714,7 +766,7 @@ fun Controller(
 @Composable
 fun ControllerTextBox(
     text: String
-){
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -722,14 +774,14 @@ fun ControllerTextBox(
             .padding(3.dp)
             .background(Color.Transparent),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Text(text = text, style = HmStyle.text8, color = HMColor.SubDarkText)
     }
 }
 
 @Preview
 @Composable
-fun ControllerTextBoxPreview(){
+fun ControllerTextBoxPreview() {
     ControllerTextBox(
         text = "월"
     )
@@ -796,7 +848,7 @@ fun ControllerBox(
 
 @Preview
 @Composable
-fun ControllerBoxPreview(){
+fun ControllerBoxPreview() {
     ControllerBox(
         containerColor = HMColor.Gray,
         tintColor = HMColor.DarkPastel.Orange,
@@ -831,18 +883,61 @@ fun ControllerYearButton(
 }
 
 
-
 @Composable
 fun HistoryTodo(
-    todoList: List<MandaTodo>,
+    todoController: TodoController,
     color: Color
-){
-    LazyRow(
+) {
+
+    Column(
         modifier = Modifier.fillMaxWidth()
-    ){
-        itemsIndexed(todoList){index, todo ->
-            MandaTodoItem(mandaTodo = todo, currentIndex = index, color = color, upsertMandaTodo = {})
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(text = todoController.date, style = HmStyle.text16, color = color)
+            Text(
+                text = "(${todoController.dayAllCount} / ${todoController.dayDoneCount})",
+                style = HmStyle.text16,
+                color = HMColor.SubDarkText
+            )
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Top
+        ) {
+            itemsIndexed(todoController.todoList) { index, todo ->
+                MandaTodoItem(
+                    mandaTodo = todo,
+                    currentIndex = index,
+                    color = color,
+                    upsertMandaTodo = {})
+            }
         }
     }
 }
+
+@Preview
+@Composable
+fun HistoryTodoPreview() {
+    HistoryTodo(
+        TodoController(
+            date = "2024-06-25",
+            dayAllCount = 100,
+            dayDoneCount = 50,
+            todoList = listOf(
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1),
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1),
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1),
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1)
+            ),
+
+            ),
+        color = HMColor.DarkPastel.Orange,
+    )
+}
+
 

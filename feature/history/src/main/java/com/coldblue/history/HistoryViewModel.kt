@@ -33,7 +33,7 @@ class HistoryViewModel @Inject constructor(
     private val _currentYear = MutableStateFlow(LocalDate.now().year.toString())
     val currentYear: StateFlow<String> get() = _currentYear
 
-    private val _currentDate = MutableStateFlow(LocalDate.now().dayOfMonth.toString())
+    private val _currentDate = MutableStateFlow(LocalDate.now().toString())
     val currentDate: StateFlow<String> get() = _currentDate
 
     private val _currentIndex = MutableStateFlow(0)
@@ -67,11 +67,17 @@ class HistoryViewModel @Inject constructor(
                             ),
                             years = yearList
                         )
+                        val todoController = TodoController(
+                            date = date,
+                            dayAllCount = todoList.size,
+                            dayDoneCount = todoList.filter { it.isDone }.size,
+                            todoList = todoList
+                        )
                         HistoryUIState.Success(
                             todoGraph = graphList,
                             titleBar = titleBar,
                             historyController = historyController,
-                            todo = todoList
+                            todoController = todoController
                         )
                     }.catch {
                         Logger.d(it)

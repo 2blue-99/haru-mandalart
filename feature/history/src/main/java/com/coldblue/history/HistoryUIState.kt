@@ -13,7 +13,7 @@ sealed interface HistoryUIState {
         val todoGraph: List<TodoGraph>,
         val titleBar: TitleBar,
         val historyController: HistoryController,
-        val todo: List<MandaTodo>
+        val todoController: TodoController
     ) : HistoryUIState
 }
 data class TitleBar(
@@ -31,6 +31,13 @@ data class HistoryController(
     val continueDate: Int,
     val controller: List<Controller>,
     val years: List<String>
+)
+
+data class TodoController(
+    val date: String,
+    val dayAllCount: Int,
+    val dayDoneCount: Int,
+    val todoList: List<MandaTodo>
 )
 
 data class Controller(
