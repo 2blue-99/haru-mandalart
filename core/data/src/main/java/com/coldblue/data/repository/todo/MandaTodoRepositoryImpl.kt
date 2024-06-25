@@ -48,6 +48,7 @@ class MandaTodoRepositoryImpl @Inject constructor(
         Logger.d(mandaKeys)
         Logger.d(counts)
         for (i in 1..9) {
+            if(i == 5) continue
             result.add(
                 if(mandaKeys.isNotEmpty()){
                     val firstKey = mandaKeys.first()
