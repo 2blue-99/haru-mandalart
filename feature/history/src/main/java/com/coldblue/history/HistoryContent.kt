@@ -80,8 +80,6 @@ fun HistoryContent(
             navigateToBackStack()
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
-
         HistoryGraph(
             todoGraph = historyUIState.todoGraph,
             changeCurrentIndex = changeCurrentIndex
@@ -117,10 +115,10 @@ fun HistoryGraph(
     Logger.d(todoGraph)
 
     val width = LocalConfiguration.current.screenWidthDp
-    val maxHeight = (width / 2.5).toInt()
+    val maxHeight = (width / 4)
     val maxCount = todoGraph.maxOfOrNull { it.allCount } ?: 0
-    val weight = maxHeight / maxCount
-    var selected by remember { mutableIntStateOf(0) }
+    val weight = if(maxCount != 0) maxHeight / maxCount else 0
+    var selected by remember { mutableIntStateOf(todoGraph.indexOfFirst { it.name != "" }) }
 
 
     Row(
@@ -390,8 +388,6 @@ fun GraphBarPreview() {
 fun HistoryTitleBar(
     titleBar: TitleBar
 ) {
-    Logger.d(titleBar)
-
     val color = HistoryUtil.indexToDarkColor(titleBar.colorIndex)
     val colors = arrayOf(0.7f to color, 1f to HMColor.Background)
     Row(
@@ -407,7 +403,7 @@ fun HistoryTitleBar(
         ) {
             Text(
                 text = titleBar.name,
-                style = HmStyle.text40,
+                style = HmStyle.text30,
                 color = HMColor.Background,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -888,25 +884,39 @@ fun HistoryTodo(
     todoController: TodoController,
     color: Color
 ) {
+    val colors = arrayOf(0.1f to HMColor.Gray, 1f to HMColor.Background)
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .padding(bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
             verticalAlignment = Alignment.Bottom
         ) {
-            Text(text = todoController.date, style = HmStyle.text16, color = color)
+            Text(text = todoController.date, style = HmStyle.text20, color = color)
             Text(
                 text = "(${todoController.dayAllCount} / ${todoController.dayDoneCount})",
-                style = HmStyle.text16,
+                style = HmStyle.text20,
                 color = HMColor.SubDarkText
             )
         }
 
+        Spacer(modifier = Modifier
+            .height(6.dp)
+            .fillMaxWidth()
+            .background(brush = Brush.verticalGradient(colorStops = colors))
+        )
+
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 4.dp)
+                .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.Top
         ) {
             itemsIndexed(todoController.todoList) { index, todo ->

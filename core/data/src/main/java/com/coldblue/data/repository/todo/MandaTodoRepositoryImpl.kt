@@ -45,23 +45,30 @@ class MandaTodoRepositoryImpl @Inject constructor(
         val result = mutableListOf<TodoGraph>()
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
         val counts = mandaTodoDao.getAllMandaTodoCount()
-        for (i in 0..8) {
-            val firstKey = mandaKeys.first()
+        Logger.d(mandaKeys)
+        Logger.d(counts)
+        for (i in 1..9) {
             result.add(
-                if (firstKey.id - 1 == i) {
-                    val todoData = counts[firstKey.id - 1]
-                    mandaKeys.removeFirst()
-                    TodoGraph(
-                        name = firstKey.name,
-                        allCount = todoData.first,
-                        doneCount = todoData.second,
-                        colorIndex = firstKey.colorIndex
-                    )
-                } else {
+                if(mandaKeys.isNotEmpty()){
+                    val firstKey = mandaKeys.first()
+                    if (firstKey.id == i) {
+                        val todoData = counts[firstKey.id - 1]
+                        mandaKeys.removeFirst()
+                        TodoGraph(
+                            name = firstKey.name,
+                            allCount = todoData.first,
+                            doneCount = todoData.second,
+                            colorIndex = firstKey.colorIndex
+                        )
+                    } else {
+                        TodoGraph()
+                    }
+                }else{
                     TodoGraph()
                 }
             )
         }
+        Logger.d(result)
         return result
     }
 

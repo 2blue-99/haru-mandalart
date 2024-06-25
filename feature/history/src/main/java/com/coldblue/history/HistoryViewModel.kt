@@ -49,6 +49,10 @@ class HistoryViewModel @Inject constructor(
                         getMandaTodoByIndexDateUseCase(index, date),
                         getUniqueTodoYearUseCase()
                     ) { graphList, doneDateList, todoList, yearList ->
+                        Logger.d(graphList)
+                        Logger.d(doneDateList)
+                        Logger.d(todoList)
+                        Logger.d(yearList)
                         val titleBar = TitleBar(
                             name = graphList[index].name,
                             startDate = if(doneDateList.isNotEmpty()) HistoryUtil.dateToString(doneDateList.first().toString()) else "",
