@@ -45,7 +45,7 @@ interface MandaTodoDao {
     suspend fun getMandaTodoIndexDoneCount(index: Int): Int?
 
     @Query("SELECT date FROM manda_todo WHERE manda_index = :index AND strftime('%Y', date) = :year AND is_del = 0")
-    fun getDoneDateByIndexYear(index: Int, year: String): Flow<List<String>>
+    fun getTodoExistDateByIndexYear(index: Int, year: String): Flow<List<String>>
 
     @Query("SELECT * FROM manda_todo WHERE manda_index = :index AND strftime('%Y-%m-%d', date) = :date AND is_del = 0")
     fun getMandaTodoByIndexDate(index: Int, date: String): Flow<List<MandaTodoEntity>>

@@ -45,19 +45,24 @@ class MandaTodoRepositoryImpl @Inject constructor(
         val result = mutableListOf<TodoGraph>()
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
         val counts = mandaTodoDao.getAllMandaTodoCount()
-        for (i in 0..8) {
-            val firstKey = mandaKeys.first()
+        for (i in 1..9) {
+            if(i == 5) continue
             result.add(
-                if (firstKey.id - 1 == i) {
-                    val todoData = counts[firstKey.id - 1]
-                    mandaKeys.removeFirst()
-                    TodoGraph(
-                        name = firstKey.name,
-                        allCount = todoData.first,
-                        doneCount = todoData.second,
-                        colorIndex = firstKey.colorIndex
-                    )
-                } else {
+                if(mandaKeys.isNotEmpty()){
+                    val firstKey = mandaKeys.first()
+                    if (firstKey.id == i) {
+                        val todoData = counts[firstKey.id - 1]
+                        mandaKeys.removeFirst()
+                        TodoGraph(
+                            name = firstKey.name,
+                            allCount = todoData.first,
+                            doneCount = todoData.second,
+                            colorIndex = firstKey.colorIndex
+                        )
+                    } else {
+                        TodoGraph()
+                    }
+                }else{
                     TodoGraph()
                 }
             )
@@ -65,8 +70,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
         return result
     }
 
-    override fun getDoneDateByIndexYear(index: Int, year: String): Flow<List<String>> {
-        return mandaTodoDao.getDoneDateByIndexYear(index, year)
+    override fun getTodoExistDateByIndexYear(index: Int, year: String): Flow<List<String>> {
+        return mandaTodoDao.getTodoExistDateByIndexYear(index, year)
     }
 
     override fun getMandaTodoByIndexDate(index: Int, date: String): Flow<List<MandaTodo>> {

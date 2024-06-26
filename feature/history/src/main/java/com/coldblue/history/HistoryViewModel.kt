@@ -3,7 +3,7 @@ package com.coldblue.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.todo.GetMandaTodoGraphUseCase
-import com.coldblue.domain.todo.GetDoneDateByIndexYearUseCase
+import com.coldblue.domain.todo.GetTodoExistDateByIndexYearUseCase
 import com.coldblue.domain.todo.GetMandaTodoByIndexDateUseCase
 import com.coldblue.domain.todo.GetUniqueTodoYearUseCase
 import com.coldblue.domain.todo.UpsertMandaTodoUseCase
@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -23,29 +24,37 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val getDoneDateByIndexYearUseCase: GetDoneDateByIndexYearUseCase,
+    private val getTodoExistDateByIndexYearUseCase: GetTodoExistDateByIndexYearUseCase,
     private val getMandaTodoByIndexDateUseCase: GetMandaTodoByIndexDateUseCase,
     private val getMandaTodoGraphUseCase: GetMandaTodoGraphUseCase,
     private val getUniqueTodoYearUseCase: GetUniqueTodoYearUseCase,
     private val upsertMandaTodoUseCase: UpsertMandaTodoUseCase
 ) : ViewModel() {
+    init {
+        viewModelScope.launch {
+            val firstIndex = HistoryUtil.initGraphIndex(getMandaTodoGraphUseCase().first())
+            _currentIndex.value = firstIndex
+        }
+    }
 
     private val _currentYear = MutableStateFlow(LocalDate.now().year.toString())
     val currentYear: StateFlow<String> get() = _currentYear
 
-    private val _currentDate = MutableStateFlow(LocalDate.now().dayOfMonth.toString())
+    private val _currentDate = MutableStateFlow(LocalDate.now().toString())
     val currentDate: StateFlow<String> get() = _currentDate
 
     private val _currentIndex = MutableStateFlow(0)
     val currentIndex: StateFlow<Int> get() = _currentIndex
 
+    // graph 데이터를 가져오기
+    // 존재하는 데이터 중 가장 왼쪽 데이터 선택
     val historyUIState: StateFlow<HistoryUIState> =
         currentIndex.flatMapLatest { index ->
             currentYear.flatMapLatest { year ->
                 currentDate.flatMapLatest { date ->
                     combine(
                         getMandaTodoGraphUseCase(),
-                        getDoneDateByIndexYearUseCase(index, year),
+                        getTodoExistDateByIndexYearUseCase(index, year),
                         getMandaTodoByIndexDateUseCase(index, date),
                         getUniqueTodoYearUseCase()
                     ) { graphList, doneDateList, todoList, yearList ->
@@ -56,7 +65,7 @@ class HistoryViewModel @Inject constructor(
                             colorIndex = graphList[index].colorIndex
                         )
                         val historyController = HistoryController(
-                            color = HistoryUtil.indexToDarkColor(graphList[index].colorIndex),
+                            colorIndex = graphList[index].colorIndex,
                             allCount = graphList[index].allCount,
                             doneCount = graphList[index].doneCount,
                             donePercentage = if(graphList[index].allCount != 0) (graphList[index].doneCount / graphList[index].allCount * 100) else 0,
@@ -67,11 +76,17 @@ class HistoryViewModel @Inject constructor(
                             ),
                             years = yearList
                         )
+                        val todoController = TodoController(
+                            date = date,
+                            dayAllCount = todoList.size,
+                            dayDoneCount = todoList.filter { it.isDone }.size,
+                            todoList = todoList
+                        )
                         HistoryUIState.Success(
                             todoGraph = graphList,
                             titleBar = titleBar,
                             historyController = historyController,
-                            todo = todoList
+                            todoController = todoController
                         )
                     }.catch {
                         Logger.d(it)
@@ -99,6 +114,7 @@ class HistoryViewModel @Inject constructor(
     }
 
     fun updateMandaTodo(todo: MandaTodo) {
+        Logger.d(todo)
         viewModelScope.launch {
             upsertMandaTodoUseCase(todo)
         }
