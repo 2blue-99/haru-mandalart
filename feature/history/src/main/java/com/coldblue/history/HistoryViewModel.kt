@@ -31,8 +31,11 @@ class HistoryViewModel @Inject constructor(
     private val upsertMandaTodoUseCase: UpsertMandaTodoUseCase
 ) : ViewModel() {
     init {
+        // 작은 목표는 있는데 allCnt가 전부 1임
+        // 작은 목표
         viewModelScope.launch {
-            val firstIndex = HistoryUtil.initGraphIndex(getMandaTodoGraphUseCase().first())
+            val firstIndex = HistoryUtil.initCurrentIndex(getMandaTodoGraphUseCase().first())
+            Logger.d(firstIndex)
             _currentIndex.value = firstIndex
         }
     }

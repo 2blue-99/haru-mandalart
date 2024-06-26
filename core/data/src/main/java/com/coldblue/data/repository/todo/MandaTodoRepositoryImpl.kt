@@ -45,6 +45,7 @@ class MandaTodoRepositoryImpl @Inject constructor(
         val result = mutableListOf<TodoGraph>()
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
         val counts = mandaTodoDao.getAllMandaTodoCount()
+        Logger.d(mandaKeys)
         for (i in 1..9) {
             if(i == 5) continue
             result.add(

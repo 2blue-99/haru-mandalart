@@ -95,8 +95,15 @@ object HistoryUtil {
         }
     }
 
-    fun sortedGraphList(graph: List<TodoGraph>): List<Int>{
-        return graph.indices.sortedWith(compareByDescending<Int> { graph[it].doneCount }.thenByDescending { graph[it].allCount })
+    /**
+     * Graph List를 정렬 기준에 맞춰 정렬해주는 함수.
+     * 정렬 기준
+     * 1. Name이 Blank가 아닌가
+     * 2. Done Count 기준
+     * 3. All Count 기준
+     */
+    private fun sortedGraphList(graph: List<TodoGraph>): List<Int>{
+        return graph.indices.sortedWith((compareByDescending<Int> { graph[it].name.isNotBlank() }.thenByDescending { graph[it].doneCount }.thenByDescending { graph[it].allCount }))
     }
 
     fun calculateContinueDate(todo: List<String>): Int {
@@ -142,8 +149,10 @@ object HistoryUtil {
         return "${year}년 ${month}월 ${day}일"
     }
 
-    fun initGraphIndex(graph: List<TodoGraph>): Int{
+    fun initCurrentIndex(graph: List<TodoGraph>): Int{
+        Logger.d(graph)
         val sortedGraph = sortedGraphList(graph)
+        Logger.d(sortedGraph)
 //        return if(graph[sortedGraph.first()].name == "") -1
 //        else sortedGraph.first()
         return sortedGraph.first()
