@@ -69,7 +69,7 @@ object HistoryUtil {
             }
 
             if (weekList.size == 7) {
-                val monthByFirstDayOfWeek = currentDay.minusDays(6).month.value
+                val monthByFirstDayOfWeek = currentDay.month.value
                 val controllerFirstMonth = if(monthByFirstDayOfWeek == 12) 1 else monthByFirstDayOfWeek
                 resultList.add(
                     Controller(
@@ -86,15 +86,17 @@ object HistoryUtil {
     }
 
     fun calculateRank(graph: List<TodoGraph>, currentIndex: Int): Int? {
-        val sortedGraph = graph.sortedByDescending { it.doneCount }
-        val index = sortedGraph.indexOf(graph[currentIndex])
-        Logger.d(sortedGraph)
-        Logger.d(index)
+        val sortedGraph = sortedGraphList(graph)
+        val index = sortedGraph.indexOf(currentIndex)
         if(index in 0..2){
             return index
         }else{
             return null
         }
+    }
+
+    fun sortedGraphList(graph: List<TodoGraph>): List<Int>{
+        return graph.indices.sortedWith(compareByDescending<Int> { graph[it].doneCount }.thenByDescending { graph[it].allCount })
     }
 
     fun calculateContinueDate(todo: List<String>): Int {
@@ -138,5 +140,12 @@ object HistoryUtil {
     fun dateToString(date: String): String{
         val (year, month, day) = date.split("-")
         return "${year}년 ${month}월 ${day}일"
+    }
+
+    fun initGraphIndex(graph: List<TodoGraph>): Int{
+        val sortedGraph = sortedGraphList(graph)
+//        return if(graph[sortedGraph.first()].name == "") -1
+//        else sortedGraph.first()
+        return sortedGraph.first()
     }
 }

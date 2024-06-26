@@ -102,7 +102,8 @@ fun HistoryContent(
 
         HistoryTodo(
             todoController = historyUIState.todoController,
-            color = HistoryUtil.indexToDarkColor(historyUIState.titleBar.colorIndex)
+            color = HistoryUtil.indexToDarkColor(historyUIState.titleBar.colorIndex),
+            updateTodo = updateTodo
         )
     }
 }
@@ -112,10 +113,6 @@ fun HistoryGraph(
     todoGraph: List<TodoGraph>,
     changeCurrentIndex: (Int) -> Unit = {}
 ) {
-
-    Logger.d(todoGraph)
-    Logger.d(todoGraph.indexOfFirst { it.name.isNotBlank() })
-
     val width = LocalConfiguration.current.screenWidthDp
     val maxHeight = (width / 4)
     val maxCount = todoGraph.maxOfOrNull { it.allCount } ?: 0
@@ -134,7 +131,7 @@ fun HistoryGraph(
                 .align(Alignment.End)
 
         ) {
-            Text(text = "전체 / 달성", color = HMColor.Gray, style = HmStyle.text10, modifier = Modifier.padding(6.dp))
+            Text(text = "전체 / 달성", color = HMColor.DarkGray, style = HmStyle.text10, modifier = Modifier.padding(6.dp))
         }
 
         Row(
@@ -828,7 +825,7 @@ fun ControllerYearButton(
             .clickable { onClick() }
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp),
+            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
             text = year,
             color = if (isClicked) HMColor.Background else color,
             style = HmStyle.text12
@@ -840,7 +837,8 @@ fun ControllerYearButton(
 @Composable
 fun HistoryTodo(
     todoController: TodoController,
-    color: Color
+    color: Color,
+    updateTodo: (MandaTodo) -> Unit
 ) {
     val colors = arrayOf(0.1f to HMColor.Gray, 1f to HMColor.Background)
 
@@ -882,7 +880,7 @@ fun HistoryTodo(
                     mandaTodo = todo,
                     currentIndex = index,
                     color = color,
-                    upsertMandaTodo = {})
+                    upsertMandaTodo = updateTodo)
             }
         }
     }
@@ -905,6 +903,7 @@ fun HistoryTodoPreview() {
 
             ),
         color = HMColor.DarkPastel.Orange,
+        {}
     )
 }
 

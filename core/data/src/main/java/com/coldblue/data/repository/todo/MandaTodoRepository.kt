@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface MandaTodoRepository: Syncable {
     fun getMandaTodo(): Flow<List<MandaTodo>>
     suspend fun getMandaTodoGraph(): List<TodoGraph>
-    fun getDoneDateByIndexYear(index: Int, year: String): Flow<List<String>>
+    fun getTodoExistDateByIndexYear(index: Int, year: String): Flow<List<String>>
     fun getMandaTodoByIndexDate(index: Int, year: String): Flow<List<MandaTodo>>
     fun getUniqueTodoYear(): Flow<List<String>>
 

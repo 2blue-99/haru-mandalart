@@ -45,8 +45,6 @@ class MandaTodoRepositoryImpl @Inject constructor(
         val result = mutableListOf<TodoGraph>()
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
         val counts = mandaTodoDao.getAllMandaTodoCount()
-        Logger.d(mandaKeys)
-        Logger.d(counts)
         for (i in 1..9) {
             if(i == 5) continue
             result.add(
@@ -69,12 +67,11 @@ class MandaTodoRepositoryImpl @Inject constructor(
                 }
             )
         }
-        Logger.d(result)
         return result
     }
 
-    override fun getDoneDateByIndexYear(index: Int, year: String): Flow<List<String>> {
-        return mandaTodoDao.getDoneDateByIndexYear(index, year)
+    override fun getTodoExistDateByIndexYear(index: Int, year: String): Flow<List<String>> {
+        return mandaTodoDao.getTodoExistDateByIndexYear(index, year)
     }
 
     override fun getMandaTodoByIndexDate(index: Int, date: String): Flow<List<MandaTodo>> {
