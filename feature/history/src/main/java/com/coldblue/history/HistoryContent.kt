@@ -93,7 +93,8 @@ fun HistoryContent(
         Spacer(modifier = Modifier.height(10.dp))
 
         HistoryTitleBar(
-            titleBar = historyUIState.titleBar
+            titleBar = historyUIState.titleBar,
+            isEmpty = historyUIState.todoGraph.isEmpty()
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -362,7 +363,8 @@ fun GraphBarPreview() {
 
 @Composable
 fun HistoryTitleBar(
-    titleBar: TitleBar
+    titleBar: TitleBar,
+    isEmpty: Boolean
 ) {
     val color = HistoryUtil.indexToDarkColor(titleBar.colorIndex)
     val colors = arrayOf(0.7f to color, 1f to HMColor.Background)
@@ -378,6 +380,7 @@ fun HistoryTitleBar(
             modifier = Modifier
                 .weight(5f)
                 .padding(bottom = 4.dp)
+                .padding(vertical = if(isEmpty) 10.dp else 0.dp)
         ) {
             Text(
                 text = titleBar.name,
@@ -386,11 +389,12 @@ fun HistoryTitleBar(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Text(
-                text = if (titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할일을 추가해보세요!",
-                style = HmStyle.text10,
-                color = HMColor.Background
-            )
+            if(!isEmpty)
+                Text(
+                    text = if (titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할일을 추가해보세요!",
+                    style = HmStyle.text10,
+                    color = HMColor.Background
+                )
         }
 
         Box(
@@ -426,7 +430,7 @@ fun HistoryTitleBar(
 @Preview(widthDp = 400)
 @Composable
 fun HistoryTitleBarPreview() {
-    HistoryTitleBar(TitleBar(name = "Hello", startDate = "2024-10-10", rank = 1, colorIndex = 1))
+    HistoryTitleBar(TitleBar(name = "Hello", startDate = "2024-10-10", rank = 1, colorIndex = 1), true)
 }
 
 @Composable
