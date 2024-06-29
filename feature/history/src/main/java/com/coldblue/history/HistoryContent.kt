@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,16 +37,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.coldblue.designsystem.IconPack
@@ -56,7 +61,6 @@ import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
 import com.coldblue.todo.MandaTodoItem
-import com.orhanobut.logger.Logger
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -81,7 +85,8 @@ fun HistoryContent(
         }
 
         HistoryGraph(
-            todoGraph = historyUIState.todoGraph,
+            todoGraph = historyUIState.todoGraph.ifEmpty { HistoryUtil.skeletonGraphList() },
+            isEmpty = historyUIState.todoGraph.isEmpty(),
             changeCurrentIndex = changeCurrentIndex
         )
 
@@ -111,117 +116,134 @@ fun HistoryContent(
 @Composable
 fun HistoryGraph(
     todoGraph: List<TodoGraph>,
+    isEmpty: Boolean,
     changeCurrentIndex: (Int) -> Unit = {}
 ) {
     val width = LocalConfiguration.current.screenWidthDp
-    val maxHeight = (width / 4)
+    val graphMaxHeight = (width / 4)
     val maxCount = todoGraph.maxOfOrNull { it.allCount } ?: 0
-    val weight = if(maxCount != 0) maxHeight / maxCount else 0
+    val weight = if(maxCount != 0) graphMaxHeight / maxCount else 0
     var selected by remember { mutableIntStateOf(todoGraph.indexOfFirst { it.name.isNotBlank() }) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
+    Box(
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            contentAlignment = Alignment.TopEnd,
-            modifier = Modifier
-                .border(1.dp, HMColor.DarkGray, RoundedCornerShape(4.dp))
-                .align(Alignment.End)
-
+        Box(modifier = Modifier
+            .clickable(false) {  }
+            .then(
+                if(isEmpty) Modifier.clickable(false) {  }
+                else Modifier
+            )
         ) {
-            Text(text = "전체 / 달성", color = HMColor.DarkGray, style = HmStyle.text10, modifier = Modifier.padding(6.dp))
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.Top
-        ) {
-            todoGraph.forEachIndexed { index, it ->
-                val darkColor = HistoryUtil.indexToDarkColor(it.colorIndex)
-                val lightColor = HistoryUtil.indexToLightColor(it.colorIndex)
-                Column(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+                    .alpha(if (isEmpty) 0.2f else 1f)
+            ) {
+                Box(
+                    contentAlignment = Alignment.TopEnd,
                     modifier = Modifier
-                        .weight(1f)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(color = if (index == selected) darkColor else Color.Transparent)
-                        .padding(top = 4.dp)
-                        .clickable(it.name != "") {
-                            changeCurrentIndex(index)
-                            selected = index
-                        }
+                        .border(1.dp, HMColor.DarkGray, RoundedCornerShape(4.dp))
+                        .align(Alignment.End)
+
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .height(height = maxHeight.dp)
-                            .padding(horizontal = 2.dp),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        GraphBarGroup(
-                            height = maxHeight.dp,
-                            allHeight = (it.allCount * weight).dp,
-                            doneHeight = (it.doneCount * weight).dp,
-                            allCount = it.allCount,
-                            doneCount = it.doneCount,
-                            darkColor = darkColor,
-                            lightColor = lightColor,
-                            selected = index == selected
-                        )
-                    }
+                    Text(text = "전체 / 달성", color = HMColor.DarkGray, style = HmStyle.text10, modifier = Modifier.padding(6.dp))
+                }
 
-                    Spacer(
-                        modifier = Modifier
-                            .height(0.4.dp)
-                            .fillMaxWidth()
-                            .background(HMColor.SubDarkText)
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1f),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Spacer(
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    todoGraph.forEachIndexed { index, it ->
+                        val darkColor = HistoryUtil.indexToDarkColor(it.colorIndex)
+                        val lightColor = HistoryUtil.indexToLightColor(it.colorIndex)
+                        Column(
                             modifier = Modifier
-                                .width(0.4.dp)
-                                .fillMaxHeight()
-                                .padding(vertical = 8.dp)
-                                .background(HMColor.Gray)
-                        )
-                        Box(
-                            modifier = Modifier.padding(horizontal = 2.dp),
-                            contentAlignment = Alignment.Center
+                                .weight(1f)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(color = if (index == selected) darkColor else Color.Transparent)
+                                .padding(top = 4.dp)
+                                .clickable(it.name != "") {
+                                    changeCurrentIndex(index)
+                                    selected = index
+                                }
                         ) {
-                            if (index == selected) {
-                                Icon(
-                                    imageVector = IconPack.Check,
-                                    tint = HMColor.Background,
-                                    contentDescription = "Check"
+                            Column(
+                                modifier = Modifier
+                                    .height(height = graphMaxHeight.dp)
+                                    .padding(horizontal = 2.dp),
+                                verticalArrangement = Arrangement.Top
+                            ) {
+                                GraphBarGroup(
+                                    height = graphMaxHeight.dp,
+                                    allHeight = (it.allCount * weight).dp,
+                                    doneHeight = (it.doneCount * weight).dp,
+                                    allCount = it.allCount,
+                                    doneCount = it.doneCount,
+                                    darkColor = darkColor,
+                                    lightColor = lightColor,
+                                    selected = index == selected
                                 )
-                            } else {
-                                Text(
-                                    text = it.name,
-                                    style = HmStyle.text10,
-                                    color = darkColor,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
+                            }
+
+                            Spacer(
+                                modifier = Modifier
+                                    .height(0.4.dp)
+                                    .fillMaxWidth()
+                                    .background(HMColor.SubDarkText)
+                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Spacer(
+                                    modifier = Modifier
+                                        .width(0.4.dp)
+                                        .fillMaxHeight()
+                                        .padding(vertical = 8.dp)
+                                        .background(HMColor.Gray)
+                                )
+                                Box(
+                                    modifier = Modifier.padding(horizontal = 2.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (index == selected) {
+                                        Icon(
+                                            imageVector = IconPack.Check,
+                                            tint = HMColor.Background,
+                                            contentDescription = "Check"
+                                        )
+                                    } else {
+                                        Text(
+                                            text = it.name,
+                                            style = HmStyle.text10,
+                                            color = darkColor,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
+                                Spacer(
+                                    modifier = Modifier
+                                        .width(0.4.dp)
+                                        .fillMaxHeight()
+                                        .padding(vertical = 8.dp)
+                                        .background(HMColor.Gray)
                                 )
                             }
                         }
-                        Spacer(
-                            modifier = Modifier
-                                .width(0.4.dp)
-                                .fillMaxHeight()
-                                .padding(vertical = 8.dp)
-                                .background(HMColor.Gray)
-                        )
                     }
                 }
             }
+        }
+        if(isEmpty){
+            Text(text = "작은 목표가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
         }
     }
 }
@@ -239,7 +261,8 @@ fun HistoryGraphPreview() {
             TodoGraph("탈모", 10, 5, 5),
             TodoGraph("탈모", 0, 0, 6),
             TodoGraph("탈모", 15, 5, 7),
-        )
+        ),
+        true
     )
 }
 
@@ -358,7 +381,7 @@ fun HistoryTitleBar(
         ) {
             Text(
                 text = titleBar.name,
-                style = HmStyle.text30,
+                style = HmStyle.text24,
                 color = HMColor.Background,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -457,7 +480,7 @@ fun HistoryController(
         }
         Controller(
             colorIndex = historyController.colorIndex,
-            historyController = historyController.controller,
+            historyController = historyController.controller.ifEmpty { HistoryUtil.makeController(2024, emptyList()) },
             selectDate = changeDay,
         )
 

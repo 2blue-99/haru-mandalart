@@ -31,11 +31,9 @@ class HistoryViewModel @Inject constructor(
     private val upsertMandaTodoUseCase: UpsertMandaTodoUseCase
 ) : ViewModel() {
     init {
-        // 작은 목표는 있는데 allCnt가 전부 1임
-        // 작은 목표
+        // 그래프가 비었다면 index = -1
         viewModelScope.launch {
             val firstIndex = HistoryUtil.initCurrentIndex(getMandaTodoGraphUseCase().first())
-            Logger.d(firstIndex)
             _currentIndex.value = firstIndex
         }
     }
@@ -57,36 +55,55 @@ class HistoryViewModel @Inject constructor(
                 currentDate.flatMapLatest { date ->
                     combine(
                         getMandaTodoGraphUseCase(),
-                        getTodoExistDateByIndexYearUseCase(index, year),
                         getMandaTodoByIndexDateUseCase(index, date),
+                        getTodoExistDateByIndexYearUseCase(index, year),
                         getUniqueTodoYearUseCase()
-                    ) { graphList, doneDateList, todoList, yearList ->
-                        val titleBar = TitleBar(
-                            name = graphList[index].name,
-                            startDate = if(doneDateList.isNotEmpty()) HistoryUtil.dateToString(doneDateList.first().toString()) else "",
-                            rank = HistoryUtil.calculateRank(graphList, index),
-                            colorIndex = graphList[index].colorIndex
-                        )
-                        val historyController = HistoryController(
-                            colorIndex = graphList[index].colorIndex,
-                            allCount = graphList[index].allCount,
-                            doneCount = graphList[index].doneCount,
-                            donePercentage = if(graphList[index].allCount != 0) (graphList[index].doneCount / graphList[index].allCount * 100) else 0,
-                            continueDate = if(doneDateList.isNotEmpty()) HistoryUtil.calculateContinueDate(doneDateList) else 0,
-                            controller = HistoryUtil.makeController(
-                                year.toInt(),
-                                doneDateList
-                            ),
-                            years = yearList
-                        )
-                        val todoController = TodoController(
-                            date = date,
-                            dayAllCount = todoList.size,
-                            dayDoneCount = todoList.filter { it.isDone }.size,
-                            todoList = todoList
-                        )
+                    ) { graphList, todoList, doneDateList, yearList ->
+                        Logger.d(graphList)
+                        Logger.d(todoList)
+                        Logger.d(doneDateList)
+                        Logger.d(yearList)
+                        val titleBar = if(graphList.isNotEmpty()) {
+                            TitleBar(
+                                name = graphList[index].name,
+                                startDate = if(doneDateList.isNotEmpty()) HistoryUtil.dateToString(doneDateList.first().toString()) else "",
+                                rank = HistoryUtil.calculateRank(graphList, index),
+                                colorIndex = graphList[index].colorIndex
+                            )
+                        } else {
+                            TitleBar()
+                        }
+
+                        val historyController = if(doneDateList.isNotEmpty()){
+                            HistoryController(
+                                colorIndex = graphList[index].colorIndex,
+                                allCount = graphList[index].allCount,
+                                doneCount = graphList[index].doneCount,
+                                donePercentage = if(graphList[index].allCount != 0) (graphList[index].doneCount / graphList[index].allCount * 100) else 0,
+                                continueDate = if(doneDateList.isNotEmpty()) HistoryUtil.calculateContinueDate(doneDateList) else 0,
+                                controller = HistoryUtil.makeController(
+                                    year.toInt(),
+                                    doneDateList
+                                ),
+                                years = yearList
+                            )
+                        }else{
+                            HistoryController()
+                        }
+
+                        val todoController = if(todoList.isNotEmpty()){
+                            TodoController(
+                                date = date,
+                                dayAllCount = todoList.size,
+                                dayDoneCount = todoList.filter { it.isDone }.size,
+                                todoList = todoList
+                            )
+                        }else{
+                            TodoController()
+                        }
+
                         HistoryUIState.Success(
-                            todoGraph = graphList,
+                            todoGraph = graphList.ifEmpty { emptyList() },
                             titleBar = titleBar,
                             historyController = historyController,
                             todoController = todoController
