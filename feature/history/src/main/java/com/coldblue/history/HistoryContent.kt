@@ -102,13 +102,17 @@ fun HistoryContent(
 
         HistoryController(
             historyController = historyUIState.historyController,
+            isEmpty = historyUIState.historyController.controller.isEmpty(),
             changeDay = changeDay,
             changeYear = changeYear
         )
 
+        Spacer(modifier = Modifier.height(10.dp))
+
         HistoryTodo(
             todoController = historyUIState.todoController,
             color = HistoryUtil.indexToDarkColor(historyUIState.titleBar.colorIndex),
+            isEmpty = historyUIState.todoController.todoList.isEmpty(),
             updateTodo = updateTodo
         )
     }
@@ -127,123 +131,127 @@ fun HistoryGraph(
     var selected by remember { mutableIntStateOf(todoGraph.indexOfFirst { it.name.isNotBlank() }) }
 
     Box(
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+        .then(
+            if (isEmpty) Modifier.clickable(false) { }
+            else Modifier
+        )
     ) {
-        Box(modifier = Modifier
-            .then(
-                if (isEmpty) Modifier.clickable(false) { }
-                else Modifier
-            )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .alpha(if (isEmpty) 0.2f else 1f)
         ) {
-            Column(
+            Box(
+                contentAlignment = Alignment.TopEnd,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-                    .alpha(if (isEmpty) 0.2f else 1f)
+                    .border(1.dp, HMColor.DarkGray, RoundedCornerShape(4.dp))
+                    .align(Alignment.End)
+
             ) {
-                Box(
-                    contentAlignment = Alignment.TopEnd,
-                    modifier = Modifier
-                        .border(1.dp, HMColor.DarkGray, RoundedCornerShape(4.dp))
-                        .align(Alignment.End)
+                Text(
+                    text = "전체 / 달성",
+                    color = HMColor.DarkGray,
+                    style = HmStyle.text10,
+                    modifier = Modifier.padding(6.dp)
+                )
+            }
 
-                ) {
-                    Text(text = "전체 / 달성", color = HMColor.DarkGray, style = HmStyle.text10, modifier = Modifier.padding(6.dp))
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    todoGraph.forEachIndexed { index, it ->
-                        val darkColor = HistoryUtil.indexToDarkColor(it.colorIndex)
-                        val lightColor = HistoryUtil.indexToLightColor(it.colorIndex)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                todoGraph.forEachIndexed { index, it ->
+                    val darkColor = HistoryUtil.indexToDarkColor(it.colorIndex)
+                    val lightColor = HistoryUtil.indexToLightColor(it.colorIndex)
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(color = if (index == selected) darkColor else Color.Transparent)
+                            .padding(top = 4.dp)
+                            .clickable(it.name != "") {
+                                changeCurrentIndex(index)
+                                selected = index
+                            }
+                    ) {
                         Column(
                             modifier = Modifier
-                                .weight(1f)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(color = if (index == selected) darkColor else Color.Transparent)
-                                .padding(top = 4.dp)
-                                .clickable(it.name != "") {
-                                    changeCurrentIndex(index)
-                                    selected = index
-                                }
+                                .height(height = graphMaxHeight.dp)
+                                .padding(horizontal = 2.dp),
+                            verticalArrangement = Arrangement.Top
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .height(height = graphMaxHeight.dp)
-                                    .padding(horizontal = 2.dp),
-                                verticalArrangement = Arrangement.Top
-                            ) {
-                                GraphBarGroup(
-                                    height = graphMaxHeight.dp,
-                                    allHeight = (it.allCount * weight).dp,
-                                    doneHeight = (it.doneCount * weight).dp,
-                                    allCount = it.allCount,
-                                    doneCount = it.doneCount,
-                                    darkColor = darkColor,
-                                    lightColor = lightColor,
-                                    selected = index == selected
-                                )
-                            }
+                            GraphBarGroup(
+                                height = graphMaxHeight.dp,
+                                allHeight = (it.allCount * weight).dp,
+                                doneHeight = (it.doneCount * weight).dp,
+                                allCount = it.allCount,
+                                doneCount = it.doneCount,
+                                darkColor = darkColor,
+                                lightColor = lightColor,
+                                selected = index == selected
+                            )
+                        }
 
+                        Spacer(
+                            modifier = Modifier
+                                .height(0.4.dp)
+                                .fillMaxWidth()
+                                .background(HMColor.SubDarkText)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             Spacer(
                                 modifier = Modifier
-                                    .height(0.4.dp)
-                                    .fillMaxWidth()
-                                    .background(HMColor.SubDarkText)
+                                    .width(0.4.dp)
+                                    .fillMaxHeight()
+                                    .padding(vertical = 8.dp)
+                                    .background(HMColor.Gray)
                             )
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1f),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
+                            Box(
+                                modifier = Modifier.padding(horizontal = 2.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Spacer(
-                                    modifier = Modifier
-                                        .width(0.4.dp)
-                                        .fillMaxHeight()
-                                        .padding(vertical = 8.dp)
-                                        .background(HMColor.Gray)
-                                )
-                                Box(
-                                    modifier = Modifier.padding(horizontal = 2.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (index == selected) {
-                                        Icon(
-                                            imageVector = IconPack.Check,
-                                            tint = HMColor.Background,
-                                            contentDescription = "Check"
-                                        )
-                                    } else {
-                                        Text(
-                                            text = it.name,
-                                            style = HmStyle.text10,
-                                            color = darkColor,
-                                            maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
+                                if (index == selected) {
+                                    Icon(
+                                        imageVector = IconPack.Check,
+                                        tint = HMColor.Background,
+                                        contentDescription = "Check"
+                                    )
+                                } else {
+                                    Text(
+                                        text = it.name,
+                                        style = HmStyle.text10,
+                                        color = darkColor,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
                                 }
-                                Spacer(
-                                    modifier = Modifier
-                                        .width(0.4.dp)
-                                        .fillMaxHeight()
-                                        .padding(vertical = 8.dp)
-                                        .background(HMColor.Gray)
-                                )
                             }
+                            Spacer(
+                                modifier = Modifier
+                                    .width(0.4.dp)
+                                    .fillMaxHeight()
+                                    .padding(vertical = 8.dp)
+                                    .background(HMColor.Gray)
+                            )
                         }
                     }
                 }
             }
         }
-        if(isEmpty){
-            Text(text = "작은 목표가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
+
+        if (isEmpty) {
+            Text(text = "데이터가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
         }
     }
 }
@@ -438,6 +446,7 @@ fun HistoryTitleBarPreview() {
 @Composable
 fun HistoryController(
     historyController: HistoryController,
+    isEmpty: Boolean,
     changeDay: (String) -> Unit,
     changeYear: (String) -> Unit
 ) {
@@ -456,7 +465,8 @@ fun HistoryController(
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
@@ -464,13 +474,18 @@ fun HistoryController(
                     modifier = Modifier.size(24.dp),
                     contentDescription = "Check"
                 )
-                Text(text = "${historyController.allCount}개 중, ${historyController.doneCount}개 완료", color = HMColor.SubDarkText, style = HmStyle.text12)
+                Text(
+                    text = if(isEmpty) "-" else "${historyController.allCount}개 중, ${historyController.doneCount}개 완료",
+                    color = HMColor.SubDarkText,
+                    style = HmStyle.text12
+                )
 //                PercentageCircle(color = historyController.color, percentage = historyController.donePercentage)
             }
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
                 Icon(
                     imageVector = Icons.Default.ThumbUp,
@@ -478,7 +493,7 @@ fun HistoryController(
                     contentDescription = "Check"
                 )
                 Text(
-                    text = "${historyController.continueDate}일 연속 Clear!",
+                    text = if(isEmpty) "-" else "${historyController.continueDate}일 연속 Clear!",
                     color = HMColor.SubDarkText,
                     style = HmStyle.text12
                 )
@@ -486,8 +501,8 @@ fun HistoryController(
         }
         Controller(
             colorIndex = historyController.colorIndex,
-            historyController = historyController.controller.ifEmpty { HistoryUtil.makeController(2024, emptyList()) },
-            isEmpty = historyController.controller.isEmpty(),
+            historyController = if(isEmpty) HistoryUtil.makeController(2024, emptyList()) else historyController.controller,
+            isEmpty = isEmpty,
             selectDate = changeDay,
         )
 
@@ -504,6 +519,7 @@ fun HistoryController(
 fun HistoryControllerPreview() {
     HistoryController(
         HistoryController(1, 100, 50, 50, 1, listOf(), years = listOf()),
+        true,
         {},
         {}
     )
@@ -580,123 +596,126 @@ fun Controller(
             .border(1.dp, darkColor, RoundedCornerShape(4.dp)),
     ) {
         Box(
-            modifier = Modifier.then(
-                if (isEmpty) Modifier.clickable(false) { }
-                else Modifier
-            )
+            contentAlignment = Alignment.Center,
         ) {
-            Box(modifier = Modifier.alpha(if (isEmpty) 0.2f else 1f)){
-                Row(
-                    modifier = Modifier
-                        .padding(top = 2.dp, bottom = 8.dp, end = 8.dp)
+            Row(
+                modifier = Modifier
+                    .padding(top = 2.dp, bottom = 8.dp, end = 8.dp)
+                    .alpha(if (isEmpty) 0.2f else 1f)
+            ) {
+                // 요일 Column
+                Column(
+                    modifier = Modifier.width((screenWidth / 16).dp)
                 ) {
-                    // 요일 Column
-                    Column(
-                        modifier = Modifier.width((screenWidth / 16).dp)
-                    ) {
-                        ControllerTextBox(text = "")
-                        dayOfWeekList.controllerDayList.forEach {
-                            if (it is ControllerDayState.Default)
-                                ControllerTextBox(text = it.dayWeek)
-                        }
+                    ControllerTextBox(text = "")
+                    dayOfWeekList.controllerDayList.forEach {
+                        if (it is ControllerDayState.Default)
+                            ControllerTextBox(text = it.dayWeek)
                     }
-                    // 투두 Column
-                    LazyRow(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(HMColor.Background),
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        itemsIndexed(todoList) { index, controller ->
-                            Column(
-                                // TODO 비율 weight 1f
-                                modifier = Modifier.width((screenWidth / 16).dp),
-                                verticalArrangement = Arrangement.Top
-                            ) {
-                                // 상단 요일 Box
-                                ControllerTextBox(text = if (controller.month.isNotBlank()) "${controller.month}월" else "")
-                                // 투두 Box
-                                controller.controllerDayList.forEachIndexed { dayIndex, dayState ->
-                                    when (dayState) {
-                                        is ControllerDayState.Default -> {
-                                            ControllerBox()
-                                        }
+                }
+                // 투두 Column
+                LazyRow(
+                    Modifier
+                        .fillMaxWidth()
+                        .background(HMColor.Background),
+                    horizontalArrangement = Arrangement.Start,
+                    userScrollEnabled = !isEmpty
+                ) {
+                    itemsIndexed(todoList) { index, controller ->
+                        Column(
+                            // TODO 비율 weight 1f
+                            modifier = Modifier.width((screenWidth / 16).dp),
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            // 상단 요일 Box
+                            ControllerTextBox(text = if (controller.month.isNotBlank()) "${controller.month}월" else "")
+                            // 투두 Box
+                            controller.controllerDayList.forEachIndexed { dayIndex, dayState ->
+                                when (dayState) {
+                                    is ControllerDayState.Default -> {
+                                        ControllerBox()
+                                    }
 
-                                        is ControllerDayState.Empty -> {
-                                            when (val timeState = dayState.timeState) {
+                                    is ControllerDayState.Empty -> {
+                                        when (val timeState = dayState.timeState) {
 
-                                                is ControllerTimeState.Past -> {
-                                                    ControllerBox(
-                                                        containerColor = HMColor.Gray,
-                                                        tintColor = darkColor,
-                                                        isClicked = clickedDate == timeState.date,
-                                                    ) {
-                                                        selectDate(timeState.date.toString())
-                                                        clickedDate = timeState.date
-                                                    }
+                                            is ControllerTimeState.Past -> {
+                                                ControllerBox(
+                                                    containerColor = HMColor.Gray,
+                                                    tintColor = darkColor,
+                                                    isClicked = clickedDate == timeState.date,
+                                                    clickAble = !isEmpty
+                                                ) {
+                                                    selectDate(timeState.date.toString())
+                                                    clickedDate = timeState.date
                                                 }
+                                            }
 
-                                                is ControllerTimeState.Present -> {
-                                                    ControllerBox(
-                                                        containerColor = HMColor.Gray,
-                                                        tintColor = darkColor,
-                                                        isClicked = clickedDate == timeState.date
-                                                    ) {
-                                                        selectDate(timeState.date.toString())
-                                                        clickedDate = timeState.date
-                                                    }
+                                            is ControllerTimeState.Present -> {
+                                                ControllerBox(
+                                                    containerColor = HMColor.Gray,
+                                                    tintColor = darkColor,
+                                                    isClicked = clickedDate == timeState.date,
+                                                    clickAble = !isEmpty
+                                                ) {
+                                                    selectDate(timeState.date.toString())
+                                                    clickedDate = timeState.date
                                                 }
+                                            }
 
-                                                is ControllerTimeState.Future -> {
-                                                    ControllerBox(
-                                                        containerColor = HMColor.Box,
-                                                        tintColor = lightColor,
-                                                        isClicked = clickedDate == timeState.date
-                                                    ) {
-                                                        selectDate(timeState.date.toString())
-                                                        clickedDate = timeState.date
-                                                    }
+                                            is ControllerTimeState.Future -> {
+                                                ControllerBox(
+                                                    containerColor = HMColor.Box,
+                                                    tintColor = lightColor,
+                                                    isClicked = clickedDate == timeState.date,
+                                                    clickAble = !isEmpty
+                                                ) {
+                                                    selectDate(timeState.date.toString())
+                                                    clickedDate = timeState.date
                                                 }
                                             }
                                         }
+                                    }
 
-                                        is ControllerDayState.Exist -> {
-                                            when (val timeState = dayState.timeState) {
+                                    is ControllerDayState.Exist -> {
+                                        when (val timeState = dayState.timeState) {
 
-                                                is ControllerTimeState.Past -> {
-                                                    ControllerBox(
-                                                        containerColor = HMColor.Gray,
-                                                        tintColor = darkColor,
-                                                        isExistTodo = true,
-                                                        isClicked = clickedDate == timeState.date
-                                                    ) {
-                                                        selectDate(timeState.date.toString())
-                                                        clickedDate = timeState.date
-                                                    }
+                                            is ControllerTimeState.Past -> {
+                                                ControllerBox(
+                                                    containerColor = HMColor.Gray,
+                                                    tintColor = darkColor,
+                                                    isExistTodo = true,
+                                                    isClicked = clickedDate == timeState.date,
+                                                    clickAble = !isEmpty
+                                                ) {
+                                                    selectDate(timeState.date.toString())
+                                                    clickedDate = timeState.date
                                                 }
+                                            }
 
-                                                is ControllerTimeState.Present -> {
-                                                    ControllerBox(
-                                                        containerColor = HMColor.Gray,
-                                                        tintColor = darkColor,
-                                                        isExistTodo = true,
-                                                        isClicked = clickedDate == timeState.date
-                                                    ) {
-                                                        selectDate(timeState.date.toString())
-                                                        clickedDate = timeState.date
-                                                    }
+                                            is ControllerTimeState.Present -> {
+                                                ControllerBox(
+                                                    containerColor = HMColor.Gray,
+                                                    tintColor = darkColor,
+                                                    isExistTodo = true,
+                                                    isClicked = clickedDate == timeState.date,
+                                                    clickAble = !isEmpty
+                                                ) {
+                                                    selectDate(timeState.date.toString())
+                                                    clickedDate = timeState.date
                                                 }
+                                            }
 
-                                                is ControllerTimeState.Future -> {
-                                                    ControllerBox(
-                                                        containerColor = HMColor.Box,
-                                                        tintColor = lightColor,
-                                                        isExistTodo = true,
-                                                        isClicked = clickedDate == timeState.date
-                                                    ) {
-                                                        selectDate(timeState.date.toString())
-                                                        clickedDate = timeState.date
-                                                    }
+                                            is ControllerTimeState.Future -> {
+                                                ControllerBox(
+                                                    containerColor = HMColor.Box,
+                                                    tintColor = lightColor,
+                                                    isExistTodo = true,
+                                                    isClicked = clickedDate == timeState.date,
+                                                    clickAble = !isEmpty
+                                                ) {
+                                                    selectDate(timeState.date.toString())
+                                                    clickedDate = timeState.date
                                                 }
                                             }
                                         }
@@ -708,7 +727,7 @@ fun Controller(
                 }
             }
             if(isEmpty){
-                Text(text = "작은 목표가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
+                Text(text = "데이터가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
             }
         }
     }
@@ -745,6 +764,7 @@ fun ControllerBox(
     tintColor: Color = Color.Transparent,
     isExistTodo: Boolean = false,
     isClicked: Boolean = false,
+    clickAble: Boolean = true,
     onClick: () -> Unit = {}
 ) {
 
@@ -760,7 +780,7 @@ fun ControllerBox(
             )
             .clip(RoundedCornerShape(2.dp))
             .background(if (isExistTodo && !isClicked) tintColor else containerColor)
-            .clickable { onClick() },
+            .clickable(clickAble) { onClick() },
         contentAlignment = Alignment.Center
     ) {
         if (isClicked && isExistTodo) {
@@ -838,6 +858,7 @@ fun ControllerYearButton(
 fun HistoryTodo(
     todoController: TodoController,
     color: Color,
+    isEmpty: Boolean,
     updateTodo: (MandaTodo) -> Unit
 ) {
     val colors = arrayOf(0.1f to HMColor.Gray, 1f to HMColor.Background)
@@ -856,31 +877,42 @@ fun HistoryTodo(
         ) {
             Text(text = todoController.date, style = HmStyle.text20, color = color)
             Text(
-                text = "(${todoController.dayAllCount} / ${todoController.dayDoneCount})",
-                style = HmStyle.text20,
+                text = "( ${todoController.dayAllCount} / ${todoController.dayDoneCount} )",
+                style = HmStyle.text12,
                 color = HMColor.SubDarkText
             )
         }
 
-        Spacer(modifier = Modifier
-            .height(6.dp)
-            .fillMaxWidth()
-            .background(brush = Brush.verticalGradient(colorStops = colors))
+        Spacer(
+            modifier = Modifier
+                .height(6.dp)
+                .fillMaxWidth()
+                .background(brush = Brush.verticalGradient(colorStops = colors))
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp)
-                .padding(horizontal = 14.dp),
-            verticalArrangement = Arrangement.Top
-        ) {
-            itemsIndexed(todoController.todoList) { index, todo ->
-                MandaTodoItem(
-                    mandaTodo = todo,
-                    currentIndex = index,
-                    color = color,
-                    upsertMandaTodo = updateTodo)
+        if(isEmpty){
+            Box(
+                modifier = Modifier.fillMaxWidth().aspectRatio(4f),
+                contentAlignment = Alignment.Center
+            ){
+                Text(text = "데이터가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
+            }
+        }else{
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp)
+                    .padding(horizontal = 14.dp),
+                verticalArrangement = Arrangement.Top
+            ) {
+                itemsIndexed(todoController.todoList.ifEmpty { HistoryUtil.skeletonTodoList() }) { index, todo ->
+                    MandaTodoItem(
+                        mandaTodo = todo,
+                        currentIndex = index,
+                        color = color,
+                        upsertMandaTodo = updateTodo
+                    )
+                }
             }
         }
     }
@@ -903,6 +935,7 @@ fun HistoryTodoPreview() {
 
             ),
         color = HMColor.DarkPastel.Orange,
+        isEmpty = true,
         {}
     )
 }

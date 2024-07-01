@@ -170,8 +170,7 @@ object HistoryUtil {
     fun skeletonTodoList(): List<MandaTodo>{
         return listOf(
             MandaTodo(title = "", isDone = true, mandaIndex = 1),
-            MandaTodo(title = "", isDone = true, mandaIndex = 1),
-            MandaTodo(title = "", isDone = false, mandaIndex = 1),
+            MandaTodo(title = "", isDone = true, mandaIndex = 1)
         )
     }
 }
