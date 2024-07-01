@@ -16,28 +16,31 @@ sealed interface HistoryUIState {
         val todoController: TodoController
     ) : HistoryUIState
 }
+
+
+
 data class TitleBar(
-    val name: String,
-    val startDate: String,
-    val rank: Int?,
-    val colorIndex: Int
+    val name: String = "작은 목표를 추가해 주세요!",
+    val startDate: String = "",
+    val rank: Int? = null,
+    val colorIndex: Int = 1
 )
 
 data class HistoryController(
-    val colorIndex: Int,
-    val allCount: Int,
-    val doneCount: Int,
-    val donePercentage: Int,
-    val continueDate: Int,
-    val controller: List<Controller>,
-    val years: List<String>
+    val colorIndex: Int = 0,
+    val allCount: Int = 0,
+    val doneCount: Int = 0,
+    val donePercentage: Int = 0,
+    val continueDate: Int = 0,
+    val controller: List<Controller> = emptyList(),
+    val years: List<String> = emptyList()
 )
 
 data class TodoController(
-    val date: String,
-    val dayAllCount: Int,
-    val dayDoneCount: Int,
-    val todoList: List<MandaTodo>
+    val date: String = LocalDate.now().toString(),
+    val dayAllCount: Int = 0,
+    val dayDoneCount: Int = 0,
+    val todoList: List<MandaTodo> = emptyList()
 )
 
 data class Controller(

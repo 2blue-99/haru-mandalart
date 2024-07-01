@@ -2,6 +2,7 @@ package com.coldblue.history
 
 import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
+import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
 import com.orhanobut.logger.Logger
 import java.time.LocalDate
@@ -95,8 +96,15 @@ object HistoryUtil {
         }
     }
 
-    fun sortedGraphList(graph: List<TodoGraph>): List<Int>{
-        return graph.indices.sortedWith(compareByDescending<Int> { graph[it].doneCount }.thenByDescending { graph[it].allCount })
+    /**
+     * Graph List를 정렬 기준에 맞춰 정렬해주는 함수.
+     * 정렬 기준
+     * 1. Name이 존재
+     * 2. Done Count 기준
+     * 3. All Count 기준
+     */
+    private fun sortedGraphList(graph: List<TodoGraph>): List<Int>{
+        return graph.indices.sortedWith((compareByDescending<Int> { graph[it].name.isNotBlank() }.thenByDescending { graph[it].doneCount }.thenByDescending { graph[it].allCount }))
     }
 
     fun calculateContinueDate(todo: List<String>): Int {
@@ -142,10 +150,27 @@ object HistoryUtil {
         return "${year}년 ${month}월 ${day}일"
     }
 
-    fun initGraphIndex(graph: List<TodoGraph>): Int{
-        val sortedGraph = sortedGraphList(graph)
-//        return if(graph[sortedGraph.first()].name == "") -1
-//        else sortedGraph.first()
-        return sortedGraph.first()
+    fun initCurrentIndex(graph: List<TodoGraph>): Int{
+        return graph.indexOfFirst { it.name.isNotBlank() }
+    }
+
+    fun skeletonGraphList(): List<TodoGraph>{
+        return listOf(
+            TodoGraph(allCount = 10, doneCount = 6, colorIndex = 1),
+            TodoGraph(allCount = 5, doneCount = 2, colorIndex = 2),
+            TodoGraph(allCount = 8, doneCount = 8, colorIndex = 3),
+            TodoGraph(allCount = 3, doneCount = 1, colorIndex = 4),
+            TodoGraph(allCount = 1, doneCount = 1, colorIndex = 5),
+            TodoGraph(allCount = 9, doneCount = 2, colorIndex = 6),
+            TodoGraph(allCount = 6, doneCount = 6, colorIndex = 7),
+            TodoGraph(allCount = 7, doneCount = 4, colorIndex = 8),
+        )
+    }
+
+    fun skeletonTodoList(): List<MandaTodo>{
+        return listOf(
+            MandaTodo(title = "", isDone = true, mandaIndex = 1),
+            MandaTodo(title = "", isDone = true, mandaIndex = 1)
+        )
     }
 }

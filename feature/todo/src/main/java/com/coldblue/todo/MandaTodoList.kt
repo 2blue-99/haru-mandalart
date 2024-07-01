@@ -277,7 +277,7 @@ fun MandaTodoItem(
             .padding(vertical = 6.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
-            .clickable {
+            .clickable(false) {
                 todoDialogState = true
             },
         horizontalArrangement = Arrangement.SpaceBetween,

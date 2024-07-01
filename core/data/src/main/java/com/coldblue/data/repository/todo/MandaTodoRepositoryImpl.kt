@@ -37,31 +37,30 @@ class MandaTodoRepositoryImpl @Inject constructor(
     }
 
     /**
-     * MandaKey 데이터와
-     * 작은 목표 별 투두의 전체 & 달성 카운트를 가져와
-     * 9개의 값이 들어있는 HistoryGraph 로 변환
+     * 작은 목표 값들을 가져와서, 존재하는 작은목표와 부합하는 mandaTodoCount 를 매핑시킴
+     * 만약 작은 목표가 최종 목표밖에 없다면 empty list 반환
+     * manda key : 1번부터 9번까지 존재
      */
     override suspend fun getMandaTodoGraph(): List<TodoGraph> {
+
         val result = mutableListOf<TodoGraph>()
+
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
+        if(mandaKeys.none { it.id != 5 }) return emptyList()
+
         val counts = mandaTodoDao.getAllMandaTodoCount()
         for (i in 1..9) {
             if(i == 5) continue
+            val mandaKey = mandaKeys.find { it.id == i }
             result.add(
-                if(mandaKeys.isNotEmpty()){
-                    val firstKey = mandaKeys.first()
-                    if (firstKey.id == i) {
-                        val todoData = counts[firstKey.id - 1]
-                        mandaKeys.removeFirst()
+                if(mandaKeys.isNotEmpty() && mandaKey != null){
+                        val todoData = counts[mandaKey.id - 1]
                         TodoGraph(
-                            name = firstKey.name,
+                            name = mandaKey.name,
                             allCount = todoData.first,
                             doneCount = todoData.second,
-                            colorIndex = firstKey.colorIndex
+                            colorIndex = mandaKey.colorIndex
                         )
-                    } else {
-                        TodoGraph()
-                    }
                 }else{
                     TodoGraph()
                 }
