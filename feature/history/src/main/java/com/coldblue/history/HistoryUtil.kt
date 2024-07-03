@@ -4,8 +4,8 @@ import androidx.compose.ui.graphics.Color
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
-import com.orhanobut.logger.Logger
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 object HistoryUtil {
 
@@ -154,7 +154,17 @@ object HistoryUtil {
         return graph.indexOfFirst { it.name.isNotBlank() }
     }
 
-    fun skeletonGraphList(): List<TodoGraph>{
+    fun initCurrentYear(list: List<String>, present: String): String{
+        return if(list.contains(present)) present
+        else list.first()
+    }
+
+    fun initCurrentDate(year: String, date: LocalDate): LocalDate {
+        return LocalDate.of(year.toInt(), date.month.value, date.dayOfWeek.value)
+    }
+
+
+    fun emptyGraphList(): List<TodoGraph>{
         return listOf(
             TodoGraph(allCount = 10, doneCount = 6, colorIndex = 1),
             TodoGraph(allCount = 5, doneCount = 2, colorIndex = 2),
@@ -167,10 +177,22 @@ object HistoryUtil {
         )
     }
 
-    fun skeletonTodoList(): List<MandaTodo>{
+    fun emptyTodoList(): List<MandaTodo>{
         return listOf(
             MandaTodo(title = "", isDone = true, mandaIndex = 1),
             MandaTodo(title = "", isDone = true, mandaIndex = 1),
         )
+    }
+
+    /**
+     * History Controller 의 Init Scroll Postion 을 계산해주는 함수.
+     * 중앙에 오기위해 임의의 값 6을 빼줌
+     */
+    fun calculateScrollerIndex(date: LocalDate): Int {
+        val baseDate = LocalDate.of(date.year, 1, 1)
+        val dayCnt = ChronoUnit.DAYS.between(baseDate, date).toInt()
+        var dayOfWeekCnt = dayCnt / 7
+        if(dayOfWeekCnt > 6) dayOfWeekCnt-=6
+        return dayOfWeekCnt
     }
 }

@@ -10,7 +10,7 @@ interface MandaTodoRepository: Syncable {
     suspend fun getMandaTodoGraph(): List<TodoGraph>
     fun getTodoExistDateByIndexYear(index: Int, year: String): Flow<List<String>>
     fun getMandaTodoByIndexDate(index: Int, year: String): Flow<List<MandaTodo>>
-    fun getUniqueTodoYear(): Flow<List<String>>
+    fun getUniqueTodoYear(index: Int): Flow<List<String>>
 
     suspend fun upsertMandaTodo(mandaTodo: MandaTodo)
     suspend fun deleteAllMandaTodo()

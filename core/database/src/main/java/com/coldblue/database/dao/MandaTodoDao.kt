@@ -50,8 +50,8 @@ interface MandaTodoDao {
     @Query("SELECT * FROM manda_todo WHERE manda_index = :index AND strftime('%Y-%m-%d', date) = :date AND is_del = 0")
     fun getMandaTodoByIndexDate(index: Int, date: String): Flow<List<MandaTodoEntity>>
 
-    @Query("SELECT DISTINCT strftime('%Y', date) From manda_todo WHERE is_del = 0")
-    fun getUniqueTodoYear(): Flow<List<String>?>
+    @Query("SELECT DISTINCT strftime('%Y', date) From manda_todo WHERE is_del = 0 AND manda_index = :index")
+    fun getUniqueTodoYear(index: Int): Flow<List<String>?>
 
 
     @Query("Update manda_todo Set is_del = 1, is_Sync = 0, update_time = :date")

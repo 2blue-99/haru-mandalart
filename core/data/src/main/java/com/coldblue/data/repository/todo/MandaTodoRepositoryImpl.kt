@@ -85,8 +85,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
 //    }
 
 
-    override fun getUniqueTodoYear(): Flow<List<String>> {
-        return mandaTodoDao.getUniqueTodoYear().map { it ?: listOf() }
+    override fun getUniqueTodoYear(index: Int): Flow<List<String>> {
+        return mandaTodoDao.getUniqueTodoYear(index).map { it ?: listOf() }
     }
 
 
