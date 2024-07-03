@@ -102,6 +102,9 @@ class HistoryViewModel @Inject constructor(
                             TodoController()
                         }
 
+                        Logger.d(titleBar)
+                        Logger.d(historyController)
+
                         HistoryUIState.Success(
                             todoGraph = graphList.ifEmpty { emptyList() },
                             titleBar = titleBar,

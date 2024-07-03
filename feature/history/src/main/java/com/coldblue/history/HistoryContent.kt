@@ -251,7 +251,7 @@ fun HistoryGraph(
         }
 
         if (isEmpty) {
-            Text(text = "데이터가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
+            Text(text = "할 일을 추가해 보세요!", style = HmStyle.text18, color = HMColor.SubDarkText)
         }
     }
 }
@@ -398,7 +398,7 @@ fun HistoryTitleBar(
             )
             if(!isEmpty) {
                 Text(
-                    text = if (titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할일을 추가해보세요!",
+                    text = if (titleBar.startDate.isNotBlank()) "${titleBar.startDate}에 시작했어요." else "할 일을 추가해 보세요!",
                     style = HmStyle.text10,
                     color = HMColor.Background
                 )
@@ -727,7 +727,7 @@ fun Controller(
                 }
             }
             if(isEmpty){
-                Text(text = "데이터가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
+                Text(text = "할 일을 추가해 보세요!", style = HmStyle.text18, color = HMColor.SubDarkText)
             }
         }
     }
@@ -918,7 +918,7 @@ fun HistoryTodo(
                         .aspectRatio(4f),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "데이터가 없어요..", style = HmStyle.text18, color = HMColor.SubDarkText)
+                    Text(text = "할 일을 추가해 보세요!", style = HmStyle.text18, color = HMColor.SubDarkText)
                 }
             }
         }

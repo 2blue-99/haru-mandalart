@@ -23,7 +23,7 @@ data class TitleBar(
     val name: String = "작은 목표를 추가해 주세요!",
     val startDate: String = "",
     val rank: Int? = null,
-    val colorIndex: Int = 1
+    val colorIndex: Int = 0
 )
 
 data class HistoryController(
