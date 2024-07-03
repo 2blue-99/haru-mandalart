@@ -171,6 +171,7 @@ fun MandaTodoList(
                             todo,
                             currentIndex,
                             colorList[todo.mandaIndex] ?: HMColor.Gray,
+                            true,
                             upsertMandaTodo,
                         )
                     }
@@ -220,6 +221,7 @@ fun MandaTodoList(
                                     todo,
                                     currentIndex,
                                     colorList[todo.mandaIndex] ?: HMColor.Gray,
+                                    true,
                                     upsertMandaTodo,
                                 )
                             }
@@ -259,6 +261,7 @@ fun MandaTodoItem(
     mandaTodo: MandaTodo,
     currentIndex: Int,
     color: Color,
+    clickAble: Boolean = true,
     upsertMandaTodo: (MandaTodo) -> Unit,
 ) {
     var todoDialogState by remember { mutableStateOf(false) }
@@ -277,9 +280,7 @@ fun MandaTodoItem(
             .padding(vertical = 6.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
-            .clickable {
-                todoDialogState = true
-            },
+            .then(if(clickAble) Modifier.clickable(false) { todoDialogState = true } else Modifier),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -320,12 +321,8 @@ fun MandaTodoItem(
                         bottomStart = CornerSize(0.dp)
                     )
                 )
-        ) {
-
-        }
+        ) {}
     }
-
-
 }
 
 @Composable

@@ -6,6 +6,7 @@ import com.coldblue.data.mapper.MandaTodoMapper.asEntity
 import com.coldblue.data.mapper.MandaTodoMapper.asNetworkModel
 import com.coldblue.data.mapper.MandaTodoMapper.asSyncedEntity
 import com.coldblue.data.sync.SyncHelper
+import com.coldblue.data.sync.TodoWidgetHelper
 import com.coldblue.data.util.getUpdateTime
 import com.coldblue.data.util.isPassed
 import com.coldblue.database.dao.MandaKeyDao
@@ -29,32 +30,37 @@ class MandaTodoRepositoryImpl @Inject constructor(
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
     private val alarmScheduler: AlarmScheduler,
+    private val todoWidgetHelper: TodoWidgetHelper
 ) : MandaTodoRepository {
     override fun getMandaTodo(): Flow<List<MandaTodo>> {
         return mandaTodoDao.getMandaTodo().map { it.asDomain() }
     }
 
     /**
-     * MandaKey 데이터와
-     * 작은 목표 별 투두의 전체 & 달성 카운트를 가져와
-     * 9개의 값이 들어있는 HistoryGraph 로 변환
+     * 작은 목표 값들을 가져와서, 존재하는 작은목표와 부합하는 mandaTodoCount 를 매핑시킴
+     * 만약 작은 목표가 최종 목표밖에 없다면 empty list 반환
+     * manda key : 1번부터 9번까지 존재
      */
     override suspend fun getMandaTodoGraph(): List<TodoGraph> {
+
         val result = mutableListOf<TodoGraph>()
+
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
+        if(mandaKeys.none { it.id != 5 }) return emptyList()
+
         val counts = mandaTodoDao.getAllMandaTodoCount()
-        for(i in 0..8){
-            val firstKey = mandaKeys.first()
+        for (i in 1..9) {
+            if(i == 5) continue
+            val mandaKey = mandaKeys.find { it.id == i }
             result.add(
-                if(firstKey.id-1 == i){
-                    val todoData = counts[firstKey.id-1]
-                    mandaKeys.removeFirst()
-                    TodoGraph(
-                        name = firstKey.name,
-                        allCount = todoData.first,
-                        doneCount = todoData.second,
-                        colorIndex = firstKey.colorIndex
-                    )
+                if(mandaKeys.isNotEmpty() && mandaKey != null){
+                        val todoData = counts[mandaKey.id - 1]
+                        TodoGraph(
+                            name = mandaKey.name,
+                            allCount = todoData.first,
+                            doneCount = todoData.second,
+                            colorIndex = mandaKey.colorIndex
+                        )
                 }else{
                     TodoGraph()
                 }
@@ -63,8 +69,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
         return result
     }
 
-    override fun getDoneDateByIndexYear(index: Int, year: String): Flow<List<String>> {
-        return mandaTodoDao.getDoneDateByIndexYear(index, year)
+    override fun getTodoExistDateByIndexYear(index: Int, year: String): Flow<List<String>> {
+        return mandaTodoDao.getTodoExistDateByIndexYear(index, year)
     }
 
     override fun getMandaTodoByIndexDate(index: Int, date: String): Flow<List<MandaTodo>> {
@@ -87,7 +93,9 @@ class MandaTodoRepositoryImpl @Inject constructor(
     override suspend fun upsertMandaTodo(mandaTodo: MandaTodo) {
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
         mandaTodo.syncAlarm()
+        todoWidgetHelper.widgetUpdate()
         syncHelper.syncWrite()
+
     }
 
 
