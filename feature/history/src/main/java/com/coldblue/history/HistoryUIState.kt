@@ -33,11 +33,12 @@ data class HistoryController(
     val donePercentage: Int = 0,
     val continueDate: Int = 0,
     val controller: List<Controller> = emptyList(),
+    val currentYear: String = "2024",
     val years: List<String> = emptyList()
 )
 
 data class TodoController(
-    val date: String = LocalDate.now().toString(),
+    val date: String,
     val dayAllCount: Int = 0,
     val dayDoneCount: Int = 0,
     val todoList: List<MandaTodo> = emptyList()

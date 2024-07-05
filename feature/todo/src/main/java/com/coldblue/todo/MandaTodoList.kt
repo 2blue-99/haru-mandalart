@@ -261,7 +261,7 @@ fun MandaTodoItem(
     mandaTodo: MandaTodo,
     currentIndex: Int,
     color: Color,
-    clickAble: Boolean = true,
+    clickable: Boolean,
     upsertMandaTodo: (MandaTodo) -> Unit,
 ) {
     var todoDialogState by remember { mutableStateOf(false) }
@@ -280,13 +280,15 @@ fun MandaTodoItem(
             .padding(vertical = 6.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
-            .then(if(clickAble) Modifier.clickable(false) { todoDialogState = true } else Modifier),
+            .then(
+                if(clickable) Modifier.clickable(true) { todoDialogState = true } else Modifier
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            CircleCheckbox(color, mandaTodo.isDone) {
+            CircleCheckbox(color, mandaTodo.isDone, clickable) {
                 upsertMandaTodo(mandaTodo.copy(isDone = !mandaTodo.isDone))
             }
             Text(

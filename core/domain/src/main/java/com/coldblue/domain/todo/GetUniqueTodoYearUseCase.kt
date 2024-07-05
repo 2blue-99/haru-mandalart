@@ -8,6 +8,6 @@ import javax.inject.Inject
 class GetUniqueTodoYearUseCase @Inject constructor(
     private val mandaTodoRepository: MandaTodoRepository
 ) {
-    operator fun invoke(): Flow<List<String>> =
-        mandaTodoRepository.getUniqueTodoYear()
+    operator fun invoke(index: Int): Flow<List<String>> =
+        mandaTodoRepository.getUniqueTodoYear(index)
 }
