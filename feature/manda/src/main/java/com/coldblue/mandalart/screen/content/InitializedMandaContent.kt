@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -207,6 +208,15 @@ fun MandaTopBar(
             )
         }
         Row {
+            IconButton(
+                onClick = { navigateToHistory() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.Add,
+                    tint = HMColor.Primary,
+                    contentDescription = "question"
+                )
+            }
             IconButton(
                 onClick = { navigateToHistory() }) {
                 Icon(
