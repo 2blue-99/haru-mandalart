@@ -65,6 +65,7 @@ import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Mandalart
+import com.coldblue.designsystem.iconpack.Question
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
@@ -212,7 +213,7 @@ fun MandaTopBar(
                 onClick = { navigateToHistory() }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Default.Add,
+                    imageVector = IconPack.Question,
                     tint = HMColor.Primary,
                     contentDescription = "question"
                 )
