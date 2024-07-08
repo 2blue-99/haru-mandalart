@@ -54,6 +54,7 @@ import androidx.compose.ui.zIndex
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.iconpack.Check
+import com.coldblue.designsystem.iconpack.Good
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
@@ -469,7 +470,7 @@ fun HistoryController(
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.CheckCircle,
+                    imageVector = IconPack.Check,
                     tint = color,
                     modifier = Modifier.size(24.dp),
                     contentDescription = "Check"
@@ -488,7 +489,7 @@ fun HistoryController(
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ThumbUp,
+                    imageVector = IconPack.Good,
                     tint = color,
                     contentDescription = "Check"
                 )
