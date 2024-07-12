@@ -210,7 +210,8 @@ fun MandaTopBar(
         }
         Row {
             IconButton(
-                onClick = { navigateToHistory() }) {
+                //TODO
+                onClick = {  }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     imageVector = IconPack.Question,

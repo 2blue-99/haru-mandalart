@@ -491,7 +491,7 @@ fun HistoryController(
                 Icon(
                     imageVector = IconPack.Good,
                     tint = color,
-                    contentDescription = "Check"
+                    contentDescription = "Good"
                 )
                 Text(
                     text = if(isEmpty) "-" else "${historyController.continueDate}일 연속 Clear!",
