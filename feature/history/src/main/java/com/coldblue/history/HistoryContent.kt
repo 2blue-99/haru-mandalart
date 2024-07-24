@@ -22,14 +22,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,24 +44,24 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.designsystem.iconpack.Check
+import com.coldblue.designsystem.iconpack.Good
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
 import com.coldblue.model.TodoGraph
 import com.coldblue.todo.MandaTodoItem
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -85,7 +86,7 @@ fun HistoryContent(
         }
 
         HistoryGraph(
-            todoGraph = historyUIState.todoGraph.ifEmpty { HistoryUtil.skeletonGraphList() },
+            todoGraph = historyUIState.todoGraph.ifEmpty { HistoryUtil.emptyGraphList() },
             isEmpty = historyUIState.todoGraph.isEmpty(),
             changeCurrentIndex = changeCurrentIndex
         )
@@ -469,7 +470,7 @@ fun HistoryController(
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.CheckCircle,
+                    imageVector = IconPack.Check,
                     tint = color,
                     modifier = Modifier.size(24.dp),
                     contentDescription = "Check"
@@ -488,7 +489,7 @@ fun HistoryController(
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Default.ThumbUp,
+                    imageVector = IconPack.Good,
                     tint = color,
                     contentDescription = "Check"
                 )
@@ -500,6 +501,7 @@ fun HistoryController(
             }
         }
         Controller(
+            currentYear = historyController.currentYear,
             colorIndex = historyController.colorIndex,
             historyController = if(isEmpty) HistoryUtil.makeController(2024, emptyList()) else historyController.controller,
             isEmpty = isEmpty,
@@ -507,6 +509,7 @@ fun HistoryController(
         )
 
         YearPicker(
+            currentYear = historyController.currentYear,
             color = color,
             yearList = historyController.years,
             changeYear = changeYear
@@ -527,23 +530,12 @@ fun HistoryControllerPreview() {
 
 @Composable
 fun YearPicker(
+    currentYear: String,
     color: Color,
     yearList: List<String>,
     changeYear: (String) -> Unit
 ) {
-    val today = LocalDate.now()
-    var clickedYear by remember { mutableStateOf(today.year) }
-
-//    fun dateController(year: Int) {
-//        clickedYear = year
-//        if (year == presentLocalDate.year) {
-//            clickedDate = presentLocalDate
-//            selectDate(presentLocalDate)
-//        } else {
-//            clickedDate = LocalDate.MIN
-//            selectDate(LocalDate.MIN)
-//        }
-//    }
+    var clickedYear by remember { mutableStateOf(currentYear) }
     LazyRow(
         Modifier
             .fillMaxWidth(),
@@ -553,10 +545,10 @@ fun YearPicker(
             ControllerYearButton(
                 color = color,
                 year = year,
-                isClicked = clickedYear.toString() == year,
+                isClicked = clickedYear == year,
             ) {
-//                selectYear(year)
-//                dateController(year.toInt())
+                changeYear(year)
+                clickedYear = year
             }
         }
     }
@@ -566,6 +558,7 @@ fun YearPicker(
 @Composable
 fun YearPickerPreview() {
     YearPicker(
+        currentYear = "2024",
         color = HMColor.DarkPastel.Red,
         yearList = listOf("2024", "2023", "2022"),
         {}
@@ -574,14 +567,15 @@ fun YearPickerPreview() {
 
 @Composable
 fun Controller(
+    currentYear: String,
     colorIndex: Int,
     historyController: List<Controller>,
     isEmpty: Boolean,
     selectDate: (String) -> Unit,
 ) {
     val today = LocalDate.now()
-    var clickedDate by remember { mutableStateOf(today) }
-
+    var clickedDate by remember { mutableStateOf(HistoryUtil.initCurrentDate(currentYear, today)) }
+    val scrollState = rememberLazyListState()
     val screenWidth = LocalConfiguration.current.screenWidthDp
 
     val dayOfWeekList = historyController.first()
@@ -589,6 +583,12 @@ fun Controller(
 
     val darkColor = HistoryUtil.indexToDarkColor(colorIndex)
     val lightColor = HistoryUtil.indexToLightColor(colorIndex)
+
+    LaunchedEffect(Unit){
+        delay(300L)
+        if(!isEmpty)
+            scrollState.animateScrollToItem(HistoryUtil.calculateScrollerIndex(today))
+    }
 
     Column(
         modifier = Modifier
@@ -615,7 +615,8 @@ fun Controller(
                 }
                 // 투두 Column
                 LazyRow(
-                    Modifier
+                    state = scrollState,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .background(HMColor.Background),
                     horizontalArrangement = Arrangement.Start,
@@ -899,14 +900,15 @@ fun HistoryTodo(
                     .padding(horizontal = 14.dp)
                     .alpha(if (isEmpty) 0.2f else 1f),
                 verticalArrangement = Arrangement.Top,
-                userScrollEnabled = !isEmpty
+                userScrollEnabled = !isEmpty,
             ) {
-                itemsIndexed(todoController.todoList.ifEmpty { HistoryUtil.skeletonTodoList() }) { index, todo ->
+                itemsIndexed(todoController.todoList.ifEmpty { HistoryUtil.emptyTodoList() }) { index, todo ->
+                    com.orhanobut.logger.Logger.d(isEmpty)
                     MandaTodoItem(
                         mandaTodo = todo,
                         currentIndex = index,
                         color = color,
-                        clickAble = !isEmpty,
+                        clickable = !isEmpty,
                         upsertMandaTodo = updateTodo
                     )
                 }

@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,6 +65,7 @@ import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Mandalart
+import com.coldblue.designsystem.iconpack.Question
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
@@ -207,6 +209,15 @@ fun MandaTopBar(
             )
         }
         Row {
+            IconButton(
+                onClick = { navigateToHistory() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = IconPack.Question,
+                    tint = HMColor.Primary,
+                    contentDescription = "question"
+                )
+            }
             IconButton(
                 onClick = { navigateToHistory() }) {
                 Icon(
