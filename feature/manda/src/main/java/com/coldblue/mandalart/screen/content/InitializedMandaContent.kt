@@ -140,45 +140,57 @@ fun InitializedMandaContent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        MandaTopBar(
-            navigateToSetting = navigateToSetting,
-            navigateToHistory = navigateToHistory
-        )
 
-        MandaStatus(
-            titleName = uiState.mandaStatus.titleManda.name,
-            statusColor = uiState.mandaStatus.statusColor,
-            donePercentage = uiState.mandaStatus.donePercentage,
-            animateDonePercentage = animateDonePercentage.value
+        Box(
+            modifier = Modifier.onGloballyPositioned {
+
+            }
         ) {
-            changeBottomSheet(
-                true,
-                MandaBottomSheetContentState.Insert(
-                    MandaBottomSheetContentType.MandaFinal(
-                        mandaUI = uiState.mandaStatus.titleManda
-                    )
-                )
+            MandaTopBar(
+                navigateToSetting = navigateToSetting,
+                navigateToHistory = navigateToHistory
             )
         }
 
-        Mandalart(
-            mandaList = uiState.mandaList,
-            curIndex = uiState.currentIndex,
-            changeBottomSheet = changeBottomSheet,
-            changeCurrentIndex = changeCurrentIndex
-        )
-        MandaTodoList(
-            colorList = currentColorList(uiState.mandaList),
-            currentIndex = uiState.currentIndex,
-            todoRange = uiState.todoRange,
-            todoList = uiState.todoList,
-            doneTodoCnt = uiState.doneTodoCnt,
-            todoCnt = uiState.todoCnt,
-            upsertMandaTodo = upsertMandaTodo,
-            changeRange = changeTodoRange,
-        )
+        Box {
+            MandaStatus(
+                titleName = uiState.mandaStatus.titleManda.name,
+                statusColor = uiState.mandaStatus.statusColor,
+                donePercentage = uiState.mandaStatus.donePercentage,
+                animateDonePercentage = animateDonePercentage.value
+            ) {
+                changeBottomSheet(
+                    true,
+                    MandaBottomSheetContentState.Insert(
+                        MandaBottomSheetContentType.MandaFinal(
+                            mandaUI = uiState.mandaStatus.titleManda
+                        )
+                    )
+                )
+            }
+        }
 
+        Box {
+            Mandalart(
+                mandaList = uiState.mandaList,
+                curIndex = uiState.currentIndex,
+                changeBottomSheet = changeBottomSheet,
+                changeCurrentIndex = changeCurrentIndex
+            )
+        }
 
+        Box {
+            MandaTodoList(
+                colorList = currentColorList(uiState.mandaList),
+                currentIndex = uiState.currentIndex,
+                todoRange = uiState.todoRange,
+                todoList = uiState.todoList,
+                doneTodoCnt = uiState.doneTodoCnt,
+                todoCnt = uiState.todoCnt,
+                upsertMandaTodo = upsertMandaTodo,
+                changeRange = changeTodoRange,
+            )
+        }
     }
 }
 
