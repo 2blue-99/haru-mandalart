@@ -192,6 +192,12 @@ fun InitializedMandaContent(
             )
         }
     }
+
+    Box(
+        modifier = Modifier.background(Color.Black).alpha(0.3f)
+    ) {
+
+    }
 }
 
 @Composable
