@@ -60,6 +60,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
@@ -114,7 +115,7 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
-    var position by remember { mutableStateOf(0.dp) }
+    var position by remember { mutableStateOf(IntSize.Zero) }
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
