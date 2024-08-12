@@ -87,6 +87,7 @@ fun MandaTodoList(
     todoList: List<MandaTodo>,
     todoCnt: Int,
     doneTodoCnt: Int,
+    isShow: Boolean,
     upsertMandaTodo: (MandaTodo) -> Unit,
     changeRange: (DateRange) -> Unit,
 ) {
@@ -577,6 +578,6 @@ fun MandaTodoItemPreview() {
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
         ),
-        3, 3, {}, {},
+        3, 3, false, {}, {},
     )
 }
