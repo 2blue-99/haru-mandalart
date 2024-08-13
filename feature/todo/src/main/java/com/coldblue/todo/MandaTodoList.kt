@@ -87,7 +87,6 @@ fun MandaTodoList(
     todoList: List<MandaTodo>,
     todoCnt: Int,
     doneTodoCnt: Int,
-    isShow: Boolean,
     upsertMandaTodo: (MandaTodo) -> Unit,
     changeRange: (DateRange) -> Unit,
 ) {

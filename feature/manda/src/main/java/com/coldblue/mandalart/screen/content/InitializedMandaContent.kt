@@ -136,118 +136,136 @@ fun InitializedMandaContent(
         percentage = uiState.mandaStatus.donePercentage
     }
 
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-
-        MandaTopBar(
-            isShow = false,
-            navigateToSetting = navigateToSetting,
-            navigateToHistory = navigateToHistory
-        )
-
-        MandaStatus(
-            titleName = uiState.mandaStatus.titleManda.name,
-            statusColor = uiState.mandaStatus.statusColor,
-            donePercentage = uiState.mandaStatus.donePercentage,
-            animateDonePercentage = animateDonePercentage.value,
-            isShow = true
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            changeBottomSheet(
-                true,
-                MandaBottomSheetContentState.Insert(
-                    MandaBottomSheetContentType.MandaFinal(
-                        mandaUI = uiState.mandaStatus.titleManda
-                    )
+
+            Box(
+                modifier = Modifier
+            ) {
+                MandaTopBar(
+                    navigateToSetting = navigateToSetting,
+                    navigateToHistory = navigateToHistory
                 )
-            )
+            }
+
+            Box(
+                modifier = Modifier
+            ) {
+                MandaStatus(
+                    titleName = uiState.mandaStatus.titleManda.name,
+                    statusColor = uiState.mandaStatus.statusColor,
+                    donePercentage = uiState.mandaStatus.donePercentage,
+                    animateDonePercentage = animateDonePercentage.value,
+                ) {
+                    changeBottomSheet(
+                        true,
+                        MandaBottomSheetContentState.Insert(
+                            MandaBottomSheetContentType.MandaFinal(
+                                mandaUI = uiState.mandaStatus.titleManda
+                            )
+                        )
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+            ) {
+                Mandalart(
+                    mandaList = uiState.mandaList,
+                    curIndex = uiState.currentIndex,
+                    changeBottomSheet = changeBottomSheet,
+                    changeCurrentIndex = changeCurrentIndex
+                )
+            }
+
+            Box(
+                modifier = Modifier
+            ) {
+                MandaTodoList(
+                    colorList = currentColorList(uiState.mandaList),
+                    currentIndex = uiState.currentIndex,
+                    todoRange = uiState.todoRange,
+                    todoList = uiState.todoList,
+                    doneTodoCnt = uiState.doneTodoCnt,
+                    todoCnt = uiState.todoCnt,
+                    upsertMandaTodo = upsertMandaTodo,
+                    changeRange = changeTodoRange,
+                )
+            }
         }
-
-        Mandalart(
-            mandaList = uiState.mandaList,
-            curIndex = uiState.currentIndex,
-            isShow = true,
-            changeBottomSheet = changeBottomSheet,
-            changeCurrentIndex = changeCurrentIndex
-        )
-
-        MandaTodoList(
-            colorList = currentColorList(uiState.mandaList),
-            currentIndex = uiState.currentIndex,
-            todoRange = uiState.todoRange,
-            todoList = uiState.todoList,
-            doneTodoCnt = uiState.doneTodoCnt,
-            todoCnt = uiState.todoCnt,
-            isShow = true,
-            upsertMandaTodo = upsertMandaTodo,
-            changeRange = changeTodoRange,
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(0.5f)
+                .background(Color.Black)
         )
     }
 }
 
 @Composable
 fun MandaTopBar(
-    isShow: Boolean,
     navigateToSetting: () -> Unit,
     navigateToHistory: () -> Unit
 ) {
-    Box (
-        modifier = Modifier.alpha(0.3f).background(Color.Black)
-    ){
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row {
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = IconPack.Mandalart,
+                tint = HMColor.Primary,
+                contentDescription = "main_icon"
+            )
+            Text(
+                text = "하루 만다라트",
+                style = HmStyle.text16,
+                modifier = Modifier.padding(horizontal = 15.dp),
+                color = HMColor.Primary,
+            )
+        }
+        Row {
+            IconButton(
+                //TODO
+                onClick = { }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = IconPack.Mandalart,
+                    imageVector = IconPack.Question,
                     tint = HMColor.Primary,
-                    contentDescription = "main_icon"
-                )
-                Text(
-                    text = "하루 만다라트",
-                    style = HmStyle.text16,
-                    modifier = Modifier.padding(horizontal = 15.dp),
-                    color = HMColor.Primary,
+                    contentDescription = "question"
                 )
             }
-            Row {
-                IconButton(
-                    //TODO
-                    onClick = {  }) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = IconPack.Question,
-                        tint = HMColor.Primary,
-                        contentDescription = "question"
-                    )
-                }
-                IconButton(
-                    onClick = { navigateToHistory() }) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = IconPack.History,
-                        tint = HMColor.Primary,
-                        contentDescription = "history"
-                    )
-                }
-                IconButton(
-                    onClick = { navigateToSetting() }) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = Icons.Default.Settings,
-                        tint = HMColor.Primary,
-                        contentDescription = "setting"
-                    )
-                }
+            IconButton(
+                onClick = { navigateToHistory() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = IconPack.History,
+                    tint = HMColor.Primary,
+                    contentDescription = "history"
+                )
+            }
+            IconButton(
+                onClick = { navigateToSetting() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.Settings,
+                    tint = HMColor.Primary,
+                    contentDescription = "setting"
+                )
             }
         }
     }
@@ -256,7 +274,7 @@ fun MandaTopBar(
 @Preview
 @Composable
 fun MandaTopBarPreview(){
-    MandaTopBar(isShow = false, navigateToSetting = { /*TODO*/ }) {
+    MandaTopBar(navigateToSetting = { /*TODO*/ }) {
         
     }
 }
@@ -267,7 +285,6 @@ fun MandaStatus(
     statusColor: Color,
     donePercentage: Float,
     animateDonePercentage: Float,
-    isShow: Boolean,
     onClickTitle: () -> Unit
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
@@ -336,7 +353,6 @@ fun MandaStatus(
 fun Mandalart(
     mandaList: List<MandaState>,
     curIndex: Int,
-    isShow: Boolean,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit,
     changeCurrentIndex: (Int) -> Unit
 ) {
