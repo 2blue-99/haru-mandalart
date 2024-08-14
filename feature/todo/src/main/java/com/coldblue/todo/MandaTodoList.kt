@@ -577,6 +577,6 @@ fun MandaTodoItemPreview() {
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
         ),
-        3, 3, false, {}, {},
+        3, 3,  {}, {},
     )
 }

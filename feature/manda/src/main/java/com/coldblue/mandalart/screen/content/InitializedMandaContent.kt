@@ -110,6 +110,7 @@ fun InitializedMandaContent(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
 ) {
+    var isExplain by remember { mutableStateOf(true) }
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
@@ -140,15 +141,24 @@ fun InitializedMandaContent(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        if(isExplain) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(0.5f)
+                    .background(Color.Black)
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-
             Box(
                 modifier = Modifier
+//                    .alpha(0.5f)
+//                    .background(Color.Black)
             ) {
                 MandaTopBar(
                     navigateToSetting = navigateToSetting,
@@ -158,6 +168,8 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier
+//                    .alpha(0.5f)
+//                    .background(Color.Black)
             ) {
                 MandaStatus(
                     titleName = uiState.mandaStatus.titleManda.name,
@@ -178,6 +190,8 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier
+//                    .alpha(0.5f)
+//                    .background(Color.Black)
             ) {
                 Mandalart(
                     mandaList = uiState.mandaList,
@@ -189,6 +203,8 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier
+//                    .alpha(0.5f)
+//                    .background(Color.Black)
             ) {
                 MandaTodoList(
                     colorList = currentColorList(uiState.mandaList),
@@ -202,12 +218,6 @@ fun InitializedMandaContent(
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.5f)
-                .background(Color.Black)
-        )
     }
 }
 
