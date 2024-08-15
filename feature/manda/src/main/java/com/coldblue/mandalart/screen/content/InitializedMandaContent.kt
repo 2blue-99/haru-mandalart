@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -152,25 +153,21 @@ fun InitializedMandaContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                /*.padding(horizontal = 16.dp)*/,
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Box(
-                modifier = Modifier
-//                    .alpha(0.5f)
-//                    .background(Color.Black)
-            ) {
+            ExplainBox(
+                top = true
+            ){
                 MandaTopBar(
                     navigateToSetting = navigateToSetting,
                     navigateToHistory = navigateToHistory
                 )
             }
 
-            Box(
-                modifier = Modifier
-//                    .alpha(0.5f)
-//                    .background(Color.Black)
-            ) {
+            ExplainBox(
+
+            ){
                 MandaStatus(
                     titleName = uiState.mandaStatus.titleManda.name,
                     statusColor = uiState.mandaStatus.statusColor,
@@ -188,10 +185,8 @@ fun InitializedMandaContent(
                 }
             }
 
-            Box(
-                modifier = Modifier
-//                    .alpha(0.5f)
-//                    .background(Color.Black)
+            ExplainBox(
+
             ) {
                 Mandalart(
                     mandaList = uiState.mandaList,
@@ -201,10 +196,8 @@ fun InitializedMandaContent(
                 )
             }
 
-            Box(
-                modifier = Modifier
-//                    .alpha(0.5f)
-//                    .background(Color.Black)
+            ExplainBox(
+                bottom = true
             ) {
                 MandaTodoList(
                     colorList = currentColorList(uiState.mandaList),
@@ -218,6 +211,26 @@ fun InitializedMandaContent(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ExplainBox(
+    top: Boolean = false,
+    bottom: Boolean = false,
+    content: @Composable BoxScope.() -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(
+                if(top) RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+                else if(bottom) RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                else RoundedCornerShape(8.dp)
+            )
+            .background(HMColor.Background)
+            .padding(horizontal = 16.dp)
+    ){
+        content()
     }
 }
 
@@ -299,7 +312,9 @@ fun MandaStatus(
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -525,7 +540,7 @@ fun Mandalart(
     }
 
     Column(
-
+        modifier = Modifier.padding(vertical = 4.dp)
     ) {
         LazyColumn(
             horizontalAlignment = Alignment.Start,

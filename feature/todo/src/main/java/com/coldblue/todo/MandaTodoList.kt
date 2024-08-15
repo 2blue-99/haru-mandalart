@@ -131,7 +131,9 @@ fun MandaTodoList(
         )
     }
 
-    Column {
+    Column(
+        modifier = Modifier.padding(top = 4.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
