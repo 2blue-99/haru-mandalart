@@ -139,23 +139,17 @@ fun InitializedMandaContent(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(HMColor.Background),
         contentAlignment = Alignment.Center
     ) {
-        if(isExplain) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.5f)
-                    .background(Color.Black)
-            )
-        }
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                /*.padding(horizontal = 16.dp)*/,
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
+
             ExplainBox(
                 top = true
             ){
@@ -210,6 +204,14 @@ fun InitializedMandaContent(
                     changeRange = changeTodoRange,
                 )
             }
+
+        }
+        if(isExplain) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(HMColor.Dim)
+            )
         }
     }
 }
@@ -222,12 +224,12 @@ fun ExplainBox(
 ) {
     Box(
         modifier = Modifier
+//            .background(HMColor.Dim)
             .clip(
                 if(top) RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
                 else if(bottom) RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
                 else RoundedCornerShape(8.dp)
             )
-            .background(HMColor.Background)
             .padding(horizontal = 16.dp)
     ){
         content()
