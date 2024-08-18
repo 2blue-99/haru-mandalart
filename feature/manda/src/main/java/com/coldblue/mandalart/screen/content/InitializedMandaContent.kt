@@ -224,6 +224,7 @@ fun ExplainBox(
 ) {
     Box(
         modifier = Modifier
+            .background(HMColor.Background)
 //            .background(HMColor.Dim)
             .clip(
                 if(top) RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
