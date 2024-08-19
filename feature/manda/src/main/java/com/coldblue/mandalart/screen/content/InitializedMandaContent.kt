@@ -146,71 +146,56 @@ fun InitializedMandaContent(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
+            MandaTopBar(
+                navigateToSetting = navigateToSetting,
+                navigateToHistory = navigateToHistory
+            )
 
-            ExplainBox(
-                top = true
-            ){
-                MandaTopBar(
-                    navigateToSetting = navigateToSetting,
-                    navigateToHistory = navigateToHistory
-                )
-            }
-
-            ExplainBox(
-
-            ){
-                MandaStatus(
-                    titleName = uiState.mandaStatus.titleManda.name,
-                    statusColor = uiState.mandaStatus.statusColor,
-                    donePercentage = uiState.mandaStatus.donePercentage,
-                    animateDonePercentage = animateDonePercentage.value,
-                ) {
-                    changeBottomSheet(
-                        true,
-                        MandaBottomSheetContentState.Insert(
-                            MandaBottomSheetContentType.MandaFinal(
-                                mandaUI = uiState.mandaStatus.titleManda
-                            )
+            MandaStatus(
+                titleName = uiState.mandaStatus.titleManda.name,
+                statusColor = uiState.mandaStatus.statusColor,
+                donePercentage = uiState.mandaStatus.donePercentage,
+                animateDonePercentage = animateDonePercentage.value,
+            ) {
+                changeBottomSheet(
+                    true,
+                    MandaBottomSheetContentState.Insert(
+                        MandaBottomSheetContentType.MandaFinal(
+                            mandaUI = uiState.mandaStatus.titleManda
                         )
                     )
-                }
-            }
-
-            ExplainBox(
-
-            ) {
-                Mandalart(
-                    mandaList = uiState.mandaList,
-                    curIndex = uiState.currentIndex,
-                    changeBottomSheet = changeBottomSheet,
-                    changeCurrentIndex = changeCurrentIndex
                 )
             }
 
-            ExplainBox(
-                bottom = true
-            ) {
-                MandaTodoList(
-                    colorList = currentColorList(uiState.mandaList),
-                    currentIndex = uiState.currentIndex,
-                    todoRange = uiState.todoRange,
-                    todoList = uiState.todoList,
-                    doneTodoCnt = uiState.doneTodoCnt,
-                    todoCnt = uiState.todoCnt,
-                    upsertMandaTodo = upsertMandaTodo,
-                    changeRange = changeTodoRange,
-                )
-            }
+            Mandalart(
+                mandaList = uiState.mandaList,
+                curIndex = uiState.currentIndex,
+                changeBottomSheet = changeBottomSheet,
+                changeCurrentIndex = changeCurrentIndex
+            )
 
+            MandaTodoList(
+                colorList = currentColorList(uiState.mandaList),
+                currentIndex = uiState.currentIndex,
+                todoRange = uiState.todoRange,
+                todoList = uiState.todoList,
+                doneTodoCnt = uiState.doneTodoCnt,
+                todoCnt = uiState.todoCnt,
+                upsertMandaTodo = upsertMandaTodo,
+                changeRange = changeTodoRange,
+            )
         }
-        if(isExplain) {
+        if (isExplain) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(HMColor.Dim)
+                    .clickable(false) {}
+                    .alpha(0.5f)
+                    .background(Color.Black)
             )
         }
     }
@@ -227,12 +212,12 @@ fun ExplainBox(
             .background(HMColor.Background)
 //            .background(HMColor.Dim)
             .clip(
-                if(top) RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
-                else if(bottom) RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                if (top) RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+                else if (bottom) RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
                 else RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 16.dp)
-    ){
+
+    ) {
         content()
     }
 }
@@ -299,9 +284,9 @@ fun MandaTopBar(
 
 @Preview
 @Composable
-fun MandaTopBarPreview(){
+fun MandaTopBarPreview() {
     MandaTopBar(navigateToSetting = { /*TODO*/ }) {
-        
+
     }
 }
 
@@ -392,7 +377,7 @@ fun Mandalart(
             addAll(mandaList)
         }
     }
-    LaunchedEffect(mandaList){
+    LaunchedEffect(mandaList) {
         currentMandaList.clear()
         currentMandaList.addAll(mandaList)
     }
@@ -537,7 +522,7 @@ fun Mandalart(
         }
     }
 
-    fun dragController(index: Int){
+    fun dragController(index: Int) {
         dragOffsetX = 0f
         dragOffsetY = 0f
     }
