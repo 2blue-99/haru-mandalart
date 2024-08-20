@@ -56,6 +56,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -111,7 +113,10 @@ fun InitializedMandaContent(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
 ) {
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    var size by remember { mutableStateOf(IntSize.Zero) }
     var isExplain by remember { mutableStateOf(true) }
+
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
@@ -146,48 +151,72 @@ fun InitializedMandaContent(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
+
             MandaTopBar(
                 navigateToSetting = navigateToSetting,
                 navigateToHistory = navigateToHistory
             )
 
-            MandaStatus(
-                titleName = uiState.mandaStatus.titleManda.name,
-                statusColor = uiState.mandaStatus.statusColor,
-                donePercentage = uiState.mandaStatus.donePercentage,
-                animateDonePercentage = animateDonePercentage.value,
+            Box(
+                modifier = Modifier.onGloballyPositioned {
+                    it.positionInRoot()
+                }
             ) {
-                changeBottomSheet(
-                    true,
-                    MandaBottomSheetContentState.Insert(
-                        MandaBottomSheetContentType.MandaFinal(
-                            mandaUI = uiState.mandaStatus.titleManda
+                ExplainBox {
+                    MandaStatus(
+                        titleName = uiState.mandaStatus.titleManda.name,
+                        statusColor = uiState.mandaStatus.statusColor,
+                        donePercentage = uiState.mandaStatus.donePercentage,
+                        animateDonePercentage = animateDonePercentage.value,
+                    ) {
+                        changeBottomSheet(
+                            true,
+                            MandaBottomSheetContentState.Insert(
+                                MandaBottomSheetContentType.MandaFinal(
+                                    mandaUI = uiState.mandaStatus.titleManda
+                                )
+                            )
                         )
-                    )
-                )
+                    }
+                }
             }
 
-            Mandalart(
-                mandaList = uiState.mandaList,
-                curIndex = uiState.currentIndex,
-                changeBottomSheet = changeBottomSheet,
-                changeCurrentIndex = changeCurrentIndex
-            )
+            Box(
+                modifier = Modifier.onGloballyPositioned {
+                    it.positionInRoot()
+                }
+            ){
+                ExplainBox {
+                    Mandalart(
+                        mandaList = uiState.mandaList,
+                        curIndex = uiState.currentIndex,
+                        changeBottomSheet = changeBottomSheet,
+                        changeCurrentIndex = changeCurrentIndex
+                    )
+                }
+            }
 
-            MandaTodoList(
-                colorList = currentColorList(uiState.mandaList),
-                currentIndex = uiState.currentIndex,
-                todoRange = uiState.todoRange,
-                todoList = uiState.todoList,
-                doneTodoCnt = uiState.doneTodoCnt,
-                todoCnt = uiState.todoCnt,
-                upsertMandaTodo = upsertMandaTodo,
-                changeRange = changeTodoRange,
-            )
+            Box(
+                modifier = Modifier.onGloballyPositioned {
+                    it.positionInRoot()
+                }
+            ) {
+                ExplainBox {
+                    MandaTodoList(
+                        colorList = currentColorList(uiState.mandaList),
+                        currentIndex = uiState.currentIndex,
+                        todoRange = uiState.todoRange,
+                        todoList = uiState.todoList,
+                        doneTodoCnt = uiState.doneTodoCnt,
+                        todoCnt = uiState.todoCnt,
+                        upsertMandaTodo = upsertMandaTodo,
+                        changeRange = changeTodoRange,
+                    )
+                }
+            }
         }
         if (isExplain) {
             Box(
@@ -203,20 +232,13 @@ fun InitializedMandaContent(
 
 @Composable
 fun ExplainBox(
-    top: Boolean = false,
-    bottom: Boolean = false,
     content: @Composable BoxScope.() -> Unit
 ) {
     Box(
         modifier = Modifier
-            .background(HMColor.Background)
-//            .background(HMColor.Dim)
-            .clip(
-                if (top) RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
-                else if (bottom) RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
-                else RoundedCornerShape(8.dp)
-            )
-
+            .padding(horizontal = 6.dp)
+            .border(1.dp, HMColor.Primary, RoundedCornerShape(8.dp))
+            .padding(horizontal = 10.dp)
     ) {
         content()
     }
