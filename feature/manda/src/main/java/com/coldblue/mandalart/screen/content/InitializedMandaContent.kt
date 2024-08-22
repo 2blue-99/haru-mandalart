@@ -229,19 +229,19 @@ fun InitializedMandaContent(
             )
         }
         Box(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset {
+                    IntOffset(
+                        offset.x.toInt(),
+                        offset.y.toInt() + size.height
+                    )
+                },
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.ThumbUp,
                 tint = HMColor.Background,
-                modifier = Modifier
-                    .offset {
-                        IntOffset(
-                            offset.x.toInt(),
-                            offset.y.toInt() + size.height
-                        )
-                    },
                 contentDescription = ""
             )
         }
