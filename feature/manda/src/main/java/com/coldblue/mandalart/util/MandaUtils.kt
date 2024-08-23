@@ -129,6 +129,10 @@ object MandaUtils {
     fun getTagList(): List<String> =
         stringArrayResource(id = R.array.tags).toList()
 
+    @Composable
+    fun getExplainList(): List<String> =
+        stringArrayResource(id = R.array.ex).toList()
+
     fun calculatePercentage(index: Int, mandaDetails: List<MandaDetail>): Float {
         return when (index) {
             -1, 4 -> (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() }

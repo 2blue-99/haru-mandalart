@@ -115,6 +115,7 @@ fun InitializedMandaContent(
     var offset by remember { mutableStateOf(Offset.Zero) }
     var size by remember { mutableStateOf(IntSize.Zero) }
     var isExplain by remember { mutableStateOf(true) }
+    var explainPosition by remember { mutableIntStateOf(0) }
 
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -239,11 +240,12 @@ fun InitializedMandaContent(
                 },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.ThumbUp,
-                tint = HMColor.Background,
-                contentDescription = ""
+            Text(
+                text = "",
+                style = HmStyle.text16,
+                color = HMColor.Background
             )
+
         }
     }
 }
