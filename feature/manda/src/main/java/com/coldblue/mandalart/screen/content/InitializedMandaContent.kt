@@ -92,6 +92,7 @@ import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
+import com.coldblue.tutorial.TutorialScreen
 import com.colddelight.mandalart.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -113,7 +114,7 @@ fun InitializedMandaContent(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
 ) {
-    val explainList = MandaUtils.getExplainList()
+
 
     var offset by remember { mutableStateOf(Offset.Zero) }
     var size by remember { mutableStateOf(IntSize.Zero) }
@@ -225,32 +226,12 @@ fun InitializedMandaContent(
             }
         }
         if (isExplain) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable(false) {}
-                    .alpha(0.5f)
-                    .background(Color.Black)
+            TutorialScreen(
+                offset = offset,
+                size = size
             )
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset {
-                    IntOffset(
-                        offset.x.toInt(),
-                        offset.y.toInt() + size.height
-                    )
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = explainList[explainPosition],
-                style = HmStyle.text16,
-                color = HMColor.Background
-            )
 
-        }
     }
 }
 
