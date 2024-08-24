@@ -131,7 +131,7 @@ object MandaUtils {
 
     @Composable
     fun getExplainList(): List<String> =
-        stringArrayResource(id = R.array.ex).toList()
+        stringArrayResource(id = R.array.explain).toList()
 
     fun calculatePercentage(index: Int, mandaDetails: List<MandaDetail>): Float {
         return when (index) {

@@ -3,7 +3,9 @@ package com.coldblue.tutorial
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material3.Button
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,9 +16,17 @@ import com.coldblue.designsystem.theme.HMColor
 
 @Composable
 fun TutorialScreen(navigateToManda: () -> Unit){
-    Surface(
-        modifier = Modifier.fillMaxSize().alpha(0.7f).background(Color.Black)
-    ) {
 
+
+
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(0.7f)
+            .background(Color.Black)
+    ) {
+        HorizontalPager(state = pagerState) {
+
+        }
     }
 }

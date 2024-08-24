@@ -85,6 +85,7 @@ import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.mandalart.util.MandaUtils.currentColorList
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
@@ -112,17 +113,20 @@ fun InitializedMandaContent(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
 ) {
+    val explainList = MandaUtils.getExplainList()
+
     var offset by remember { mutableStateOf(Offset.Zero) }
     var size by remember { mutableStateOf(IntSize.Zero) }
     var isExplain by remember { mutableStateOf(true) }
     var explainPosition by remember { mutableIntStateOf(0) }
-
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+
+
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
@@ -241,7 +245,7 @@ fun InitializedMandaContent(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "",
+                text = explainList[explainPosition],
                 style = HmStyle.text16,
                 color = HMColor.Background
             )
