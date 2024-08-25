@@ -21,11 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.component.HMButton
+import com.coldblue.designsystem.component.HMNavigateAnimation.fadeOutScreen
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -68,6 +72,13 @@ fun TutorialScreen(
                 style = HmStyle.text16,
                 color = HMColor.Background
             )
+
+        }
+        HMButton(
+            text = if (pagerState.currentPage == 3)
+                stringResource(id = R.string.explain_finish) else stringResource(id = R.string.explain_next),
+            clickableState = true
+        ) {
 
         }
     }
