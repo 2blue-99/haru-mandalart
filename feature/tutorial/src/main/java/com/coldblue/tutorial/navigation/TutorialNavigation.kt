@@ -14,6 +14,6 @@ fun NavController.navigateToTutorial(navOptions: NavOptions? = null){
 
 fun NavGraphBuilder.tutorialScreen(navigateToManda: () -> Unit){
     composable(route = tutorialRoute){
-        TutorialScreen()
+        TutorialScreen(){}
     }
 }

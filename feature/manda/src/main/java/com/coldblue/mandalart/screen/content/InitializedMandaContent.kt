@@ -228,8 +228,10 @@ fun InitializedMandaContent(
         if (isExplain) {
             TutorialScreen(
                 offset = offset,
-                size = size
-            )
+                size = size,
+            ){
+                isExplain = false
+            }
         }
 
     }

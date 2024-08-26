@@ -1,5 +1,6 @@
 package com.coldblue.tutorial
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,8 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -36,13 +39,19 @@ import kotlinx.coroutines.launch
 fun TutorialScreen(
     offset: Offset = Offset.Zero,
     size: IntSize = IntSize.Zero,
-){
+    onFinished: () -> Unit
+) {
 
     val explainList = HistoryUtil.getExplainList()
     val pagerState = rememberPagerState { 4 }
+    val coroutineScope = rememberCoroutineScope()
+    val fadeAlpha = remember { Animatable(0.5f) }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(fadeAlpha.value)
+            .background(Color.Black)
     ) {
         HorizontalPager(
             state = pagerState,
@@ -52,10 +61,9 @@ fun TutorialScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable(false) {}
-                    .alpha(0.5f)
-                    .background(Color.Black)
             )
         }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,12 +82,21 @@ fun TutorialScreen(
             )
 
         }
+
         HMButton(
-            text = if (pagerState.currentPage == 3)
-                stringResource(id = R.string.explain_finish) else stringResource(id = R.string.explain_next),
+            text = if (pagerState.currentPage == 3) stringResource(id = R.string.tutorial_finish) else stringResource(
+                id = R.string.tutorial_next
+            ),
             clickableState = true
         ) {
-
+            coroutineScope.launch {
+                if (pagerState.currentPage == 3) {
+                    onFinished()
+                    fadeAlpha.fadeOutScreen()
+                } else {
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                }
+            }
         }
     }
 }
