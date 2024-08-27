@@ -114,11 +114,9 @@ fun InitializedMandaContent(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
 ) {
-
-
     var offset by remember { mutableStateOf(Offset.Zero) }
     var size by remember { mutableStateOf(IntSize.Zero) }
-    var isExplain by remember { mutableStateOf(true) }
+    var isExplain by remember { mutableStateOf(false) }
     var explainPosition by remember { mutableIntStateOf(0) }
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -126,7 +124,6 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
-
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
@@ -160,14 +157,15 @@ fun InitializedMandaContent(
         ) {
 
             MandaTopBar(
+                navigateToTutorial = { isExplain = true },
                 navigateToSetting = navigateToSetting,
                 navigateToHistory = navigateToHistory
             )
 
             Box(
                 modifier = Modifier.onGloballyPositioned {
-//                    offset = it.positionInRoot()
-//                    size = it.size
+                    offset = it.positionInRoot()
+                    size = it.size
                 }
             ) {
                 ExplainBox {
@@ -253,6 +251,7 @@ fun ExplainBox(
 
 @Composable
 fun MandaTopBar(
+    navigateToTutorial: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToHistory: () -> Unit
 ) {
@@ -260,7 +259,8 @@ fun MandaTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp),
+            .height(60.dp)
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -280,8 +280,7 @@ fun MandaTopBar(
         }
         Row {
             IconButton(
-                //TODO
-                onClick = { }) {
+                onClick = { navigateToTutorial() }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     imageVector = IconPack.Question,
@@ -314,7 +313,10 @@ fun MandaTopBar(
 @Preview
 @Composable
 fun MandaTopBarPreview() {
-    MandaTopBar(navigateToSetting = { /*TODO*/ }) {
+    MandaTopBar(
+        navigateToTutorial = {},
+        navigateToSetting = { /*TODO*/ }
+    ) {
 
     }
 }
