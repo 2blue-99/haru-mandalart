@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -46,6 +47,7 @@ import kotlin.math.absoluteValue
 fun TutorialScreen(
     offset: Offset = Offset.Zero,
     size: IntSize = IntSize.Zero,
+    setCurrentPosition: (Int) -> Unit,
     onFinished: () -> Unit
 ) {
 
@@ -53,6 +55,10 @@ fun TutorialScreen(
     val pagerState = rememberPagerState(pageCount = {4})
     val coroutineScope = rememberCoroutineScope()
     val backGroundAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(pagerState.currentPage){
+        setCurrentPosition(pagerState.currentPage)
+    }
 
     LaunchedEffect(Unit){
         backGroundAlpha.fadeInScreen()
@@ -125,7 +131,12 @@ fun TutorialScreen(
                 modifier = Modifier
                     .size(40.dp)
                     .align(Alignment.TopCenter)
-                    .clickable { onFinished() },
+                    .clickable {
+                        coroutineScope.launch {
+                            backGroundAlpha.fadeOutScreen()
+                            onFinished()
+                        }
+                    },
                 contentDescription = "finish"
             )
         }
@@ -155,7 +166,8 @@ fun TutorialScreen(
 @Preview
 @Composable
 fun TutorialPreview(){
-    TutorialScreen {
-
-    }
+    TutorialScreen(
+        setCurrentPosition = {},
+        onFinished = {}
+    )
 }

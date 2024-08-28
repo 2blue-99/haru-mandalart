@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -28,7 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -62,7 +59,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
@@ -85,7 +81,6 @@ import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
-import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.mandalart.util.MandaUtils.currentColorList
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
@@ -97,7 +92,7 @@ import com.colddelight.mandalart.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun InitializedMandaContent(
     uiState: MandaUIState.InitializedSuccess,
@@ -117,7 +112,7 @@ fun InitializedMandaContent(
     var offset by remember { mutableStateOf(Offset.Zero) }
     var size by remember { mutableStateOf(IntSize.Zero) }
     var isExplain by remember { mutableStateOf(false) }
-    var explainPosition by remember { mutableIntStateOf(0) }
+    var currentPosition by remember { mutableIntStateOf(0) }
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
@@ -164,11 +159,13 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier.onGloballyPositioned {
-                    offset = it.positionInRoot()
-                    size = it.size
+                    if(currentPosition == 0){
+                        offset = it.positionInRoot()
+                        size = it.size
+                    }
                 }
             ) {
-                ExplainBox {
+                ExplainBox(borderVisible = currentPosition == 0) {
                     MandaStatus(
                         titleName = uiState.mandaStatus.titleManda.name,
                         statusColor = uiState.mandaStatus.statusColor,
@@ -189,11 +186,13 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier.onGloballyPositioned {
-                    offset = it.positionInRoot()
-                    size = it.size
+                    if(currentPosition == 1){
+                        offset = it.positionInRoot()
+                        size = it.size
+                    }
                 }
             ) {
-                ExplainBox {
+                ExplainBox(borderVisible = currentPosition == 1) {
                     Mandalart(
                         mandaList = uiState.mandaList,
                         curIndex = uiState.currentIndex,
@@ -205,11 +204,13 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier.onGloballyPositioned {
-//                    offset = it.positionInRoot()
-//                    size = it.size
+                    if(currentPosition == 2){
+                        offset = it.positionInRoot()
+                        size = it.size
+                    }
                 }
             ) {
-                ExplainBox {
+                ExplainBox(borderVisible = currentPosition == 2) {
                     MandaTodoList(
                         colorList = currentColorList(uiState.mandaList),
                         currentIndex = uiState.currentIndex,
@@ -227,22 +228,24 @@ fun InitializedMandaContent(
             TutorialScreen(
                 offset = offset,
                 size = size,
-            ){
-                isExplain = false
-            }
+                setCurrentPosition = { currentPosition = it },
+                onFinished = {
+                    isExplain = false
+                    currentPosition = -1
+                }
+            )
         }
-
     }
 }
 
 @Composable
 fun ExplainBox(
+    borderVisible: Boolean,
     content: @Composable BoxScope.() -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .padding(horizontal = 6.dp)
-            .border(1.dp, HMColor.Primary, RoundedCornerShape(8.dp))
+        modifier = Modifier.padding(horizontal = 6.dp)
+            .border(1.dp, if(borderVisible) HMColor.Primary else Color.Transparent, RoundedCornerShape(8.dp))
             .padding(horizontal = 10.dp)
     ) {
         content()
