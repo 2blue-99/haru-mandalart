@@ -131,7 +131,9 @@ fun MandaTodoList(
         )
     }
 
-    Column {
+    Column(
+        modifier = Modifier.padding(top = 4.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -577,6 +579,6 @@ fun MandaTodoItemPreview() {
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
         ),
-        3, 3, {}, {},
+        3, 3,  {}, {},
     )
 }
