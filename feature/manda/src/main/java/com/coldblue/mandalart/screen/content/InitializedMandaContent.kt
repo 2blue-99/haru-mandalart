@@ -147,7 +147,8 @@ fun InitializedMandaContent(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
 
@@ -165,22 +166,20 @@ fun InitializedMandaContent(
                     }
                 }
             ) {
-                ExplainBox(borderVisible = currentPosition == 0) {
-                    MandaStatus(
-                        titleName = uiState.mandaStatus.titleManda.name,
-                        statusColor = uiState.mandaStatus.statusColor,
-                        donePercentage = uiState.mandaStatus.donePercentage,
-                        animateDonePercentage = animateDonePercentage.value,
-                    ) {
-                        changeBottomSheet(
-                            true,
-                            MandaBottomSheetContentState.Insert(
-                                MandaBottomSheetContentType.MandaFinal(
-                                    mandaUI = uiState.mandaStatus.titleManda
-                                )
+                MandaStatus(
+                    titleName = uiState.mandaStatus.titleManda.name,
+                    statusColor = uiState.mandaStatus.statusColor,
+                    donePercentage = uiState.mandaStatus.donePercentage,
+                    animateDonePercentage = animateDonePercentage.value,
+                ) {
+                    changeBottomSheet(
+                        true,
+                        MandaBottomSheetContentState.Insert(
+                            MandaBottomSheetContentType.MandaFinal(
+                                mandaUI = uiState.mandaStatus.titleManda
                             )
                         )
-                    }
+                    )
                 }
             }
 
@@ -192,14 +191,12 @@ fun InitializedMandaContent(
                     }
                 }
             ) {
-                ExplainBox(borderVisible = currentPosition == 1) {
-                    Mandalart(
-                        mandaList = uiState.mandaList,
-                        curIndex = uiState.currentIndex,
-                        changeBottomSheet = changeBottomSheet,
-                        changeCurrentIndex = changeCurrentIndex
-                    )
-                }
+                Mandalart(
+                    mandaList = uiState.mandaList,
+                    curIndex = uiState.currentIndex,
+                    changeBottomSheet = changeBottomSheet,
+                    changeCurrentIndex = changeCurrentIndex
+                )
             }
 
             Box(
@@ -210,18 +207,16 @@ fun InitializedMandaContent(
                     }
                 }
             ) {
-                ExplainBox(borderVisible = currentPosition == 2) {
-                    MandaTodoList(
-                        colorList = currentColorList(uiState.mandaList),
-                        currentIndex = uiState.currentIndex,
-                        todoRange = uiState.todoRange,
-                        todoList = uiState.todoList,
-                        doneTodoCnt = uiState.doneTodoCnt,
-                        todoCnt = uiState.todoCnt,
-                        upsertMandaTodo = upsertMandaTodo,
-                        changeRange = changeTodoRange,
-                    )
-                }
+                MandaTodoList(
+                    colorList = currentColorList(uiState.mandaList),
+                    currentIndex = uiState.currentIndex,
+                    todoRange = uiState.todoRange,
+                    todoList = uiState.todoList,
+                    doneTodoCnt = uiState.doneTodoCnt,
+                    todoCnt = uiState.todoCnt,
+                    upsertMandaTodo = upsertMandaTodo,
+                    changeRange = changeTodoRange,
+                )
             }
         }
         if (isExplain) {
@@ -238,19 +233,19 @@ fun InitializedMandaContent(
     }
 }
 
-@Composable
-fun ExplainBox(
-    borderVisible: Boolean,
-    content: @Composable BoxScope.() -> Unit
-) {
-    Box(
-        modifier = Modifier.padding(horizontal = 6.dp)
-            .border(1.dp, if(borderVisible) HMColor.Primary else Color.Transparent, RoundedCornerShape(8.dp))
-            .padding(horizontal = 10.dp)
-    ) {
-        content()
-    }
-}
+//@Composable
+//fun ExplainBox(
+//    borderVisible: Boolean,
+//    content: @Composable BoxScope.() -> Unit
+//) {
+//    Box(
+//        modifier = Modifier.padding(horizontal = 6.dp)
+//            .border(1.dp, if(borderVisible) HMColor.Primary else Color.Transparent, RoundedCornerShape(8.dp))
+//            .padding(horizontal = 10.dp)
+//    ) {
+//        content()
+//    }
+//}
 
 @Composable
 fun MandaTopBar(
