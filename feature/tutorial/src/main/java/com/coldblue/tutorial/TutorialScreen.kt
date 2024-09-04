@@ -1,17 +1,21 @@
 package com.coldblue.tutorial
 
+import android.support.annotation.DrawableRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -27,16 +31,20 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMNavigateAnimation.fadeInScreen
 import com.coldblue.designsystem.component.HMNavigateAnimation.fadeOutScreen
 import com.coldblue.designsystem.component.HMPagerIndicator
 import com.coldblue.designsystem.component.calculateCurrentOffsetForPage
+import com.coldblue.designsystem.iconpack.TutorialArrow
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import kotlinx.coroutines.launch
@@ -51,7 +59,8 @@ fun TutorialScreen(
     onFinished: () -> Unit
 ) {
 
-    val explainList = HistoryUtil.getExplainList()
+    val textList = TutorialUtil.getTextList()
+    val imageList = TutorialUtil.getImageList()
     val pagerState = rememberPagerState(pageCount = {4})
     val coroutineScope = rememberCoroutineScope()
     val backGroundAlpha = remember { Animatable(0f) }
@@ -69,12 +78,33 @@ fun TutorialScreen(
             .fillMaxSize()
             .alpha(backGroundAlpha.value)
     ) {
+        Box(
+            modifier = Modifier.fillMaxSize().alpha(0.6f).background(Color.Black)
+        )
+        Box(
+            modifier = Modifier
+                .padding(top = 20.dp, end = 20.dp)
+                .align(Alignment.TopEnd),
+        ){
+            Icon(
+                imageVector = Icons.Default.Close,
+                tint = HMColor.Background,
+                modifier = Modifier
+                    .size(40.dp)
+                    .align(Alignment.TopCenter)
+                    .clickable {
+                        coroutineScope.launch {
+                            backGroundAlpha.fadeOutScreen()
+                            onFinished()
+                        }
+                    },
+                contentDescription = "finish"
+            )
+        }
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
-                .fillMaxSize()
-                .alpha(0.6f)
-                .background(Color.Black),
+                .fillMaxSize(),
             beyondBoundsPageCount = 0
         ) {page ->
             Box(
@@ -98,10 +128,10 @@ fun TutorialScreen(
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = explainList[pagerState.currentPage],
-                        style = HmStyle.text16,
-                        color = HMColor.Background
+                    TutorialContent(
+                        text = textList[page],
+                        mainId = imageList[page],
+                        subId = if(page==2) imageList[page+1] else null
                     )
                 }
             }
@@ -117,27 +147,6 @@ fun TutorialScreen(
                 targetPage = pagerState.targetPage,
                 currentPageOffsetFraction = pagerState.currentPageOffsetFraction,
                 indicatorColor = HMColor.Background
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .padding(top = 20.dp, end = 20.dp)
-                .align(Alignment.TopEnd),
-        ){
-            Icon(
-                imageVector = Icons.Default.Close,
-                tint = HMColor.Background,
-                modifier = Modifier
-                    .size(40.dp)
-                    .align(Alignment.TopCenter)
-                    .clickable {
-                        coroutineScope.launch {
-                            backGroundAlpha.fadeOutScreen()
-                            onFinished()
-                        }
-                    },
-                contentDescription = "finish"
             )
         }
         Box(
@@ -163,11 +172,57 @@ fun TutorialScreen(
     }
 }
 
+//@Preview
+//@Composable
+//fun TutorialPreview(){
+//    TutorialScreen(
+//        setCurrentPosition = {},
+//        onFinished = {}
+//    )
+//}
+
+@Composable
+fun CloseIcon(){
+
+}
+
+@Composable
+fun TutorialContent(
+    text: String,
+    @DrawableRes mainId: Int,
+    @DrawableRes subId: Int?
+){
+    val gap =  painterResource(id = mainId)
+    Column(
+        modifier = Modifier.padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Image(
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .aspectRatio(gap.intrinsicSize.width / gap.intrinsicSize.height)
+                .fillMaxWidth(),
+            painter = painterResource(id = mainId),
+            contentDescription = "main image"
+        )
+        subId?.let { Image(painter = painterResource(id = subId), contentDescription = "sub image") }
+        Icon(
+            imageVector = IconPack.TutorialArrow,
+            tint = HMColor.Background,
+            contentDescription = "arrow"
+        )
+        Text(
+            text = text,
+            style = HmStyle.text16,
+            color = HMColor.Background
+        )
+    }
+}
+
 @Preview
 @Composable
-fun TutorialPreview(){
-    TutorialScreen(
-        setCurrentPosition = {},
-        onFinished = {}
-    )
+fun FirstTutorialPreview(){
+    TutorialContent("가나다라마바사", R.drawable.tutorial_first, R.drawable.tutorial_first)
 }
+

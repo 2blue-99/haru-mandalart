@@ -151,7 +151,6 @@ fun InitializedMandaContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-
             MandaTopBar(
                 navigateToTutorial = { isExplain = true },
                 navigateToSetting = navigateToSetting,
@@ -257,8 +256,7 @@ fun MandaTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
-            .padding(horizontal = 16.dp),
+            .height(60.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
