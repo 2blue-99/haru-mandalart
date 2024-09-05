@@ -1,6 +1,7 @@
 package com.coldblue.tutorial
 
 import android.support.annotation.DrawableRes
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -23,8 +24,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -53,10 +57,11 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TutorialScreen(
-    offset: Offset = Offset.Zero,
+    titleOffset: Offset = Offset.Zero,
+    mandaOffset: Offset = Offset.Zero,
+    todoOffset: Offset = Offset.Zero,
     size: IntSize = IntSize.Zero,
-    setCurrentPosition: (Int) -> Unit,
-    onFinished: () -> Unit
+    onFinished: () -> Unit,
 ) {
 
     val textList = TutorialUtil.getTextList()
@@ -64,9 +69,17 @@ fun TutorialScreen(
     val pagerState = rememberPagerState(pageCount = {4})
     val coroutineScope = rememberCoroutineScope()
     val backGroundAlpha = remember { Animatable(0f) }
+    var imageOffset by remember { mutableStateOf(Offset.Zero) }
+    val list = listOf(titleOffset, mandaOffset, mandaOffset, todoOffset)
 
     LaunchedEffect(pagerState.currentPage){
-        setCurrentPosition(pagerState.currentPage)
+        Log.e("TAG", "currentPage: ${pagerState.currentPage}")
+        when(pagerState.currentPage){
+            0 -> imageOffset = titleOffset
+            1 -> imageOffset = mandaOffset
+            2 -> imageOffset = mandaOffset
+            3 -> imageOffset = todoOffset
+        }
     }
 
     LaunchedEffect(Unit){
@@ -79,8 +92,35 @@ fun TutorialScreen(
             .alpha(backGroundAlpha.value)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().alpha(0.6f).background(Color.Black)
+            modifier = Modifier
+                .fillMaxSize()
+                .alpha(0.6f)
+                .background(Color.Black)
         )
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize(),
+            beyondBoundsPageCount =1
+        ) {page ->
+            Box(
+                modifier = Modifier
+                    .graphicsLayer {
+                        val pageOffset = pagerState.calculateCurrentOffsetForPage(page)
+//                        translationX = pageOffset * size.width // TODO 슬라이드되면서 Fade Out
+                        alpha = 1 - pageOffset.absoluteValue
+                    }
+                    .fillMaxSize()
+                    .clickable(false) {}
+            ){
+                TutorialContent(
+                    imageOffset = list[page],
+                    text = textList[page],
+                    mainId = imageList[page],
+                    subId = if(page==2) imageList[page+1] else null
+                )
+
+            }
+        }
         Box(
             modifier = Modifier
                 .padding(top = 20.dp, end = 20.dp)
@@ -92,7 +132,7 @@ fun TutorialScreen(
                 modifier = Modifier
                     .size(40.dp)
                     .align(Alignment.TopCenter)
-                    .clickable {
+                    .clickable(true) {
                         coroutineScope.launch {
                             backGroundAlpha.fadeOutScreen()
                             onFinished()
@@ -100,41 +140,6 @@ fun TutorialScreen(
                     },
                 contentDescription = "finish"
             )
-        }
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxSize(),
-            beyondBoundsPageCount = 0
-        ) {page ->
-            Box(
-                modifier = Modifier
-                    .graphicsLayer {
-                        val pageOffset = pagerState.calculateCurrentOffsetForPage(page)
-                        translationX = pageOffset * size.width
-                        alpha = 1 - pageOffset.absoluteValue
-                    }
-                    .fillMaxSize()
-                    .clickable(false) {}
-            ){
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset {
-                            IntOffset(
-                                x = offset.x.toInt(),
-                                y = offset.y.toInt() + size.height
-                            )
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    TutorialContent(
-                        text = textList[page],
-                        mainId = imageList[page],
-                        subId = if(page==2) imageList[page+1] else null
-                    )
-                }
-            }
         }
         Box(
             modifier = Modifier
@@ -180,49 +185,66 @@ fun TutorialScreen(
 //        onFinished = {}
 //    )
 //}
-
-@Composable
-fun CloseIcon(){
-
-}
-
 @Composable
 fun TutorialContent(
+    imageOffset: Offset,
     text: String,
     @DrawableRes mainId: Int,
     @DrawableRes subId: Int?
 ){
     val gap =  painterResource(id = mainId)
-    Column(
-        modifier = Modifier.padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(2.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Image(
-            modifier = Modifier
-                .weight(1f, fill = false)
-                .aspectRatio(gap.intrinsicSize.width / gap.intrinsicSize.height)
-                .fillMaxWidth(),
-            painter = painterResource(id = mainId),
-            contentDescription = "main image"
-        )
-        subId?.let { Image(painter = painterResource(id = subId), contentDescription = "sub image") }
-        Icon(
-            imageVector = IconPack.TutorialArrow,
-            tint = HMColor.Background,
-            contentDescription = "arrow"
-        )
-        Text(
-            text = text,
-            style = HmStyle.text16,
-            color = HMColor.Background
-        )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .offset {
+                IntOffset(
+                    x = 0,
+                    y = imageOffset.y.toInt()
+                )
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Image(
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .aspectRatio(gap.intrinsicSize.width / gap.intrinsicSize.height)
+                    .fillMaxWidth(),
+                painter = painterResource(id = mainId),
+                contentDescription = "main image"
+            )
+            subId?.let {
+                Image(
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .aspectRatio(gap.intrinsicSize.width / gap.intrinsicSize.height)
+                        .fillMaxWidth(),
+                    painter = painterResource(id = subId),
+                    contentDescription = "sub image"
+                )
+            }
+            Icon(
+                imageVector = IconPack.TutorialArrow,
+                tint = HMColor.Background,
+                contentDescription = "arrow"
+            )
+            Text(
+                text = text,
+                style = HmStyle.text16,
+                color = HMColor.Background
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 fun FirstTutorialPreview(){
-    TutorialContent("가나다라마바사", R.drawable.tutorial_first, R.drawable.tutorial_first)
+    TutorialContent(Offset.Zero,"가나다라마바사", R.drawable.tutorial_first, R.drawable.tutorial_first)
 }
 

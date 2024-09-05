@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.screen.content
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -109,10 +110,11 @@ fun InitializedMandaContent(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit
 ) {
-    var offset by remember { mutableStateOf(Offset.Zero) }
+    var titleOffset by remember { mutableStateOf(Offset.Zero) }
+    var mandaOffset by remember { mutableStateOf(Offset.Zero) }
+    var todoOffset by remember { mutableStateOf(Offset.Zero) }
     var size by remember { mutableStateOf(IntSize.Zero) }
     var isExplain by remember { mutableStateOf(false) }
-    var currentPosition by remember { mutableIntStateOf(0) }
     var percentage by remember { mutableFloatStateOf(0f) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
@@ -159,10 +161,8 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier.onGloballyPositioned {
-                    if(currentPosition == 0){
-                        offset = it.positionInRoot()
-                        size = it.size
-                    }
+                    titleOffset = it.positionInRoot()
+                    size = it.size
                 }
             ) {
                 MandaStatus(
@@ -184,10 +184,8 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier.onGloballyPositioned {
-                    if(currentPosition == 1){
-                        offset = it.positionInRoot()
-                        size = it.size
-                    }
+                    mandaOffset = it.positionInRoot()
+                    size = it.size
                 }
             ) {
                 Mandalart(
@@ -200,10 +198,8 @@ fun InitializedMandaContent(
 
             Box(
                 modifier = Modifier.onGloballyPositioned {
-                    if(currentPosition == 2){
-                        offset = it.positionInRoot()
-                        size = it.size
-                    }
+                    todoOffset = it.positionInRoot()
+                    size = it.size
                 }
             ) {
                 MandaTodoList(
@@ -220,12 +216,12 @@ fun InitializedMandaContent(
         }
         if (isExplain) {
             TutorialScreen(
-                offset = offset,
+                titleOffset = titleOffset,
+                mandaOffset = mandaOffset,
+                todoOffset = todoOffset,
                 size = size,
-                setCurrentPosition = { currentPosition = it },
                 onFinished = {
                     isExplain = false
-                    currentPosition = -1
                 }
             )
         }
