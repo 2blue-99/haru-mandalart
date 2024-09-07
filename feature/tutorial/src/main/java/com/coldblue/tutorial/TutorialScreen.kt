@@ -35,7 +35,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -192,7 +191,8 @@ fun TutorialContent(
     @DrawableRes mainId: Int,
     @DrawableRes subId: Int?
 ){
-    val gap =  painterResource(id = mainId)
+    val mainImage =  painterResource(id = mainId)
+    val subImage =  painterResource(id = subId ?: mainId)
 
     Box(
         modifier = Modifier
@@ -213,19 +213,27 @@ fun TutorialContent(
             Image(
                 modifier = Modifier
                     .weight(1f, fill = false)
-                    .aspectRatio(gap.intrinsicSize.width / gap.intrinsicSize.height)
+                    .aspectRatio(mainImage.intrinsicSize.width / mainImage.intrinsicSize.height)
                     .fillMaxWidth(),
                 painter = painterResource(id = mainId),
                 contentDescription = "main image"
             )
+//            Image(
+//                modifier = Modifier
+//                    .weight(1f, fill = false)
+//                    .aspectRatio(subImage.intrinsicSize.width / subImage.intrinsicSize.height)
+//                    .fillMaxWidth(),
+//                painter = painterResource(id = subId ?: mainId),
+//                contentDescription = "main image"
+//            )
             subId?.let {
                 Image(
                     modifier = Modifier
                         .weight(1f, fill = false)
-                        .aspectRatio(gap.intrinsicSize.width / gap.intrinsicSize.height)
+                        .aspectRatio(subImage.intrinsicSize.width / subImage.intrinsicSize.height)
                         .fillMaxWidth(),
                     painter = painterResource(id = subId),
-                    contentDescription = "sub image"
+                    contentDescription = "main image"
                 )
             }
             Icon(
