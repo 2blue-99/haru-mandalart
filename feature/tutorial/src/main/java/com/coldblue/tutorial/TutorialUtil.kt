@@ -13,7 +13,6 @@ object TutorialUtil {
             R.drawable.tutorial_first,
             R.drawable.tutorial_second,
             R.drawable.tutorial_third_top,
-            R.drawable.tutorial_third_mid,
             R.drawable.tutorial_fourth,
             )
 }

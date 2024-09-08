@@ -7,12 +7,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -69,7 +73,7 @@ fun TutorialScreen(
     val coroutineScope = rememberCoroutineScope()
     val backGroundAlpha = remember { Animatable(0f) }
     var imageOffset by remember { mutableStateOf(Offset.Zero) }
-    val list = listOf(titleOffset, mandaOffset, mandaOffset, todoOffset)
+    val list = listOf(titleOffset, mandaOffset, titleOffset, todoOffset)
 
     LaunchedEffect(pagerState.currentPage){
         Log.e("TAG", "currentPage: ${pagerState.currentPage}")
@@ -114,10 +118,10 @@ fun TutorialScreen(
                 TutorialContent(
                     imageOffset = list[page],
                     text = textList[page],
+                    last = page == 3,
                     mainId = imageList[page],
-                    subId = if(page==2) imageList[page+1] else null
+                    subId = if(page==2) R.drawable.tutorial_third_mid else null
                 )
-
             }
         }
         Box(
@@ -176,18 +180,11 @@ fun TutorialScreen(
     }
 }
 
-//@Preview
-//@Composable
-//fun TutorialPreview(){
-//    TutorialScreen(
-//        setCurrentPosition = {},
-//        onFinished = {}
-//    )
-//}
 @Composable
 fun TutorialContent(
     imageOffset: Offset,
     text: String,
+    last: Boolean,
     @DrawableRes mainId: Int,
     @DrawableRes subId: Int?
 ){
@@ -195,57 +192,85 @@ fun TutorialContent(
     val subImage =  painterResource(id = subId ?: mainId)
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .offset {
-                IntOffset(
-                    x = 0,
-                    y = imageOffset.y.toInt()
-                )
-            },
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Image(
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .aspectRatio(mainImage.intrinsicSize.width / mainImage.intrinsicSize.height)
-                    .fillMaxWidth(),
-                painter = painterResource(id = mainId),
-                contentDescription = "main image"
-            )
-//            Image(
-//                modifier = Modifier
-//                    .weight(1f, fill = false)
-//                    .aspectRatio(subImage.intrinsicSize.width / subImage.intrinsicSize.height)
-//                    .fillMaxWidth(),
-//                painter = painterResource(id = subId ?: mainId),
-//                contentDescription = "main image"
-//            )
-            subId?.let {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset {
+                    IntOffset(
+                        x = 0,
+                        y = imageOffset.y.toInt()
+                    )
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
                 Image(
                     modifier = Modifier
                         .weight(1f, fill = false)
-                        .aspectRatio(subImage.intrinsicSize.width / subImage.intrinsicSize.height)
+                        .aspectRatio(mainImage.intrinsicSize.width / mainImage.intrinsicSize.height)
                         .fillMaxWidth(),
-                    painter = painterResource(id = subId),
+                    painter = painterResource(id = mainId),
                     contentDescription = "main image"
                 )
+                subId?.let {
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Image(
+                        modifier = Modifier
+                            .weight(1f, fill = false)
+                            .aspectRatio(subImage.intrinsicSize.width / subImage.intrinsicSize.height)
+                            .fillMaxWidth(),
+                        painter = painterResource(id = subId),
+                        contentDescription = "main image"
+                    )
+                }
+                if(!last){
+                    Icon(
+                        imageVector = IconPack.TutorialArrow,
+                        tint = HMColor.Background,
+                        contentDescription = "arrow"
+                    )
+                    Text(
+                        text = text,
+                        style = HmStyle.text16,
+                        color = HMColor.Background
+                    )
+                }
             }
-            Icon(
-                imageVector = IconPack.TutorialArrow,
-                tint = HMColor.Background,
-                contentDescription = "arrow"
-            )
-            Text(
-                text = text,
-                style = HmStyle.text16,
-                color = HMColor.Background
-            )
+        }
+        if(last){
+            Box(
+                modifier = Modifier.offset {
+                        IntOffset(
+                            x = 0,
+                            y = imageOffset.y.toInt() - 500
+                        )
+                    },
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Text(
+                        text = text,
+                        style = HmStyle.text16,
+                        color = HMColor.Background
+                    )
+                    Icon(
+                        modifier = Modifier.rotate(180f),
+                        imageVector = IconPack.TutorialArrow,
+                        tint = HMColor.Background,
+                        contentDescription = "arrow"
+                    )
+                }
+            }
         }
     }
 }
@@ -253,6 +278,6 @@ fun TutorialContent(
 @Preview
 @Composable
 fun FirstTutorialPreview(){
-    TutorialContent(Offset.Zero,"가나다라마바사", R.drawable.tutorial_first, R.drawable.tutorial_first)
+    TutorialContent(Offset.Zero,"가나다라마바사", false,R.drawable.tutorial_first, R.drawable.tutorial_first)
 }
 
