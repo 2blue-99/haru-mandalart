@@ -3,7 +3,9 @@ plugins {
     alias(libs.plugins.hm.android.hilt)
     alias(libs.plugins.hm.android.application.compose)
     id("com.google.android.gms.oss-licenses-plugin")
+    alias(libs.plugins.org.jetbrains.kotlin.android)
 }
+
 android {
     namespace = "com.coldblue.haru_mandalart"
 
@@ -50,6 +52,7 @@ dependencies {
     implementation(project(":feature:survey"))
     implementation(project(":feature:explain"))
     implementation(project(":feature:history"))
+    implementation(project(":feature:alarm"))
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
@@ -63,4 +66,7 @@ dependencies {
     implementation(libs.androidx.work.ktx)
     implementation (libs.play.services.oss.licenses)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
 }

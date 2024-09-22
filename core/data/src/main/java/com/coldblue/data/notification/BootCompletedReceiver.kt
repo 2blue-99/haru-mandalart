@@ -1,4 +1,4 @@
-package com.coldblue.data.alarm
+package com.coldblue.data.notification
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BootCompletedReceiver : BroadcastReceiver() {
     @Inject
-    lateinit var alarmScheduler: AlarmScheduler
+    lateinit var notificationScheduler: NotificationScheduler
 
     @Inject
     lateinit var alarmDao: AlarmDao
@@ -28,9 +28,8 @@ class BootCompletedReceiver : BroadcastReceiver() {
     private fun addAllAlarm(){
         CoroutineScope(Dispatchers.IO).launch {
             alarmDao.getAllAlarm().forEach {
-                alarmScheduler.add(it.asDomain())
+                notificationScheduler.add(it.asDomain())
             }
         }
     }
-
 }

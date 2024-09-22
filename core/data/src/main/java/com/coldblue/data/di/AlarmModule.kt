@@ -2,8 +2,8 @@ package com.coldblue.data.di
 
 import android.app.AlarmManager
 import android.content.Context
-import com.coldblue.data.alarm.AlarmScheduler
-import com.coldblue.data.alarm.AlarmSchedulerImpl
+import com.coldblue.data.notification.NotificationScheduler
+import com.coldblue.data.notification.NotificationSchedulerImpl
 import com.coldblue.database.dao.AlarmDao
 import dagger.Module
 import dagger.Provides
@@ -26,7 +26,7 @@ object AlarmModule {
         @ApplicationContext context: Context,
         alarmManager: AlarmManager,
         alarmDao: AlarmDao
-    ): AlarmScheduler = AlarmSchedulerImpl(context, alarmManager, alarmDao)
+    ): NotificationScheduler = NotificationSchedulerImpl(context, alarmManager, alarmDao)
 
 
 }

@@ -48,6 +48,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.blue.alarm.AlarmViewModel
 import com.coldblue.data.util.toMillis
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.todo.AddSquare
@@ -89,6 +91,7 @@ fun MandaTodoList(
     doneTodoCnt: Int,
     upsertMandaTodo: (MandaTodo) -> Unit,
     changeRange: (DateRange) -> Unit,
+    alarmViewModel: AlarmViewModel = hiltViewModel()
 ) {
     var datePickerState by remember { mutableStateOf(false) }
     var timePickerState by remember { mutableStateOf(false) }
@@ -283,7 +286,7 @@ fun MandaTodoItem(
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
             .then(
-                if(clickable) Modifier.clickable(true) { todoDialogState = true } else Modifier
+                if (clickable) Modifier.clickable(true) { todoDialogState = true } else Modifier
             ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -295,7 +298,8 @@ fun MandaTodoItem(
             }
             Text(
                 modifier = Modifier
-                    .padding(4.dp).padding(bottom = 2.dp)
+                    .padding(4.dp)
+                    .padding(bottom = 2.dp)
                     .fillMaxWidth(0.85f),
                 text = mandaTodo.title,
                 color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
@@ -560,7 +564,9 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
             }
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp).padding(bottom = 2.dp),
+            modifier = Modifier
+                .padding(vertical = 4.dp, horizontal = 16.dp)
+                .padding(bottom = 2.dp),
             text = toggleInfo.text,
             color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray,
             style = HmStyle.text14

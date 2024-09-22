@@ -1,6 +1,6 @@
 package com.coldblue.data.repository.todo
 
-import com.coldblue.data.alarm.AlarmScheduler
+import com.coldblue.data.notification.NotificationScheduler
 import com.coldblue.data.mapper.MandaTodoMapper.asDomain
 import com.coldblue.data.mapper.MandaTodoMapper.asEntity
 import com.coldblue.data.mapper.MandaTodoMapper.asNetworkModel
@@ -29,7 +29,7 @@ class MandaTodoRepositoryImpl @Inject constructor(
     private val mandaTodoDataSource: MandaTodoDataSource,
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
-    private val alarmScheduler: AlarmScheduler,
+    private val notificationScheduler: NotificationScheduler,
     private val todoWidgetHelper: TodoWidgetHelper
 ) : MandaTodoRepository {
     override fun getMandaTodo(): Flow<List<MandaTodo>> {
@@ -140,20 +140,20 @@ class MandaTodoRepositoryImpl @Inject constructor(
     private suspend fun MandaTodo.syncAlarm() {
         // 시간 null 체크
         if (time == null) {
-            alarmScheduler.cancel(id)
+            notificationScheduler.cancel(id)
             return
         }
         // date, time 추가 시점이 과거인지 체크
         if (LocalDateTime.of(date, time).isPassed()) {
-            alarmScheduler.cancel(id)
+            notificationScheduler.cancel(id)
             return
         }
         // 삭제, 완료했는지 체크
         if (isDel or isDone) {
-            alarmScheduler.cancel(id)
+            notificationScheduler.cancel(id)
             return
         }
-        alarmScheduler.add(AlarmItem(LocalDateTime.of(date, time), title, id))
+        notificationScheduler.add(AlarmItem(LocalDateTime.of(date, time), title, id))
     }
 
 }

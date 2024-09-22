@@ -1,45 +1,41 @@
 package com.coldblue.data.alarm
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.coldblue.data.repository.user.UserRepository
-import com.coldblue.database.dao.AlarmDao
-import com.orhanobut.logger.Logger
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import javax.inject.Inject
+import android.util.Log
+import androidx.core.app.NotificationCompat
 
-@AndroidEntryPoint
-class AlarmReceiver : BroadcastReceiver() {
+class AlarmReceiver: BroadcastReceiver() {
 
-    @Inject
-    lateinit var todoNotificationService: TodoNotificationService
+    private lateinit var manager: NotificationManager
+    private lateinit var builder: NotificationCompat.Builder
 
-    @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var alarmDao: AlarmDao
+    companion object {
+        const val MY_ID = "MYID"
+        const val MY_NAME = "MYNAME"
+    }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val text = intent?.getStringExtra(TODO_TITLE) ?: return
-        val id = intent.getIntExtra(TODO_ID, 0)
+        Log.e("TAG", "onReceive: 받았음")
+        manager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        CoroutineScope(Dispatchers.IO).launch {
-            alarmDao.deleteAlarm(id)
-            if (userRepository.isAlarm.first())
-                showNotification(text)
-        }
-    }
+        manager.createNotificationChannel(
+            NotificationChannel(
+                MY_ID,
+                MY_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+        )
 
-    private fun showNotification(text: String) {
-        todoNotificationService.showNotification(text)
+        builder = NotificationCompat.Builder(context, MY_ID)
+
+//        val activityIntent = Intent(context, AlarmActivity::class.java).apply {
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        }
+//
+//        context.startActivity(activityIntent)
     }
 }
-
-internal const val TODO_TITLE = "TODO_TITLE"
-internal const val TODO_ID = "TODO_ID"

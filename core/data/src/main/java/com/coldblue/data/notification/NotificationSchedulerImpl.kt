@@ -1,4 +1,4 @@
-package com.coldblue.data.alarm
+package com.coldblue.data.notification
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -9,14 +9,13 @@ import com.coldblue.data.mapper.AlarmMapper.asEntity
 import com.coldblue.data.util.toMillis
 import com.coldblue.database.dao.AlarmDao
 import com.coldblue.model.AlarmItem
-import com.orhanobut.logger.Logger
 import javax.inject.Inject
 
-class AlarmSchedulerImpl @Inject constructor(
+class NotificationSchedulerImpl @Inject constructor(
     private val context: Context,
     private val alarmManager: AlarmManager,
     private val alarmDao: AlarmDao
-) : AlarmScheduler {
+) : NotificationScheduler {
 
     override suspend fun add(item: AlarmItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {

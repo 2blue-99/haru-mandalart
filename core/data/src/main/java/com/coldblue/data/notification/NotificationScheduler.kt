@@ -1,8 +1,8 @@
-package com.coldblue.data.alarm
+package com.coldblue.data.notification
 
 import com.coldblue.model.AlarmItem
 
-interface AlarmScheduler {
+interface NotificationScheduler {
 
     suspend fun add(item: AlarmItem)
 

@@ -6,9 +6,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import com.coldblue.data.alarm.TodoNotificationService
+import com.coldblue.data.notification.TodoNotificationService
 import com.coldblue.haru_mandalart.MainActivity
-import com.coldblue.haru_mandalart.R
 import com.orhanobut.logger.Logger
 import javax.inject.Inject
 

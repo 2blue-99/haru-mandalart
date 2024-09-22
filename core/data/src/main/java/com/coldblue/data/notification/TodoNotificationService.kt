@@ -1,4 +1,4 @@
-package com.coldblue.data.alarm
+package com.coldblue.data.notification
 
 interface TodoNotificationService {
     fun showNotification(text: String)
