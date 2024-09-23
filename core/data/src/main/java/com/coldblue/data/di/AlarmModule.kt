@@ -1,10 +1,8 @@
 package com.coldblue.data.di
 
-import android.app.AlarmManager
 import android.content.Context
-import com.coldblue.data.notification.NotificationScheduler
-import com.coldblue.data.notification.NotificationSchedulerImpl
-import com.coldblue.database.dao.AlarmDao
+import com.coldblue.data.alarm.AlarmScheduler
+import com.coldblue.data.alarm.AlarmSchedulerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,16 +15,5 @@ import javax.inject.Singleton
 object AlarmModule {
     @Singleton
     @Provides
-    fun provideAlarmManager(@ApplicationContext context: Context): AlarmManager =
-        context.getSystemService(AlarmManager::class.java)
-
-    @Singleton
-    @Provides
-    fun provideAlarmScheduler(
-        @ApplicationContext context: Context,
-        alarmManager: AlarmManager,
-        alarmDao: AlarmDao
-    ): NotificationScheduler = NotificationSchedulerImpl(context, alarmManager, alarmDao)
-
-
+    fun provideAlarmHelper(@ApplicationContext context: Context): AlarmScheduler = AlarmSchedulerImpl(context)
 }

@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.coldblue.data.mapper.AlarmMapper.asDomain
-import com.coldblue.database.dao.AlarmDao
+import com.coldblue.database.dao.NotificationDao
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,17 +17,17 @@ class BootCompletedReceiver : BroadcastReceiver() {
     lateinit var notificationScheduler: NotificationScheduler
 
     @Inject
-    lateinit var alarmDao: AlarmDao
+    lateinit var notificationDao: NotificationDao
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            addAllAlarm()
+            addAllNotification()
         }
     }
 
-    private fun addAllAlarm(){
+    private fun addAllNotification(){
         CoroutineScope(Dispatchers.IO).launch {
-            alarmDao.getAllAlarm().forEach {
+            notificationDao.getAllNotification().forEach {
                 notificationScheduler.add(it.asDomain())
             }
         }

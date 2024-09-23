@@ -6,32 +6,30 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import com.coldblue.data.util.AlarmHelper
+import com.coldblue.data.util.toMillis
+import com.coldblue.model.NotificationAlarmItem
 import java.util.Calendar
 import java.util.Date
+import javax.inject.Inject
 
-class AlarmHelperImpl(
+class AlarmSchedulerImpl @Inject constructor(
     private val context: Context
-):AlarmHelper {
-    override fun addAlarm(time: Date, alarmCode : Int, content: String) {
+): AlarmScheduler {
+    override fun addAlarm(alarmItem: NotificationAlarmItem) {
         val alarmManger = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val receiverIntent = Intent(context, AlarmReceiver::class.java)
         receiverIntent.apply {
-            putExtra("alarm_rqCode", alarmCode)
-            putExtra("content", content)
+            putExtra(ALARM_TITLE, alarmItem.title)
+            putExtra(ALARM_ID, alarmItem.id)
         }
 
         val pendingIntent = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
-            PendingIntent.getBroadcast(context, alarmCode, receiverIntent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, alarmItem.id, receiverIntent, PendingIntent.FLAG_IMMUTABLE)
         } else {
-            PendingIntent.getBroadcast(context, alarmCode, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(context, alarmItem.id, receiverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
-
-        val calendar = Calendar.getInstance()
-        calendar.time = time
-
-        Log.e("TAG", "시간 : $time", )
-        alarmManger.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        Log.e("TAG", "alarm 시간 set : ${alarmItem.time}")
+        alarmManger.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmItem.time!!.toMillis(), pendingIntent)
     }
 
     override fun cancelAlarm(alarmCode: Int) {
@@ -47,3 +45,4 @@ class AlarmHelperImpl(
         alarmManager.cancel(pendingIntent)
     }
 }
+

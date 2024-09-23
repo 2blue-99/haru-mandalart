@@ -1,16 +1,16 @@
 package com.coldblue.data.mapper
 
-import com.coldblue.database.entity.AlarmEntity
-import com.coldblue.model.AlarmItem
+import com.coldblue.database.entity.NotificationEntity
+import com.coldblue.model.NotificationAlarmItem
 
 object AlarmMapper {
 
-    fun AlarmItem.asEntity(): AlarmEntity =
-        AlarmEntity(this.time!!, this.title!!, this.id)
+    fun NotificationAlarmItem.asEntity(): NotificationEntity =
+        NotificationEntity(this.time!!, this.title!!, this.id)
 
-    fun AlarmEntity.asDomain(): AlarmItem =
-        AlarmItem(this.time, this.title, this.id)
+    fun NotificationEntity.asDomain(): NotificationAlarmItem =
+        NotificationAlarmItem(this.time, this.title, this.id)
 
-    fun List<AlarmEntity>.asDomain(): List<AlarmItem> =
+    fun List<NotificationEntity>.asDomain(): List<NotificationAlarmItem> =
         this.map { it.asDomain() }
 }

@@ -1,20 +1,20 @@
 package com.blue.alarm
 
 import androidx.lifecycle.ViewModel
-import com.coldblue.data.util.AlarmHelper
+import com.coldblue.data.alarm.AlarmScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class AlarmViewModel @Inject constructor (
-    private val alarmHelper: AlarmHelper
+    private val alarmScheduler: AlarmScheduler
 ): ViewModel() {
     fun addAlarm(time: Date, alarmCode : Int, content: String){
-        alarmHelper.addAlarm(time, alarmCode, content)
+        alarmScheduler.addAlarm(time, alarmCode, content)
     }
 
     fun cancelAlarm(alarmCode: Int){
-        alarmHelper.cancelAlarm(alarmCode)
+        alarmScheduler.cancelAlarm(alarmCode)
     }
 }

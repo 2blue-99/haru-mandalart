@@ -1,7 +1,7 @@
 package com.coldblue.database.di
 
 import com.coldblue.database.AppDataBase
-import com.coldblue.database.dao.AlarmDao
+import com.coldblue.database.dao.NotificationDao
 import com.coldblue.database.dao.AppDao
 import com.coldblue.database.dao.MandaDetailDao
 import com.coldblue.database.dao.MandaKeyDao
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 object DaoModule {
     @Singleton
     @Provides
-    fun provideAlarmDao(dataBase: AppDataBase): AlarmDao =
+    fun provideAlarmDao(dataBase: AppDataBase): NotificationDao =
         dataBase.alarmDao()
 
     @Singleton

@@ -7,17 +7,17 @@ import android.content.Intent
 import android.util.Log
 import com.coldblue.data.mapper.AlarmMapper.asEntity
 import com.coldblue.data.util.toMillis
-import com.coldblue.database.dao.AlarmDao
-import com.coldblue.model.AlarmItem
+import com.coldblue.database.dao.NotificationDao
+import com.coldblue.model.NotificationAlarmItem
 import javax.inject.Inject
 
 class NotificationSchedulerImpl @Inject constructor(
     private val context: Context,
     private val alarmManager: AlarmManager,
-    private val alarmDao: AlarmDao
+    private val notificationDao: NotificationDao
 ) : NotificationScheduler {
 
-    override suspend fun add(item: AlarmItem) {
+    override suspend fun add(item: NotificationAlarmItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(TODO_TITLE, item.title)
             putExtra(TODO_ID, item.id)
@@ -33,7 +33,7 @@ class NotificationSchedulerImpl @Inject constructor(
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
-            alarmDao.addAlarm(item.asEntity())
+            notificationDao.addNotification(item.asEntity())
 
         } catch (e: Exception) {
             Log.e("TAG", "schedule: ${e.message}")
@@ -49,11 +49,11 @@ class NotificationSchedulerImpl @Inject constructor(
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
-        alarmDao.deleteAlarm(id)
+        notificationDao.deleteNotification(id)
     }
 
     override suspend fun cancelAll() {
-        alarmDao.getAllAlarm().forEach {
+        notificationDao.getAllNotification().forEach {
             cancel(it.id)
         }
     }

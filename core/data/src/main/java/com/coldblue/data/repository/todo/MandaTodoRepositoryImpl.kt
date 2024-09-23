@@ -1,5 +1,6 @@
 package com.coldblue.data.repository.todo
 
+import com.coldblue.data.alarm.AlarmScheduler
 import com.coldblue.data.notification.NotificationScheduler
 import com.coldblue.data.mapper.MandaTodoMapper.asDomain
 import com.coldblue.data.mapper.MandaTodoMapper.asEntity
@@ -12,7 +13,7 @@ import com.coldblue.data.util.isPassed
 import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
-import com.coldblue.model.AlarmItem
+import com.coldblue.model.NotificationAlarmItem
 import com.coldblue.model.TodoGraph
 import com.coldblue.model.MandaTodo
 import com.coldblue.network.datasource.MandaTodoDataSource
@@ -30,6 +31,7 @@ class MandaTodoRepositoryImpl @Inject constructor(
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
     private val notificationScheduler: NotificationScheduler,
+    private val alarmScheduler: AlarmScheduler,
     private val todoWidgetHelper: TodoWidgetHelper
 ) : MandaTodoRepository {
     override fun getMandaTodo(): Flow<List<MandaTodo>> {
@@ -91,8 +93,9 @@ class MandaTodoRepositoryImpl @Inject constructor(
 
 
     override suspend fun upsertMandaTodo(mandaTodo: MandaTodo) {
+        Logger.e("mandaTodo : $mandaTodo")
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
-        mandaTodo.syncAlarm()
+        mandaTodo.syncNotificationAlarm()
         todoWidgetHelper.widgetUpdate()
         syncHelper.syncWrite()
 
@@ -137,7 +140,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun MandaTodo.syncAlarm() {
+    private suspend fun MandaTodo.syncNotificationAlarm() {
+        // TODO 취소할 필요가 있나 궁금
         // 시간 null 체크
         if (time == null) {
             notificationScheduler.cancel(id)
@@ -153,7 +157,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
             notificationScheduler.cancel(id)
             return
         }
-        notificationScheduler.add(AlarmItem(LocalDateTime.of(date, time), title, id))
+        val item = NotificationAlarmItem(LocalDateTime.of(date, time), title, id)
+        notificationScheduler.add(item)
+        alarmScheduler.addAlarm(item)
     }
-
 }
