@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,7 @@ import java.time.ZoneId
 
 @Composable
 fun AlarmScreen(
-    text: String,
+    title: String,
     onFinished: () -> Unit,
     onStartActivity: () -> Unit
 ){
@@ -47,14 +48,15 @@ fun AlarmScreen(
     ) {
         Image(
             painter = painterResource(id = R.drawable.alarm_background),
+            contentScale = ContentScale.Crop,
             contentDescription = "background"
         )
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(bottom = 120.dp)
+            modifier = Modifier.padding(bottom = 160.dp)
         ) {
             MainContent(
-                text = text
+                title = title
             )
         }
 
@@ -71,7 +73,7 @@ fun AlarmScreen(
 
 @Composable
 fun MainContent(
-    text: String
+    title: String
 ){
     val timeFormat = SimpleDateFormat("hh:mm")
     val currentSystemTime = System.currentTimeMillis()
@@ -90,7 +92,7 @@ fun MainContent(
         ) {
             Text(
                 text = formatTime,
-                style = HmStyle.text46,
+                style = HmStyle.text60,
                 color = Color.White
             )
             Text(
@@ -105,7 +107,7 @@ fun MainContent(
             contentDescription = ""
         )
         Text(
-            text = "알람 제목", // TODO
+            text = title, // TODO
             style = HmStyle.text14,
             color = Color.White
         )
@@ -119,17 +121,18 @@ fun BottomContent(
 ){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier.padding(70.dp)
     ){
         IconButton(
             onClick = onFinished,
             modifier = Modifier
-                .size(70.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .size(70.dp),
             colors = IconButtonDefaults.iconButtonColors(containerColor = HMColor.Background)
         ) {
             Icon(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(30.dp),
                 imageVector = Icons.Default.Close,
                 tint = HMColor.Primary,
                 contentDescription = "close"
@@ -147,6 +150,7 @@ fun BottomContent(
                         end = Offset(size.width, verticalOffset)
                     )
                 },
+                style = HmStyle.text14,
                 text = "하루 만다라트 바로가기",
                 color = HMColor.Background
             )
@@ -158,7 +162,7 @@ fun BottomContent(
 @Composable
 fun AlarmPreview(){
     AlarmScreen(
-        text = "",
+        title = "",
         onFinished = {},
         onStartActivity = {}
     )

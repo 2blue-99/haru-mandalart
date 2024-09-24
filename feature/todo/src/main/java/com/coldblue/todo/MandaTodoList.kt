@@ -48,8 +48,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.blue.alarm.AlarmViewModel
 import com.coldblue.data.util.toMillis
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.todo.AddSquare
@@ -91,7 +89,6 @@ fun MandaTodoList(
     doneTodoCnt: Int,
     upsertMandaTodo: (MandaTodo) -> Unit,
     changeRange: (DateRange) -> Unit,
-//    alarmViewModel: AlarmViewModel = hiltViewModel()
 ) {
     var datePickerState by remember { mutableStateOf(false) }
     var timePickerState by remember { mutableStateOf(false) }

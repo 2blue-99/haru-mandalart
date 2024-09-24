@@ -1,8 +1,8 @@
 package com.coldblue.data.di
 
 import android.content.Context
-import com.coldblue.data.alarm.AlarmScheduler
-import com.coldblue.data.alarm.AlarmSchedulerImpl
+import com.coldblue.data.receiver.alarm.AlarmScheduler
+import com.coldblue.data.receiver.alarm.AlarmSchedulerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

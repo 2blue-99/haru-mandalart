@@ -146,6 +146,7 @@ class MainActivity : ComponentActivity() {
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
             onResult = { isGranted ->
+                //TODO 단순화
                 if (isGranted) {
                     CoroutineScope(Dispatchers.IO).launch {
                         loginHelper.updateAlarmState(true)

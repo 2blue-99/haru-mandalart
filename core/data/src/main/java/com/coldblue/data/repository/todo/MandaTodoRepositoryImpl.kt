@@ -1,7 +1,7 @@
 package com.coldblue.data.repository.todo
 
-import com.coldblue.data.alarm.AlarmScheduler
-import com.coldblue.data.notification.NotificationScheduler
+import com.coldblue.data.receiver.alarm.AlarmScheduler
+import com.coldblue.data.receiver.notification.NotificationScheduler
 import com.coldblue.data.mapper.MandaTodoMapper.asDomain
 import com.coldblue.data.mapper.MandaTodoMapper.asEntity
 import com.coldblue.data.mapper.MandaTodoMapper.asNetworkModel

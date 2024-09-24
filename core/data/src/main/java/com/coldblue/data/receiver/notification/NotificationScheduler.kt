@@ -1,4 +1,4 @@
-package com.coldblue.data.notification
+package com.coldblue.data.receiver.notification
 
 import com.coldblue.model.NotificationAlarmItem
 

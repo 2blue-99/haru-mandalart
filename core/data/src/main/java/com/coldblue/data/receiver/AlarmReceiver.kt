@@ -1,8 +1,10 @@
-package com.coldblue.data.notification
+package com.coldblue.data.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.coldblue.data.receiver.alarm.AlarmAppInterface
 import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.database.dao.NotificationDao
 import dagger.hilt.android.AndroidEntryPoint
@@ -13,10 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AlarmReceiver : BroadcastReceiver() {
+class AlarmReceiver: BroadcastReceiver() {
 
     @Inject
-    lateinit var todoNotificationService: TodoNotificationService
+    lateinit var alarmAppInterface: AlarmAppInterface
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -25,20 +27,22 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var notificationDao: NotificationDao
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val text = intent?.getStringExtra(TODO_TITLE) ?: return
-        val id = intent.getIntExtra(TODO_ID, 0)
+        Log.e("TAG", "onReceive: 받았음")
+
+        val title = intent?.getStringExtra(ALARM_TITLE) ?: ""
+        val id = intent?.getIntExtra(ALARM_ID, 0) ?: 0
 
         CoroutineScope(Dispatchers.IO).launch {
             notificationDao.deleteNotification(id)
             if (userRepository.isAlarm.first())
-                showNotification(text)
+                showAlarm(title)
         }
     }
 
-    private fun showNotification(text: String) {
-        todoNotificationService.showNotification(text)
+    private fun showAlarm(text: String){
+        alarmAppInterface.showAlarm(text)
     }
 }
 
-internal const val TODO_TITLE = "TODO_TITLE"
-internal const val TODO_ID = "TODO_ID"
+internal const val ALARM_TITLE = "ALARM_TITLE"
+internal const val ALARM_ID = "ALARM_ID"

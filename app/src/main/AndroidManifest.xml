@@ -62,9 +62,9 @@
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/Theme.OpensourceLicense" />
 
-        <receiver android:name="com.coldblue.data.notification.AlarmReceiver" />
+        <receiver android:name="com.coldblue.data.receiver.AlarmReceiver" />
         <receiver
-            android:name="com.coldblue.data.notification.BootCompletedReceiver"
+            android:name="com.coldblue.data.receiver.BootCompletedReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -2,8 +2,8 @@ package com.coldblue.data.di
 
 import android.app.AlarmManager
 import android.content.Context
-import com.coldblue.data.notification.NotificationScheduler
-import com.coldblue.data.notification.NotificationSchedulerImpl
+import com.coldblue.data.receiver.notification.NotificationScheduler
+import com.coldblue.data.receiver.notification.NotificationSchedulerImpl
 import com.coldblue.database.dao.NotificationDao
 import dagger.Module
 import dagger.Provides

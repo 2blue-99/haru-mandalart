@@ -1,4 +1,4 @@
-package com.coldblue.data.alarm
+package com.coldblue.data.receiver.alarm
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,10 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import com.coldblue.data.receiver.ALARM_ID
+import com.coldblue.data.receiver.ALARM_TITLE
+import com.coldblue.data.receiver.AlarmReceiver
 import com.coldblue.data.util.toMillis
 import com.coldblue.model.NotificationAlarmItem
-import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
 class AlarmSchedulerImpl @Inject constructor(

@@ -1,6 +1,6 @@
 package com.coldblue.data.util
 
-import com.coldblue.data.notification.NotificationScheduler
+import com.coldblue.data.receiver.notification.NotificationScheduler
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.database.dao.AppDao
 import com.coldblue.datastore.UpdateTimeDataSource

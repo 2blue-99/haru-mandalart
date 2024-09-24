@@ -27,7 +27,7 @@ class AlarmActivity : ComponentActivity() {
         setContent {
             HarumandalartTheme {
                 AlarmScreen(
-                    text = text,
+                    title = text,
                     onFinished = ::finishActivity,
                     onStartActivity = ::startActivity
                 )
