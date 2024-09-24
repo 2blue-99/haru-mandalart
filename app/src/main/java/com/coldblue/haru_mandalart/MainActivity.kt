@@ -145,16 +145,9 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                //TODO 단순화
-                if (isGranted) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        loginHelper.updateAlarmState(true)
-                    }
-                } else {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        loginHelper.updateAlarmState(false)
-                    }
+            onResult = { result ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    loginHelper.updateAlarmState(result)
                 }
             }
         )
@@ -163,13 +156,12 @@ class MainActivity : ComponentActivity() {
                 if (ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_DENIED
+                    ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
         }
-
     }
 
     @Composable
