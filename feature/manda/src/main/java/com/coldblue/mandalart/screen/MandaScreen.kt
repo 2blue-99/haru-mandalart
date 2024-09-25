@@ -1,13 +1,10 @@
 package com.coldblue.mandalart.screen
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.theme.HmStyle
@@ -35,7 +31,6 @@ import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.orhanobut.logger.Logger
 
@@ -62,7 +57,6 @@ fun MandaScreen(
                 onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(true, null) }
             )
         }
-
         is MandaUpdateDialogState.Error -> {}
         is MandaUpdateDialogState.Hide -> {}
     }
@@ -99,7 +93,9 @@ fun MandaScreen(
                 navigateToHistory = navigateToHistory,
                 changeCurrentIndex = mandaViewModel::changeCurrentIndex,
                 changeTodoRange = mandaViewModel::changeTodoRange,
-                upsertMandaTodo = mandaViewModel::upsertMandaTodo
+                upsertMandaTodo = mandaViewModel::upsertMandaTodo,
+                getRequirePermission = mandaViewModel::getRequestPermission,
+                setRequirePermission = mandaViewModel::setRequestPermission
             )
         }
     }
@@ -120,8 +116,9 @@ fun MandaContentWithState(
     navigateToHistory: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
-    upsertMandaTodo: (MandaTodo) -> Unit
-
+    upsertMandaTodo: (MandaTodo) -> Unit,
+    getRequirePermission: () -> Boolean,
+    setRequirePermission: () -> Unit
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {
@@ -165,7 +162,9 @@ fun MandaContentWithState(
                 navigateToHistory = navigateToHistory,
                 changeCurrentIndex = changeCurrentIndex,
                 changeTodoRange = changeTodoRange,
-                upsertMandaTodo = upsertMandaTodo
+                upsertMandaTodo = upsertMandaTodo,
+                getRequirePermission = getRequirePermission,
+                setRequirePermission = setRequirePermission
             )
 
         }
@@ -186,5 +185,3 @@ private fun checkUpdate(
         }
     }
 }
-
-

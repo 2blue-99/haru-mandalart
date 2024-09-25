@@ -1,6 +1,5 @@
 package com.coldblue.mandalart.screen.content
 
-import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -12,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -55,6 +53,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -64,6 +63,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Mandalart
@@ -82,7 +82,9 @@ import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.util.MandaUtils.checkAlertWindowPermission
 import com.coldblue.mandalart.util.MandaUtils.currentColorList
+import com.coldblue.mandalart.util.MandaUtils.requestPermission
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
@@ -90,6 +92,7 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
 import com.coldblue.tutorial.TutorialScreen
 import com.colddelight.mandalart.R
+import java.util.logging.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -108,7 +111,9 @@ fun InitializedMandaContent(
     navigateToHistory: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
-    upsertMandaTodo: (MandaTodo) -> Unit
+    upsertMandaTodo: (MandaTodo) -> Unit,
+    getRequirePermission: () -> Boolean,
+    setRequirePermission: () -> Unit
 ) {
     var titleOffset by remember { mutableStateOf(Offset.Zero) }
     var mandaOffset by remember { mutableStateOf(Offset.Zero) }
@@ -116,11 +121,13 @@ fun InitializedMandaContent(
     var size by remember { mutableStateOf(IntSize.Zero) }
     var isExplain by remember { mutableStateOf(false) }
     var percentage by remember { mutableFloatStateOf(0f) }
+    var isPermissionDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+    val context = LocalContext.current
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
@@ -141,6 +148,32 @@ fun InitializedMandaContent(
     LaunchedEffect(uiState.mandaStatus.donePercentage) {
         percentage = uiState.mandaStatus.donePercentage
     }
+
+    if(getRequirePermission()){
+        if(!checkAlertWindowPermission(context)){
+            isPermissionDialog = true
+        }
+    }
+
+    if(isPermissionDialog) {
+        HMTextDialog(
+            topText = "원활한 알람 기능을 위해,\n",
+            targetText = "다른 앱 위에 표시 권한",
+            bottomText = "이 필요합니다.",
+            tintColor = HMColor.Primary,
+            confirmText = "지금 설정",
+            onDismissRequest = {
+                isPermissionDialog = false
+                setRequirePermission()
+            },
+            onConfirm = {
+                isPermissionDialog = false
+                setRequirePermission()
+                requestPermission(context)
+            }
+        )
+    }
+
 
     Box(
         modifier = Modifier
@@ -798,8 +831,3 @@ fun Mandalart(
         }
     }
 }
-
-
-
-
-

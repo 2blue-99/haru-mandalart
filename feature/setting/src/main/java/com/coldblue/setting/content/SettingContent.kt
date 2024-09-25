@@ -328,13 +328,13 @@ fun ResignDialog(
 ) {
     HMTextDialog(
         targetText = "",
-        text = stringResource(id = R.string.delete_dialog_resign),
+        bottomText = stringResource(id = R.string.delete_dialog_resign),
         confirmText = stringResource(id = com.coldblue.designsystem.R.string.all_resign),
         tintColor = HMColor.DarkPastel.Red,
         onDismissRequest = {
             onDismiss()
         },
-        onConfirmation = {
+        onConfirm = {
             deleteUser()
         },
     )
@@ -347,13 +347,13 @@ fun LogoutDialog(
 ) {
     HMTextDialog(
         targetText = "",
-        text = stringResource(id = R.string.delete_dialog_logout),
+        bottomText = stringResource(id = R.string.delete_dialog_logout),
         confirmText = stringResource(id = R.string.setting_logout),
         tintColor = HMColor.DarkPastel.Red,
         onDismissRequest = {
             onDismiss()
         },
-        onConfirmation = {
+        onConfirm = {
             onResign()
         },
     )
@@ -366,13 +366,13 @@ fun InitDialog(
 ) {
     HMTextDialog(
         targetText = "",
-        text = stringResource(id = R.string.delete_dialog_init),
+        bottomText = stringResource(id = R.string.delete_dialog_init),
         confirmText = stringResource(id = R.string.setting_init),
         tintColor = HMColor.DarkPastel.Red,
         onDismissRequest = {
             onDismiss()
         },
-        onConfirmation = {
+        onConfirm = {
             initManda()
         },
     )

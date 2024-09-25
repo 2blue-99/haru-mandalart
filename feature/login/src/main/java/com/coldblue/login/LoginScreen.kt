@@ -77,12 +77,12 @@ fun LoginScreen(
     if (openDialog) {
         HMTextDialog(
             targetText = "",
-            text = stringResource(id = R.string.login_non_member_notice),
+            bottomText = stringResource(id = R.string.login_non_member_notice),
             confirmText = stringResource(id = R.string.login_check),
             tintColor = HMColor.Primary,
             subText = stringResource(id = R.string.login_non_member_sub_notice),
             onDismissRequest = { openDialog = false },
-            onConfirmation = {
+            onConfirm = {
                 loginViewModel.loginWithOutAuth()
             }
         )
