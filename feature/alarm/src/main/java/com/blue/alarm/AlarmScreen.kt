@@ -97,7 +97,7 @@ fun MainContent(
             )
             Text(
                 text = "${month}월 ${day}일 ${today.dayOfWeekToText()}",
-                style = HmStyle.text14,
+                style = HmStyle.text16,
                 color = Color.White
             )
         }
@@ -107,8 +107,8 @@ fun MainContent(
             contentDescription = ""
         )
         Text(
-            text = title, // TODO
-            style = HmStyle.text14,
+            text = title,
+            style = HmStyle.text16,
             color = Color.White
         )
     }

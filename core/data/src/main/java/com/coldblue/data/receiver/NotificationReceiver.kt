@@ -3,9 +3,11 @@ package com.coldblue.data.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.coldblue.data.receiver.notification.TodoNotificationService
+import android.util.Log
+import com.coldblue.data.receiver.notification.NotificationAppService
 import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.database.dao.NotificationDao
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,10 +16,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class NotificationReceiver : BroadcastReceiver() {
+class AlarmReceiver: BroadcastReceiver() {
 
     @Inject
-    lateinit var todoNotificationService: TodoNotificationService
+    lateinit var notificationAppService: NotificationAppService
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -26,20 +28,33 @@ class NotificationReceiver : BroadcastReceiver() {
     lateinit var notificationDao: NotificationDao
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val text = intent?.getStringExtra(TODO_TITLE) ?: return
-        val id = intent.getIntExtra(TODO_ID, 0)
+        val title = intent?.getStringExtra(NOTICE_TITLE) ?: ""
+        val id = intent?.getIntExtra(NOTICE_ID, 0) ?: 0
+        Log.e("TAG", "Alarm onReceive :$title / $id")
 
         CoroutineScope(Dispatchers.IO).launch {
+            // 알람 실행 동의 여부 확인
+            if (userRepository.isAlarm.first()){
+                // 앱 실행 or 미실행 확인
+                Logger.d("notificationAppService.isAppForeground() :${notificationAppService.isAppForeground()}")
+                if(notificationAppService.isAppForeground()) {
+                    showNotification(title)
+                }else{
+                    showAlarm(title)
+                }
+            }
             notificationDao.deleteNotification(id)
-            if (userRepository.isAlarm.first())
-                showNotification(text)
         }
     }
 
     private fun showNotification(text: String) {
-        todoNotificationService.showNotification(text)
+        notificationAppService.showNotification(text)
+    }
+
+    private fun showAlarm(text: String){
+        notificationAppService.showAlarm(text)
     }
 }
 
-internal const val TODO_TITLE = "TODO_TITLE"
-internal const val TODO_ID = "TODO_ID"
+const val NOTICE_TITLE = "ALARM_TITLE"
+const val NOTICE_ID = "ALARM_ID"

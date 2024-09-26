@@ -1,7 +1,7 @@
 //package com.blue.alarm
 //
 //import androidx.lifecycle.ViewModel
-//import com.coldblue.data.receiver.alarm.AlarmScheduler
+//import com.coldblue.data.receiver.notification.AlarmScheduler
 //import com.coldblue.model.NotificationAlarmItem
 //import dagger.hilt.android.lifecycle.HiltViewModel
 //import java.time.LocalDateTime

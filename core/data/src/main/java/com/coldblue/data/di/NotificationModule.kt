@@ -1,6 +1,5 @@
 package com.coldblue.data.di
 
-import android.app.AlarmManager
 import android.content.Context
 import com.coldblue.data.receiver.notification.NotificationScheduler
 import com.coldblue.data.receiver.notification.NotificationSchedulerImpl
@@ -17,16 +16,8 @@ import javax.inject.Singleton
 object NotificationModule {
     @Singleton
     @Provides
-    fun provideNotificationManager(@ApplicationContext context: Context): AlarmManager =
-        context.getSystemService(AlarmManager::class.java)
-
-    @Singleton
-    @Provides
     fun provideNotificationScheduler(
         @ApplicationContext context: Context,
-        notificationManager: AlarmManager,
         notificationDao: NotificationDao
-    ): NotificationScheduler = NotificationSchedulerImpl(context, notificationManager, notificationDao)
-
-
+    ): NotificationScheduler = NotificationSchedulerImpl(context, notificationDao)
 }

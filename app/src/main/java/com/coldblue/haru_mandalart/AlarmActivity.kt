@@ -8,6 +8,7 @@ import android.os.Vibrator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.blue.alarm.AlarmScreen
+import com.coldblue.data.receiver.NOTICE_TITLE
 import com.coldblue.designsystem.theme.HarumandalartTheme
 
 class AlarmActivity : ComponentActivity() {
@@ -16,7 +17,7 @@ class AlarmActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val text = intent.getStringExtra("alarm_text") ?: ""
+        val text = intent.getStringExtra(NOTICE_TITLE) ?: ""
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)

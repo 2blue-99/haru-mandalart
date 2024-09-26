@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
@@ -15,7 +16,7 @@ import com.coldblue.data.repository.todo.MandaTodoRepository
 import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
-import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
+import com.coldblue.haru_mandalart.notification.NotificationAppServiceImpl
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
@@ -27,6 +28,9 @@ import javax.inject.Inject
 class HMApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: SyncWorkerFactory
+
+    val lifecycleObserver = AppLifecycleObserver()
+
     override val workManagerConfiguration: Configuration
         get() =
             Configuration.Builder().setMinimumLoggingLevel(Log.DEBUG)
@@ -36,6 +40,7 @@ class HMApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
         initLogger()
     }
 
@@ -77,11 +82,11 @@ class HMApplication : Application(), Configuration.Provider {
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
-            TodoNotificationServiceImpl.CHANNEL_ID,
-            TodoNotificationServiceImpl.CHANNEL_NAME,
-            TodoNotificationServiceImpl.IMPORTANCE,
+            NotificationAppServiceImpl.CHANNEL_ID,
+            NotificationAppServiceImpl.CHANNEL_NAME,
+            NotificationAppServiceImpl.IMPORTANCE,
         )
-        channel.description = TodoNotificationServiceImpl.description
+        channel.description = NotificationAppServiceImpl.description
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
