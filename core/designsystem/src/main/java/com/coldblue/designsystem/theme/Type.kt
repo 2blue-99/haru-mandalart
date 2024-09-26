@@ -31,6 +31,11 @@ val typography = Typography(
 )
 
 object HmStyle{
+    val text60 = TextStyle(
+        fontFamily = orbit,
+        fontSize = 60.sp,
+        fontWeight = FontWeight.Bold,
+    )
     val text46 = TextStyle(
         fontFamily = orbit,
         fontSize = 46.sp,

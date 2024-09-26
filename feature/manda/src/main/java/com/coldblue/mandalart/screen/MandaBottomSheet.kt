@@ -112,14 +112,14 @@ fun MandaBottomSheet(
     if (dialogState) {
         HMTextDialog(
             targetText = keyNameText,
-            text = stringResource(id = R.string.dialog_main_title),
+            bottomText = stringResource(id = R.string.dialog_main_title),
             confirmText = stringResource(id = R.string.bottom_sheet_delete),
             onDismissRequest = {
                 dialogState = false
                 onDisMiss()
             },
             tintColor = HMColor.DarkPastel.Red,
-            onConfirmation = {
+            onConfirm = {
                 deleteMandaKey(
                     mandaUI.id,
                     (contentType as MandaBottomSheetContentType.MandaKey).groupIdList ?: emptyList()

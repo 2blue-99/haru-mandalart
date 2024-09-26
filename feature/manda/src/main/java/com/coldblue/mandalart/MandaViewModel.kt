@@ -55,6 +55,11 @@ class MandaViewModel @Inject constructor(
     val getExplainStateUseCase: GetExplainStateUseCase
 ) : ViewModel() {
 
+    /**
+     * 다른 앱 위 표시 권한 요청을 해야 하는지 여부
+     */
+    private var isRequestPermission = true
+
     private val _explainUIState = MutableStateFlow(true)
     val explainUIState: StateFlow<Boolean> get() = _explainUIState
 
@@ -194,5 +199,17 @@ class MandaViewModel @Inject constructor(
         viewModelScope.launch {
             _explainUIState.emit(getExplainStateUseCase().first())
         }
+    }
+
+    /**
+     * 다른 앱 위 표시 권한 요청 여부 체크
+     */
+    fun getRequestPermission(): Boolean = isRequestPermission
+
+    /**
+     * 다른 앱 위 표시 권한 요청 상태 저장
+     */
+    fun setRequestPermission(){
+        isRequestPermission = false
     }
 }

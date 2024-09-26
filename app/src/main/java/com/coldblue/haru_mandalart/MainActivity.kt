@@ -4,12 +4,9 @@ import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
@@ -20,10 +17,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,15 +36,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.data.util.LoginHelper
 import com.coldblue.data.util.LoginState
-import com.coldblue.data.util.SettingHelper
 import com.coldblue.designsystem.theme.HarumandalartTheme
 import com.coldblue.haru_mandalart.ui.HMApp
 import com.coldblue.login.LoginScreen
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -145,15 +137,9 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         val permissionLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                if (isGranted) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        loginHelper.updateAlarmState(true)
-                    }
-                } else {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        loginHelper.updateAlarmState(false)
-                    }
+            onResult = { result ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    loginHelper.updateAlarmState(result)
                 }
             }
         )
@@ -162,13 +148,12 @@ class MainActivity : ComponentActivity() {
                 if (ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_DENIED
+                    ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
         }
-
     }
 
     @Composable

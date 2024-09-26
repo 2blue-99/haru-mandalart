@@ -1,6 +1,6 @@
 package com.coldblue.data.util
 
-import com.coldblue.data.alarm.AlarmScheduler
+import com.coldblue.data.receiver.notification.NotificationScheduler
 import com.coldblue.data.sync.SyncHelper
 import com.coldblue.database.dao.AppDao
 import com.coldblue.datastore.UpdateTimeDataSource
@@ -19,7 +19,7 @@ class LoginHelperImpl @Inject constructor(
     private val userDataSource: UserDataSource,
     private val updateTimeDataSource: UpdateTimeDataSource,
     private val client: SupabaseClient,
-    private val alarmScheduler: AlarmScheduler,
+    private val notificationScheduler: NotificationScheduler,
     private val appDao: AppDao,
     private val syncHelper: SyncHelper,
     private val supabaseDataSource: SupabaseDataSource,
@@ -55,7 +55,7 @@ class LoginHelperImpl @Inject constructor(
 
     override suspend fun logout() {
         client.auth.clearSession()
-        alarmScheduler.cancelAll()
+        notificationScheduler.cancelAll()
         userDataSource.reset()
         updateTimeDataSource.reset()
         appDao.reset()

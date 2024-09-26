@@ -4,16 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.coldblue.database.entity.AlarmEntity
+import com.coldblue.database.entity.NotificationEntity
 
 @Dao
-interface AlarmDao {
+interface NotificationDao {
     @Query("SELECT * FROM alarm")
-    suspend fun getAllAlarm(): List<AlarmEntity>
+    suspend fun getAllNotification(): List<NotificationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAlarm(alarm: AlarmEntity)
+    suspend fun addNotification(notification: NotificationEntity)
 
     @Query("DELETE FROM alarm WHERE id = :id")
-    suspend fun deleteAlarm(id: Int)
+    suspend fun deleteNotification(id: Int)
 }

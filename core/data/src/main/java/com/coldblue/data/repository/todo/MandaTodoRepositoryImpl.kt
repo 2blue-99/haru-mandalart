@@ -1,6 +1,6 @@
 package com.coldblue.data.repository.todo
 
-import com.coldblue.data.alarm.AlarmScheduler
+import com.coldblue.data.receiver.notification.NotificationScheduler
 import com.coldblue.data.mapper.MandaTodoMapper.asDomain
 import com.coldblue.data.mapper.MandaTodoMapper.asEntity
 import com.coldblue.data.mapper.MandaTodoMapper.asNetworkModel
@@ -12,7 +12,7 @@ import com.coldblue.data.util.isPassed
 import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.database.dao.MandaTodoDao
 import com.coldblue.datastore.UpdateTimeDataSource
-import com.coldblue.model.AlarmItem
+import com.coldblue.model.NotificationAlarmItem
 import com.coldblue.model.TodoGraph
 import com.coldblue.model.MandaTodo
 import com.coldblue.network.datasource.MandaTodoDataSource
@@ -29,7 +29,8 @@ class MandaTodoRepositoryImpl @Inject constructor(
     private val mandaTodoDataSource: MandaTodoDataSource,
     private val syncHelper: SyncHelper,
     private val updateTimeDataSource: UpdateTimeDataSource,
-    private val alarmScheduler: AlarmScheduler,
+    private val notificationScheduler: NotificationScheduler,
+    private val alarmScheduler: NotificationScheduler,
     private val todoWidgetHelper: TodoWidgetHelper
 ) : MandaTodoRepository {
     override fun getMandaTodo(): Flow<List<MandaTodo>> {
@@ -91,8 +92,9 @@ class MandaTodoRepositoryImpl @Inject constructor(
 
 
     override suspend fun upsertMandaTodo(mandaTodo: MandaTodo) {
+        Logger.e("mandaTodo : $mandaTodo")
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
-        mandaTodo.syncAlarm()
+        mandaTodo.syncNotificationAlarm()
         todoWidgetHelper.widgetUpdate()
         syncHelper.syncWrite()
 
@@ -137,23 +139,25 @@ class MandaTodoRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun MandaTodo.syncAlarm() {
+    private suspend fun MandaTodo.syncNotificationAlarm() {
+        // TODO 취소할 필요가 있나 궁금
         // 시간 null 체크
         if (time == null) {
-            alarmScheduler.cancel(id)
+            notificationScheduler.cancel(id)
             return
         }
         // date, time 추가 시점이 과거인지 체크
         if (LocalDateTime.of(date, time).isPassed()) {
-            alarmScheduler.cancel(id)
+            notificationScheduler.cancel(id)
             return
         }
         // 삭제, 완료했는지 체크
         if (isDel or isDone) {
-            alarmScheduler.cancel(id)
+            notificationScheduler.cancel(id)
             return
         }
-        alarmScheduler.add(AlarmItem(LocalDateTime.of(date, time), title, id))
+        val item = NotificationAlarmItem(LocalDateTime.of(date, time), title, id)
+        notificationScheduler.add(item)
+        alarmScheduler.add(item)
     }
-
 }

@@ -155,7 +155,7 @@ object HistoryUtil {
     }
 
     fun initCurrentYear(list: List<String>, present: String): String{
-        return if(list.contains(present)) present
+        return if(list.contains(present) || list.isEmpty()) present
         else list.first()
     }
 

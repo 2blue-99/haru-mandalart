@@ -1,5 +1,9 @@
 package com.coldblue.mandalart.util
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
@@ -176,5 +180,19 @@ object MandaUtils {
         }
     }
 
-//    fun calculateMandaIndex
+    /**
+     * 다른 앱 위 표시 권한 요청 설정 여부 확인
+     */
+    fun checkAlertWindowPermission(context: Context): Boolean = Settings.canDrawOverlays(context)
+
+    /**
+     * 다른 앱 위 표시 권한 요청
+     */
+    fun requestPermission(context: Context){
+        val intent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:" + context.packageName)
+        )
+        context.startActivity(intent)
+    }
 }

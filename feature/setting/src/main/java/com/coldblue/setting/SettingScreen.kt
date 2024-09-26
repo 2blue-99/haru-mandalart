@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.coldblue.data.util.LoginState
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.setting.content.SettingContent
@@ -33,13 +31,13 @@ fun SettingScreen(
     if (permissionDialogState) {
         HMTextDialog(
             targetText = "알림권한",
-            text = "을 허용해 주세요",
+            bottomText = "을 허용해 주세요",
             confirmText = "설정이동",
             tintColor = HMColor.Primary,
             onDismissRequest = {
                 settingViewModel.hidePermissionDialog()
             },
-            onConfirmation = {
+            onConfirm = {
                 settingViewModel.hidePermissionDialog()
                 settingViewModel.showAppInfo()
             },
