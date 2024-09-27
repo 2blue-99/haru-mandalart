@@ -18,5 +18,4 @@ class AppLifecycleObserver: LifecycleEventObserver {
             }
         }
     }
-
 }

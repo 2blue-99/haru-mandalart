@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.hm.android.application.compose)
     id("com.google.android.gms.oss-licenses-plugin")
     alias(libs.plugins.org.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -56,6 +58,10 @@ dependencies {
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
+
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtimeCompose)
