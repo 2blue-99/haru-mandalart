@@ -58,8 +58,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        throw Exception("아임 기모띠!")
-
         splashScreen = installSplashScreen()
         splashScreen()
 

@@ -17,6 +17,9 @@ import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.data.sync.worker.SyncReadWorker
 import com.coldblue.data.sync.worker.SyncWriteWorker
 import com.coldblue.haru_mandalart.notification.NotificationAppServiceImpl
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.initialize
+import com.google.firebase.ktx.Firebase
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.FormatStrategy
 import com.orhanobut.logger.Logger
@@ -41,6 +44,7 @@ class HMApplication : Application(), Configuration.Provider {
         super.onCreate()
         createNotificationChannel()
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
+        setFirebase()
         initLogger()
     }
 
@@ -98,5 +102,14 @@ class HMApplication : Application(), Configuration.Provider {
             .tag("logger").showThreadInfo(false).methodCount(1)
             .build()
         Logger.addLogAdapter(AndroidLogAdapter(strategy))
+    }
+
+    private fun setFirebase(){
+        val options = FirebaseOptions.Builder()
+            .setProjectId("com.coldblue.haru_mandalart")
+            .setApplicationId("1:243006459444:android:7b04ad747fe51467cf8461")
+            .setApiKey("AIzaSyAGNAWI8GtxwqtTn7OGfbwFSHi8N4NGwm8")
+            .build()
+        com.google.firebase.Firebase.initialize(this, options)
     }
 }
