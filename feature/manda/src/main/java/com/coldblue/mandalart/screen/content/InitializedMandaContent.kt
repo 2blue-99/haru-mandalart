@@ -1,5 +1,7 @@
 package com.coldblue.mandalart.screen.content
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -417,7 +419,6 @@ fun MandaStatus(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Mandalart(
     mandaList: List<MandaState>,
@@ -454,9 +455,6 @@ fun Mandalart(
 
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
-
-    var dragOffsetX by remember { mutableStateOf(0f) }
-    var dragOffsetY by remember { mutableStateOf(0f) }
 
     val dampingRatio = 0.8f // 클수록 스프링 효과 감소
     val stiffness = 1600f // 클수록 빨리 확대, 축소
@@ -578,9 +576,11 @@ fun Mandalart(
         }
     }
 
-    fun dragController(index: Int) {
-        dragOffsetX = 0f
-        dragOffsetY = 0f
+    /**
+     * 줌 상태 Back 리스너
+     */
+    BackHandler(isZoom) {
+        zoomController(-1)
     }
 
     Column(
