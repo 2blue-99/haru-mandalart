@@ -583,6 +583,7 @@ fun Mandalart(
         zoomController(-1)
     }
 
+
     Column(
         modifier = Modifier.padding(vertical = 4.dp)
     ) {
