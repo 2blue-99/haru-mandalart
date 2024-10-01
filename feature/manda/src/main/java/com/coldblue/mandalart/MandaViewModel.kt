@@ -66,7 +66,7 @@ class MandaViewModel @Inject constructor(
     private val _currentIndex = MutableStateFlow(4)
     val currentIndex: StateFlow<Int> get() = _currentIndex
 
-    private val _todoRange = MutableStateFlow(DateRange.DAY)
+    private val _todoRange = MutableStateFlow(DateRange.ALL)
     val todoRange: StateFlow<DateRange> get() = _todoRange
 
     private val _mandaBottomSheetUIState =

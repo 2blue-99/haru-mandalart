@@ -478,7 +478,7 @@ fun TodoInput(
                     Box(modifier = Modifier.fillMaxWidth(0.9f)) {
                         if (hintVisible) {
                             Text(
-                                text = "Todo 추가", color = HMColor.Gray
+                                text = "Todo 추가", color = HMColor.DarkGray
                             )
                         }
                         innerTextField()
@@ -498,7 +498,7 @@ fun TodoInput(
                         },
                         imageVector = IconPack.AddSquare,
                         contentDescription = "",
-                        tint = if (hintVisible) HMColor.Gray else HMColor.Primary,
+                        tint = if (hintVisible) HMColor.DarkGray else HMColor.Primary,
                     )
 
                 }
@@ -519,6 +519,11 @@ fun TodoRangeSelector(
     val dateRangeButtons = remember {
         mutableStateListOf(
             ToggleInfo(
+                isChecked = todoRange == DateRange.ALL,
+                text = "전체",
+                dateRange = DateRange.ALL
+            ),
+            ToggleInfo(
                 isChecked = todoRange == DateRange.DAY,
                 text = "오늘",
                 dateRange = DateRange.DAY
@@ -526,11 +531,6 @@ fun TodoRangeSelector(
                 isChecked = todoRange == DateRange.WEEK,
                 text = "이번주",
                 dateRange = DateRange.WEEK
-            ),
-            ToggleInfo(
-                isChecked = todoRange == DateRange.ALL,
-                text = "전체",
-                dateRange = DateRange.ALL
             )
         )
     }

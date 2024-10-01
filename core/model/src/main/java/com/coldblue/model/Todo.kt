@@ -18,5 +18,5 @@ data class Todo(
 )
 
 enum class DateRange {
-    DAY, WEEK, ALL
+    ALL, DAY, WEEK
 }
