@@ -1,12 +1,10 @@
 package com.coldblue.mandalart.screen.content
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -67,7 +65,6 @@ import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.iconpack.Back
-import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.iconpack.Question
 import com.coldblue.designsystem.theme.HMColor
@@ -94,11 +91,10 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
 import com.coldblue.tutorial.TutorialScreen
 import com.colddelight.mandalart.R
-import java.util.logging.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitializedMandaContent(
     uiState: MandaUIState.InitializedSuccess,
@@ -315,15 +311,15 @@ fun MandaTopBar(
                     contentDescription = "question"
                 )
             }
-            IconButton(
-                onClick = { navigateToHistory() }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = IconPack.History,
-                    tint = HMColor.Primary,
-                    contentDescription = "history"
-                )
-            }
+//            IconButton(
+//                onClick = { navigateToHistory() }) {
+//                Icon(
+//                    modifier = Modifier.size(24.dp),
+//                    imageVector = IconPack.History,
+//                    tint = HMColor.Primary,
+//                    contentDescription = "history"
+//                )
+//            }
             IconButton(
                 onClick = { navigateToSetting() }) {
                 Icon(
