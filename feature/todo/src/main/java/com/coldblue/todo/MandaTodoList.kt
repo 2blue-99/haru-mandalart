@@ -136,7 +136,8 @@ fun MandaTodoList(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(end = 14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -192,8 +193,8 @@ fun MandaTodoList(
                                 Row(
                                     modifier = Modifier.padding(
                                         vertical = 4.dp,
-                                        horizontal = 8.dp
-                                    ),
+                                        horizontal = 4.dp
+                                    ).padding(end = 8.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     if (showDoneTodo) {
@@ -212,7 +213,6 @@ fun MandaTodoList(
                                     Text(
                                         text = "완료 $doneTodoCnt",
                                         style = HmStyle.text14,
-                                        modifier = Modifier.padding(bottom = 2.dp)
                                     )
                                 }
                             }
@@ -296,7 +296,6 @@ fun MandaTodoItem(
             Text(
                 modifier = Modifier
                     .padding(4.dp)
-                    .padding(bottom = 2.dp)
                     .fillMaxWidth(0.85f),
                 text = mandaTodo.title,
                 color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
@@ -562,8 +561,7 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
     ) {
         Text(
             modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 16.dp)
-                .padding(bottom = 2.dp),
+                .padding(vertical = 8.dp, horizontal = 16.dp),
             text = toggleInfo.text,
             color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray,
             style = HmStyle.text14
