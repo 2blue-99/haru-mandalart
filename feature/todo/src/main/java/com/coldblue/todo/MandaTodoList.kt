@@ -145,7 +145,7 @@ fun MandaTodoList(
                     scrollState.scrollToItem(0)
                 }
             })
-            Text(text = "Todo:$todoCnt", style = HmStyle.text16, fontWeight = FontWeight.Bold)
+            Text(text = "Todo : $todoCnt", style = HmStyle.text16)
         }
         Box(modifier = Modifier.fillMaxHeight()) {
             LazyColumn(

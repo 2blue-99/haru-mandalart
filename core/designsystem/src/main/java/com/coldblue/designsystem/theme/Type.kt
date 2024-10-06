@@ -8,90 +8,90 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.coldblue.designsystem.R
 
-val orbit = FontFamily(
-    Font(R.font.orbit)
+val pretendard = FontFamily(
+    Font(R.font.pretendard_regular)
 )
 
 val typography = Typography(
-    headlineLarge = TextStyle(fontFamily = orbit),
-    headlineMedium = TextStyle(fontFamily = orbit),
-    headlineSmall = TextStyle(fontFamily = orbit),
-    bodyLarge = TextStyle(fontFamily = orbit),
-    bodyMedium = TextStyle(fontFamily = orbit),
-    bodySmall = TextStyle(fontFamily = orbit),
-    labelLarge = TextStyle(fontFamily = orbit),
-    labelMedium = TextStyle(fontFamily = orbit),
-    labelSmall = TextStyle(fontFamily = orbit),
-    titleLarge = TextStyle(fontFamily = orbit),
-    titleMedium = TextStyle(fontFamily = orbit),
-    titleSmall = TextStyle(fontFamily = orbit),
-    displayLarge = TextStyle(fontFamily = orbit),
-    displayMedium = TextStyle(fontFamily = orbit),
-    displaySmall = TextStyle(fontFamily = orbit),
+    headlineLarge = TextStyle(fontFamily = pretendard),
+    headlineMedium = TextStyle(fontFamily = pretendard),
+    headlineSmall = TextStyle(fontFamily = pretendard),
+    bodyLarge = TextStyle(fontFamily = pretendard),
+    bodyMedium = TextStyle(fontFamily = pretendard),
+    bodySmall = TextStyle(fontFamily = pretendard),
+    labelLarge = TextStyle(fontFamily = pretendard),
+    labelMedium = TextStyle(fontFamily = pretendard),
+    labelSmall = TextStyle(fontFamily = pretendard),
+    titleLarge = TextStyle(fontFamily = pretendard),
+    titleMedium = TextStyle(fontFamily = pretendard),
+    titleSmall = TextStyle(fontFamily = pretendard),
+    displayLarge = TextStyle(fontFamily = pretendard),
+    displayMedium = TextStyle(fontFamily = pretendard),
+    displaySmall = TextStyle(fontFamily = pretendard),
 )
 
 object HmStyle{
     val text60 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 60.sp,
         fontWeight = FontWeight.Bold,
     )
     val text46 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 46.sp,
         fontWeight = FontWeight.Bold,
     )
     val text40 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 40.sp,
         fontWeight = FontWeight.Bold,
     )
     val text30 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 30.sp,
         fontWeight = FontWeight.Bold
     )
     val text24 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 24.sp,
         fontWeight = FontWeight.Bold
     )
     val text20 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold
     )
     val text18 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 18.sp,
     )
     val text16 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 16.sp,
     )
     val text14 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 14.sp,
     )
     val text12 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 12.sp,
     )
     val text10 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 10.sp,
     )
     val text8 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 8.sp,
     )
     val text6 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 6.sp,
     )
 
     val text4 = TextStyle(
-        fontFamily = orbit,
+        fontFamily = pretendard,
         fontSize = 4.sp,
     )
 }
