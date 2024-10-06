@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -157,15 +158,20 @@ fun MandaTodoList(
             ) {
                 if (todoList.isEmpty()) {
                     item {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 40.dp),
-                            textAlign = TextAlign.Center,
-                            text = if (currentIndex != -1 && colorList[currentIndex] != null) "Todo를 추가해 주세요!" else "Todo를 추가해 주세요!",
-                            style = HmStyle.text20,
-                            color = HMColor.SubLightText
-                        )
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 40.dp),
+                                textAlign = TextAlign.Center,
+                                text = if (currentIndex != -1 && colorList[currentIndex] != null) "Todo를 추가해 주세요!" else "Todo를 추가해 주세요!",
+                                style = HmStyle.text20,
+                                color = HMColor.SubLightText
+                            )
+                        }
                     }
 
                 } else {
@@ -191,10 +197,12 @@ fun MandaTodoList(
                                     }
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(
-                                        vertical = 4.dp,
-                                        horizontal = 4.dp
-                                    ).padding(end = 8.dp),
+                                    modifier = Modifier
+                                        .padding(
+                                            vertical = 4.dp,
+                                            horizontal = 4.dp
+                                        )
+                                        .padding(end = 8.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     if (showDoneTodo) {
