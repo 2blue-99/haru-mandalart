@@ -7,19 +7,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,22 +24,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMNavigateAnimation.fadeInScreen
 import com.coldblue.designsystem.component.HMNavigateAnimation.fadeOutScreen
+import com.coldblue.designsystem.component.HMPagerIndicator
 import com.coldblue.designsystem.component.HMText
+import com.coldblue.designsystem.component.calculateCurrentOffsetForPage
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.colddelight.explain.R
@@ -95,7 +89,7 @@ fun ExplainScreen(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier.padding(top = 30.dp)
         ) {
-            PagerIndicator(
+            HMPagerIndicator(
                 pageCount = pageState.pageCount,
                 currentPage = pageState.currentPage,
                 targetPage = pageState.targetPage,
@@ -155,52 +149,7 @@ fun ExplainPage(
     }
 }
 
-@Composable
-fun PagerIndicator(
-    pageCount: Int,
-    currentPage: Int,
-    targetPage: Int,
-    currentPageOffsetFraction: Float,
-    indicatorColor: Color = Color.DarkGray,
-    unselectedIndicatorSize: Dp = 8.dp,
-    selectedIndicatorSize: Dp = 10.dp,
-    indicatorPadding: Dp = 8.dp
-) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .wrapContentSize()
-            .height(selectedIndicatorSize + indicatorPadding * 2)
-    ) {
-        repeat(pageCount) { page ->
-            val (color, size) =
-                if (currentPage == page || targetPage == page) {
-                    val pageOffset =
-                        ((currentPage - page) + currentPageOffsetFraction).absoluteValue
-                    val offsetPercentage = 1f - pageOffset.coerceIn(0f, 1f)
-                    val size =
-                        unselectedIndicatorSize + ((selectedIndicatorSize - unselectedIndicatorSize) * offsetPercentage)
-                    indicatorColor.copy(
-                        alpha = offsetPercentage
-                    ) to size
-                } else {
-                    indicatorColor.copy(alpha = 0.1f) to unselectedIndicatorSize
-                }
 
-            Box(
-                modifier = Modifier
-                    .padding(
-                        horizontal = ((selectedIndicatorSize + indicatorPadding * 2) - size) / 2,
-                        vertical = size / 4
-                    )
-                    .clip(CircleShape)
-                    .background(color)
-                    .size(size)
-            )
-        }
-    }
-}
 
 @Composable
 fun FirstPage() {
@@ -313,10 +262,6 @@ fun FourthPage() {
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-fun PagerState.calculateCurrentOffsetForPage(page: Int): Float {
-    return (currentPage - page) + currentPageOffsetFraction
-}
 @Preview
 @Composable
 fun ExplainPagePreview() {

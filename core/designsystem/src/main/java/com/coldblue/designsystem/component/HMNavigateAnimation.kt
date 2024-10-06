@@ -45,7 +45,7 @@ object HMNavigateAnimation {
         animateTo(
             targetValue = 1f,
             animationSpec = tween(
-                durationMillis = 500,
+                durationMillis = 300,
                 easing = LinearEasing
             )
         )

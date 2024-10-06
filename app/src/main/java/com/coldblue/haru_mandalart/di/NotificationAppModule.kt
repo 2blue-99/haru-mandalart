@@ -1,8 +1,8 @@
 package com.coldblue.haru_mandalart.di
 
 import android.content.Context
-import com.coldblue.data.alarm.TodoNotificationService
-import com.coldblue.haru_mandalart.notification.TodoNotificationServiceImpl
+import com.coldblue.data.receiver.notification.NotificationAppService
+import com.coldblue.haru_mandalart.notification.NotificationAppServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,9 +12,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NotificationModule {
+object NotificationAppModule {
     @Singleton
     @Provides
-    fun provideTodoNotificationService(@ApplicationContext context: Context): TodoNotificationService =
-        TodoNotificationServiceImpl(context)
+    fun provideNotificationAppService(@ApplicationContext context: Context): NotificationAppService = NotificationAppServiceImpl(context)
 }

@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(libs.playStore.update)
+    implementation(project(":feature:tutorial"))
     implementation(project(":feature:todo"))
     implementation(project(":feature:explain"))
     implementation( "androidx.glance:glance-appwidget:1.1.0" )

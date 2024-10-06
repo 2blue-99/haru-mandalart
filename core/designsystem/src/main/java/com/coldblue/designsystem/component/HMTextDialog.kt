@@ -20,13 +20,14 @@ import com.coldblue.designsystem.theme.HmStyle
 
 @Composable
 fun HMTextDialog(
+    topText: String = "",
     targetText: String,
-    text: String,
+    bottomText: String,
     tintColor: Color,
     subText: String = "",
     confirmText: String,
     onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
+    onConfirm: () -> Unit,
 ) {
     AlertDialog(
         shape = RoundedCornerShape(10.dp),
@@ -37,6 +38,7 @@ fun HMTextDialog(
             ) {
                 Text(
                     buildAnnotatedString {
+                        append(topText)
                         withStyle(
                             style = SpanStyle(
                                 color = tintColor,
@@ -45,7 +47,7 @@ fun HMTextDialog(
                         ) {
                             append(targetText)
                         }
-                        append(text)
+                        append(bottomText)
                     }
                 )
                 if (subText != "")
@@ -64,7 +66,7 @@ fun HMTextDialog(
                     contentColor = tintColor
                 ),
                 onClick = {
-                    onConfirmation()
+                    onConfirm()
                 }) {
                 Text(
                     text = confirmText,
@@ -95,5 +97,5 @@ fun HMTextDialog(
 @Preview
 @Composable
 fun DeleteDialogPreview() {
-//    HMTextDialog("ff", "탈퇴하면 모든 데이터가 완전히 삭제됩니다.", "탈퇴", HMColor.Dark.Red, "aa", {}, {})
+    HMTextDialog("탑 텍스트", "강조", "기모띠", HMColor.Primary, "aa", "확인", {}, {})
 }

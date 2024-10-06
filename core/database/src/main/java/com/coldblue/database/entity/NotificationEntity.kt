@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.time.LocalDateTime
 
 @Entity(tableName = "alarm")
-data class AlarmEntity(
+data class NotificationEntity(
     @ColumnInfo(name = "time") val time: LocalDateTime?,
     @ColumnInfo(name = "title") val title: String,
     @PrimaryKey val id: Int

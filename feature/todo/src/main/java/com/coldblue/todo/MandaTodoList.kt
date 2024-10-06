@@ -131,7 +131,9 @@ fun MandaTodoList(
         )
     }
 
-    Column {
+    Column(
+        modifier = Modifier.padding(top = 4.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -281,7 +283,7 @@ fun MandaTodoItem(
             .clip(RoundedCornerShape(8.dp))
             .background(HMColor.LiteGray)
             .then(
-                if(clickable) Modifier.clickable(true) { todoDialogState = true } else Modifier
+                if (clickable) Modifier.clickable(true) { todoDialogState = true } else Modifier
             ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -293,7 +295,8 @@ fun MandaTodoItem(
             }
             Text(
                 modifier = Modifier
-                    .padding(4.dp).padding(bottom = 2.dp)
+                    .padding(4.dp)
+                    .padding(bottom = 2.dp)
                     .fillMaxWidth(0.85f),
                 text = mandaTodo.title,
                 color = if (mandaTodo.isDone) HMColor.DarkGray else HMColor.Text,
@@ -475,7 +478,7 @@ fun TodoInput(
                     Box(modifier = Modifier.fillMaxWidth(0.9f)) {
                         if (hintVisible) {
                             Text(
-                                text = "Todo 추가", color = HMColor.Gray
+                                text = "Todo 추가", color = HMColor.DarkGray
                             )
                         }
                         innerTextField()
@@ -495,7 +498,7 @@ fun TodoInput(
                         },
                         imageVector = IconPack.AddSquare,
                         contentDescription = "",
-                        tint = if (hintVisible) HMColor.Gray else HMColor.Primary,
+                        tint = if (hintVisible) HMColor.DarkGray else HMColor.Primary,
                     )
 
                 }
@@ -516,6 +519,11 @@ fun TodoRangeSelector(
     val dateRangeButtons = remember {
         mutableStateListOf(
             ToggleInfo(
+                isChecked = todoRange == DateRange.ALL,
+                text = "전체",
+                dateRange = DateRange.ALL
+            ),
+            ToggleInfo(
                 isChecked = todoRange == DateRange.DAY,
                 text = "오늘",
                 dateRange = DateRange.DAY
@@ -523,11 +531,6 @@ fun TodoRangeSelector(
                 isChecked = todoRange == DateRange.WEEK,
                 text = "이번주",
                 dateRange = DateRange.WEEK
-            ),
-            ToggleInfo(
-                isChecked = todoRange == DateRange.ALL,
-                text = "전체",
-                dateRange = DateRange.ALL
             )
         )
     }
@@ -558,7 +561,9 @@ fun SelectButton(toggleInfo: ToggleInfo, onClick: (DateRange) -> Unit) {
             }
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp).padding(bottom = 2.dp),
+            modifier = Modifier
+                .padding(vertical = 4.dp, horizontal = 16.dp)
+                .padding(bottom = 2.dp),
             text = toggleInfo.text,
             color = if (toggleInfo.isChecked) HMColor.Background else HMColor.DarkGray,
             style = HmStyle.text14
@@ -577,6 +582,6 @@ fun MandaTodoItemPreview() {
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
             MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
         ),
-        3, 3, {}, {},
+        3, 3,  {}, {},
     )
 }

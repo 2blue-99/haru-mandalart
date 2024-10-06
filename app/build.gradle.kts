@@ -3,7 +3,11 @@ plugins {
     alias(libs.plugins.hm.android.hilt)
     alias(libs.plugins.hm.android.application.compose)
     id("com.google.android.gms.oss-licenses-plugin")
+    alias(libs.plugins.org.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
+
 android {
     namespace = "com.coldblue.haru_mandalart"
 
@@ -15,6 +19,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        signingConfig = signingConfigs.getByName("debug")
     }
 
     buildTypes {
@@ -30,7 +35,6 @@ android {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
         }
-
     }
     packaging {
         resources {
@@ -50,9 +54,14 @@ dependencies {
     implementation(project(":feature:survey"))
     implementation(project(":feature:explain"))
     implementation(project(":feature:history"))
+    implementation(project(":feature:alarm"))
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
+
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -63,4 +72,8 @@ dependencies {
     implementation(libs.androidx.work.ktx)
     implementation (libs.play.services.oss.licenses)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+    implementation(libs.androidx.lifecycle.process)
 }

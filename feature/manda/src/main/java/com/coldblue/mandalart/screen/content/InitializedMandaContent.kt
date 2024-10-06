@@ -1,11 +1,10 @@
 package com.coldblue.mandalart.screen.content
 
-import androidx.compose.animation.core.Animatable
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -46,7 +44,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -54,16 +51,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.coldblue.designsystem.IconPack
+import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.iconpack.Back
-import com.coldblue.designsystem.iconpack.History
 import com.coldblue.designsystem.iconpack.Mandalart
 import com.coldblue.designsystem.iconpack.Question
 import com.coldblue.designsystem.theme.HMColor
@@ -80,12 +81,15 @@ import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.mandalart.state.MandaUIState
+import com.coldblue.mandalart.util.MandaUtils.checkAlertWindowPermission
 import com.coldblue.mandalart.util.MandaUtils.currentColorList
+import com.coldblue.mandalart.util.MandaUtils.requestPermission
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
+import com.coldblue.tutorial.TutorialScreen
 import com.colddelight.mandalart.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -105,14 +109,24 @@ fun InitializedMandaContent(
     navigateToHistory: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
-    upsertMandaTodo: (MandaTodo) -> Unit
+    upsertMandaTodo: (MandaTodo) -> Unit,
+    getRequirePermission: () -> Boolean,
+    setRequirePermission: () -> Unit
 ) {
+    var titleOffset by remember { mutableStateOf(Offset.Zero) }
+    var mandaOffset by remember { mutableStateOf(Offset.Zero) }
+    var todoOffset by remember { mutableStateOf(Offset.Zero) }
+    var size by remember { mutableStateOf(IntSize.Zero) }
+    var isExplain by remember { mutableStateOf(false) }
     var percentage by remember { mutableFloatStateOf(0f) }
+    var isPermissionDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val animateDonePercentage = animateFloatAsState(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+    val context = LocalContext.current
+
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
         MandaBottomSheet(
             mandaBottomSheetContentState = mandaBottomSheetUIState.mandaBottomSheetContentState,
@@ -133,60 +147,139 @@ fun InitializedMandaContent(
         percentage = uiState.mandaStatus.donePercentage
     }
 
+    if(getRequirePermission()){
+        if(!checkAlertWindowPermission(context)){
+            isPermissionDialog = true
+        }
+    }
 
-    Column(
+    if(isPermissionDialog) {
+        HMTextDialog(
+            topText = "원활한 알람 기능을 위해,\n",
+            targetText = "다른 앱 위에 표시 권한",
+            bottomText = "이 필요합니다.",
+            tintColor = HMColor.Primary,
+            confirmText = "지금 설정",
+            onDismissRequest = {
+                isPermissionDialog = false
+                setRequirePermission()
+            },
+            onConfirm = {
+                isPermissionDialog = false
+                setRequirePermission()
+                requestPermission(context)
+            }
+        )
+    }
+
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+            .background(HMColor.Background),
     ) {
-        MandaTopBar(
-            navigateToSetting = navigateToSetting,
-            navigateToHistory = navigateToHistory
-        )
-
-        MandaStatus(
-            titleName = uiState.mandaStatus.titleManda.name,
-            statusColor = uiState.mandaStatus.statusColor,
-            donePercentage = uiState.mandaStatus.donePercentage,
-            animateDonePercentage = animateDonePercentage.value
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            changeBottomSheet(
-                true,
-                MandaBottomSheetContentState.Insert(
-                    MandaBottomSheetContentType.MandaFinal(
-                        mandaUI = uiState.mandaStatus.titleManda
+            MandaTopBar(
+                navigateToTutorial = { isExplain = true },
+                navigateToSetting = navigateToSetting,
+                navigateToHistory = navigateToHistory
+            )
+
+            Box(
+                modifier = Modifier.onGloballyPositioned {
+                    titleOffset = it.positionInRoot()
+                    size = it.size
+                }
+            ) {
+                MandaStatus(
+                    titleName = uiState.mandaStatus.titleManda.name,
+                    statusColor = uiState.mandaStatus.statusColor,
+                    donePercentage = uiState.mandaStatus.donePercentage,
+                    animateDonePercentage = animateDonePercentage.value,
+                ) {
+                    changeBottomSheet(
+                        true,
+                        MandaBottomSheetContentState.Insert(
+                            MandaBottomSheetContentType.MandaFinal(
+                                mandaUI = uiState.mandaStatus.titleManda
+                            )
+                        )
                     )
+                }
+            }
+
+            Box(
+                modifier = Modifier.onGloballyPositioned {
+                    mandaOffset = it.positionInRoot()
+                    size = it.size
+                }
+            ) {
+                Mandalart(
+                    mandaList = uiState.mandaList,
+                    curIndex = uiState.currentIndex,
+                    changeBottomSheet = changeBottomSheet,
+                    changeCurrentIndex = changeCurrentIndex
                 )
+            }
+
+            Box(
+                modifier = Modifier.onGloballyPositioned {
+                    todoOffset = it.positionInRoot()
+                    size = it.size
+                }
+            ) {
+                MandaTodoList(
+                    colorList = currentColorList(uiState.mandaList),
+                    currentIndex = uiState.currentIndex,
+                    todoRange = uiState.todoRange,
+                    todoList = uiState.todoList,
+                    doneTodoCnt = uiState.doneTodoCnt,
+                    todoCnt = uiState.todoCnt,
+                    upsertMandaTodo = upsertMandaTodo,
+                    changeRange = changeTodoRange,
+                )
+            }
+        }
+        if (isExplain) {
+            TutorialScreen(
+                titleOffset = titleOffset,
+                mandaOffset = mandaOffset,
+                todoOffset = todoOffset,
+                size = size,
+                onFinished = {
+                    isExplain = false
+                }
             )
         }
-
-        Mandalart(
-            mandaList = uiState.mandaList,
-            curIndex = uiState.currentIndex,
-            changeBottomSheet = changeBottomSheet,
-            changeCurrentIndex = changeCurrentIndex
-        )
-        MandaTodoList(
-            colorList = currentColorList(uiState.mandaList),
-            currentIndex = uiState.currentIndex,
-            todoRange = uiState.todoRange,
-            todoList = uiState.todoList,
-            doneTodoCnt = uiState.doneTodoCnt,
-            todoCnt = uiState.todoCnt,
-            upsertMandaTodo = upsertMandaTodo,
-            changeRange = changeTodoRange,
-        )
-
-
     }
 }
 
+//@Composable
+//fun ExplainBox(
+//    borderVisible: Boolean,
+//    content: @Composable BoxScope.() -> Unit
+//) {
+//    Box(
+//        modifier = Modifier.padding(horizontal = 6.dp)
+//            .border(1.dp, if(borderVisible) HMColor.Primary else Color.Transparent, RoundedCornerShape(8.dp))
+//            .padding(horizontal = 10.dp)
+//    ) {
+//        content()
+//    }
+//}
+
 @Composable
 fun MandaTopBar(
+    navigateToTutorial: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToHistory: () -> Unit
 ) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -210,7 +303,7 @@ fun MandaTopBar(
         }
         Row {
             IconButton(
-                onClick = { navigateToHistory() }) {
+                onClick = { navigateToTutorial() }) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     imageVector = IconPack.Question,
@@ -218,15 +311,15 @@ fun MandaTopBar(
                     contentDescription = "question"
                 )
             }
-            IconButton(
-                onClick = { navigateToHistory() }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = IconPack.History,
-                    tint = HMColor.Primary,
-                    contentDescription = "history"
-                )
-            }
+//            IconButton(
+//                onClick = { navigateToHistory() }) {
+//                Icon(
+//                    modifier = Modifier.size(24.dp),
+//                    imageVector = IconPack.History,
+//                    tint = HMColor.Primary,
+//                    contentDescription = "history"
+//                )
+//            }
             IconButton(
                 onClick = { navigateToSetting() }) {
                 Icon(
@@ -240,6 +333,17 @@ fun MandaTopBar(
     }
 }
 
+@Preview
+@Composable
+fun MandaTopBarPreview() {
+    MandaTopBar(
+        navigateToTutorial = {},
+        navigateToSetting = { /*TODO*/ }
+    ) {
+
+    }
+}
+
 @Composable
 fun MandaStatus(
     titleName: String,
@@ -250,7 +354,9 @@ fun MandaStatus(
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -309,7 +415,6 @@ fun MandaStatus(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Mandalart(
     mandaList: List<MandaState>,
@@ -325,7 +430,7 @@ fun Mandalart(
             addAll(mandaList)
         }
     }
-    LaunchedEffect(mandaList){
+    LaunchedEffect(mandaList) {
         currentMandaList.clear()
         currentMandaList.addAll(mandaList)
     }
@@ -346,9 +451,6 @@ fun Mandalart(
 
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
-
-    var dragOffsetX by remember { mutableStateOf(0f) }
-    var dragOffsetY by remember { mutableStateOf(0f) }
 
     val dampingRatio = 0.8f // 클수록 스프링 효과 감소
     val stiffness = 1600f // 클수록 빨리 확대, 축소
@@ -470,13 +572,16 @@ fun Mandalart(
         }
     }
 
-    fun dragController(index: Int){
-        dragOffsetX = 0f
-        dragOffsetY = 0f
+    /**
+     * 줌 상태 Back 리스너
+     */
+    BackHandler(isZoom) {
+        zoomController(-1)
     }
 
-    Column(
 
+    Column(
+        modifier = Modifier.padding(vertical = 4.dp)
     ) {
         LazyColumn(
             horizontalAlignment = Alignment.Start,
@@ -723,8 +828,3 @@ fun Mandalart(
         }
     }
 }
-
-
-
-
-
