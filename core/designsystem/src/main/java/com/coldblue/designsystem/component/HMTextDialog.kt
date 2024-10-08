@@ -76,7 +76,7 @@ fun HMTextDialog(
                     Text(
                         text = subText,
                         style = HmStyle.text16,
-                        color = HMColor.SubLightText
+                        color = HMColor.SubDarkText
                     )
             }
         }, onDismissRequest = {
