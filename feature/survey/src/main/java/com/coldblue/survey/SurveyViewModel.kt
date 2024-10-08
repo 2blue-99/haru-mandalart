@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.domain.survey.GetSurveyListUseCase
 import com.coldblue.model.Survey
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +28,11 @@ class SurveyViewModel @Inject constructor(
     fun getSurveyList() {
         viewModelScope.launch {
             if (getNetworkStateUseCase().first()) {
-                _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
+                if(getSurveyListUseCase().isNotEmpty()){
+                    _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
+                }else{
+                    _surveyUIState.value = SurveyUiState.Error("제안하기 게시판이 비어있습니다.")
+                }
             } else {
                 _surveyUIState.value = SurveyUiState.Error("네트워크 연결 상태가 좋지 않습니다.")
             }
