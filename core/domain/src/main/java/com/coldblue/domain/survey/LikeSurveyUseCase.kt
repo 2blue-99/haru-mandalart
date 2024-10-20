@@ -4,7 +4,7 @@ import com.coldblue.data.repository.survey.SurveyRepository
 import com.coldblue.model.Survey
 import javax.inject.Inject
 
-class UpdateSurveyUseCase @Inject constructor(
+class LikeSurveyUseCase @Inject constructor(
     private val surveyRepository: SurveyRepository
 ) {
     suspend operator fun invoke(survey: Survey){

@@ -19,38 +19,57 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.coldblue.designsystem.component.HMTopBar
+import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.Survey
+import com.coldblue.designsystem.R.drawable.comment
 
 @Composable
 fun SurveyListContent(
     surveyList: List<Survey>,
     navigateToSurveyDetail: (id: Int) -> Unit,
+    updateSurvey: (survey: Survey) -> Unit,
+    writeSurvey: () -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        items(surveyList) {
-            SurveyItem(it, navigateToSurveyDetail)
+    Column(modifier = Modifier.fillMaxSize().padding(bottom = 16.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f)
+        ) {
+            items(surveyList) {
+                SurveyItem(it, navigateToSurveyDetail, updateSurvey)
+            }
         }
+        HMButton(
+            text = "기능제안하기",
+            clickableState = true,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            writeSurvey()
+        }
+
     }
 }
 
 @Composable
 fun SurveyItem(
     survey: Survey,
-    navigateToSurveyDetail: (id: Int) -> Unit={},
+    navigateToSurveyDetail: (id: Int) -> Unit = {},
+    updateSurvey: (survey: Survey) -> Unit
+
 ) {
 
     Row(
@@ -66,7 +85,7 @@ fun SurveyItem(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.65f)
         ) {
 
 
@@ -85,11 +104,25 @@ fun SurveyItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                tint = if (survey.isLiked) HMColor.NegativeText else HMColor.Text,
-                imageVector = if (survey.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = "좋아요"
+                tint =  HMColor.Text,
+                painter = painterResource(id = comment),
+                contentDescription = "댓글"
             )
-            Text(text = survey.likeCount.toString())
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = survey.commentCount.toString())
+
+            TextButton(
+                onClick = { updateSurvey(survey) },
+                modifier = Modifier
+            ) {
+                Icon(
+                    tint = if (survey.isLiked) HMColor.NegativeText else HMColor.Text,
+                    imageVector = if (survey.isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = "좋아요"
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = survey.likeCount.toString())
+            }
         }
 
 
@@ -134,10 +167,12 @@ fun SurveyStateChip(state: String) {
 fun SurveyListContentPreview() {
     SurveyListContent(
         surveyList = listOf(
-            Survey(1, "홈화면 만다라트 표시", "완료", "2024-06-03", 15, "만다라트 제거", "관리자", false),
-            Survey(2, "위젯", "진행중", "2024-05-11", 1, "만타탙", "관리자", true),
-            Survey(3, "다크모드 지원", "개발예정", "2024-06-13", 0, "만ㅋ크크크제거", "관리자", false),
+            Survey(1, "홈화면 만다라트 표시", "완료", "2024-06-03", 15, "만다라트 제거", "관리자", false,3),
+            Survey(2, "위젯", "진행중", "2024-05-11", 1, "만타탙", "관리자", true,3),
+            Survey(3, "다크모드 지원", "개발예정", "2024-06-13", 0, "만ㅋ크크크제거", "관리자", false,3),
         ),
         {},
+        {},
+        {}
     )
 }
