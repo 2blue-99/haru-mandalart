@@ -3,13 +3,11 @@ package com.coldblue.network.datasourceImpl
 import com.coldblue.network.datasource.SurveyDataSource
 import com.coldblue.network.model.NetworkNotice
 import com.coldblue.network.model.NetworkSurvey
+import com.coldblue.network.model.NetworkSurveyComment
 import com.coldblue.network.model.NetworkSurveyLike
 import com.orhanobut.logger.Logger
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
-import io.github.jan.supabase.postgrest.query.Order
 import javax.inject.Inject
 
 class SurveyDataSourceImpl @Inject constructor(
@@ -43,6 +41,13 @@ class SurveyDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun upsertSurvey(survey: NetworkSurvey) {
+        try {
+            client.postgrest["survey"].insert(survey)
+        } catch (e: Exception) {
+        }
+    }
+
     override suspend fun isSurveyLiked(id: Int): Boolean {
         return try {
             client.postgrest["surveyLike"].select {
@@ -52,6 +57,33 @@ class SurveyDataSourceImpl @Inject constructor(
             }.decodeList<NetworkSurveyLike>().isNotEmpty()
         } catch (e: Exception) {
             false
+        }
+    }
+
+    override suspend fun getAllSurveyCommentList(): List<NetworkSurveyComment> {
+        return try {
+            client.postgrest["surveyComment"].select().decodeList<NetworkSurveyComment>()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getSurveyCommentList(surveyId: Int): List<NetworkSurveyComment> {
+        return try {
+            client.postgrest["surveyComment"].select {
+                filter {
+                    NetworkSurveyComment::survey_id eq surveyId
+                }
+            }.decodeList<NetworkSurveyComment>()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun upsertSurveyComment(surveyComment: NetworkSurveyComment) {
+        try {
+            client.postgrest["surveyComment"].insert(surveyComment)
+        } catch (e: Exception) {
         }
     }
 

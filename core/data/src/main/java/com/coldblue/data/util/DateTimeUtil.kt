@@ -11,6 +11,12 @@ fun getUpdateTime(): String {
     return LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli().toString()
 }
 
+fun getDateString():String{
+    val currentDate = LocalDate.now()
+    val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+    val formattedDate = currentDate.format(formatter)
+    return formattedDate
+}
 fun String?.toTime(): LocalTime? {
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
     return if (this.isNullOrBlank()) null
