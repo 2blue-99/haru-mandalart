@@ -2,13 +2,19 @@ package com.coldblue.survey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.coldblue.data.util.LoginState
+import com.coldblue.domain.auth.GetAuthStateUseCase
 import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.domain.survey.GetSurveyListUseCase
+import com.coldblue.domain.survey.LikeSurveyUseCase
 import com.coldblue.model.Survey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,13 +22,26 @@ import javax.inject.Inject
 class SurveyViewModel @Inject constructor(
     private val getSurveyListUseCase: GetSurveyListUseCase,
     private val getNetworkStateUseCase: GetNetworkStateUseCase,
-
+    getAuthStateUseCase: GetAuthStateUseCase,
+    private val likeSurveyUseCase: LikeSurveyUseCase,
     ) : ViewModel() {
     private val _surveyUIState = MutableStateFlow<SurveyUiState>(SurveyUiState.Loading)
     val surveyUIState: StateFlow<SurveyUiState> get() = _surveyUIState
 
-    private val _survey = MutableStateFlow<Survey?>(null)
-    val survey: StateFlow<Survey?> get() = _survey
+    val networkState = getNetworkStateUseCase().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = false
+    )
+
+    val authState = getAuthStateUseCase().catch {
+        LoginState.Loading
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = LoginState.Loading
+    )
+
 
     fun getSurveyList() {
         viewModelScope.launch {
@@ -33,6 +52,21 @@ class SurveyViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateSurvey(survey: Survey) {
+        viewModelScope.launch {
+            _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
+
+            likeSurveyUseCase(
+                survey.copy(
+                    isLiked = !survey.isLiked,
+                    likeCount = if (survey.isLiked) survey.likeCount - 1 else survey.likeCount + 1
+                )
+            )
+
+        }
+    }
+
     init {
         getSurveyList()
     }

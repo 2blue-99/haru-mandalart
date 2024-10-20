@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.coldblue.designsystem.component.HMTopBar
 import com.coldblue.data.util.LoginState
 import com.coldblue.model.Survey
+import com.coldblue.model.SurveyComment
 import com.coldblue.survey.content.SurveyDetailContent
 
 @Composable
@@ -20,6 +21,7 @@ fun SurveyDetailScreen(
     surveyDetailViewModel: SurveyDetailViewModel = hiltViewModel()
 ) {
     val survey by surveyDetailViewModel.surveyState.collectAsStateWithLifecycle()
+    val surveyCommentList by surveyDetailViewModel.surveyCommentState.collectAsStateWithLifecycle()
     val authState by surveyDetailViewModel.authState.collectAsStateWithLifecycle()
     val networkState by surveyDetailViewModel.networkState.collectAsStateWithLifecycle()
 
@@ -34,41 +36,69 @@ fun SurveyDetailScreen(
             navigateToBackStack()
         }
         SurveyDetailScreenWithState(
-            survey = survey
-        ) {
-            if (networkState) {
-                when (authState) {
-                    LoginState.AuthenticatedLogin -> (surveyDetailViewModel.updateSurvey(it))
+            survey = survey,
+            surveyCommentList,
+            updateSurvey = {
+                if (networkState) {
+                    when (authState) {
+                        LoginState.AuthenticatedLogin -> (surveyDetailViewModel.updateSurvey(it))
 
-                    else -> {
-                        Toast.makeText(
-                            context,
-                            "로그인이 필요합니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        else -> {
+                            Toast.makeText(
+                                context,
+                                "로그인이 필요합니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
+                } else {
+                    Toast.makeText(
+                        context,
+                        "인터넷 연결을 확인하세요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            } else {
-                Toast.makeText(
-                    context,
-                    "인터넷 연결을 확인하세요.",
-                    Toast.LENGTH_SHORT
-                ).show()
+            },
+            upsertSurveyComment = {
+                if (networkState) {
+                    when (authState) {
+                        LoginState.AuthenticatedLogin -> (surveyDetailViewModel.upsertSurveyComment(
+                            it
+                        ))
+                        else -> {
+                            Toast.makeText(
+                                context,
+                                "로그인이 필요합니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        context,
+                        "인터넷 연결을 확인하세요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-
-        }
+        )
     }
 }
 
 @Composable
 fun SurveyDetailScreenWithState(
     survey: Survey?,
-    updateSurvey: (survey: Survey) -> Unit
+    surveyCommentList: List<SurveyComment>,
+    updateSurvey: (survey: Survey) -> Unit,
+    upsertSurveyComment: (surveyComment: SurveyComment) -> Unit
+
 ) {
     if (survey != null) {
         SurveyDetailContent(
             survey,
-            updateSurvey
+            surveyCommentList,
+            updateSurvey,
+            upsertSurveyComment
         )
     }
 

@@ -45,11 +45,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalConfiguration
@@ -62,6 +64,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieClipSpec
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieAnimatable
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.resetToBeginning
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.iconpack.Back
@@ -91,6 +100,7 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
 import com.coldblue.tutorial.TutorialScreen
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -125,6 +135,41 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
+    val doneComposition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.manda_done)
+    )
+    val createComposition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.manda_create)
+    )
+    val doneAni = rememberLottieAnimatable()
+    val createAni = rememberLottieAnimatable()
+
+    var showDoneAni by remember { mutableStateOf(false) }
+    var showCreateAni by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showCreateAni) {
+        if (showCreateAni) {
+            createAni.animate(
+                composition = createComposition,
+                clipSpec = LottieClipSpec.Frame(0, 1200),
+                initialProgress = 0f
+            ).also {
+                createAni.resetToBeginning()
+                showCreateAni = false
+            }
+        }
+    }
+    LaunchedEffect(showDoneAni) {
+        if (showDoneAni) {
+            doneAni.animate(
+                composition = doneComposition,
+                clipSpec = LottieClipSpec.Frame(0, 1200),
+                initialProgress = 0f
+            ).also {
+                showDoneAni = false
+            }
+        }
+    }
     val context = LocalContext.current
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
@@ -133,9 +178,23 @@ fun InitializedMandaContent(
             sheetState = sheetState,
             mandaKeyList = uiState.mandaKeyList,
             usedColorIndexList = uiState.usedColorIndexList,
-            upsertMandaFinal = upsertMandaFinal,
-            upsertMandaKey = upsertMandaKey,
-            upsertMandaDetail = upsertMandaDetail,
+            upsertMandaFinal = {
+                showCreateAni = true
+                upsertMandaFinal(it)
+            },
+            upsertMandaKey = {
+                showCreateAni = true
+                upsertMandaKey(it)
+            },
+            upsertMandaDetail = {
+                if (it.isDone) {
+                    showDoneAni = true
+                } else {
+                    showCreateAni = true
+
+                }
+                upsertMandaDetail(it)
+            },
             deleteMandaKey = deleteMandaKey,
             deleteMandaDetail = deleteMandaDetail
         ) {
@@ -147,13 +206,13 @@ fun InitializedMandaContent(
         percentage = uiState.mandaStatus.donePercentage
     }
 
-    if(getRequirePermission()){
-        if(!checkAlertWindowPermission(context)){
+    if (getRequirePermission()) {
+        if (!checkAlertWindowPermission(context)) {
             isPermissionDialog = true
         }
     }
 
-    if(isPermissionDialog) {
+    if (isPermissionDialog) {
         HMTextDialog(
             topText = "원활한 알람 기능을 위해,\n",
             targetText = "다른 앱 위에 표시 권한",
@@ -177,6 +236,7 @@ fun InitializedMandaContent(
         modifier = Modifier
             .fillMaxSize()
             .background(HMColor.Background),
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
@@ -212,7 +272,6 @@ fun InitializedMandaContent(
                     )
                 }
             }
-
             Box(
                 modifier = Modifier.onGloballyPositioned {
                     mandaOffset = it.positionInRoot()
@@ -245,6 +304,17 @@ fun InitializedMandaContent(
                 )
             }
         }
+        LottieAnimation(
+            composition = doneComposition,
+            progress = { doneAni.progress },
+            contentScale = ContentScale.FillHeight
+        )
+        LottieAnimation(
+            composition = createComposition,
+            modifier = Modifier.scale(3.0f),
+            progress = { createAni.progress },
+            contentScale = ContentScale.FillHeight
+        )
         if (isExplain) {
             TutorialScreen(
                 titleOffset = titleOffset,

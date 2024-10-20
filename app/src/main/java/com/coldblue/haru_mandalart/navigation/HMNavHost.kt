@@ -5,11 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.coldblue.designsystem.component.HMNavigateAnimation.noneEnter
 import com.coldblue.designsystem.component.HMNavigateAnimation.noneExit
-import com.coldblue.explain.navigation.navigateToExplain
 import com.coldblue.haru_mandalart.ui.HMAppState
 import com.coldblue.history.historyScreen
 import com.coldblue.history.navigateToHistory
-import com.coldblue.login.navigation.loginScreen
 import com.coldblue.mandalart.navigation.mandaRoute
 import com.coldblue.mandalart.navigation.mandaScreen
 import com.coldblue.notice.navigation.navigateToNotice
@@ -18,8 +16,10 @@ import com.coldblue.setting.navigation.navigateToSetting
 import com.coldblue.setting.navigation.settingScreen
 import com.coldblue.survey.navigation.navigateToSurvey
 import com.coldblue.survey.navigation.navigateToSurveyDetail
+import com.coldblue.survey.navigation.navigateToSurveyWrite
 import com.coldblue.survey.navigation.surveyDetailScreen
 import com.coldblue.survey.navigation.surveyScreen
+import com.coldblue.survey.navigation.surveyWriteScreen
 
 @Composable
 fun HMNavHost(
@@ -38,7 +38,7 @@ fun HMNavHost(
         popExitTransition = { noneExit() }
 
     ) {
-        historyScreen (
+        historyScreen(
             navigateToBackStack = navController::popBackStack
         )
         mandaScreen(
@@ -55,9 +55,13 @@ fun HMNavHost(
         )
         surveyScreen(
             navigateToSurveyDetail = navController::navigateToSurveyDetail,
-            navigateToBackStack = navController::popBackStack
+            navigateToBackStack = navController::popBackStack,
+            navigateToSurveyWrite = navController::navigateToSurveyWrite
         )
         surveyDetailScreen(
+            navigateToBackStack = navController::popBackStack
+        )
+        surveyWriteScreen(
             navigateToBackStack = navController::popBackStack
         )
     }

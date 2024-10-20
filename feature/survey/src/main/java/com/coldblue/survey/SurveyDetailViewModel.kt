@@ -6,9 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.coldblue.data.util.LoginState
 import com.coldblue.domain.auth.GetAuthStateUseCase
 import com.coldblue.domain.network.GetNetworkStateUseCase
+import com.coldblue.domain.survey.GetSurveyCommentUseCase
 import com.coldblue.domain.survey.GetSurveyUseCase
-import com.coldblue.domain.survey.UpdateSurveyUseCase
+import com.coldblue.domain.survey.LikeSurveyUseCase
+import com.coldblue.domain.survey.UpsertSurveyCommentUseCase
 import com.coldblue.model.Survey
+import com.coldblue.model.SurveyComment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,13 +27,16 @@ class SurveyDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getAuthStateUseCase: GetAuthStateUseCase,
     private val getSurveyUseCase: GetSurveyUseCase,
-    private val updateSurveyUseCase: UpdateSurveyUseCase,
+    private val getSurveyCommentUseCase: GetSurveyCommentUseCase,
+    private val upsertSurveyCommentUseCase: UpsertSurveyCommentUseCase,
+    private val likeSurveyUseCase: LikeSurveyUseCase,
     private val getNetworkStateUseCase: GetNetworkStateUseCase,
 
     ) : ViewModel() {
 
     private val id: Int? = savedStateHandle.get<Int>("id")
     private val _survey = MutableStateFlow<Survey?>(null)
+    private val _surveyComment = MutableStateFlow<List<SurveyComment>>(emptyList())
 
     val networkState = getNetworkStateUseCase().stateIn(
         scope = viewModelScope,
@@ -47,9 +53,11 @@ class SurveyDetailViewModel @Inject constructor(
     )
 
     val surveyState: StateFlow<Survey?> get() = _survey
+    val surveyCommentState: StateFlow<List<SurveyComment>> get() = _surveyComment
 
     init {
         getSurvey()
+        getSurveyComment()
     }
 
     private fun getSurvey() {
@@ -68,8 +76,24 @@ class SurveyDetailViewModel @Inject constructor(
                 isLiked = !survey.isLiked,
                 likeCount = if (survey.isLiked) survey.likeCount - 1 else survey.likeCount + 1
             )
-            updateSurveyUseCase(surveyState.value!!)
+            likeSurveyUseCase(surveyState.value!!)
+        }
+    }
 
+    private fun getSurveyComment() {
+        viewModelScope.launch {
+            if (getNetworkStateUseCase().first()) {
+                if (id != null) {
+                    _surveyComment.value = getSurveyCommentUseCase(id)
+                }
+            }
+        }
+    }
+
+    fun upsertSurveyComment(surveyComment: SurveyComment) {
+        viewModelScope.launch {
+            _surveyComment.value = listOf(surveyComment) + _surveyComment.value
+            upsertSurveyCommentUseCase(surveyComment)
         }
     }
 
