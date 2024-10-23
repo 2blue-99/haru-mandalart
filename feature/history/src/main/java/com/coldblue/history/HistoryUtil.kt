@@ -179,8 +179,8 @@ object HistoryUtil {
 
     fun emptyTodoList(): List<MandaTodo>{
         return listOf(
-            MandaTodo(title = "", isDone = true, mandaIndex = 1),
-            MandaTodo(title = "", isDone = true, mandaIndex = 1),
+            MandaTodo(title = "", isDone = true, mandaIndex = 1, repeatCycle = 0),
+            MandaTodo(title = "", isDone = true, mandaIndex = 1, repeatCycle = 0),
         )
     }
 

@@ -11,6 +11,7 @@ data class NetworkMandaTodo(
     val is_done: Boolean,
     val is_alarm: Boolean,
     val date: String,
+    val repeat_cycle:Int,
     val update_time: String,
     val time: String? = null,
     val user_id: String? = null,

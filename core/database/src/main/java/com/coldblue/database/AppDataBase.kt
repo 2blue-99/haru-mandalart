@@ -23,7 +23,7 @@ import com.coldblue.database.entity.MandaTodoEntity
         MandaDetailEntity::class,
         MandaTodoEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 
