@@ -2,12 +2,17 @@ package com.coldblue.designsystem.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -15,8 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
+import com.coldblue.designsystem.theme.pretendard
 
 @Composable
 fun HMTextDialog(
@@ -38,31 +45,48 @@ fun HMTextDialog(
             ) {
                 Text(
                     buildAnnotatedString {
-                        append(topText)
+                        withStyle(
+                            style = SpanStyle(
+                                fontSize = 16.sp,
+                                fontFamily = pretendard
+                            )
+                        ){
+                            append(topText)
+                        }
                         withStyle(
                             style = SpanStyle(
                                 color = tintColor,
-                                fontWeight = FontWeight.Bold
+                                fontSize = 16.sp,
+                                fontFamily = pretendard
                             )
                         ) {
                             append(targetText)
                         }
-                        append(bottomText)
+                        withStyle(
+                            style = SpanStyle(
+                                fontSize = 16.sp,
+                                fontFamily = pretendard
+                            )
+                        ){
+                            append(bottomText)
+                        }
                     }
                 )
                 if (subText != "")
                     Text(
                         text = subText,
-                        style = HmStyle.text12,
-                        color = HMColor.SubLightText
+                        style = HmStyle.text16,
+                        color = HMColor.SubDarkText
                     )
             }
         }, onDismissRequest = {
             onDismissRequest()
         }, confirmButton = {
-            TextButton(
+            Button(
+                modifier = Modifier.offset(y = (10.dp)),
+                shape = RoundedCornerShape(6.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = HMColor.Background,
+                    containerColor = tintColor,
                     contentColor = tintColor
                 ),
                 onClick = {
@@ -70,13 +94,13 @@ fun HMTextDialog(
                 }) {
                 Text(
                     text = confirmText,
-                    color = tintColor,
-                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
                     style = HmStyle.text16
                 )
             }
         }, dismissButton = {
             TextButton(
+                modifier = Modifier.offset(y = 10.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = HMColor.Background,
                     contentColor = HMColor.Text
@@ -87,7 +111,6 @@ fun HMTextDialog(
                 Text(
                     text = "취소",
                     color = HMColor.Text,
-                    fontWeight = FontWeight.Bold,
                     style = HmStyle.text16
                 )
             }

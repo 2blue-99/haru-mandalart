@@ -61,7 +61,11 @@ fun UnInitializedMandaContent(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left
         )
-        HMTextField(inputText, maxLen = mandaFinalMaxLen) {
+        HMTextField(
+            inputText = inputText,
+            maxLen = mandaFinalMaxLen,
+            hint = "목표를 입력해주세요."
+        ) {
             inputText = it
             buttonClickableState = it.isNotBlank()
         }

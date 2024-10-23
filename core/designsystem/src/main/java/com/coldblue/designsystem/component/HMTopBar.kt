@@ -51,7 +51,6 @@ fun HMTopBar(
                 text = title,
                 style = HmStyle.text16,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 2.dp)
             )
         }
     }
