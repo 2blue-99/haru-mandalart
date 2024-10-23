@@ -238,7 +238,7 @@ fun TutorialContent(
                     )
                     Text(
                         text = text,
-                        style = HmStyle.text16,
+                        style = HmStyle.text18,
                         color = HMColor.Background
                     )
                 }
@@ -260,7 +260,7 @@ fun TutorialContent(
                 ) {
                     Text(
                         text = text,
-                        style = HmStyle.text16,
+                        style = HmStyle.text18,
                         color = HMColor.Background
                     )
                     Icon(

@@ -26,7 +26,8 @@ import com.coldblue.designsystem.theme.HmStyle
 fun HMTextField(
     inputText: String = "",
     maxLen: Int = -1,
-    onChangeText: (String) -> Unit = {}
+    hint: String = "",
+    onChangeText: (String) -> Unit = {},
 ) {
     var text by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
@@ -37,6 +38,13 @@ fun HMTextField(
     TextField(
         modifier = Modifier.fillMaxWidth(),
         value = text,
+        placeholder = {
+            Text(
+                text = hint,
+                style = HmStyle.text16,
+                color = HMColor.DarkGray
+            )
+        },
         onValueChange = {
             if (maxLen != -1) {
                 if (it.length <= maxLen) {
@@ -78,5 +86,5 @@ fun HMTextField(
 @Preview
 @Composable
 fun HMTextFieldPreview() {
-    HMTextField("아아아", 10, {})
+    HMTextField("아아아", 10, "", {})
 }

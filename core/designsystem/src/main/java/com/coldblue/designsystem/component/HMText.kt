@@ -8,8 +8,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
-import com.coldblue.designsystem.theme.HmStyle
-import com.coldblue.designsystem.theme.orbit
+import com.coldblue.designsystem.theme.pretendard
 
 @Composable
 fun HMText(
@@ -27,7 +26,7 @@ fun HMText(
                     color = tintColor,
                     fontWeight = FontWeight.Bold,
 //                    fontSize = fontSize,
-                    fontFamily = orbit
+                    fontFamily = pretendard
                 )
             ){
                 append(targetText)

@@ -32,7 +32,11 @@ class NoticeViewModel @Inject constructor(
         try {
             viewModelScope.launch {
                 if (getNetworkStateUseCase().first()) {
-                    _noticeUIState.value = NoticeUiState.Success(getNoticeListUseCase())
+                    if(getNoticeListUseCase().isNotEmpty()){
+                        _noticeUIState.value = NoticeUiState.Success(getNoticeListUseCase())
+                    }else{
+                        _noticeUIState.value = NoticeUiState.Error("공지사항 게시판이 비어있습니다.")
+                    }
                 } else {
                     _noticeUIState.value = NoticeUiState.Error("네트워크 연결 상태가 좋지 않습니다.")
                 }

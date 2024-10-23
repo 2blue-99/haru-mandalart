@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -219,12 +220,13 @@ fun TodoBottomSheet(
 
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
             ) {
                 Button(
                     modifier = Modifier
-                        .padding(end = 5.dp)
-                        .height(50.dp)
+                        .fillMaxSize()
                         .weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = HMColor.Gray),
                     shape = RoundedCornerShape(10.dp),
@@ -240,11 +242,12 @@ fun TodoBottomSheet(
                         fontWeight = FontWeight.Bold
                     )
                 }
+                Spacer(modifier = Modifier.width(10.dp))
                 HMButton(
                     text = stringResource(id = com.coldblue.designsystem.R.string.all_save),
                     clickableState = text.isNotBlank(),
                     modifier = Modifier
-                        .padding(start = 5.dp)
+                        .fillMaxSize()
                         .weight(1f),
                 ) {
                     onClickCancel()
