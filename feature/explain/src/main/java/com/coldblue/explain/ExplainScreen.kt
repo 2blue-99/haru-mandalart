@@ -7,9 +7,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
@@ -194,7 +196,7 @@ fun SecondPage() {
     Text(
         modifier = Modifier.padding(start = 10.dp),
         text = stringResource(id = R.string.explain_usage_1),
-        style = HmStyle.text16,
+        style = HmStyle.text18,
         color = HMColor.Primary
     )
 }
@@ -213,11 +215,12 @@ fun ThirdPage() {
     ) {
         Text(
             text = stringResource(id = R.string.explain_usage_1),
-            style = HmStyle.text16
+            style = HmStyle.text18
         )
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = R.string.explain_usage_2),
-            style = HmStyle.text16,
+            style = HmStyle.text18,
             color = HMColor.Primary
         )
     }
@@ -237,16 +240,17 @@ fun FourthPage() {
     ) {
         Text(
             text = stringResource(id = R.string.explain_usage_1),
-            style = HmStyle.text16
+            style = HmStyle.text18
         )
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = R.string.explain_usage_2),
-            style = HmStyle.text16
+            style = HmStyle.text18
         )
-
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = stringResource(id = R.string.explain_usage_3),
-            style = HmStyle.text16,
+            style = HmStyle.text18,
             color = HMColor.Primary
         )
     }

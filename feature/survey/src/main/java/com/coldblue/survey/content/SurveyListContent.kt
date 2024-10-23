@@ -149,9 +149,7 @@ fun SurveyStateChip(state: String) {
         Alignment.Center
     ) {
         Text(
-            modifier = Modifier
-                .padding(vertical = 2.dp)
-                .padding(bottom = 1.dp),
+            modifier = Modifier.padding(vertical = 2.dp),
             text = state,
             style = HmStyle.text10,
             color = color

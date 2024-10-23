@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -118,7 +120,7 @@ fun MandaBottomSheet(
                 dialogState = false
                 onDisMiss()
             },
-            tintColor = HMColor.DarkPastel.Red,
+            tintColor = mandaUI.color,
             onConfirm = {
                 deleteMandaKey(
                     mandaUI.id,
@@ -228,12 +230,13 @@ fun MandaBottomSheet(
 
                 is MandaBottomSheetContentState.Update -> {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
                     ) {
                         Button(
                             modifier = Modifier
-                                .padding(end = 5.dp)
-                                .height(50.dp)
+                                .fillMaxSize()
                                 .weight(1f),
                             colors = ButtonDefaults.buttonColors(containerColor = HMColor.Gray),
                             shape = RoundedCornerShape(10.dp),
@@ -260,11 +263,12 @@ fun MandaBottomSheet(
                                 fontWeight = FontWeight.Bold
                             )
                         }
+                        Spacer(modifier = Modifier.width(10.dp))
                         HMButton(
                             text = stringResource(id = com.coldblue.designsystem.R.string.all_save),
                             clickableState = buttonClickableState,
                             modifier = Modifier
-                                .padding(start = 5.dp)
+                                .fillMaxSize()
                                 .weight(1f),
                         ) {
                             when (contentType) {

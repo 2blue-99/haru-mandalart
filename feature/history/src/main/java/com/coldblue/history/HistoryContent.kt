@@ -387,7 +387,6 @@ fun HistoryTitleBar(
         Column(
             modifier = Modifier
                 .weight(5f)
-                .padding(bottom = 4.dp)
                 .padding(vertical = if (isEmpty) 10.dp else 0.dp)
         ) {
             Text(

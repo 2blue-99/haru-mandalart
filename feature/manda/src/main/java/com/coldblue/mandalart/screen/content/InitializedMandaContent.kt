@@ -357,7 +357,9 @@ fun MandaTopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
                 modifier = Modifier.size(24.dp),
                 imageVector = IconPack.Mandalart,
@@ -366,7 +368,7 @@ fun MandaTopBar(
             )
             Text(
                 text = "하루 만다라트",
-                style = HmStyle.text16,
+                style = HmStyle.text18,
                 modifier = Modifier.padding(horizontal = 15.dp),
                 color = HMColor.Primary,
             )
@@ -460,7 +462,9 @@ fun MandaStatus(
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Column {
+            Column(
+
+            ) {
                 Text(
                     text = stringResource(
                         id = R.string.initialized_done_percentage,
