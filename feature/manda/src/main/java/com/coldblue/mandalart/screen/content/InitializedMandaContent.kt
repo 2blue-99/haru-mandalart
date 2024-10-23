@@ -147,6 +147,8 @@ fun InitializedMandaContent(
     var showDoneAni by remember { mutableStateOf(false) }
     var showCreateAni by remember { mutableStateOf(false) }
 
+    var currentIndex by remember { mutableIntStateOf(4) }
+
     LaunchedEffect(showCreateAni) {
         if (showCreateAni) {
             createAni.animate(
@@ -265,9 +267,8 @@ fun InitializedMandaContent(
                     changeBottomSheet(
                         true,
                         MandaBottomSheetContentState.Insert(
-                            MandaBottomSheetContentType.MandaFinal(
-                                mandaUI = uiState.mandaStatus.titleManda
-                            )
+                            if (currentIndex == 4) MandaBottomSheetContentType.MandaFinal(mandaUI = uiState.mandaStatus.titleManda)
+                            else MandaBottomSheetContentType.MandaKey(mandaUI = uiState.mandaStatus.titleManda)
                         )
                     )
                 }
@@ -282,7 +283,10 @@ fun InitializedMandaContent(
                     mandaList = uiState.mandaList,
                     curIndex = uiState.currentIndex,
                     changeBottomSheet = changeBottomSheet,
-                    changeCurrentIndex = changeCurrentIndex
+                    changeCurrentIndex = {
+                        changeCurrentIndex(it)
+                        currentIndex = it
+                    }
                 )
             }
 
@@ -497,6 +501,7 @@ fun Mandalart(
     changeCurrentIndex: (Int) -> Unit
 ) {
     var currentIndex by remember { mutableIntStateOf(curIndex) }
+
     LaunchedEffect(curIndex) { currentIndex = curIndex }
 
     var currentMandaList = remember {
