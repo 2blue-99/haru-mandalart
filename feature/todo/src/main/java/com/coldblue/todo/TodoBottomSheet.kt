@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +51,17 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import com.coldblue.designsystem.R.drawable.repeat
+import com.coldblue.model.DATE_RANGE
+import com.coldblue.model.RepeatRange
+import com.coldblue.model.dateRangeToString
+import com.coldblue.model.repeatCycleToRepeatRange
+import com.coldblue.model.repeatRangeToInt
+import com.coldblue.model.repeatRangeToString
+import com.coldblue.todo.dialog.CustomDatePickerDialog
+import com.coldblue.todo.dialog.CustomTimePickerDialog
+import com.coldblue.todo.dialog.RepeatDialog
+
 import java.util.Locale
 
 fun toMyDate(date: LocalDate): MyDate {
@@ -94,14 +106,23 @@ fun TodoBottomSheet(
 ) {
     var dateState by remember { mutableStateOf<MyDate>(toMyDate(mandaTodo.date)) }
     var myTimeState by remember { mutableStateOf<MyTime?>(toMyTime(mandaTodo.time)) }
+    var repeatState by remember { mutableStateOf(repeatCycleToRepeatRange(mandaTodo.repeatCycle)) }
 
 
     var timePickerState by remember { mutableStateOf(false) }
     var datePickerState by remember { mutableStateOf(false) }
+    var repeatDialogState by remember { mutableStateOf(false) }
+
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var text by remember { mutableStateOf(mandaTodo.title) }
 
 
+    if (repeatDialogState) {
+        RepeatDialog(repeatState, { repeatDialogState = false }, { repeatCycle ->
+            repeatDialogState = false
+            repeatState = repeatCycle
+        })
+    }
     if (datePickerState) {
         CustomDatePickerDialog(
             LocalDateTime.of(dateState.date, LocalTime.now()).toMillis(),
@@ -216,7 +237,46 @@ fun TodoBottomSheet(
                         )
                     }
                 }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { repeatDialogState = true }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    val color =
+                        if (repeatState.dateRange == DATE_RANGE.NONE) HMColor.DarkGray else HMColor.Primary
+                    val rangeText =
+                        if (repeatState.dateRange != DATE_RANGE.NONE) repeatRangeToString(
+                            repeatState
+                        ) else "반복"
 
+                    val textColor =
+                        if (repeatState.dateRange == DATE_RANGE.NONE) HMColor.DarkGray else HMColor.Text
+                    Row {
+                        Icon(
+                            painter = painterResource(id = repeat),
+                            contentDescription = "",
+                            tint = color,
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Text(rangeText, color = textColor)
+                    }
+                    if (repeatState.dateRange != DATE_RANGE.NONE) {
+                        Icon(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(CircleShape)
+                                .clickable {
+                                    repeatState = RepeatRange(DATE_RANGE.NONE, 0)
+                                },
+                            imageVector = Icons.Rounded.Clear,
+                            contentDescription = "",
+                            tint = HMColor.Primary,
+                        )
+                    }
+                }
 
             }
             Row(
@@ -255,7 +315,8 @@ fun TodoBottomSheet(
                         mandaTodo.copy(
                             title = text,
                             time = myTimeState?.time,
-                            date = dateState.date
+                            date = dateState.date,
+                            repeatCycle = repeatRangeToInt(repeatState)
                         )
                     )
                 }
@@ -267,5 +328,8 @@ fun TodoBottomSheet(
 @Preview
 @Composable
 fun TodoBottomSheetPreview() {
-    TodoBottomSheet({}, MandaTodo("내용입니ㅏ 내용입니ㅏ 내용입니ㅏ 내용입니ㅏ내용입니ㅏ", mandaIndex = 2), {})
+    TodoBottomSheet(
+        {},
+        MandaTodo("내용입니ㅏ 내용입니ㅏ 내용입니ㅏ 내용입니ㅏ내용입니ㅏ", mandaIndex = 2, repeatCycle = 0),
+        {})
 }

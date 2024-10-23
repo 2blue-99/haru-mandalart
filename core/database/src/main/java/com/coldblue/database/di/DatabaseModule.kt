@@ -23,23 +23,32 @@ object DatabaseModule {
             database.execSQL("DROP TABLE todo_group")
             database.execSQL(
                 "CREATE TABLE `manda_todo` (`id` INTEGER NOT NULL, `title` TEXT  NOT NULL," +
-                    "`manda_index` INTEGER NOT NULL," +
-                    "`is_done` INTEGER NOT NULL," +
-                    "`is_alarm` INTEGER NOT NULL," +
-                    "`time` INTEGER ," +
-                    "`date` TEXT NOT NULL," +
-                    "`origin_id` INTEGER NOT NULL," +
-                    "`is_sync` INTEGER  NOT NULL," +
-                    "`is_del` INTEGER NOT NULL," +
-                    "`update_time` TEXT NOT NULL," +
-                    " PRIMARY KEY(`id`))"
+                        "`manda_index` INTEGER NOT NULL," +
+                        "`is_done` INTEGER NOT NULL," +
+                        "`is_alarm` INTEGER NOT NULL," +
+                        "`time` INTEGER ," +
+                        "`date` TEXT NOT NULL," +
+                        "`origin_id` INTEGER NOT NULL," +
+                        "`is_sync` INTEGER  NOT NULL," +
+                        "`is_del` INTEGER NOT NULL," +
+                        "`update_time` TEXT NOT NULL," +
+                        " PRIMARY KEY(`id`))"
             )
         }
     }
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL(
+                "ALTER TABLE `manda_todo` ADD COLUMN `repeat_cycle` INTEGER DEFAULT 0 NOT NULL;"
+            )
+        }
+    }
+
     @Singleton
     @Provides
     fun provideDataBase(@ApplicationContext context: Context): AppDataBase =
-        Room.databaseBuilder(context, AppDataBase::class.java, "hm-dataBase").addMigrations(MIGRATION_1_2).build()
+        Room.databaseBuilder(context, AppDataBase::class.java, "hm-dataBase")
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
 
 
 }

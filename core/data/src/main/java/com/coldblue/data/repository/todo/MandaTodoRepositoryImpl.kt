@@ -15,6 +15,7 @@ import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.model.NotificationAlarmItem
 import com.coldblue.model.TodoGraph
 import com.coldblue.model.MandaTodo
+import com.coldblue.model.repeatCycleToDate
 import com.coldblue.network.datasource.MandaTodoDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
@@ -47,22 +48,22 @@ class MandaTodoRepositoryImpl @Inject constructor(
         val result = mutableListOf<TodoGraph>()
 
         val mandaKeys = mandaKeyDao.getMandaKeys().first().toMutableList()
-        if(mandaKeys.none { it.id != 5 }) return emptyList()
+        if (mandaKeys.none { it.id != 5 }) return emptyList()
 
         val counts = mandaTodoDao.getAllMandaTodoCount()
         for (i in 1..9) {
-            if(i == 5) continue
+            if (i == 5) continue
             val mandaKey = mandaKeys.find { it.id == i }
             result.add(
-                if(mandaKeys.isNotEmpty() && mandaKey != null){
-                        val todoData = counts[mandaKey.id - 1]
-                        TodoGraph(
-                            name = mandaKey.name,
-                            allCount = todoData.first,
-                            doneCount = todoData.second,
-                            colorIndex = mandaKey.colorIndex
-                        )
-                }else{
+                if (mandaKeys.isNotEmpty() && mandaKey != null) {
+                    val todoData = counts[mandaKey.id - 1]
+                    TodoGraph(
+                        name = mandaKey.name,
+                        allCount = todoData.first,
+                        doneCount = todoData.second,
+                        colorIndex = mandaKey.colorIndex
+                    )
+                } else {
                     TodoGraph()
                 }
             )
@@ -92,8 +93,21 @@ class MandaTodoRepositoryImpl @Inject constructor(
 
 
     override suspend fun upsertMandaTodo(mandaTodo: MandaTodo) {
-        Logger.e("mandaTodo : $mandaTodo")
         mandaTodoDao.upsertMandaTodo(mandaTodo.asEntity())
+        if (mandaTodo.repeatCycle != 0 && mandaTodo.id != 0 && mandaTodo.isDone) {
+            val repeatDate = repeatCycleToDate(mandaTodo.repeatCycle, mandaTodo.date)
+            val repeatTodo = MandaTodo(
+                title = mandaTodo.title,
+                isDone = false,
+                date = repeatDate,
+                isAlarm = mandaTodo.isAlarm,
+                time = mandaTodo.time,
+                mandaIndex = mandaTodo.mandaIndex,
+                repeatCycle = mandaTodo.repeatCycle
+            )
+            mandaTodoDao.upsertMandaTodo(repeatTodo.asEntity())
+
+        }
         mandaTodo.syncNotificationAlarm()
         todoWidgetHelper.widgetUpdate()
         syncHelper.syncWrite()
