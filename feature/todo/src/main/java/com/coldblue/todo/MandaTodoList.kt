@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -62,12 +63,20 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.model.MyDate
 import com.coldblue.model.MyTime
 import com.coldblue.model.ToggleInfo
+import com.coldblue.todo.dialog.CustomDatePickerDialog
+import com.coldblue.todo.dialog.CustomTimePickerDialog
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.coldblue.designsystem.R.drawable.repeat
+import com.coldblue.model.DATE_RANGE
+import com.coldblue.model.RepeatRange
+import com.coldblue.model.repeatRangeToInt
+import com.coldblue.model.repeatRangeToString
+import com.coldblue.todo.dialog.RepeatDialog
 
 fun getDisplayTime(time: LocalTime?): String {
 
@@ -92,9 +101,11 @@ fun MandaTodoList(
 ) {
     var datePickerState by remember { mutableStateOf(false) }
     var timePickerState by remember { mutableStateOf(false) }
+    var repeatDialogState by remember { mutableStateOf(false) }
 
     var dateState by remember { mutableStateOf<MyDate?>(null) }
     var myTimeState by remember { mutableStateOf<MyTime?>(null) }
+    var repeatState by remember { mutableStateOf(RepeatRange(DATE_RANGE.NONE, 1)) }
 
     var showDoneTodo by remember { mutableStateOf(true) }
 
@@ -116,6 +127,12 @@ fun MandaTodoList(
                 datePickerState = false
             }
         )
+    }
+    if (repeatDialogState) {
+        RepeatDialog(repeatState, { repeatDialogState = false }, {
+            repeatDialogState = false
+            repeatState = it
+        })
     }
 
 
@@ -140,11 +157,11 @@ fun MandaTodoList(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TodoRangeSelector(todoRange, changeRange, {
+            TodoRangeSelector(todoRange, changeRange) {
                 scope.launch {
                     scrollState.scrollToItem(0)
                 }
-            })
+            }
             Text(text = "Todo:$todoCnt", style = HmStyle.text16, fontWeight = FontWeight.Bold)
         }
         Box(modifier = Modifier.fillMaxHeight()) {
@@ -240,12 +257,15 @@ fun MandaTodoList(
                     TodoInput(
                         myTimeState,
                         dateState,
+                        repeatState,
                         upsertMandaTodo,
                         currentIndex,
                         { datePickerState = true },
                         { timePickerState = true },
+                        { repeatDialogState = true },
                         { myTimeState = null },
                         { dateState = null },
+                        { repeatState = (RepeatRange(DATE_RANGE.NONE, 1)) },
                         {
                             dateState = null
                             myTimeState = null
@@ -305,7 +325,7 @@ fun MandaTodoItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            if (mandaTodo.time!=null){
+            if (mandaTodo.time != null) {
                 Icon(
                     imageVector = IconPack.Alarm,
                     contentDescription = "",
@@ -359,12 +379,15 @@ fun CircleCheckbox(
 fun TodoInput(
     myTime: MyTime?,
     date: MyDate?,
+    repeatRange: RepeatRange,
     upsertMandaTodo: (MandaTodo) -> Unit,
     currentIndex: Int,
     showDatePicker: () -> Unit,
     showTimePicker: () -> Unit,
+    showRepeatDialog: () -> Unit,
     clearTimeState: () -> Unit,
     clearDateState: () -> Unit,
+    clearRepeatState: () -> Unit,
     clearDateAndTime: () -> Unit
 ) {
     var text by remember { mutableStateOf("") }
@@ -457,6 +480,45 @@ fun TodoInput(
                         }
                     }
                 }
+                Surface(
+                    color = HMColor.Box,
+                    contentColor = HMColor.Text,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable {
+                            showRepeatDialog()
+                        }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = repeat),
+                            contentDescription = "",
+                            tint = HMColor.Primary,
+                        )
+                        if (repeatRange.dateRange != DATE_RANGE.NONE) {
+                            Text(
+                                modifier = Modifier.padding(start = 4.dp, end = 4.dp),
+                                text = repeatRangeToString(repeatRange),
+                                style = HmStyle.text12
+                            )
+                            Icon(
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        clearRepeatState()
+                                    },
+                                imageVector = Icons.Rounded.Clear,
+                                contentDescription = "",
+                                tint = HMColor.Primary,
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -489,10 +551,12 @@ fun TodoInput(
                                 MandaTodo(
                                     title = text, mandaIndex = currentIndex,
                                     date = date?.date ?: LocalDate.now(),
-                                    time = myTime?.time
+                                    time = myTime?.time,
+                                    repeatCycle = repeatRangeToInt(repeatRange)
                                 )
                             )
                             text = ""
+                            clearRepeatState()
                             clearDateAndTime()
                             focusManager.clearFocus()
                         },
@@ -578,10 +642,19 @@ fun MandaTodoItemPreview() {
         listOf(HMColor.DarkPastel.Red, HMColor.DarkPastel.Orange),
         1, DateRange.DAY,
         listOf(
-            MandaTodo("1번투구ffffffffffffffffffffffffffffffsdddddddddddd", true, false, LocalTime.now(), LocalDate.now(), 1, false),
-            MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false),
-            MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, false)
+            MandaTodo(
+                "1번투구ffffffffffffffffffffffffffffffsdddddddddddd",
+                true,
+                false,
+                LocalTime.now(),
+                LocalDate.now(),
+                1,
+                0,
+                false
+            ),
+            MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, 0, false),
+            MandaTodo("1번투구", false, false, null, LocalDate.now(), 1, 0, false)
         ),
-        3, 3,  {}, {},
+        3, 3, {}, {},
     )
 }

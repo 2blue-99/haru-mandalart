@@ -1,4 +1,4 @@
-package com.coldblue.todo
+package com.coldblue.todo.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

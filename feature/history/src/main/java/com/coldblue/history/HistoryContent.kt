@@ -936,10 +936,10 @@ fun HistoryTodoPreview() {
             dayAllCount = 100,
             dayDoneCount = 50,
             todoList = listOf(
-                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1),
-                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1),
-                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1),
-                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1)
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1,0),
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1,0),
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1,0),
+                MandaTodo("ㄱㄴㄷㄹ", false, false, LocalTime.now(), LocalDate.now(), 1,0)
             ),
 
             ),
