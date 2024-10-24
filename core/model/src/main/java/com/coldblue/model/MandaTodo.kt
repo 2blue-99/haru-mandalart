@@ -10,6 +10,7 @@ data class MandaTodo(
     val time: LocalTime? = null,
     val date: LocalDate = LocalDate.now(),
     val mandaIndex: Int,
+    val repeatCycle:Int,
     val isDel: Boolean = false,
     val originId: Int = 0,
     val id: Int = 0,

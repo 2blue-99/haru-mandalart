@@ -13,7 +13,18 @@ object MandaTodoMapper {
     }
 
     fun MandaTodoEntity.asDomain(): MandaTodo {
-        return MandaTodo(title, isDone, isAlarm, time, date, mandaIndex, isDel, originId, id)
+        return MandaTodo(
+            title,
+            isDone,
+            isAlarm,
+            time,
+            date,
+            mandaIndex,
+            repeatCycle,
+            isDel,
+            originId,
+            id
+        )
     }
 
     fun List<NetworkMandaTodo>.asEntity(mandaTodoIds: List<Int?>): List<MandaTodoEntity> {
@@ -28,6 +39,7 @@ object MandaTodoMapper {
                 title = mandaTodo.title,
                 time = mandaTodo.time.toTime(),
                 date = mandaTodo.date.toDate(),
+                repeatCycle = mandaTodo.repeat_cycle,
                 isAlarm = mandaTodo.is_alarm,
                 id = mandaTodoIds[index] ?: 0,
             )
@@ -44,6 +56,7 @@ object MandaTodoMapper {
                 is_alarm = it.isAlarm,
                 time = if (it.time == null) null else it.time.toString(),
                 date = it.date.toString(),
+                repeat_cycle = it.repeatCycle,
                 is_del = it.isDel,
                 id = it.originId
             )
@@ -62,6 +75,7 @@ object MandaTodoMapper {
                 title = entity.title,
                 time = entity.time,
                 date = entity.date,
+                repeatCycle = entity.repeatCycle,
                 isAlarm = entity.isAlarm,
                 id = entity.id,
             )
@@ -76,6 +90,7 @@ object MandaTodoMapper {
             isAlarm,
             time,
             date,
+            repeatCycle,
             originId,
             isSync = false,
             isDel,

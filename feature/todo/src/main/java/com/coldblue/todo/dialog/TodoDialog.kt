@@ -1,4 +1,4 @@
-package com.coldblue.todo
+package com.coldblue.todo.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +42,7 @@ import com.coldblue.designsystem.iconpack.todo.Calendar
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.model.MandaTodo
+import com.coldblue.todo.getDisplayTime
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -210,5 +211,5 @@ fun TodoDialog(
 @Preview
 @Composable
 fun TodoDialogPreview() {
-    TodoDialog({}, MandaTodo("내용입니ㅏ 내용입니ㅏ 내용입니ㅏ 내용입니ㅏ내용입니ㅏ", mandaIndex = 2), {})
+//    TodoDialog({}, MandaTodo("내용입니ㅏ 내용입니ㅏ 내용입니ㅏ 내용입니ㅏ내용입니ㅏ", mandaIndex = 2, repeatCycle = 0), {})
 }
