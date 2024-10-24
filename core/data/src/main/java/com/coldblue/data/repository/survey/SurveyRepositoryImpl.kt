@@ -2,15 +2,19 @@ package com.coldblue.data.repository.survey
 
 import com.coldblue.data.mapper.SurveyMapper.asDomain
 import com.coldblue.data.mapper.SurveyMapper.asNetwork
+import com.coldblue.data.repository.user.UserRepository
 import com.coldblue.model.Survey
 import com.coldblue.model.SurveyComment
 import com.coldblue.network.datasource.SurveyDataSource
 import javax.inject.Inject
 
 class SurveyRepositoryImpl @Inject constructor(
-    private val surveyDataSource: SurveyDataSource
+    private val surveyDataSource: SurveyDataSource,
+    private val userRepository: UserRepository
+
 ) : SurveyRepository {
     override suspend fun getSurveyList(): List<Survey> {
+//        userRepository.refresh()
         val surveyLikedList = surveyDataSource.getSurveyLikedList()
         val surveyCommentList = surveyDataSource.getAllSurveyCommentList()
 

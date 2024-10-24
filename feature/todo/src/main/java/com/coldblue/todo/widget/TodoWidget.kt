@@ -90,7 +90,7 @@ class TodoWidget : GlanceAppWidget() {
                                 mandaKeys.firstOrNull { key -> key.id - 1 == it.mandaIndex }
                             val color = indexToColor(mandaKey?.colorIndex ?: -1)
 
-                            Column {
+                            Column(GlanceModifier.clickable { viewModel.startApp() }) {
                                 TodoWidgetItem(
                                     color = color,
                                     todo = it
@@ -101,11 +101,11 @@ class TodoWidget : GlanceAppWidget() {
                                                 isDone = !it.isDone
                                             )
                                         )
-//                                        TodoWidget().update(context, id)
+                                        TodoWidget().update(context, id)
                                     }
                                 }
                                 Spacer(modifier = GlanceModifier.padding(vertical = 3.dp))
-                                if (index != todos.size-1) {
+                                if (index != todos.size - 1) {
                                     Row(
                                         modifier = GlanceModifier.fillMaxWidth().height(0.5.dp)
                                             .background(HMColor.SubDarkText)
@@ -117,7 +117,6 @@ class TodoWidget : GlanceAppWidget() {
                             }
                         }
                     }
-//                    }
                 }
 
             }

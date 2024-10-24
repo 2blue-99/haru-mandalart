@@ -10,5 +10,6 @@ data class NetworkSurvey(
     val date: String,
     val content: String,
     val is_admin: Boolean,
-    val like_count: Int
+    val like_count: Int,
+    val user_id: String? = null,
 )

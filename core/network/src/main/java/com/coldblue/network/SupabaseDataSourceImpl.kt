@@ -2,6 +2,9 @@ package com.coldblue.network
 
 import com.coldblue.network.model.NetworkMandaDetail
 import com.coldblue.network.model.NetworkMandaKey
+import com.coldblue.network.model.NetworkSurvey
+import com.coldblue.network.model.NetworkSurveyComment
+import com.coldblue.network.model.NetworkSurveyLike
 import com.coldblue.network.model.NetworkTodo
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
@@ -39,6 +42,21 @@ class SupabaseDataSourceImpl @Inject constructor(
             client.postgrest["mandaTodo"].delete {
                 filter {
                     NetworkMandaDetail::user_id eq user.id
+                }
+            }
+            client.postgrest["survey"].delete {
+                filter {
+                    NetworkSurvey::user_id eq user.id
+                }
+            }
+            client.postgrest["surveyLike"].delete {
+                filter {
+                    NetworkSurveyLike::user_id eq user.id
+                }
+            }
+            client.postgrest["surveyComment"].delete {
+                filter {
+                    NetworkSurveyComment::user_id eq user.id
                 }
             }
         }
