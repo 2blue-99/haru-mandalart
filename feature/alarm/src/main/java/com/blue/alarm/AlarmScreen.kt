@@ -128,13 +128,13 @@ fun BottomContent(
             onClick = onFinished,
             modifier = Modifier
                 .clip(CircleShape)
-                .size(70.dp),
+                .size(64.dp),
             colors = IconButtonDefaults.iconButtonColors(containerColor = HMColor.Background)
         ) {
             Icon(
                 modifier = Modifier.size(30.dp),
                 imageVector = Icons.Default.Close,
-                tint = HMColor.Primary,
+                tint = HMColor.SubDarkText,
                 contentDescription = "close"
             )
         }

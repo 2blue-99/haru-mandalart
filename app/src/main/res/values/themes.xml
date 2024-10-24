@@ -11,4 +11,11 @@
         <item name ="windowSplashScreenAnimationDuration">900</item>
         <item name="postSplashScreenTheme">@style/Theme.Harumandalart</item>
     </style>
+
+    <style name="Theme.SeeMeet.TransparentStatusBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!--drawerlayout statusbar -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
 </resources>

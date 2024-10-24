@@ -4,6 +4,7 @@
     <string name="app_reject_alarm">알림 권한은 앱 설정에서 변경 가능합니다.</string>
     <string name="app_back_notice">한 번 더 누르면 앱이 종료됩니다.</string>
     <string name="app_name">하루 만다라트</string>
+    <string name="alarm_back_notice">앱 하단의 종료 버튼을 눌러주세요.</string>
 
 
     // Notice
