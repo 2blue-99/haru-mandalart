@@ -138,7 +138,10 @@ fun BottomContent(
                 contentDescription = "close"
             )
         }
-        TextButton(onClick = onStartActivity) {
+        TextButton(onClick = {
+            onFinished()
+            onStartActivity()
+        }) {
             Text(
                 modifier = Modifier.drawBehind {
                     val strokeWidthPx = 1.dp.toPx()
