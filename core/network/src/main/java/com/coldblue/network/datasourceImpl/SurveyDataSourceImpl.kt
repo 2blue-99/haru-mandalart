@@ -17,6 +17,7 @@ class SurveyDataSourceImpl @Inject constructor(
         return try {
             client.postgrest["survey"].select {}.decodeList<NetworkSurvey>()
         } catch (e: Exception) {
+            Logger.d(e.message)
             emptyList()
         }
     }

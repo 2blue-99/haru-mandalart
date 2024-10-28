@@ -92,8 +92,10 @@ class SurveyDetailViewModel @Inject constructor(
 
     fun upsertSurveyComment(surveyComment: SurveyComment) {
         viewModelScope.launch {
-            _surveyComment.value = listOf(surveyComment) + _surveyComment.value
             upsertSurveyCommentUseCase(surveyComment)
+            _surveyComment.value = getSurveyCommentUseCase(surveyComment.surveyId)
+//            _surveyComment.value = listOf(surveyComment) + _surveyComment.value
+
         }
     }
 

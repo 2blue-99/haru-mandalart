@@ -25,7 +25,7 @@ class SurveyViewModel @Inject constructor(
     private val getNetworkStateUseCase: GetNetworkStateUseCase,
     getAuthStateUseCase: GetAuthStateUseCase,
     private val likeSurveyUseCase: LikeSurveyUseCase,
-    ) : ViewModel() {
+) : ViewModel() {
     private val _surveyUIState = MutableStateFlow<SurveyUiState>(SurveyUiState.Loading)
     val surveyUIState: StateFlow<SurveyUiState> get() = _surveyUIState
 
@@ -47,9 +47,9 @@ class SurveyViewModel @Inject constructor(
     fun getSurveyList() {
         viewModelScope.launch {
             if (getNetworkStateUseCase().first()) {
-                if(getSurveyListUseCase().isNotEmpty()){
+                if (getSurveyListUseCase().isNotEmpty()) {
                     _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
-                }else{
+                } else {
                     _surveyUIState.value = SurveyUiState.Error("제안하기 게시판이 비어있습니다.")
                 }
             } else {
@@ -59,15 +59,21 @@ class SurveyViewModel @Inject constructor(
     }
 
     fun updateSurvey(survey: Survey) {
-        viewModelScope.launch {
-            _surveyUIState.value = SurveyUiState.Success(getSurveyListUseCase())
+        val newSurveyList = when (val tmp = _surveyUIState.value) {
+            is SurveyUiState.Success -> {
+                SurveyUiState.Success(tmp.surveyList.map { if (it.id == survey.id) it.copy(isLiked = !it.isLiked) else it })
+            }
 
+            else -> _surveyUIState.value
+        }
+        viewModelScope.launch {
             likeSurveyUseCase(
                 survey.copy(
                     isLiked = !survey.isLiked,
                     likeCount = if (survey.isLiked) survey.likeCount - 1 else survey.likeCount + 1
                 )
             )
+            _surveyUIState.value = newSurveyList
 
         }
     }
