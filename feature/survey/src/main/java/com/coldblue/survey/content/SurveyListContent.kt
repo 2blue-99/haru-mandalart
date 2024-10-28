@@ -88,7 +88,6 @@ fun SurveyItem(
                 .fillMaxWidth(0.65f)
         ) {
 
-
             SurveyStateChip(survey.state)
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = survey.title)
@@ -113,7 +112,7 @@ fun SurveyItem(
 
             TextButton(
                 onClick = { updateSurvey(survey) },
-                modifier = Modifier
+                modifier = Modifier,
             ) {
                 Icon(
                     tint = if (survey.isLiked) HMColor.NegativeText else HMColor.Text,
@@ -121,7 +120,7 @@ fun SurveyItem(
                     contentDescription = "좋아요"
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = survey.likeCount.toString())
+                Text(text = survey.likeCount.toString(), color = HMColor.Text)
             }
         }
 

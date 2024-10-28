@@ -152,6 +152,7 @@ fun InitializedMandaContent(
     LaunchedEffect(showCreateAni) {
         if (showCreateAni) {
             createAni.animate(
+                speed = 0.7f,
                 composition = createComposition,
                 clipSpec = LottieClipSpec.Frame(0, 1200),
                 initialProgress = 0f
@@ -164,6 +165,7 @@ fun InitializedMandaContent(
     LaunchedEffect(showDoneAni) {
         if (showDoneAni) {
             doneAni.animate(
+                speed = 0.7f,
                 composition = doneComposition,
                 clipSpec = LottieClipSpec.Frame(0, 1200),
                 initialProgress = 0f

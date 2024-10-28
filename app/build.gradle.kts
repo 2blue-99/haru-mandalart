@@ -13,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId = "com.coldblue.haru_mandalart"
-            versionCode = 11
-            versionName = "1.2.1"
+            versionCode = 13
+            versionName = "1.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
