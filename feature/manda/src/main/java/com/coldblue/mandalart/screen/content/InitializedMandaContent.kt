@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -121,7 +122,9 @@ fun InitializedMandaContent(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit,
     getRequirePermission: () -> Boolean,
-    setRequirePermission: () -> Unit
+    setRequirePermission: () -> Unit,
+    currentManda: Int,
+    changeManda: (Int) -> Unit,
 ) {
     var titleOffset by remember { mutableStateOf(Offset.Zero) }
     var mandaOffset by remember { mutableStateOf(Offset.Zero) }
@@ -265,6 +268,8 @@ fun InitializedMandaContent(
                     statusColor = uiState.mandaStatus.statusColor,
                     donePercentage = uiState.mandaStatus.donePercentage,
                     animateDonePercentage = animateDonePercentage.value,
+                    currentManda = currentManda,
+                    changeManda = changeManda,
                 ) {
                     changeBottomSheet(
                         true,
@@ -428,6 +433,8 @@ fun MandaStatus(
     statusColor: Color,
     donePercentage: Float,
     animateDonePercentage: Float,
+    currentManda: Int,
+    changeManda: (Int) -> Unit,
     onClickTitle: () -> Unit
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
@@ -438,11 +445,15 @@ fun MandaStatus(
         verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "현재 만다 $currentManda")
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
+            Button(onClick = { changeManda(currentManda - 1) }) {
+                Text(text = "이전 ")
+            }
             Text(
                 text = "\"",
                 style = HmStyle.text24,
@@ -463,6 +474,9 @@ fun MandaStatus(
                 style = HmStyle.text24,
                 color = statusColor
             )
+            Button(onClick = { changeManda(currentManda + 1) }) {
+                Text(text = "이후 ")
+            }
         }
 
         Column(

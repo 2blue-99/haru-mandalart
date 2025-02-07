@@ -60,6 +60,9 @@ class MandaViewModel @Inject constructor(
      */
     private var isRequestPermission = true
 
+    private val _currentManda = MutableStateFlow(1)
+    val currentManda: StateFlow<Int> get() = _currentManda
+
     private val _explainUIState = MutableStateFlow(true)
     val explainUIState: StateFlow<Boolean> get() = _explainUIState
 
@@ -84,7 +87,8 @@ class MandaViewModel @Inject constructor(
                     todoRange
                 ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
                     val mandaList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
-                    val usedColorIndexList = mandaKeys.filter { it.id != 5 }.map { it.colorIndex }.toSet().toList()
+                    val usedColorIndexList =
+                        mandaKeys.filter { it.id != 5 }.map { it.colorIndex }.toSet().toList()
                     val mandaStatus = MandaStatus(
                         titleManda = MandaUtils.matchingTitleManda(curIndex, mandaList),
                         statusColor = MandaUtils.matchingPercentageColor(curIndex, mandaList),
@@ -97,10 +101,17 @@ class MandaViewModel @Inject constructor(
                     val curDateRangeTodoList = when (todoRange) {
                         DateRange.DAY -> curIndexTodoList.filter { it.date == LocalDate.now() }
                         DateRange.WEEK -> {
-                            val startOfWeek = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                            val endOfWeek = LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
-                            curIndexTodoList.filter { it.date.isAfter(startOfWeek) && it.date.isBefore(endOfWeek) }
+                            val startOfWeek = LocalDate.now()
+                                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                            val endOfWeek =
+                                LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+                            curIndexTodoList.filter {
+                                it.date.isAfter(startOfWeek) && it.date.isBefore(
+                                    endOfWeek
+                                )
+                            }
                         }
+
                         else -> curIndexTodoList
                     }
 
@@ -130,6 +141,10 @@ class MandaViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = MandaUIState.Loading
         )
+
+    fun changeManda(index: Int) {
+        _currentManda.value = index
+    }
 
     fun changeBottomSheet(isShow: Boolean, uiState: MandaBottomSheetContentState?) {
         if (isShow && uiState != null) {
@@ -195,7 +210,7 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun updateExplainState(){
+    fun updateExplainState() {
         viewModelScope.launch {
             _explainUIState.emit(getExplainStateUseCase().first())
         }
@@ -209,7 +224,7 @@ class MandaViewModel @Inject constructor(
     /**
      * 다른 앱 위 표시 권한 요청 상태 저장
      */
-    fun setRequestPermission(){
+    fun setRequestPermission() {
         isRequestPermission = false
     }
 }
