@@ -9,8 +9,8 @@ sealed interface MandaUIState {
     data class Error(val msg: String) : MandaUIState
     data object UnInitializedSuccess : MandaUIState
     data class InitializedSuccess(
-        val keyMandaCnt: Int,
-        val detailMandaCnt: Int,
+//        val keyMandaCnt: Int,
+//        val detailMandaCnt: Int,
         val mandaStatus: MandaStatus,
         val mandaList: List<MandaState>,
         val mandaKeyList: List<String>,

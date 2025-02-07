@@ -14,6 +14,7 @@ import com.coldblue.domain.todo.UpsertMandaTodoUseCase
 import com.coldblue.domain.user.GetExplainStateUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
+import com.coldblue.mandalart.state.CurrentManda
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaStatus
@@ -23,6 +24,7 @@ import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -60,14 +62,15 @@ class MandaViewModel @Inject constructor(
      */
     private var isRequestPermission = true
 
-    private val _currentManda = MutableStateFlow(1)
-    val currentManda: StateFlow<Int> get() = _currentManda
+    private val _currentManda = MutableStateFlow(CurrentManda(0, 4))
+    val currentManda: StateFlow<CurrentManda> get() = _currentManda
 
     private val _explainUIState = MutableStateFlow(true)
     val explainUIState: StateFlow<Boolean> get() = _explainUIState
 
-    private val _currentIndex = MutableStateFlow(4)
-    val currentIndex: StateFlow<Int> get() = _currentIndex
+//    private val _currentIndex = MutableStateFlow(4)
+//    val currentIndex: StateFlow<Int> get() = _currentIndex
+
 
     private val _todoRange = MutableStateFlow(DateRange.ALL)
     val todoRange: StateFlow<DateRange> get() = _todoRange
@@ -83,20 +86,52 @@ class MandaViewModel @Inject constructor(
                     getKeyMandaUseCase(),
                     getDetailMandaUseCase(),
                     getMandaTodoUseCase(),
-                    currentIndex,
-                    todoRange
-                ) { mandaKeys, mandaDetails, todoList, curIndex, todoRange ->
-                    val mandaList = MandaUtils.transformToMandaList(mandaKeys, mandaDetails)
+                    currentManda,
+                    todoRange,
+                ) { mandaKeys, mandaDetails, todoList, currentManda, todoRange ->
+                    val mandaKey1to9 =
+                        mandaKeys.filter { it.id > currentManda.currentManda * 9 && it.id <= (currentManda.currentManda + 1) * 9 }
+                            .map {
+                                it.copy(
+                                    id = if (currentManda.currentManda != 0) {
+                                        if (it.id % 9 != 0) it.id % 9 else 9
+                                    } else it.id
+                                )
+                            }
+
+                    val mandaDetail1to81 =
+                        mandaDetails.filter { it.id > currentManda.currentManda * 81 && it.id <= (currentManda.currentManda + 1) * 81 }
+                            .map {
+                                it.copy(
+                                    id = if (currentManda.currentManda != 0) {
+                                        if (it.id % 81 != 0) it.id % 81 else 81
+                                    } else it.id
+                                )
+                            }
+                    val mandaList = MandaUtils.transformToMandaList(
+                        mandaKey1to9,
+                        mandaDetail1to81
+                    )
+
                     val usedColorIndexList =
-                        mandaKeys.filter { it.id != 5 }.map { it.colorIndex }.toSet().toList()
+                        mandaKey1to9.filter { it.id != 5 }.map { it.colorIndex }.toSet().toList()
                     val mandaStatus = MandaStatus(
-                        titleManda = MandaUtils.matchingTitleManda(curIndex, mandaList),
-                        statusColor = MandaUtils.matchingPercentageColor(curIndex, mandaList),
-                        donePercentage = MandaUtils.calculatePercentage(curIndex, mandaDetails)
+                        titleManda = MandaUtils.matchingTitleManda(
+                            currentManda.currentIndex,
+                            mandaList
+                        ),
+                        statusColor = MandaUtils.matchingPercentageColor(
+                            currentManda.currentIndex,
+                            mandaList
+                        ),
+                        donePercentage = MandaUtils.calculatePercentage(
+                            currentManda.currentIndex,
+                            mandaDetail1to81
+                        )
                     )
 
                     val curIndexTodoList =
-                        if (curIndex != 4 && curIndex != -1) todoList.filter { it.mandaIndex == curIndex } else todoList
+                        if (currentManda.currentIndex != 4 && currentManda.currentIndex != -1) todoList.filter { it.mandaIndex == currentManda.currentIndex } else todoList
 
                     val curDateRangeTodoList = when (todoRange) {
                         DateRange.DAY -> curIndexTodoList.filter { it.date == LocalDate.now() }
@@ -116,13 +151,13 @@ class MandaViewModel @Inject constructor(
                     }
 
                     MandaUIState.InitializedSuccess(
-                        keyMandaCnt = mandaKeys.size - 1,
-                        detailMandaCnt = mandaDetails.size,
+//                        keyMandaCnt = mandaKeys.size - 1,
+//                        detailMandaCnt = mandaDetails.size,
                         mandaStatus = mandaStatus,
                         mandaList = mandaList,
-                        mandaKeyList = mandaKeys.map { it.name },
+                        mandaKeyList = mandaKey1to9.map { it.name },
                         usedColorIndexList = usedColorIndexList,
-                        currentIndex = curIndex,
+                        currentIndex = currentManda.currentIndex,
                         todoRange = todoRange,
                         todoList = curDateRangeTodoList,
                         todoCnt = curDateRangeTodoList.count { !it.isDone },
@@ -143,7 +178,7 @@ class MandaViewModel @Inject constructor(
         )
 
     fun changeManda(index: Int) {
-        _currentManda.value = index
+        _currentManda.value = CurrentManda(index, 4)
     }
 
     fun changeBottomSheet(isShow: Boolean, uiState: MandaBottomSheetContentState?) {
@@ -156,31 +191,34 @@ class MandaViewModel @Inject constructor(
 
     fun upsertMandaFinal(mandaKey: MandaKey) {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(mandaKey.copy(id = 5))
+            upsertMandaKeyUseCase(mandaKey.copy(id = 5 + (currentManda.value.currentManda * 9)))
         }
     }
 
     fun upsertMandaKey(mandaKey: MandaKey) {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(mandaKey)
+            Logger.d("추가${mandaKey.id + (currentManda.value.currentManda * 9)}")
+            upsertMandaKeyUseCase(mandaKey.copy(id = mandaKey.id + (currentManda.value.currentManda * 9)))
         }
     }
 
     fun upsertMandaDetail(mandaDetail: MandaDetail) {
         viewModelScope.launch {
-            upsertMandaDetailUseCase(mandaDetail)
+            upsertMandaDetailUseCase(mandaDetail.copy(id = mandaDetail.id + (currentManda.value.currentManda * 81)))
         }
     }
 
     fun deleteMandaKey(id: Int, detailIdList: List<Int>) {
         viewModelScope.launch {
-            deleteMandaKeyUseCase(id, detailIdList)
+            deleteMandaKeyUseCase(
+                id + (currentManda.value.currentManda * 9),
+                detailIdList.map { it + (currentManda.value.currentManda * 81) })
         }
     }
 
     fun deleteMandaDetail(id: Int) {
         viewModelScope.launch {
-            deleteMandaDetailUseCase(id)
+            deleteMandaDetailUseCase(id + (currentManda.value.currentManda * 81))
         }
     }
 
@@ -197,7 +235,8 @@ class MandaViewModel @Inject constructor(
     }
 
     fun changeCurrentIndex(index: Int) {
-        _currentIndex.value = index
+        _currentManda.value = CurrentManda(currentManda.value.currentManda, index)
+//        _currentIndex.value = index
     }
 
     fun changeTodoRange(dateRange: DateRange) {
@@ -227,4 +266,6 @@ class MandaViewModel @Inject constructor(
     fun setRequestPermission() {
         isRequestPermission = false
     }
+
+
 }

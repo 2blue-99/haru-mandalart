@@ -98,7 +98,7 @@ fun MandaScreen(
                 upsertMandaTodo = mandaViewModel::upsertMandaTodo,
                 getRequirePermission = mandaViewModel::getRequestPermission,
                 setRequirePermission = mandaViewModel::setRequestPermission,
-                currentManda = currentManda,
+                currentManda = currentManda.currentManda,
                 changeManda = mandaViewModel::changeManda,
             )
         }
