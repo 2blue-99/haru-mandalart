@@ -89,29 +89,17 @@ class MandaViewModel @Inject constructor(
                     currentManda,
                     todoRange,
                 ) { mandaKeys, mandaDetails, todoList, currentManda, todoRange ->
-                    val mandaKey1to9 =
-                        mandaKeys.filter { it.id > currentManda.currentManda * 9 && it.id <= (currentManda.currentManda + 1) * 9 }
-                            .map {
-                                it.copy(
-                                    id = if (currentManda.currentManda != 0) {
-                                        if (it.id % 9 != 0) it.id % 9 else 9
-                                    } else it.id
-                                )
-                            }
-
+                    val mandaKey1to9 = MandaUtils.mandaKey1to9(mandaKeys, currentManda.currentManda)
                     val mandaDetail1to81 =
-                        mandaDetails.filter { it.id > currentManda.currentManda * 81 && it.id <= (currentManda.currentManda + 1) * 81 }
-                            .map {
-                                it.copy(
-                                    id = if (currentManda.currentManda != 0) {
-                                        if (it.id % 81 != 0) it.id % 81 else 81
-                                    } else it.id
-                                )
-                            }
+                        MandaUtils.mandaDetail1to81(mandaDetails, currentManda.currentManda)
+
                     val mandaList = MandaUtils.transformToMandaList(
                         mandaKey1to9,
                         mandaDetail1to81
                     )
+
+                    val currentTodoList =
+                        MandaUtils.mandaTodo1to9(todoList, currentManda.currentManda)
 
                     val usedColorIndexList =
                         mandaKey1to9.filter { it.id != 5 }.map { it.colorIndex }.toSet().toList()
@@ -131,7 +119,8 @@ class MandaViewModel @Inject constructor(
                     )
 
                     val curIndexTodoList =
-                        if (currentManda.currentIndex != 4 && currentManda.currentIndex != -1) todoList.filter { it.mandaIndex == currentManda.currentIndex } else todoList
+                        if (currentManda.currentIndex != 4 && currentManda.currentIndex != -1) currentTodoList.filter { it.mandaIndex == currentManda.currentIndex } else currentTodoList
+
 
                     val curDateRangeTodoList = when (todoRange) {
                         DateRange.DAY -> curIndexTodoList.filter { it.date == LocalDate.now() }
@@ -197,7 +186,6 @@ class MandaViewModel @Inject constructor(
 
     fun upsertMandaKey(mandaKey: MandaKey) {
         viewModelScope.launch {
-            Logger.d("추가${mandaKey.id + (currentManda.value.currentManda * 9)}")
             upsertMandaKeyUseCase(mandaKey.copy(id = mandaKey.id + (currentManda.value.currentManda * 9)))
         }
     }
@@ -245,7 +233,7 @@ class MandaViewModel @Inject constructor(
 
     fun upsertMandaTodo(mandaTodo: MandaTodo) {
         viewModelScope.launch {
-            upsertMandaTodoUseCase(mandaTodo)
+            upsertMandaTodoUseCase(mandaTodo.copy(mandaIndex = mandaTodo.mandaIndex + (currentManda.value.currentManda * 9)))
         }
     }
 
