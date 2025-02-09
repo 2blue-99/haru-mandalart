@@ -46,6 +46,7 @@ fun MandaScreen(
     val mandaUiState by mandaViewModel.mandaUiState.collectAsStateWithLifecycle()
     val bottomSheetUiState by mandaViewModel.mandaBottomSheetUIState.collectAsStateWithLifecycle()
     val explainUIState by mandaViewModel.explainUIState.collectAsStateWithLifecycle()
+    val currentManda by mandaViewModel.currentManda.collectAsStateWithLifecycle()
     val focus = LocalFocusManager.current
     val context = LocalContext.current
 
@@ -57,6 +58,7 @@ fun MandaScreen(
                 onDismiss = { updateNoteViewModel.changeUpdateNoteDialog(true, null) }
             )
         }
+
         is MandaUpdateDialogState.Error -> {}
         is MandaUpdateDialogState.Hide -> {}
     }
@@ -95,7 +97,9 @@ fun MandaScreen(
                 changeTodoRange = mandaViewModel::changeTodoRange,
                 upsertMandaTodo = mandaViewModel::upsertMandaTodo,
                 getRequirePermission = mandaViewModel::getRequestPermission,
-                setRequirePermission = mandaViewModel::setRequestPermission
+                setRequirePermission = mandaViewModel::setRequestPermission,
+                currentManda = currentManda.currentManda,
+                changeManda = mandaViewModel::changeManda,
             )
         }
     }
@@ -118,7 +122,9 @@ fun MandaContentWithState(
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit,
     getRequirePermission: () -> Boolean,
-    setRequirePermission: () -> Unit
+    setRequirePermission: () -> Unit,
+    currentManda: Int,
+    changeManda: (Int) -> Unit,
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {
@@ -164,7 +170,9 @@ fun MandaContentWithState(
                 changeTodoRange = changeTodoRange,
                 upsertMandaTodo = upsertMandaTodo,
                 getRequirePermission = getRequirePermission,
-                setRequirePermission = setRequirePermission
+                setRequirePermission = setRequirePermission,
+                currentManda = currentManda,
+                changeManda = changeManda,
             )
 
         }

@@ -8,3 +8,8 @@ data class MandaStatus(
     val statusColor: Color,
     val donePercentage: Float
 )
+
+data class CurrentManda(
+    val currentManda:Int,
+    val currentIndex:Int
+)

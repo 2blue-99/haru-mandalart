@@ -13,7 +13,9 @@ import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
+import com.coldblue.model.MandaTodo
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 
 object MandaUtils {
 
@@ -161,8 +163,13 @@ object MandaUtils {
     fun currentColorList(list: List<MandaState>): List<Color?> {
         val colorList = list.map {
             when (it) {
-                is MandaState.Exist -> { it.mandaUIList[4].mandaUI.color }
-                is MandaState.Empty -> { null }
+                is MandaState.Exist -> {
+                    it.mandaUIList[4].mandaUI.color
+                }
+
+                is MandaState.Empty -> {
+                    null
+                }
             }
         }
         return colorList
@@ -188,11 +195,64 @@ object MandaUtils {
     /**
      * 다른 앱 위 표시 권한 요청
      */
-    fun requestPermission(context: Context){
+    fun requestPermission(context: Context) {
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             Uri.parse("package:" + context.packageName)
         )
         context.startActivity(intent)
+    }
+
+
+    fun mandaKey1to9(mandaKey: List<MandaKey>, currentManda: Int): List<MandaKey> {
+        return mandaKey.filter { it.id > currentManda * 9 && it.id <= (currentManda + 1) * 9 }
+            .map {
+                it.copy(
+                    id = if (currentManda != 0) {
+                        if (it.id % 9 != 0) it.id % 9 else 9
+                    } else it.id
+                )
+            }
+    }
+
+    //
+//    fun mandaTodo1to9(mandaTodo: List<MandaTodo>, currentManda: Int): List<MandaTodo> {
+//        Logger.d("변환 ")
+//        val tmp = 9
+//        return mandaTodo.filter { tmp + 1 > currentManda * 9 && tmp <= (currentManda + 1 + 1) * 9 }
+//            .map {
+//                it.copy(
+//                    id = if (currentManda != 0) {
+//                        if ((tmp + 1) % 9 != 0) (tmp + 1 % 9) - 1 else 9 - 1
+//                    } else tmp
+//                )
+//            }
+//    }
+
+
+    fun mandaTodo1to9(mandaTodo: List<MandaTodo>, currentManda: Int): List<MandaTodo> {
+        return mandaTodo.filter { it.mandaIndex + 1 > currentManda * 9 && it.mandaIndex + 1 <= (currentManda + 1) * 9 }
+            .map {
+                it.copy(
+                    mandaIndex = if (currentManda != 0) {
+                        if ((it.mandaIndex + 1) % 9 != 0) ((it.mandaIndex + 1) % 9) - 1 else 9 - 1
+                    } else it.mandaIndex
+                )
+            }
+    }
+
+    fun mandaDetail1to81(
+        mandaDetail: List<MandaDetail>,
+        currentManda: Int
+    ): List<MandaDetail> {
+        return mandaDetail.filter { it.id > currentManda * 81 && it.id <= (currentManda + 1) * 81 }
+            .map {
+                it.copy(
+                    id = if (currentManda != 0) {
+                        if (it.id % 81 != 0) it.id % 81 else 81
+                    } else it.id
+                )
+            }
+
     }
 }
