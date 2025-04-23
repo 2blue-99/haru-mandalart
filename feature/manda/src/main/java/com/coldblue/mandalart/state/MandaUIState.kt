@@ -19,7 +19,8 @@ sealed interface MandaUIState {
         val todoRange: DateRange,
         val todoList: List<MandaTodo>,
         val todoCnt: Int,
-        val doneTodoCnt: Int
+        val doneTodoCnt: Int,
+        val mandaChangeInfo: List<MandaInfo>
     ) : MandaUIState
 }
 
@@ -49,3 +50,10 @@ sealed interface MandaType {
         override val mandaUI: MandaUI
     ) : MandaType
 }
+
+data class MandaInfo(
+    val name:String,
+    val index:Int
+)
+
+const val MAX_MANDA_CNT = 3

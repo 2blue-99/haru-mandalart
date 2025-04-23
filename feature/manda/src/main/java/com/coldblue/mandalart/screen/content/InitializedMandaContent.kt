@@ -25,8 +25,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -80,6 +80,7 @@ import com.coldblue.designsystem.iconpack.Question
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.mandalart.screen.ChangeMandaBottomSheet
 import com.coldblue.mandalart.screen.MandaBottomSheet
 import com.coldblue.mandalart.screen.MandaDetailBox
 import com.coldblue.mandalart.screen.MandaEmptyBox
@@ -125,6 +126,7 @@ fun InitializedMandaContent(
     setRequirePermission: () -> Unit,
     currentManda: Int,
     changeManda: (Int) -> Unit,
+    deleteManda:(Int)->Unit
 ) {
     var titleOffset by remember { mutableStateOf(Offset.Zero) }
     var mandaOffset by remember { mutableStateOf(Offset.Zero) }
@@ -151,6 +153,8 @@ fun InitializedMandaContent(
     var showCreateAni by remember { mutableStateOf(false) }
 
     var currentIndex by remember { mutableIntStateOf(4) }
+
+    var mandaChangeState by remember { mutableStateOf(false) }
 
     LaunchedEffect(showCreateAni) {
         if (showCreateAni) {
@@ -208,7 +212,15 @@ fun InitializedMandaContent(
             changeBottomSheet(false, null)
         }
     }
-
+    if(mandaChangeState){
+        ChangeMandaBottomSheet(
+            mandaInfo = uiState.mandaChangeInfo,
+            currentMandaIndex = currentManda,
+            changeManda = changeManda,
+            onDisMiss = {mandaChangeState = false},
+            deleteManda = deleteManda,
+        )
+    }
     LaunchedEffect(uiState.mandaStatus.donePercentage) {
         percentage = uiState.mandaStatus.donePercentage
     }
@@ -254,7 +266,8 @@ fun InitializedMandaContent(
             MandaTopBar(
                 navigateToTutorial = { isExplain = true },
                 navigateToSetting = navigateToSetting,
-                navigateToHistory = navigateToHistory
+                navigateToHistory = navigateToHistory,
+                onClickDetail = {mandaChangeState = true}
             )
 
             Box(
@@ -358,6 +371,7 @@ fun InitializedMandaContent(
 fun MandaTopBar(
     navigateToTutorial: () -> Unit,
     navigateToSetting: () -> Unit,
+    onClickDetail: () -> Unit,
     navigateToHistory: () -> Unit
 ) {
 
@@ -385,6 +399,15 @@ fun MandaTopBar(
             )
         }
         Row {
+            IconButton(
+                onClick = { onClickDetail() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.Default.MoreVert,
+                    tint = HMColor.Primary,
+                    contentDescription = "detail"
+                )
+            }
             IconButton(
                 onClick = { navigateToTutorial() }) {
                 Icon(
@@ -416,12 +439,14 @@ fun MandaTopBar(
     }
 }
 
+
 @Preview
 @Composable
 fun MandaTopBarPreview() {
     MandaTopBar(
         navigateToTutorial = {},
-        navigateToSetting = { /*TODO*/ }
+        navigateToSetting = { /*TODO*/ },
+        onClickDetail = {}
     ) {
 
     }
@@ -445,15 +470,18 @@ fun MandaStatus(
         verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "현재 만다 $currentManda")
+//        Text(text = "현재 만다 $currentManda")
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Button(onClick = { changeManda(currentManda - 1) }) {
-                Text(text = "이전 ")
-            }
+//            IconButton(onClick = { changeManda(currentManda - 1) }) {
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+//                    contentDescription = "이전"
+//                )
+//            }
             Text(
                 text = "\"",
                 style = HmStyle.text24,
@@ -474,16 +502,20 @@ fun MandaStatus(
                 style = HmStyle.text24,
                 color = statusColor
             )
-            Button(onClick = { changeManda(currentManda + 1) }) {
-                Text(text = "이후 ")
-            }
+
+//            IconButton(onClick = { changeManda(currentManda + 1) }) {
+//                Icon(
+//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+//                    contentDescription = "다음"
+//                )
+//            }
         }
 
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Column(
-
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stringResource(

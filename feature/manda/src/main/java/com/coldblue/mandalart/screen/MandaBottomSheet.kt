@@ -2,13 +2,13 @@ package com.coldblue.mandalart.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,11 +19,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
@@ -36,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -43,16 +47,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMButton
 import com.coldblue.designsystem.component.HMSwitch
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.component.HMTextField
+import com.coldblue.designsystem.iconpack.todo.CircleCheck
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 import com.coldblue.mandalart.model.asMandaDetail
 import com.coldblue.mandalart.model.asMandaKey
+import com.coldblue.mandalart.state.MAX_MANDA_CNT
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
+import com.coldblue.mandalart.state.MandaInfo
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
@@ -102,7 +110,7 @@ fun MandaBottomSheet(
     var colorIndex by remember {
         val color = MandaUtils.colorToIndex(mandaUI.color)
         val ableList = colorList.indices.filter { !usedColorIndexList.contains(it) }
-        val index = if(ableList.isEmpty()) 0 else if(color == -1) ableList.first() else color
+        val index = if (ableList.isEmpty()) 0 else if (color == -1) ableList.first() else color
         mutableIntStateOf(index)
     }
 
@@ -130,6 +138,7 @@ fun MandaBottomSheet(
             })
 
     }
+
 
     ModalBottomSheet(
         onDismissRequest = { onDisMiss() },
@@ -300,6 +309,173 @@ fun MandaBottomSheet(
     }
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChangeMandaBottomSheet(
+    mandaInfo: List<MandaInfo>,
+    currentMandaIndex: Int,
+    changeManda: (Int) -> Unit,
+    onDisMiss: () -> Unit,
+    deleteManda: (Int) -> Unit
+) {
+    var mandaDialogState by remember { mutableStateOf(false) }
+    var deleteIndex by remember { mutableIntStateOf(currentMandaIndex) }
+
+    if (mandaDialogState) {
+        HMTextDialog(
+            targetText = mandaInfo[deleteIndex].name,
+            bottomText = "해당 만다라트의 모든 정보가 삭제되요",
+            confirmText = stringResource(id = R.string.bottom_sheet_delete),
+            onDismissRequest = {
+                mandaDialogState = false
+            },
+            tintColor = HMColor.LightPastel.Red,
+            onConfirm = {
+                deleteManda(deleteIndex)
+            })
+
+    }
+    ModalBottomSheet(
+        onDismissRequest = { onDisMiss() },
+        containerColor = HMColor.Background
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 24.dp, end = 24.dp, top = 0.dp, bottom = 50.dp),
+            verticalArrangement = Arrangement.spacedBy(30.dp)
+        ) {
+            Text(
+                text = "만다라트 변경",
+                style = HmStyle.text20,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
+            LazyColumn {
+                item {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(text = "${mandaInfo.size}/$MAX_MANDA_CNT")
+                    }
+                }
+                for (i in 0 until MAX_MANDA_CNT) {
+                    item {
+                        val mandaIndex = if (i < mandaInfo.size) (mandaInfo[i].index - 5) / 9 else i
+                        if (mandaInfo.map { (it.index - 5) / 9 }.contains(i)) {
+                            MandaItem(
+                                mandaInfo[i].name,
+                                currentMandaIndex == mandaIndex,
+                                { changeManda(mandaIndex) },
+                                onDisMiss,
+                                {
+                                    deleteIndex = mandaIndex
+                                    mandaDialogState = true
+                                }
+                            )
+                        } else {
+                            MandaEmptyItem(
+                                changeManda = { changeManda(mandaIndex) },
+                                onDisMiss
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
+fun MandaItem(
+    text: String,
+    isSelected: Boolean,
+    changeManda: () -> Unit,
+    onDisMiss: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable {
+                onDisMiss()
+                changeManda()
+            }
+            .border(
+                width = 2.dp,
+                color = if (isSelected) HMColor.Primary else HMColor.LiteGray,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clip(RoundedCornerShape(8.dp))
+            .background(HMColor.LiteGray)
+            .padding(16.dp)
+    ) {
+        Text(
+            text = text,
+        )
+        if (isSelected) {
+            Icon(
+                imageVector = IconPack.CircleCheck,
+                modifier = Modifier.background(HMColor.Primary, shape = CircleShape),
+                tint = HMColor.LiteGray,
+                contentDescription = "checkbox"
+            )
+        } else {
+            Icon(
+                modifier = Modifier.clickable {
+                    onDelete()
+                },
+                imageVector = Icons.Default.Delete,
+                tint = HMColor.DarkGray,
+                contentDescription = "delete"
+            )
+        }
+    }
+
+}
+
+@Composable
+fun MandaEmptyItem(
+    changeManda: () -> Unit,
+    onDisMiss: () -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable {
+                onDisMiss()
+                changeManda()
+            }
+            .clip(RoundedCornerShape(8.dp))
+            .background(HMColor.LiteGray)
+            .padding(16.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            tint = HMColor.Primary,
+            contentDescription = "plus"
+        )
+    }
+
+}
+
+@Preview
+@Composable
+fun MandaItemPreview() {
+    MandaItem("test", true, {}, {}, {})
+}
+
 
 @Composable
 fun MandaBottomSheetColor(

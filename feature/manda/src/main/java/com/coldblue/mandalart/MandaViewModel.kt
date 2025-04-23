@@ -2,7 +2,7 @@ package com.coldblue.mandalart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.domain.manda.DeleteMandaAllUseCase
+import com.coldblue.domain.manda.DeleteMandaUseCase
 import com.coldblue.domain.manda.DeleteMandaDetailUseCase
 import com.coldblue.domain.manda.DeleteMandaKeyUseCase
 import com.coldblue.domain.manda.GetDetailMandaUseCase
@@ -17,6 +17,7 @@ import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.CurrentManda
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
+import com.coldblue.mandalart.state.MandaInfo
 import com.coldblue.mandalart.state.MandaStatus
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
@@ -24,7 +25,6 @@ import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -51,7 +51,7 @@ class MandaViewModel @Inject constructor(
     getDetailMandaUseCase: GetDetailMandaUseCase,
     private val upsertMandaDetailUseCase: UpsertMandaDetailUseCase,
     private val deleteMandaDetailUseCase: DeleteMandaDetailUseCase,
-    private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
+    private val deleteMandaUseCase: DeleteMandaUseCase,
     val getMandaTodoUseCase: GetMandaTodoUseCase,
     val upsertMandaTodoUseCase: UpsertMandaTodoUseCase,
     val getExplainStateUseCase: GetExplainStateUseCase
@@ -97,6 +97,8 @@ class MandaViewModel @Inject constructor(
                         mandaKey1to9,
                         mandaDetail1to81
                     )
+
+                    val mandaInfo = mandaKeys.filter { (it.id-5) % 9 == 0 }
 
                     val currentTodoList =
                         MandaUtils.mandaTodo1to9(todoList, currentManda.currentManda)
@@ -150,7 +152,8 @@ class MandaViewModel @Inject constructor(
                         todoRange = todoRange,
                         todoList = curDateRangeTodoList,
                         todoCnt = curDateRangeTodoList.count { !it.isDone },
-                        doneTodoCnt = curDateRangeTodoList.count { it.isDone }
+                        doneTodoCnt = curDateRangeTodoList.count { it.isDone },
+                        mandaChangeInfo = mandaInfo.map { MandaInfo(it.name,it.id) }
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")
@@ -210,9 +213,9 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun deleteMandaAll() {
+    fun deleteManda(mandaIndex:Int) {
         viewModelScope.launch {
-            deleteMandaAllUseCase()
+            deleteMandaUseCase(mandaIndex)
         }
     }
 

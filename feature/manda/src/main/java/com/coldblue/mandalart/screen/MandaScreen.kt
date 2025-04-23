@@ -100,6 +100,7 @@ fun MandaScreen(
                 setRequirePermission = mandaViewModel::setRequestPermission,
                 currentManda = currentManda.currentManda,
                 changeManda = mandaViewModel::changeManda,
+                deleteManda = mandaViewModel::deleteManda
             )
         }
     }
@@ -125,6 +126,8 @@ fun MandaContentWithState(
     setRequirePermission: () -> Unit,
     currentManda: Int,
     changeManda: (Int) -> Unit,
+    deleteManda:(Int)->Unit
+
 ) {
     when (mandaUIState) {
         is MandaUIState.Loading -> {
@@ -173,6 +176,8 @@ fun MandaContentWithState(
                 setRequirePermission = setRequirePermission,
                 currentManda = currentManda,
                 changeManda = changeManda,
+                deleteManda = deleteManda
+
             )
 
         }

@@ -10,9 +10,7 @@ import com.coldblue.database.dao.MandaKeyDao
 import com.coldblue.datastore.UpdateTimeDataSource
 import com.coldblue.datastore.UserDataSource
 import com.coldblue.model.MandaKey
-import com.coldblue.model.UpdateNote
 import com.coldblue.network.datasource.MandaKeyDataSource
-import com.coldblue.network.datasource.UpdateNoteDataSource
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -25,7 +23,7 @@ class MandaKeyRepositoryImpl @Inject constructor(
     private val mandaKeyDao: MandaKeyDao,
     private val mandaKeyDataSource: MandaKeyDataSource,
     private val updateTimeDataSource: UpdateTimeDataSource,
-    ) : MandaKeyRepository {
+) : MandaKeyRepository {
     override fun getMandaKeys(): Flow<List<MandaKey>> =
         mandaKeyDao.getMandaKeys().map { it.map { it.asDomain() } }
 
@@ -39,7 +37,24 @@ class MandaKeyRepositoryImpl @Inject constructor(
         syncHelper.syncWrite()
     }
 
-    override suspend fun deleteAllMandaDetail() {
+    override suspend fun deleteManda(mandaIndex: Int) {
+        val keyIdList = when(mandaIndex){
+            0 -> (1..9).toList()
+            1 -> (10..18).toList()
+            2 -> (19..27).toList()
+            else -> emptyList()
+        }
+        val detailIdList = when(mandaIndex){
+            0 -> (1..81).toList()
+            1 -> (82..162).toList()
+            2 -> (162..243).toList()
+            else -> emptyList()
+        }
+        mandaKeyDao.deleteManda(getUpdateTime(), keyIdList, detailIdList)
+        syncHelper.syncWrite()
+    }
+
+    override suspend fun deleteAllMandaKey() {
         mandaKeyDao.deleteAllMandaKey(getUpdateTime())
         syncHelper.syncWrite()
     }
@@ -58,7 +73,7 @@ class MandaKeyRepositoryImpl @Inject constructor(
 
             val toUpsertMandaKeys = remoteNew.asEntity(mandaKeyIds)
 
-            if(toUpsertMandaKeys.map { it.id }.contains(5))
+            if (toUpsertMandaKeys.map { it.id }.contains(5))
                 userDataSource.updateMandaInitState(true)
 
             mandaKeyDao.upsertMandaKeys(toUpsertMandaKeys)
@@ -76,7 +91,8 @@ class MandaKeyRepositoryImpl @Inject constructor(
 
     override suspend fun syncWrite(): Boolean {
         try {
-            val localNew = mandaKeyDao.getToWriteMandaKeys(updateTimeDataSource.mandaKeyUpdateTime.first())
+            val localNew =
+                mandaKeyDao.getToWriteMandaKeys(updateTimeDataSource.mandaKeyUpdateTime.first())
             val originIds = mandaKeyDataSource.upsertMandaKey(localNew.asNetworkModel())
 
             val toUpsertMandaKeys = localNew.asSyncedEntity(originIds)
@@ -92,7 +108,6 @@ class MandaKeyRepositoryImpl @Inject constructor(
             return false
         }
     }
-
 
 
 }
