@@ -332,6 +332,7 @@ fun ChangeMandaBottomSheet(
             },
             tintColor = HMColor.LightPastel.Red,
             onConfirm = {
+                onDisMiss()
                 deleteManda(deleteIndex)
             })
 
