@@ -15,16 +15,19 @@ import com.coldblue.domain.user.GetExplainStateUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.CurrentManda
+import com.coldblue.mandalart.state.MAX_MANDA_CNT
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
 import com.coldblue.mandalart.state.MandaInfo
 import com.coldblue.mandalart.state.MandaStatus
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
+import com.coldblue.mandalart.util.MandaUtils.mandaChangeInfo
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -97,8 +100,7 @@ class MandaViewModel @Inject constructor(
                         mandaKey1to9,
                         mandaDetail1to81
                     )
-
-                    val mandaInfo = mandaKeys.filter { (it.id-5) % 9 == 0 }
+                    val mandaInfo = mandaChangeInfo(mandaKeys)
 
                     val currentTodoList =
                         MandaUtils.mandaTodo1to9(todoList, currentManda.currentManda)
@@ -153,7 +155,7 @@ class MandaViewModel @Inject constructor(
                         todoList = curDateRangeTodoList,
                         todoCnt = curDateRangeTodoList.count { !it.isDone },
                         doneTodoCnt = curDateRangeTodoList.count { it.isDone },
-                        mandaChangeInfo = mandaInfo.map { MandaInfo(it.name,it.id) }
+                        mandaChangeInfo = mandaInfo
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")

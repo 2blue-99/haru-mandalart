@@ -1,5 +1,6 @@
 package com.coldblue.mandalart.state
 
+import androidx.datastore.preferences.protobuf.Internal.BooleanList
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaTodo
@@ -53,7 +54,8 @@ sealed interface MandaType {
 
 data class MandaInfo(
     val name:String,
-    val index:Int
+    val index:Int,
+    val isEmpty : Boolean
 )
 
 const val MAX_MANDA_CNT = 3

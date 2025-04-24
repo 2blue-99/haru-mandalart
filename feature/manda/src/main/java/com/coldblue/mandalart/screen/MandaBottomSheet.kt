@@ -332,8 +332,8 @@ fun ChangeMandaBottomSheet(
             },
             tintColor = HMColor.LightPastel.Red,
             onConfirm = {
-                onDisMiss()
                 deleteManda(deleteIndex)
+                mandaDialogState = false
             })
 
     }
@@ -361,27 +361,28 @@ fun ChangeMandaBottomSheet(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Text(text = "${mandaInfo.size}/$MAX_MANDA_CNT")
+                        Text(text = "${mandaInfo.filter { !it.isEmpty }.size}/$MAX_MANDA_CNT")
                     }
                 }
                 for (i in 0 until MAX_MANDA_CNT) {
                     item {
-                        val mandaIndex = if (i < mandaInfo.size) (mandaInfo[i].index - 5) / 9 else i
-                        if (mandaInfo.map { (it.index - 5) / 9 }.contains(i)) {
+//                        val mandaIndex = if (i < mandaInfo.size) (mandaInfo[i].index - 5) / 9 else i
+                        if (mandaInfo[i].isEmpty) {
+                            MandaEmptyItem(
+                                changeManda = { changeManda(i) },
+                                onDisMiss
+                            )
+
+                        } else {
                             MandaItem(
                                 mandaInfo[i].name,
-                                currentMandaIndex == mandaIndex,
-                                { changeManda(mandaIndex) },
+                                currentMandaIndex == i,
+                                { changeManda(i) },
                                 onDisMiss,
                                 {
-                                    deleteIndex = mandaIndex
+                                    deleteIndex = i
                                     mandaDialogState = true
                                 }
-                            )
-                        } else {
-                            MandaEmptyItem(
-                                changeManda = { changeManda(mandaIndex) },
-                                onDisMiss
                             )
                         }
                     }
