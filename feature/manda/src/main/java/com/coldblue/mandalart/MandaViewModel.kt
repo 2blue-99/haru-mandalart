@@ -17,10 +17,8 @@ import com.coldblue.domain.user.GetMandaInitStateUseCase
 import com.coldblue.domain.user.UpdateCurrentMandaIndexUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.CurrentManda
-import com.coldblue.mandalart.state.MAX_MANDA_CNT
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetUIState
-import com.coldblue.mandalart.state.MandaInfo
 import com.coldblue.mandalart.state.MandaStatus
 import com.coldblue.mandalart.state.MandaUIState
 import com.coldblue.mandalart.util.MandaUtils
@@ -29,7 +27,6 @@ import com.coldblue.model.DateRange
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -79,10 +76,6 @@ class MandaViewModel @Inject constructor(
      * 다른 앱 위 표시 권한 요청을 해야 하는지 여부
      */
     private var isRequestPermission = true
-
-
-//    private val _currentManda = MutableStateFlow(CurrentManda(0, 4))
-//    val currentManda: StateFlow<CurrentManda> get() = _currentManda
 
     private val _explainUIState = MutableStateFlow(true)
     val explainUIState: StateFlow<Boolean> get() = _explainUIState

@@ -126,7 +126,7 @@ fun InitializedMandaContent(
     setRequirePermission: () -> Unit,
     currentManda: Int,
     changeManda: (Int) -> Unit,
-    deleteManda:(Int)->Unit
+    deleteManda: (Int) -> Unit
 ) {
     var titleOffset by remember { mutableStateOf(Offset.Zero) }
     var mandaOffset by remember { mutableStateOf(Offset.Zero) }
@@ -152,7 +152,7 @@ fun InitializedMandaContent(
     var showDoneAni by remember { mutableStateOf(false) }
     var showCreateAni by remember { mutableStateOf(false) }
 
-    var currentIndex by remember { mutableIntStateOf(4) }
+    var currentIndex by remember { mutableIntStateOf(uiState.currentIndex) }
 
     var mandaChangeState by remember { mutableStateOf(false) }
 
@@ -212,12 +212,12 @@ fun InitializedMandaContent(
             changeBottomSheet(false, null)
         }
     }
-    if(mandaChangeState){
+    if (mandaChangeState) {
         ChangeMandaBottomSheet(
             mandaInfo = uiState.mandaChangeInfo,
             currentMandaIndex = currentManda,
             changeManda = changeManda,
-            onDisMiss = {mandaChangeState = false},
+            onDisMiss = { mandaChangeState = false },
             deleteManda = deleteManda,
         )
     }
@@ -267,7 +267,7 @@ fun InitializedMandaContent(
                 navigateToTutorial = { isExplain = true },
                 navigateToSetting = navigateToSetting,
                 navigateToHistory = navigateToHistory,
-                onClickDetail = {mandaChangeState = true}
+                onClickDetail = { mandaChangeState = true }
             )
 
             Box(
@@ -281,13 +281,13 @@ fun InitializedMandaContent(
                     statusColor = uiState.mandaStatus.statusColor,
                     donePercentage = uiState.mandaStatus.donePercentage,
                     animateDonePercentage = animateDonePercentage.value,
-                    currentManda = currentManda,
-                    changeManda = changeManda,
                 ) {
                     changeBottomSheet(
                         true,
                         MandaBottomSheetContentState.Insert(
-                            if (currentIndex == 4) MandaBottomSheetContentType.MandaFinal(mandaUI = uiState.mandaStatus.titleManda)
+                            if (currentIndex == 4 || currentIndex == -1) MandaBottomSheetContentType.MandaFinal(
+                                mandaUI = uiState.mandaStatus.titleManda
+                            )
                             else MandaBottomSheetContentType.MandaKey(mandaUI = uiState.mandaStatus.titleManda)
                         )
                     )
@@ -306,7 +306,8 @@ fun InitializedMandaContent(
                     changeCurrentIndex = {
                         changeCurrentIndex(it)
                         currentIndex = it
-                    }
+                    },
+                    isMandaInit = !uiState.mandaChangeInfo[currentManda].isEmpty
                 )
             }
 
@@ -458,8 +459,6 @@ fun MandaStatus(
     statusColor: Color,
     donePercentage: Float,
     animateDonePercentage: Float,
-    currentManda: Int,
-    changeManda: (Int) -> Unit,
     onClickTitle: () -> Unit
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
@@ -476,12 +475,6 @@ fun MandaStatus(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-//            IconButton(onClick = { changeManda(currentManda - 1) }) {
-//                Icon(
-//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-//                    contentDescription = "이전"
-//                )
-//            }
             Text(
                 text = "\"",
                 style = HmStyle.text24,
@@ -502,13 +495,6 @@ fun MandaStatus(
                 style = HmStyle.text24,
                 color = statusColor
             )
-
-//            IconButton(onClick = { changeManda(currentManda + 1) }) {
-//                Icon(
-//                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-//                    contentDescription = "다음"
-//                )
-//            }
         }
 
         Column(
@@ -546,9 +532,12 @@ fun Mandalart(
     mandaList: List<MandaState>,
     curIndex: Int,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState) -> Unit,
-    changeCurrentIndex: (Int) -> Unit
+    changeCurrentIndex: (Int) -> Unit,
+    isMandaInit: Boolean
 ) {
     var currentIndex by remember { mutableIntStateOf(curIndex) }
+    var mandaDialogState by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(curIndex) { currentIndex = curIndex }
 
@@ -706,6 +695,21 @@ fun Mandalart(
         zoomController(-1)
     }
 
+    if (mandaDialogState) {
+        HMTextDialog(
+            targetText = "",
+            bottomText = "중앙 목표를 먼저 입력해 주세요.",
+            confirmText = "확인",
+            onDismissRequest = {
+                mandaDialogState = false
+            },
+            tintColor = HMColor.Primary,
+            onConfirm = {
+                mandaDialogState = false
+            },
+            canCancel = false
+        )
+    }
 
     Column(
         modifier = Modifier.padding(vertical = 4.dp)
@@ -767,15 +771,21 @@ fun Mandalart(
                                                     modifier = Modifier.fillMaxSize()
                                                 ) {
                                                     MandaEmptyBox {
-                                                        changeBottomSheet(
-                                                            true,
-                                                            MandaBottomSheetContentState.Insert(
-                                                                MandaBottomSheetContentType.MandaKey(
-                                                                    MandaUI(id = bigBox.id),
-                                                                    null
+                                                        Logger.d("이곳은 빈 큰박스")
+                                                        if (isMandaInit) {
+                                                            changeBottomSheet(
+                                                                true,
+                                                                MandaBottomSheetContentState.Insert(
+                                                                    MandaBottomSheetContentType.MandaKey(
+                                                                        MandaUI(id = bigBox.id),
+                                                                        null
+                                                                    )
                                                                 )
                                                             )
-                                                        )
+                                                        } else {
+                                                            mandaDialogState = true
+                                                        }
+
                                                     }
                                                 }
                                             }
@@ -800,20 +810,45 @@ fun Mandalart(
                                                                                 .padding(2.dp)
                                                                         ) {
                                                                             MandaEmptyBox {
-                                                                                changeBottomSheet(
-                                                                                    true,
-                                                                                    MandaBottomSheetContentState.Insert(
-                                                                                        if (bigBox.id == 5) {
-                                                                                            MandaBottomSheetContentType.MandaKey(
-                                                                                                smallBox.mandaUI,
-                                                                                            )
-                                                                                        } else {
-                                                                                            MandaBottomSheetContentType.MandaDetail(
-                                                                                                smallBox.mandaUI,
-                                                                                            )
-                                                                                        }
+                                                                                Logger.d("이곳은 가장 작은 빈 박스")
+
+                                                                                if (isMandaInit) {
+                                                                                    changeBottomSheet(
+                                                                                        true,
+                                                                                        MandaBottomSheetContentState.Insert(
+                                                                                            if (bigBox.id == 5) {
+                                                                                                if (smallBox.mandaUI.id == 5) {
+                                                                                                    MandaBottomSheetContentType.MandaFinal(
+                                                                                                        smallBox.mandaUI
+                                                                                                    )
+                                                                                                } else {
+                                                                                                    MandaBottomSheetContentType.MandaKey(
+                                                                                                        smallBox.mandaUI,
+                                                                                                    )
+                                                                                                }
+
+                                                                                            } else {
+                                                                                                MandaBottomSheetContentType.MandaDetail(
+                                                                                                    smallBox.mandaUI,
+                                                                                                )
+                                                                                            }
+                                                                                        )
                                                                                     )
-                                                                                )
+                                                                                } else {
+                                                                                    if (bigBox.id == 5 && smallBox.mandaUI.id == 5) {
+                                                                                        changeBottomSheet(
+                                                                                            true,
+                                                                                            MandaBottomSheetContentState.Insert(
+                                                                                                MandaBottomSheetContentType.MandaFinal(
+                                                                                                    smallBox.mandaUI
+                                                                                                )
+                                                                                            )
+                                                                                        )
+
+                                                                                    } else {
+                                                                                        mandaDialogState = true
+                                                                                    }
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -831,6 +866,8 @@ fun Mandalart(
                                                                                 color = smallBoxData.color,
                                                                                 isDone = smallBoxData.isDone
                                                                             ) {
+                                                                                Logger.d("이곳은  작은 만다 키 박스")
+
                                                                                 changeBottomSheet(
                                                                                     true,
                                                                                     if (bigBox.id == 5 && smallBoxData.id == 5) {
@@ -865,6 +902,8 @@ fun Mandalart(
                                                                                 color = data.color,
                                                                                 isDone = data.isDone
                                                                             ) {
+                                                                                Logger.d("이곳은  작은 만다 디테일 박스")
+
                                                                                 changeBottomSheet(
                                                                                     true,
                                                                                     MandaBottomSheetContentState.Update(

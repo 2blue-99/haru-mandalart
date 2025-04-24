@@ -99,8 +99,6 @@ fun MandaBottomSheet(
         HMColor.DarkPastel.Purple
     )
 
-    Logger.d(MandaUtils.colorToIndex(mandaUI.color))
-    Logger.d(usedColorIndexList)
 
     var inputText by remember { mutableStateOf(mandaUI.name) }
     var keyNameText by remember { mutableStateOf("") }
@@ -325,7 +323,7 @@ fun ChangeMandaBottomSheet(
     if (mandaDialogState) {
         HMTextDialog(
             targetText = mandaInfo[deleteIndex].name,
-            bottomText = "해당 만다라트의 모든 정보가 삭제되요",
+            bottomText = "해당 만다라트의 모든 정보가 삭제되요.",
             confirmText = stringResource(id = R.string.bottom_sheet_delete),
             onDismissRequest = {
                 mandaDialogState = false
