@@ -10,6 +10,7 @@ interface UserDataSource {
     val isAlarm: Flow<Boolean>
     val mandaInitState: Flow<Boolean>
     val noteRequestDate: Flow<String>
+    val currentMandaIndex: Flow<Int>
 
     suspend fun updateToken(token: String)
     suspend fun updateStarted(state: Boolean)
@@ -18,5 +19,6 @@ interface UserDataSource {
     suspend fun updateAlarm(state: Boolean)
     suspend fun updateMandaInitState(state: Boolean)
     suspend fun updateNoteRequestDate(date: String)
+    suspend fun updateCurrentMandaIndex(index: Int)
     suspend fun reset()
 }

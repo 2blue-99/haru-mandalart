@@ -2,13 +2,12 @@ package com.coldblue.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.coldblue.data.util.LoginState
 import com.coldblue.domain.auth.DeleteUserUseCase
 import com.coldblue.domain.auth.GetAuthStateUseCase
 import com.coldblue.domain.auth.GetComposeAuthUseCase
 import com.coldblue.domain.auth.LoginSucceededUseCase
 import com.coldblue.domain.auth.LogoutUseCase
-import com.coldblue.domain.manda.DeleteMandaAllUseCase
+import com.coldblue.domain.manda.DeleteMandaUseCase
 import com.coldblue.domain.network.GetNetworkStateUseCase
 import com.coldblue.domain.setting.GetVersionUseCase
 import com.coldblue.domain.setting.ShowAppInfoUseCase
@@ -26,8 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,7 +44,7 @@ class SettingViewModel @Inject constructor(
     private val showContactUseCase: ShowContactUseCase,
     private val showOssUseCase: ShowOssUseCase,
     private val showPlayStoreUseCase: ShowPlayStoreUseCase,
-    private val deleteMandaAllUseCase: DeleteMandaAllUseCase,
+    private val deleteMandaUseCase: DeleteMandaUseCase,
     private val updateMandaInitStateUseCase: UpdateMandaInitStateUseCase,
     private val showAppInfoUseCase: ShowAppInfoUseCase
 ) : ViewModel() {
@@ -129,7 +126,7 @@ class SettingViewModel @Inject constructor(
 
     fun initManda() {
         viewModelScope.launch {
-            deleteMandaAllUseCase()
+            deleteMandaUseCase()
             updateMandaInitStateUseCase(false)
         }
     }

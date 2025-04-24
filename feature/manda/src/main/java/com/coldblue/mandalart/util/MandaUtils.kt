@@ -9,13 +9,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.mandalart.model.MandaUI
+import com.coldblue.mandalart.state.MAX_MANDA_CNT
+import com.coldblue.mandalart.state.MandaChangeInfo
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
 
 object MandaUtils {
 
@@ -203,6 +204,13 @@ object MandaUtils {
         context.startActivity(intent)
     }
 
+    fun mandaChangeInfo(mandaKeys:List<MandaKey>): List<MandaChangeInfo>{
+        val filteredManda = mandaKeys.filter { (it.id-5) % 9 == 0 }.map { MandaChangeInfo(it.name,it.id,false) }
+        val requiredIds = List(MAX_MANDA_CNT) { 5 + 9 * it }
+        val missing = requiredIds.filter { id -> filteredManda.none { it.mandaIndex == id } }
+            .map { id -> MandaChangeInfo("",id,true) }
+        return (filteredManda + missing).sortedBy { it.mandaIndex }
+    }
 
     fun mandaKey1to9(mandaKey: List<MandaKey>, currentManda: Int): List<MandaKey> {
         return mandaKey.filter { it.id > currentManda * 9 && it.id <= (currentManda + 1) * 9 }
@@ -214,21 +222,6 @@ object MandaUtils {
                 )
             }
     }
-
-    //
-//    fun mandaTodo1to9(mandaTodo: List<MandaTodo>, currentManda: Int): List<MandaTodo> {
-//        Logger.d("변환 ")
-//        val tmp = 9
-//        return mandaTodo.filter { tmp + 1 > currentManda * 9 && tmp <= (currentManda + 1 + 1) * 9 }
-//            .map {
-//                it.copy(
-//                    id = if (currentManda != 0) {
-//                        if ((tmp + 1) % 9 != 0) (tmp + 1 % 9) - 1 else 9 - 1
-//                    } else tmp
-//                )
-//            }
-//    }
-
 
     fun mandaTodo1to9(mandaTodo: List<MandaTodo>, currentManda: Int): List<MandaTodo> {
         return mandaTodo.filter { it.mandaIndex + 1 > currentManda * 9 && it.mandaIndex + 1 <= (currentManda + 1) * 9 }

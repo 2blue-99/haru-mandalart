@@ -35,6 +35,7 @@ fun HMTextDialog(
     confirmText: String,
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
+    canCancel: Boolean = true
 ) {
     AlertDialog(
         shape = RoundedCornerShape(10.dp),
@@ -99,20 +100,22 @@ fun HMTextDialog(
                 )
             }
         }, dismissButton = {
-            TextButton(
-                modifier = Modifier.offset(y = 10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = HMColor.Background,
-                    contentColor = HMColor.Text
-                ),
-                onClick = {
-                    onDismissRequest()
-                }) {
-                Text(
-                    text = "취소",
-                    color = HMColor.Text,
-                    style = HmStyle.text16
-                )
+            if (canCancel){
+                TextButton(
+                    modifier = Modifier.offset(y = 10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = HMColor.Background,
+                        contentColor = HMColor.Text
+                    ),
+                    onClick = {
+                        onDismissRequest()
+                    }) {
+                    Text(
+                        text = "취소",
+                        color = HMColor.Text,
+                        style = HmStyle.text16
+                    )
+                }
             }
         })
 }

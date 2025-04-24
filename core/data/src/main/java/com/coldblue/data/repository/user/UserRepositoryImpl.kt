@@ -18,6 +18,7 @@ class UserRepositoryImpl @Inject constructor(
     override val isAlarm: Flow<Boolean> = userDataSource.isAlarm
     override val isInit: Flow<Boolean> = userDataSource.mandaInitState
     override val noteRequestDate: Flow<String> = userDataSource.noteRequestDate
+    override val currentMandaIndex: Flow<Int> = userDataSource.currentMandaIndex
 
     override suspend fun updateToken(token: String) {
         userDataSource.updateToken(token)
@@ -46,6 +47,10 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun updateNoteRequestDate(date: String) {
         userDataSource.updateNoteRequestDate(date)
+    }
+
+    override suspend fun updateCurrentMandaIndex(index: Int){
+        userDataSource.updateCurrentMandaIndex(index)
     }
 
     override suspend fun refresh() {

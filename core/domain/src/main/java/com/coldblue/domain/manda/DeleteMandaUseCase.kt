@@ -5,14 +5,26 @@ import com.coldblue.data.repository.manda.MandaKeyRepository
 import com.coldblue.data.repository.todo.MandaTodoRepository
 import javax.inject.Inject
 
-class DeleteMandaAllUseCase @Inject constructor(
+class DeleteMandaUseCase @Inject constructor(
     private val mandaKeyRepository: MandaKeyRepository,
     private val mandaDetailRepository: MandaDetailRepository,
     private val mandaTodoRepository: MandaTodoRepository,
 ) {
+    suspend operator fun invoke(mandaIndex:Int) {
+        mandaKeyRepository.deleteManda(mandaIndex)
+    }
     suspend operator fun invoke() {
-        mandaKeyRepository.deleteAllMandaDetail()
+        mandaKeyRepository.deleteAllMandaKey()
         mandaDetailRepository.deleteAllMandaDetail()
         mandaTodoRepository.deleteAllMandaTodo()
     }
 }
+
+
+//class DeleteMandaUseCase @Inject constructor(
+//    private val mandaKeyRepository: MandaKeyRepository,
+//) {
+//    suspend operator fun invoke(mandaIndex:Int) {
+//        mandaKeyRepository.deleteManda(mandaIndex)
+//    }
+//}

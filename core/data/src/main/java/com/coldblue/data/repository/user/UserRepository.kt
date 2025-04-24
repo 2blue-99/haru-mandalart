@@ -8,6 +8,7 @@ interface UserRepository {
     val isExplain: Flow<Boolean>
     val isAlarm: Flow<Boolean>
     val isInit: Flow<Boolean>
+    val currentMandaIndex: Flow<Int>
     val noteRequestDate: Flow<String>
 
 
@@ -17,5 +18,6 @@ interface UserRepository {
     suspend fun updateAlarm(state: Boolean):Boolean
     suspend fun updateMandaInitState(state: Boolean)
     suspend fun updateNoteRequestDate(date: String)
+    suspend fun updateCurrentMandaIndex(index: Int)
     suspend fun refresh()
 }
