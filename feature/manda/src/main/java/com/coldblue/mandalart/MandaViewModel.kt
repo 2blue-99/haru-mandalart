@@ -67,7 +67,7 @@ class MandaViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             getCurrentMandaIndexUseCase().collect { mandaIndex ->
-                _currentManda.value = _currentManda.value.copy(currentManda = mandaIndex)
+                _currentManda.value = _currentManda.value.copy(currentMandaIndex = mandaIndex)
             }
         }
     }
@@ -101,18 +101,18 @@ class MandaViewModel @Inject constructor(
                     currentManda,
                     todoRange,
                 ) { mandaKeys, mandaDetails, todoList, currentManda, todoRange ->
-                    val mandaKey1to9 = MandaUtils.mandaKey1to9(mandaKeys, currentManda.currentManda)
+                    val mandaKey1to9 = MandaUtils.mandaKey1to9(mandaKeys, currentManda.currentMandaIndex)
                     val mandaDetail1to81 =
-                        MandaUtils.mandaDetail1to81(mandaDetails, currentManda.currentManda)
+                        MandaUtils.mandaDetail1to81(mandaDetails, currentManda.currentMandaIndex)
 
                     val mandaList = MandaUtils.transformToMandaList(
                         mandaKey1to9,
                         mandaDetail1to81
                     )
-                    val mandaInfo = mandaChangeInfo(mandaKeys)
+                    val mandaChangeInfo = mandaChangeInfo(mandaKeys)
 
                     val currentTodoList =
-                        MandaUtils.mandaTodo1to9(todoList, currentManda.currentManda)
+                        MandaUtils.mandaTodo1to9(todoList, currentManda.currentMandaIndex)
 
                     val usedColorIndexList =
                         mandaKey1to9.filter { it.id != 5 }.map { it.colorIndex }.toSet().toList()
@@ -164,7 +164,7 @@ class MandaViewModel @Inject constructor(
                         todoList = curDateRangeTodoList,
                         todoCnt = curDateRangeTodoList.count { !it.isDone },
                         doneTodoCnt = curDateRangeTodoList.count { it.isDone },
-                        mandaChangeInfo = mandaInfo
+                        mandaChangeInfo = mandaChangeInfo
                     )
                 }.catch {
                     MandaUIState.Error(it.message ?: "Error")
@@ -197,33 +197,33 @@ class MandaViewModel @Inject constructor(
 
     fun upsertMandaFinal(mandaKey: MandaKey) {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(mandaKey.copy(id = 5 + (currentManda.value.currentManda * 9)))
+            upsertMandaKeyUseCase(mandaKey.copy(id = 5 + (currentManda.value.currentMandaIndex * 9)))
         }
     }
 
     fun upsertMandaKey(mandaKey: MandaKey) {
         viewModelScope.launch {
-            upsertMandaKeyUseCase(mandaKey.copy(id = mandaKey.id + (currentManda.value.currentManda * 9)))
+            upsertMandaKeyUseCase(mandaKey.copy(id = mandaKey.id + (currentManda.value.currentMandaIndex * 9)))
         }
     }
 
     fun upsertMandaDetail(mandaDetail: MandaDetail) {
         viewModelScope.launch {
-            upsertMandaDetailUseCase(mandaDetail.copy(id = mandaDetail.id + (currentManda.value.currentManda * 81)))
+            upsertMandaDetailUseCase(mandaDetail.copy(id = mandaDetail.id + (currentManda.value.currentMandaIndex * 81)))
         }
     }
 
     fun deleteMandaKey(id: Int, detailIdList: List<Int>) {
         viewModelScope.launch {
             deleteMandaKeyUseCase(
-                id + (currentManda.value.currentManda * 9),
-                detailIdList.map { it + (currentManda.value.currentManda * 81) })
+                id + (currentManda.value.currentMandaIndex * 9),
+                detailIdList.map { it + (currentManda.value.currentMandaIndex * 81) })
         }
     }
 
     fun deleteMandaDetail(id: Int) {
         viewModelScope.launch {
-            deleteMandaDetailUseCase(id + (currentManda.value.currentManda * 81))
+            deleteMandaDetailUseCase(id + (currentManda.value.currentMandaIndex * 81))
         }
     }
 
@@ -240,7 +240,7 @@ class MandaViewModel @Inject constructor(
     }
 
     fun changeCurrentIndex(index: Int) {
-        _currentManda.value = CurrentManda(currentManda.value.currentManda, index)
+        _currentManda.value = CurrentManda(currentManda.value.currentMandaIndex, index)
 //        _currentIndex.value = index
     }
 
@@ -250,7 +250,7 @@ class MandaViewModel @Inject constructor(
 
     fun upsertMandaTodo(mandaTodo: MandaTodo) {
         viewModelScope.launch {
-            upsertMandaTodoUseCase(mandaTodo.copy(mandaIndex = mandaTodo.mandaIndex + (currentManda.value.currentManda * 9)))
+            upsertMandaTodoUseCase(mandaTodo.copy(mandaIndex = mandaTodo.mandaIndex + (currentManda.value.currentMandaIndex * 9)))
         }
     }
 

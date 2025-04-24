@@ -10,6 +10,6 @@ data class MandaStatus(
 )
 
 data class CurrentManda(
-    val currentManda:Int,
+    val currentMandaIndex:Int,
     val currentIndex:Int
 )

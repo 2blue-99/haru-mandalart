@@ -65,7 +65,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -214,7 +213,7 @@ fun InitializedMandaContent(
     }
     if (mandaChangeState) {
         ChangeMandaBottomSheet(
-            mandaInfo = uiState.mandaChangeInfo,
+            mandaChangeInfo = uiState.mandaChangeInfo,
             currentMandaIndex = currentManda,
             changeManda = changeManda,
             onDisMiss = { mandaChangeState = false },
@@ -809,9 +808,7 @@ fun Mandalart(
                                                                                 .weight(1f)
                                                                                 .padding(2.dp)
                                                                         ) {
-                                                                            MandaEmptyBox {
-                                                                                Logger.d("이곳은 가장 작은 빈 박스")
-
+                                                                            MandaEmptyBox {//빈 박스
                                                                                 if (isMandaInit) {
                                                                                     changeBottomSheet(
                                                                                         true,
@@ -866,8 +863,6 @@ fun Mandalart(
                                                                                 color = smallBoxData.color,
                                                                                 isDone = smallBoxData.isDone
                                                                             ) {
-                                                                                Logger.d("이곳은  작은 만다 키 박스")
-
                                                                                 changeBottomSheet(
                                                                                     true,
                                                                                     if (bigBox.id == 5 && smallBoxData.id == 5) {
@@ -902,8 +897,6 @@ fun Mandalart(
                                                                                 color = data.color,
                                                                                 isDone = data.isDone
                                                                             ) {
-                                                                                Logger.d("이곳은  작은 만다 디테일 박스")
-
                                                                                 changeBottomSheet(
                                                                                     true,
                                                                                     MandaBottomSheetContentState.Update(

@@ -10,14 +10,13 @@ import androidx.compose.ui.res.stringArrayResource
 import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.mandalart.state.MAX_MANDA_CNT
-import com.coldblue.mandalart.state.MandaInfo
+import com.coldblue.mandalart.state.MandaChangeInfo
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.coldblue.model.MandaTodo
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
 
 object MandaUtils {
 
@@ -205,12 +204,12 @@ object MandaUtils {
         context.startActivity(intent)
     }
 
-    fun mandaChangeInfo(mandaKeys:List<MandaKey>): List<MandaInfo>{
-        val filteredManda = mandaKeys.filter { (it.id-5) % 9 == 0 }.map { MandaInfo(it.name,it.id,false) }
+    fun mandaChangeInfo(mandaKeys:List<MandaKey>): List<MandaChangeInfo>{
+        val filteredManda = mandaKeys.filter { (it.id-5) % 9 == 0 }.map { MandaChangeInfo(it.name,it.id,false) }
         val requiredIds = List(MAX_MANDA_CNT) { 5 + 9 * it }
-        val missing = requiredIds.filter { id -> filteredManda.none { it.index == id } }
-            .map { id -> MandaInfo("",id,true) }
-        return (filteredManda + missing).sortedBy { it.index }
+        val missing = requiredIds.filter { id -> filteredManda.none { it.mandaIndex == id } }
+            .map { id -> MandaChangeInfo("",id,true) }
+        return (filteredManda + missing).sortedBy { it.mandaIndex }
     }
 
     fun mandaKey1to9(mandaKey: List<MandaKey>, currentManda: Int): List<MandaKey> {

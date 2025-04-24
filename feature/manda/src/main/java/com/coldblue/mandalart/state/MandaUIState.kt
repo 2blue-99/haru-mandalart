@@ -1,6 +1,5 @@
 package com.coldblue.mandalart.state
 
-import androidx.datastore.preferences.protobuf.Internal.BooleanList
 import com.coldblue.mandalart.model.MandaUI
 import com.coldblue.model.DateRange
 import com.coldblue.model.MandaTodo
@@ -21,7 +20,7 @@ sealed interface MandaUIState {
         val todoList: List<MandaTodo>,
         val todoCnt: Int,
         val doneTodoCnt: Int,
-        val mandaChangeInfo: List<MandaInfo>
+        val mandaChangeInfo: List<MandaChangeInfo>
     ) : MandaUIState
 }
 
@@ -52,9 +51,9 @@ sealed interface MandaType {
     ) : MandaType
 }
 
-data class MandaInfo(
+data class MandaChangeInfo(
     val name:String,
-    val index:Int,
+    val mandaIndex:Int,
     val isEmpty : Boolean
 )
 

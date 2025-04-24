@@ -26,7 +26,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
@@ -60,12 +59,11 @@ import com.coldblue.mandalart.model.asMandaKey
 import com.coldblue.mandalart.state.MAX_MANDA_CNT
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
-import com.coldblue.mandalart.state.MandaInfo
+import com.coldblue.mandalart.state.MandaChangeInfo
 import com.coldblue.mandalart.util.MandaUtils
 import com.coldblue.model.MandaDetail
 import com.coldblue.model.MandaKey
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -311,7 +309,7 @@ fun MandaBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeMandaBottomSheet(
-    mandaInfo: List<MandaInfo>,
+    mandaChangeInfo: List<MandaChangeInfo>,
     currentMandaIndex: Int,
     changeManda: (Int) -> Unit,
     onDisMiss: () -> Unit,
@@ -322,7 +320,7 @@ fun ChangeMandaBottomSheet(
 
     if (mandaDialogState) {
         HMTextDialog(
-            targetText = mandaInfo[deleteIndex].name,
+            targetText = mandaChangeInfo[deleteIndex].name,
             bottomText = "해당 만다라트의 모든 정보가 삭제되요.",
             confirmText = stringResource(id = R.string.bottom_sheet_delete),
             onDismissRequest = {
@@ -359,13 +357,13 @@ fun ChangeMandaBottomSheet(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Text(text = "${mandaInfo.filter { !it.isEmpty }.size}/$MAX_MANDA_CNT")
+                        Text(text = "${mandaChangeInfo.filter { !it.isEmpty }.size}/$MAX_MANDA_CNT")
                     }
                 }
                 for (i in 0 until MAX_MANDA_CNT) {
                     item {
 //                        val mandaIndex = if (i < mandaInfo.size) (mandaInfo[i].index - 5) / 9 else i
-                        if (mandaInfo[i].isEmpty) {
+                        if (mandaChangeInfo[i].isEmpty) {
                             MandaEmptyItem(
                                 changeManda = { changeManda(i) },
                                 onDisMiss
@@ -373,7 +371,7 @@ fun ChangeMandaBottomSheet(
 
                         } else {
                             MandaItem(
-                                mandaInfo[i].name,
+                                mandaChangeInfo[i].name,
                                 currentMandaIndex == i,
                                 { changeManda(i) },
                                 onDisMiss,
