@@ -11,8 +11,10 @@ import com.coldblue.domain.manda.UpsertMandaDetailUseCase
 import com.coldblue.domain.manda.UpsertMandaKeyUseCase
 import com.coldblue.domain.todo.GetMandaTodoUseCase
 import com.coldblue.domain.todo.UpsertMandaTodoUseCase
+import com.coldblue.domain.user.GetCurrentMandaIndexUseCase
 import com.coldblue.domain.user.GetExplainStateUseCase
 import com.coldblue.domain.user.GetMandaInitStateUseCase
+import com.coldblue.domain.user.UpdateCurrentMandaIndexUseCase
 import com.coldblue.domain.user.UpdateMandaInitStateUseCase
 import com.coldblue.mandalart.state.CurrentManda
 import com.coldblue.mandalart.state.MAX_MANDA_CNT
@@ -57,16 +59,30 @@ class MandaViewModel @Inject constructor(
     private val deleteMandaUseCase: DeleteMandaUseCase,
     val getMandaTodoUseCase: GetMandaTodoUseCase,
     val upsertMandaTodoUseCase: UpsertMandaTodoUseCase,
-    val getExplainStateUseCase: GetExplainStateUseCase
+    val getExplainStateUseCase: GetExplainStateUseCase,
+    val getCurrentMandaIndexUseCase: GetCurrentMandaIndexUseCase,
+    val updateCurrentMandaIndexUseCase: UpdateCurrentMandaIndexUseCase
 ) : ViewModel() {
+
+    private val _currentManda = MutableStateFlow(CurrentManda(0, 4))
+    val currentManda: StateFlow<CurrentManda> get() = _currentManda
+
+    init {
+        viewModelScope.launch {
+            getCurrentMandaIndexUseCase().collect { mandaIndex ->
+                _currentManda.value = _currentManda.value.copy(currentManda = mandaIndex)
+            }
+        }
+    }
 
     /**
      * 다른 앱 위 표시 권한 요청을 해야 하는지 여부
      */
     private var isRequestPermission = true
 
-    private val _currentManda = MutableStateFlow(CurrentManda(0, 4))
-    val currentManda: StateFlow<CurrentManda> get() = _currentManda
+
+//    private val _currentManda = MutableStateFlow(CurrentManda(0, 4))
+//    val currentManda: StateFlow<CurrentManda> get() = _currentManda
 
     private val _explainUIState = MutableStateFlow(true)
     val explainUIState: StateFlow<Boolean> get() = _explainUIState
@@ -172,7 +188,10 @@ class MandaViewModel @Inject constructor(
         )
 
     fun changeManda(index: Int) {
-        _currentManda.value = CurrentManda(index, 4)
+        viewModelScope.launch {
+            updateCurrentMandaIndexUseCase(index)
+        }
+//        _currentManda.value = CurrentManda(index, 4)
     }
 
     fun changeBottomSheet(isShow: Boolean, uiState: MandaBottomSheetContentState?) {
@@ -215,7 +234,7 @@ class MandaViewModel @Inject constructor(
         }
     }
 
-    fun deleteManda(mandaIndex:Int) {
+    fun deleteManda(mandaIndex: Int) {
         viewModelScope.launch {
             deleteMandaUseCase(mandaIndex)
         }
