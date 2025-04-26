@@ -649,7 +649,7 @@ fun MandaTodoItemPreview() {
         1, DateRange.DAY,
         listOf(
             MandaTodo(
-                "1번투구ffffffffffffffffffffffffffffffsdddddddddddd",
+                "1번투두",
                 true,
                 false,
                 LocalTime.now(),
