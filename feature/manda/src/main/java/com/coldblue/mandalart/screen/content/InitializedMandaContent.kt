@@ -770,7 +770,6 @@ fun Mandalart(
                                                     modifier = Modifier.fillMaxSize()
                                                 ) {
                                                     MandaEmptyBox {
-                                                        Logger.d("이곳은 빈 큰박스")
                                                         if (isMandaInit) {
                                                             changeBottomSheet(
                                                                 true,
