@@ -920,25 +920,6 @@ fun Mandalart(
                                                 .background(Color.Transparent)
                                                 .fillMaxWidth()
                                                 .aspectRatio(1F)
-//                                                .pointerInput(Unit) {
-//                                                    detectDragGesturesAfterLongPress(
-//                                                        onDrag = { change, dragAmount ->
-//                                                            change.consume()
-//                                                            dragOffsetX += dragAmount.x
-//                                                            dragOffsetY += dragAmount.y
-//                                                            com.orhanobut.logger.Logger.d("$dragOffsetX  $dragOffsetY")
-//                                                        },
-//                                                        onDragEnd = {
-//                                                            dragController(keyColumn + keyRow * 3)
-//                                                            com.orhanobut.logger.Logger.d("END")
-//                                                        }
-//                                                    )
-//                                                }
-//                                                .onGloballyPositioned {
-//                                                    it.boundsInWindow().let {
-//                                                        com.orhanobut.logger.Logger.d("Click")
-//                                                    }
-//                                                }
                                                 .clip(RoundedCornerShape(8.dp))
                                                 .clickable {
                                                     if (!isZoom) {
