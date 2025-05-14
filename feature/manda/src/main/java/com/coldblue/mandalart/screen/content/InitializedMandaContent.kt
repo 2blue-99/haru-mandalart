@@ -762,9 +762,10 @@ fun Mandalart(
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(horizontal = 5.dp)
+                                            .clip(RoundedCornerShape(8))
+                                            .background(HMColor.DarkPastel.Purple)
                                     ) {
-                                        when (val bigBox =
-                                            currentMandaList[keyColumn + keyRow * 3]) {
+                                        when (val bigBox = currentMandaList[keyColumn + keyRow * 3]) {
                                             is MandaState.Empty -> {
                                                 Box(
                                                     modifier = Modifier.fillMaxSize()
@@ -796,7 +797,6 @@ fun Mandalart(
                                                     modifier = Modifier.fillMaxSize()
                                                 ) {
                                                     repeat(3) { detailRow ->
-
                                                         Row {
                                                             repeat(3) { detailColumn ->
                                                                 when (val smallBox =
@@ -808,7 +808,7 @@ fun Mandalart(
                                                                                 .weight(1f)
                                                                                 .padding(2.dp)
                                                                         ) {
-                                                                            MandaEmptyBox {//빈 박스
+                                                                            MandaEmptyBox { //빈 박스
                                                                                 if (isMandaInit) {
                                                                                     changeBottomSheet(
                                                                                         true,
