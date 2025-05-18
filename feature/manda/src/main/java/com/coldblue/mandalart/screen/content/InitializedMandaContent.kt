@@ -762,8 +762,8 @@ fun Mandalart(
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(horizontal = 5.dp)
-                                            .clip(RoundedCornerShape(8))
-                                            .background(HMColor.DarkPastel.Purple)
+//                                            .clip(RoundedCornerShape(8))
+//                                            .background(HMColor.DarkPastel.Purple)
                                     ) {
                                         when (val bigBox = currentMandaList[keyColumn + keyRow * 3]) {
                                             is MandaState.Empty -> {

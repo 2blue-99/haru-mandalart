@@ -29,10 +29,63 @@ import com.coldblue.designsystem.theme.HMColor
 import com.coldblue.designsystem.theme.HmStyle
 
 @Composable
+fun MandaBaseBox(
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = HMColor.Primary,
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit = {}
+){
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onClick() }
+            .fillMaxWidth()
+            .aspectRatio(1F)
+            .background(backgroundColor)
+            .border(0.65.dp, HMColor.Gray, RoundedCornerShape(8.dp))
+    ){
+        content()
+    }
+}
+
+@Preview
+@Composable
+fun BaseBoxPreview() {
+    MandaBaseBox()
+}
+
+@Composable
+fun MandaEmptyBox2(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+){
+    MandaBaseBox(
+        modifier = modifier,
+        backgroundColor = HMColor.Background,
+        onClick = onClick
+    ){
+        Icon(
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(0.35f),
+            imageVector = IconPack.Plus,
+            tint = HMColor.SubLightText,
+            contentDescription = ""
+        )
+    }
+}
+@Preview
+@Composable
+fun MandaEmptyBox2Preview() {
+    MandaEmptyBox2()
+}
+
+@Composable
 fun MandaKeyBox(
-    name: String,
-    color: Color,
-    isDone: Boolean,
+    name: String = "Title",
+    color: Color = HMColor.Primary,
+    isDone: Boolean = true,
     onClick: () -> Unit
 ) {
     Box(
@@ -57,11 +110,17 @@ fun MandaKeyBox(
     }
 }
 
+@Preview
+@Composable
+fun MandaKeyBoxPreview() {
+    MandaKeyBox() {}
+}
+
 @Composable
 fun MandaDetailBox(
-    name: String,
-    color: Color,
-    isDone: Boolean,
+    name: String = "Title",
+    color: Color = HMColor.Background,
+    isDone: Boolean = false,
     onClick: () -> Unit
 ) {
     Box(
@@ -85,6 +144,13 @@ fun MandaDetailBox(
     }
 }
 
+@Preview
+@Composable
+fun MandaDetailBoxPreview() {
+    MandaDetailBox() {}
+}
+
+
 @Composable
 fun MandaEmptyBox(
     onClick: () -> Unit
@@ -96,6 +162,7 @@ fun MandaEmptyBox(
             .clickable { onClick() }
             .fillMaxWidth()
             .aspectRatio(1F)
+            .background(HMColor.Background)
             .border(0.65.dp, HMColor.Gray, RoundedCornerShape(8.dp))
     ) {
         Icon(
@@ -108,6 +175,7 @@ fun MandaEmptyBox(
         )
     }
 }
+
 
 @Preview
 @Composable
