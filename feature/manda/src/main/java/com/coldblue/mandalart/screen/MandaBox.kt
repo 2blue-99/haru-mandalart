@@ -38,6 +38,7 @@ fun MandaBaseBox(
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
+            .padding(2.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable { onClick() }
             .fillMaxWidth()
