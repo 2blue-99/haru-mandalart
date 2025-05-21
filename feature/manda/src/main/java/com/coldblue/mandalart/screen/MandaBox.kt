@@ -32,6 +32,7 @@ import com.coldblue.designsystem.theme.HmStyle
 fun MandaBaseBox(
     modifier: Modifier = Modifier,
     backgroundColor: Color = HMColor.Primary,
+    borderColor: Color = HMColor.Gray,
     onClick: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ){
@@ -44,7 +45,7 @@ fun MandaBaseBox(
             .fillMaxWidth()
             .aspectRatio(1F)
             .background(backgroundColor)
-            .border(0.65.dp, HMColor.Gray, RoundedCornerShape(8.dp))
+            .border(0.65.dp, borderColor, RoundedCornerShape(8.dp))
     ){
         content()
     }
@@ -57,7 +58,7 @@ fun BaseBoxPreview() {
 }
 
 @Composable
-fun MandaEmptyBox2(
+fun MandaEmptyBox(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ){
@@ -79,26 +80,22 @@ fun MandaEmptyBox2(
 @Preview
 @Composable
 fun MandaEmptyBox2Preview() {
-    MandaEmptyBox2()
+    MandaEmptyBox()
 }
 
 @Composable
 fun MandaKeyBox(
+    modifier: Modifier = Modifier,
     name: String = "Title",
     color: Color = HMColor.Primary,
     isDone: Boolean = true,
-    onClick: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() }
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .border(BorderStroke(1.5.dp, color), RoundedCornerShape(8.dp))
-            .background(if (isDone) color else HMColor.Background)
-    ) {
+    onClick: () -> Unit = {}
+){
+    MandaBaseBox(
+        modifier = modifier,
+        backgroundColor = if (isDone) color else HMColor.Background,
+        onClick = onClick
+    ){
         Text(
             modifier = Modifier.padding(4.dp),
             textAlign = TextAlign.Center,
@@ -113,33 +110,65 @@ fun MandaKeyBox(
 
 @Preview
 @Composable
-fun MandaKeyBoxPreview() {
-    MandaKeyBox() {}
+fun MandaKeyBox2Preview() {
+    MandaKeyBox()
 }
+
+//@Composable
+//fun MandaKeyBox(
+//    name: String = "Title",
+//    color: Color = HMColor.Primary,
+//    isDone: Boolean = true,
+//    onClick: () -> Unit
+//) {
+//    Box(
+//        contentAlignment = Alignment.Center,
+//        modifier = Modifier
+//            .clip(RoundedCornerShape(8.dp))
+//            .clickable { onClick() }
+//            .fillMaxWidth()
+//            .aspectRatio(1F)
+//            .border(BorderStroke(1.5.dp, color), RoundedCornerShape(8.dp))
+//            .background(if (isDone) color else HMColor.Background)
+//    ) {
+//        Text(
+//            modifier = Modifier.padding(4.dp),
+//            textAlign = TextAlign.Center,
+//            color = if (isDone) HMColor.Background else color,
+//            text = name,
+//            style = HmStyle.text6,
+//            fontWeight = FontWeight.Bold,
+//            overflow = TextOverflow.Ellipsis,
+//        )
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun MandaKeyBoxPreview() {
+//    MandaKeyBox() {}
+//}
 
 @Composable
 fun MandaDetailBox(
+    modifier: Modifier = Modifier,
     name: String = "Title",
     color: Color = HMColor.Background,
     isDone: Boolean = false,
-    onClick: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() }
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .border(0.65.dp, color = color, RoundedCornerShape(8.dp))
-            .background(if (isDone) color else HMColor.Background)
-    ) {
+    onClick: () -> Unit = {}
+){
+    MandaBaseBox(
+        modifier = modifier,
+        backgroundColor = if (isDone) color else HMColor.Background,
+        onClick = onClick
+    ){
         Text(
+            modifier = Modifier.padding(4.dp),
             textAlign = TextAlign.Center,
-            text = name,
             color = if (isDone) HMColor.Background else HMColor.Text,
-            modifier = Modifier.padding(2.dp),
+            text = name,
             style = HmStyle.text6,
+            fontWeight = FontWeight.Bold,
             overflow = TextOverflow.Ellipsis,
         )
     }
@@ -147,39 +176,73 @@ fun MandaDetailBox(
 
 @Preview
 @Composable
-fun MandaDetailBoxPreview() {
-    MandaDetailBox() {}
+fun MandaDetailBox2Preview() {
+    MandaDetailBox()
 }
 
-
-@Composable
-fun MandaEmptyBox(
-    onClick: () -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { onClick() }
-            .fillMaxWidth()
-            .aspectRatio(1F)
-            .background(HMColor.Background)
-            .border(0.65.dp, HMColor.Gray, RoundedCornerShape(8.dp))
-    ) {
-        Icon(
-            modifier = Modifier
-                .fillMaxSize()
-                .scale(0.35f),
-            imageVector = IconPack.Plus,
-            tint = HMColor.SubLightText,
-            contentDescription = ""
-        )
-    }
-}
-
-
-@Preview
-@Composable
-fun DetailBoxPreview() {
-    MandaEmptyBox() {}
-}
+//@Composable
+//fun MandaDetailBox(
+//    name: String = "Title",
+//    color: Color = HMColor.Background,
+//    isDone: Boolean = false,
+//    onClick: () -> Unit
+//) {
+//    Box(
+//        contentAlignment = Alignment.Center,
+//        modifier = Modifier
+//            .clip(RoundedCornerShape(8.dp))
+//            .clickable { onClick() }
+//            .fillMaxWidth()
+//            .aspectRatio(1F)
+//            .border(0.65.dp, color = color, RoundedCornerShape(8.dp))
+//            .background(if (isDone) color else HMColor.Background)
+//    ) {
+//        Text(
+//            textAlign = TextAlign.Center,
+//            text = name,
+//            color = if (isDone) HMColor.Background else HMColor.Text,
+//            modifier = Modifier.padding(2.dp),
+//            style = HmStyle.text6,
+//            overflow = TextOverflow.Ellipsis,
+//        )
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun MandaDetailBoxPreview() {
+//    MandaDetailBox() {}
+//}
+//
+//
+//@Composable
+//fun MandaEmptyBox(
+//    onClick: () -> Unit
+//) {
+//    Box(
+//        contentAlignment = Alignment.Center,
+//        modifier = Modifier
+//            .clip(RoundedCornerShape(8.dp))
+//            .clickable { onClick() }
+//            .fillMaxWidth()
+//            .aspectRatio(1F)
+//            .background(HMColor.Background)
+//            .border(0.65.dp, HMColor.Gray, RoundedCornerShape(8.dp))
+//    ) {
+//        Icon(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .scale(0.35f),
+//            imageVector = IconPack.Plus,
+//            tint = HMColor.SubLightText,
+//            contentDescription = ""
+//        )
+//    }
+//}
+//
+//
+//@Preview
+//@Composable
+//fun DetailBoxPreview() {
+//    MandaEmptyBox() {}
+//}

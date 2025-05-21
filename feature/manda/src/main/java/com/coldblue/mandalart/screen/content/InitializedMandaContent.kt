@@ -220,6 +220,7 @@ fun InitializedMandaContent(
             deleteManda = deleteManda,
         )
     }
+
     LaunchedEffect(uiState.mandaStatus.donePercentage) {
         percentage = uiState.mandaStatus.donePercentage
     }
@@ -328,11 +329,13 @@ fun InitializedMandaContent(
                 )
             }
         }
+
         LottieAnimation(
             composition = doneComposition,
             progress = { doneAni.progress },
             contentScale = ContentScale.FillHeight
         )
+
         LottieAnimation(
             composition = createComposition,
             modifier = Modifier.scale(3.0f),
@@ -352,20 +355,6 @@ fun InitializedMandaContent(
         }
     }
 }
-
-//@Composable
-//fun ExplainBox(
-//    borderVisible: Boolean,
-//    content: @Composable BoxScope.() -> Unit
-//) {
-//    Box(
-//        modifier = Modifier.padding(horizontal = 6.dp)
-//            .border(1.dp, if(borderVisible) HMColor.Primary else Color.Transparent, RoundedCornerShape(8.dp))
-//            .padding(horizontal = 10.dp)
-//    ) {
-//        content()
-//    }
-//}
 
 @Composable
 fun MandaTopBar(
