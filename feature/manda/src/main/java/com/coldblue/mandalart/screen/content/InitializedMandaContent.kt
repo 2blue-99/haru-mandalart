@@ -101,7 +101,6 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
 import com.coldblue.tutorial.TutorialScreen
 import com.colddelight.mandalart.R
-import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -201,9 +200,9 @@ fun InitializedMandaContent(
                     showDoneAni = true
                 } else {
                     showCreateAni = true
-
                 }
                 upsertMandaDetail(it)
+
             },
             deleteMandaKey = deleteMandaKey,
             deleteMandaDetail = deleteMandaDetail
@@ -710,6 +709,7 @@ fun Mandalart(
                 .aspectRatio(1f)
                 .border(1.5.dp, HMColor.DarkGray, shape = RoundedCornerShape(8.dp))
         ) {
+            // 81 X 81 만다라트
             item {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -741,26 +741,26 @@ fun Mandalart(
                                 mandaSize = it.size.toSize()
                             }
                     ) {
+                        // 3 X 9 만다라트
                         repeat(3) { keyRow ->
                             Row(
                                 modifier = Modifier
                                     .padding(vertical = 5.dp)
                             ) {
+                                // 3 X 3 만다라트
                                 repeat(3) { keyColumn ->
                                     Box(
                                         modifier = Modifier
                                             .weight(1f)
                                             .padding(horizontal = 5.dp)
-//                                            .clip(RoundedCornerShape(8))
-//                                            .background(HMColor.DarkPastel.Purple)
+                                            .clip(RoundedCornerShape(8))
+                                            .background(HMColor.LightPastel.Pink)
                                     ) {
                                         when (val bigBox = currentMandaList[keyColumn + keyRow * 3]) {
                                             is MandaState.Empty -> {
-                                                Box(
-                                                    modifier = Modifier.fillMaxSize()
-                                                ) {
-                                                    MandaEmptyBox {
-                                                        Logger.d("이곳은 빈 큰박스")
+                                                    MandaEmptyBox(
+                                                        modifier = Modifier.fillMaxSize()
+                                                    ) {
                                                         if (isMandaInit) {
                                                             changeBottomSheet(
                                                                 true,
@@ -776,7 +776,6 @@ fun Mandalart(
                                                         }
 
                                                     }
-                                                }
                                             }
 
                                             is MandaState.Exist -> {
@@ -785,19 +784,17 @@ fun Mandalart(
                                                     verticalArrangement = Arrangement.Top,
                                                     modifier = Modifier.fillMaxSize()
                                                 ) {
+                                                    // 1 X 3 만다라트
                                                     repeat(3) { detailRow ->
                                                         Row {
+                                                            // 1 X 1 만다라트
                                                             repeat(3) { detailColumn ->
                                                                 when (val smallBox =
                                                                     bigBox.mandaUIList[detailColumn + detailRow * 3]) {
-
                                                                     is MandaType.None -> {
-                                                                        Box(
-                                                                            modifier = Modifier
-                                                                                .weight(1f)
-                                                                                .padding(2.dp)
-                                                                        ) {
-                                                                            MandaEmptyBox { //빈 박스
+                                                                            MandaEmptyBox(
+                                                                                modifier = Modifier.weight(1f)
+                                                                            ) {
                                                                                 if (isMandaInit) {
                                                                                     changeBottomSheet(
                                                                                         true,
@@ -836,20 +833,16 @@ fun Mandalart(
                                                                                     }
                                                                                 }
                                                                             }
-                                                                        }
                                                                     }
 
                                                                     is MandaType.Key -> {
                                                                         val smallBoxData =
                                                                             smallBox.mandaUI
-                                                                        Box(
-                                                                            modifier = Modifier
-                                                                                .weight(1f)
-                                                                                .padding(2.dp)
-                                                                        ) {
                                                                             MandaKeyBox(
+                                                                                modifier = Modifier.weight(1f),
                                                                                 name = smallBoxData.name,
-                                                                                color = smallBoxData.color,
+                                                                                backgroundColor = smallBoxData.color,
+                                                                                borderColor = smallBoxData.color,
                                                                                 isDone = smallBoxData.isDone
                                                                             ) {
                                                                                 changeBottomSheet(
@@ -870,20 +863,16 @@ fun Mandalart(
                                                                                     }
                                                                                 )
                                                                             }
-                                                                        }
                                                                     }
 
                                                                     is MandaType.Detail -> {
                                                                         val data =
                                                                             smallBox.mandaUI
-                                                                        Box(
-                                                                            modifier = Modifier
-                                                                                .weight(1f)
-                                                                                .padding(2.dp)
-                                                                        ) {
                                                                             MandaDetailBox(
+                                                                                modifier = Modifier.weight(1f),
                                                                                 name = data.name,
-                                                                                color = data.color,
+                                                                                backgroundColor = data.color,
+                                                                                borderColor = data.color,
                                                                                 isDone = data.isDone
                                                                             ) {
                                                                                 changeBottomSheet(
@@ -895,7 +884,6 @@ fun Mandalart(
                                                                                     )
                                                                                 )
                                                                             }
-                                                                        }
                                                                     }
                                                                 }
                                                             }

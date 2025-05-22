@@ -1,6 +1,5 @@
 package com.coldblue.mandalart.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.iconpack.Plus
@@ -33,6 +33,7 @@ fun MandaBaseBox(
     modifier: Modifier = Modifier,
     backgroundColor: Color = HMColor.Primary,
     borderColor: Color = HMColor.Gray,
+    borderWidth: Dp = 0.65.dp,
     onClick: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ){
@@ -45,7 +46,7 @@ fun MandaBaseBox(
             .fillMaxWidth()
             .aspectRatio(1F)
             .background(backgroundColor)
-            .border(0.65.dp, borderColor, RoundedCornerShape(8.dp))
+            .border(borderWidth, borderColor, RoundedCornerShape(8.dp))
     ){
         content()
     }
@@ -87,19 +88,22 @@ fun MandaEmptyBox2Preview() {
 fun MandaKeyBox(
     modifier: Modifier = Modifier,
     name: String = "Title",
-    color: Color = HMColor.Primary,
+    backgroundColor: Color = HMColor.Primary,
+    borderColor: Color = HMColor.Primary,
     isDone: Boolean = true,
     onClick: () -> Unit = {}
 ){
     MandaBaseBox(
         modifier = modifier,
-        backgroundColor = if (isDone) color else HMColor.Background,
+        backgroundColor = if (isDone) backgroundColor else HMColor.Background,
+        borderColor = borderColor,
+        borderWidth = 1.5.dp,
         onClick = onClick
     ){
         Text(
             modifier = Modifier.padding(4.dp),
             textAlign = TextAlign.Center,
-            color = if (isDone) HMColor.Background else color,
+            color = if (isDone) HMColor.Background else backgroundColor,
             text = name,
             style = HmStyle.text6,
             fontWeight = FontWeight.Bold,
@@ -113,6 +117,41 @@ fun MandaKeyBox(
 fun MandaKeyBox2Preview() {
     MandaKeyBox()
 }
+
+@Composable
+fun MandaDetailBox(
+    modifier: Modifier = Modifier,
+    name: String = "Title",
+    backgroundColor: Color = HMColor.Background,
+    borderColor: Color = HMColor.Background,
+    isDone: Boolean = false,
+    onClick: () -> Unit = {}
+){
+    MandaBaseBox(
+        modifier = modifier,
+        backgroundColor = if (isDone) backgroundColor else HMColor.Background,
+        borderColor = borderColor,
+        borderWidth = 0.65.dp,
+        onClick = onClick
+    ){
+        Text(
+            modifier = Modifier.padding(4.dp),
+            textAlign = TextAlign.Center,
+            color = if (isDone) HMColor.Background else HMColor.Text,
+            text = name,
+            style = HmStyle.text6,
+            fontWeight = FontWeight.Bold,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Preview
+@Composable
+fun MandaDetailBox2Preview() {
+    MandaDetailBox()
+}
+
 
 //@Composable
 //fun MandaKeyBox(
@@ -149,36 +188,7 @@ fun MandaKeyBox2Preview() {
 //    MandaKeyBox() {}
 //}
 
-@Composable
-fun MandaDetailBox(
-    modifier: Modifier = Modifier,
-    name: String = "Title",
-    color: Color = HMColor.Background,
-    isDone: Boolean = false,
-    onClick: () -> Unit = {}
-){
-    MandaBaseBox(
-        modifier = modifier,
-        backgroundColor = if (isDone) color else HMColor.Background,
-        onClick = onClick
-    ){
-        Text(
-            modifier = Modifier.padding(4.dp),
-            textAlign = TextAlign.Center,
-            color = if (isDone) HMColor.Background else HMColor.Text,
-            text = name,
-            style = HmStyle.text6,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
 
-@Preview
-@Composable
-fun MandaDetailBox2Preview() {
-    MandaDetailBox()
-}
 
 //@Composable
 //fun MandaDetailBox(
