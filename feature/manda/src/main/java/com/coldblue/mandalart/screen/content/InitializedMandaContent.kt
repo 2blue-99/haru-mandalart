@@ -101,6 +101,7 @@ import com.coldblue.model.MandaTodo
 import com.coldblue.todo.MandaTodoList
 import com.coldblue.tutorial.TutorialScreen
 import com.colddelight.mandalart.R
+import com.orhanobut.logger.Logger
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -198,6 +199,9 @@ fun InitializedMandaContent(
             upsertMandaDetail = {
                 if (it.isDone) {
                     showDoneAni = true
+                    if((it.id - 1) / 9 + 1 ){
+                        upsertMandaKey()
+                    }
                 } else {
                     showCreateAni = true
                 }
