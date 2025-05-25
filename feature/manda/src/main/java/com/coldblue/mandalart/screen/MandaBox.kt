@@ -91,13 +91,14 @@ fun MandaKeyBox(
     backgroundColor: Color = HMColor.Primary,
     borderColor: Color = HMColor.Primary,
     isDone: Boolean = true,
-    onClick: () -> Unit = {}
+    isCenter : Boolean = false,
+    onClick: () -> Unit = {},
 ){
     MandaBaseBox(
         modifier = modifier,
         backgroundColor = if (isDone) backgroundColor else HMColor.Background,
-        borderColor = borderColor,
-        borderWidth = 1.5.dp,
+        borderColor = if(isDone) HMColor.Background else borderColor,
+        borderWidth = if(isCenter && isDone) 0.dp else 1.5.dp,
         onClick = onClick
     ){
         Text(
@@ -130,8 +131,8 @@ fun MandaDetailBox(
     MandaBaseBox(
         modifier = modifier,
         backgroundColor = if (isDone) backgroundColor else HMColor.Background,
-        borderColor = borderColor,
-        borderWidth = 0.65.dp,
+        borderColor = if(isDone) HMColor.Background else borderColor,
+        borderWidth = if(isDone) 0.dp else 0.65.dp,
         onClick = onClick
     ){
         Text(

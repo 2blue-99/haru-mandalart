@@ -42,9 +42,7 @@ object MandaUtils {
                 val key = keyList.removeFirst()
                 val color = indexToDarkLightColor(key.colorIndex)
                 val groupIdList = mutableListOf<Int>()
-                // 디테일 만다라트가 하나라도 done이 아닐경우 false
-                // 디테일 만다라트가 하나도 없을 경우 false
-
+                var detailDoneCount = 0
                 for (id in 1..9) {
 
                     val detailId = id + (keyId - 1) * 9
@@ -52,7 +50,7 @@ object MandaUtils {
                     if (detailIdList.contains(detailId)) {
                         val detail = detailList.removeFirst()
                         groupIdList.add(detail.id)
-
+                        if(detail.isDone) detailDoneCount++
                         smallList.add(
                             MandaType.Detail(
                                 mandaUI = MandaUI(
@@ -77,11 +75,12 @@ object MandaUtils {
                     mandaUI = MandaUI(
                         name = key.name,
                         color = if (keyId == 5) HMColor.LightPrimary else color,
-                        isDone = keyId == 5,
+                        // 최종 목표 박스 이거나, 모든 Manda Detail 이 Done 이라면 True
+                        isDone = detailDoneCount != 0 && detailDoneCount == detailIdList.size,
                         originId = key.originId,
                         id = keyId
                     ),
-                    groupIdList = groupIdList
+                    groupIdList = groupIdList,
                 )
                 smallList[4] = keyType
                 centerList.add(keyType)
@@ -247,5 +246,15 @@ object MandaUtils {
                 )
             }
 
+    }
+
+    /**
+     * Manda Detail ID -> Key ID 계산
+     *
+     * Key ID -> 1~9
+     * Detail ID -> 1~81
+     */
+    fun detailIdToKeyId(detailId: Int): Int{
+        return (detailId - 1) / 9 + 1
     }
 }
