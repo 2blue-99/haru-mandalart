@@ -132,7 +132,7 @@ fun MandaDetailBox(
         modifier = modifier,
         backgroundColor = if (isDone) backgroundColor else HMColor.Background,
         borderColor = if(isDone) HMColor.Background else borderColor,
-        borderWidth = if(isDone) 0.dp else 0.65.dp,
+        borderWidth = 0.65.dp,
         onClick = onClick
     ){
         Text(

@@ -871,11 +871,14 @@ fun Mandalart(
 
                                                                     is MandaType.Detail -> {
                                                                         val data = smallBox.mandaUI
+                                                                        // 전체 달성여부 체크하여 BorderColor 변경
+                                                                        var isAllDone = false
+                                                                        if(bigBox.mandaUIList.size == 9) isAllDone = bigBox.mandaUIList[4].mandaUI.isDone
                                                                         MandaDetailBox(
                                                                             modifier = Modifier.weight(1f),
                                                                             name = data.name,
                                                                             backgroundColor = data.color,
-                                                                            borderColor = data.color,
+                                                                            borderColor = if(isAllDone) HMColor.Background else data.color,
                                                                             isDone = data.isDone
                                                                         ) {
                                                                             changeBottomSheet(
