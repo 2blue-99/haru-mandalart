@@ -75,7 +75,7 @@ object MandaUtils {
                     mandaUI = MandaUI(
                         name = key.name,
                         color = if (keyId == 5) HMColor.LightPrimary else color,
-                        // 최종 목표 박스 이거나, 모든 Manda Detail 이 Done 이라면 True
+                        // 최종 목표 박스 이거나, 존재하는 Manda Detail Box가 Done 이라면 True
                         isDone = detailDoneCount != 0 && detailDoneCount == detailIdList.size,
                         originId = key.originId,
                         id = keyId
