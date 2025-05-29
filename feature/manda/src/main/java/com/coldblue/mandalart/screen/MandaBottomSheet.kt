@@ -362,7 +362,6 @@ fun ChangeMandaBottomSheet(
                 }
                 for (i in 0 until MAX_MANDA_CNT) {
                     item {
-//                        val mandaIndex = if (i < mandaInfo.size) (mandaInfo[i].index - 5) / 9 else i
                         if (mandaChangeInfo[i].isEmpty) {
                             MandaEmptyItem(
                                 changeManda = { changeManda(i) },
