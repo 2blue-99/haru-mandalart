@@ -367,7 +367,6 @@ fun ChangeMandaBottomSheet(
                                 changeManda = { changeManda(i) },
                                 onDisMiss
                             )
-
                         } else {
                             MandaItem(
                                 mandaChangeInfo[i].name,
