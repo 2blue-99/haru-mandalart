@@ -125,7 +125,7 @@ fun UpdateDialog(
                         .clickable { onDismiss() }
                         .size(30.dp),
                     tint = HMColor.Primary,
-                    contentDescription = ""
+                    contentDescription = " "
                 )
             }
         }
