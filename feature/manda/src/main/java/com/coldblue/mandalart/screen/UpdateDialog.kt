@@ -38,7 +38,6 @@ fun UpdateDialog(
     onDismiss: () -> Unit,
     onUpdate: () -> Unit
 ) {
-
     Dialog(
         onDismissRequest = { onDismiss() }
     ) {
