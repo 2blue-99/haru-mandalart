@@ -127,6 +127,7 @@ object MandaUtils {
             HMColor.DarkPastel.Green -> 4
             HMColor.DarkPastel.Blue -> 5
             HMColor.DarkPastel.Mint -> 6
+            HMColor.DarkPastel.Purple -> 7
             else -> -1
         }
     }
@@ -137,13 +138,10 @@ object MandaUtils {
 
     fun calculatePercentage(index: Int, mandaDetails: List<MandaDetail>): Float {
         return when (index) {
-            -1, 4 -> (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() }
-                ?: 0f
-
+            -1, 4 -> (mandaDetails.count { it.isDone } / mandaDetails.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
             else -> {
-                val rangeList = mandaDetails.filter { it.id in 9 * index..8 + 9 * index }
-                (rangeList.count { it.isDone } / rangeList.size.toFloat()).takeIf { !it.isNaN() }
-                    ?: 0f
+                val rangeList = mandaDetails.filter { it.id in 1 + 9 * index..9 * (index + 1) }
+                (rangeList.count { it.isDone } / rangeList.size.toFloat()).takeIf { !it.isNaN() } ?: 0f
             }
         }
     }

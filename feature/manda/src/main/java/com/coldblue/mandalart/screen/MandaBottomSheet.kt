@@ -101,12 +101,16 @@ fun MandaBottomSheet(
     var inputText by remember { mutableStateOf(mandaUI.name) }
     var keyNameText by remember { mutableStateOf("") }
 
-    // insert : 사용안한거 선택 / 만약 다 사용중일 경우엔 첫번째꺼 선택
-    // update : 클릭된거 선택
+    // key insert : 사용안된 색상 위치 (만약 모두 사용중일 경우엔 첫번째 위치)
+    // key update : 현재 선택된 색상 위치
     var colorIndex by remember {
+        // 현재 선택된 Manda Key Box 색상
         val color = MandaUtils.colorToIndex(mandaUI.color)
+        // 선택 가능한 색상 리스트
         val ableList = colorList.indices.filter { !usedColorIndexList.contains(it) }
-        val index = if (ableList.isEmpty()) 0 else if (color == -1) ableList.first() else color
+        // 동그라미로 선택될 색상 인덱스
+        val index = if(mandaBottomSheetContentState is MandaBottomSheetContentState.Update) color
+            else if(ableList.isEmpty()) 0 else if (color == -1) ableList.first() else color
         mutableIntStateOf(index)
     }
 
@@ -141,7 +145,6 @@ fun MandaBottomSheet(
         sheetState = sheetState,
         containerColor = HMColor.Background
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -476,7 +479,7 @@ fun MandaItemPreview() {
 @Composable
 fun MandaBottomSheetColor(
     colorList: List<Color>,
-    colorIndex: Int,
+    colorIndex: Int, // 현재 컬러 인텍스
     usedColorList: List<Int>,
     onClick: (Int) -> Unit
 ) {
