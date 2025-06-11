@@ -556,7 +556,9 @@ fun Mandalart(
     var offsetX by remember { mutableStateOf(0f) }
     var offsetY by remember { mutableStateOf(0f) }
 
-    // 3 X 3 모두 달성 여부
+    // 3 X 3 전체 달성 여부
+    // manda key box 생성 시 색상 세팅
+    // Empty 3 X 3 Box 시 null 처리
     val mandaDoneState = remember { mutableStateListOf<Color?>(null,null,null,null,null,null,null,null,null) }
 
     val dampingRatio = 0.8f // 클수록 스프링 효과 감소
@@ -762,24 +764,25 @@ fun Mandalart(
                                     ) {
                                         when (bigBox) {
                                             is MandaState.Empty -> {
-                                                    MandaEmptyBox(
-                                                        modifier = Modifier.fillMaxSize()
-                                                    ) {
-                                                        if (isMandaInit) {
-                                                            changeBottomSheet(
-                                                                true,
-                                                                MandaBottomSheetContentState.Insert(
-                                                                    MandaBottomSheetContentType.MandaKey(
-                                                                        MandaUI(id = bigBox.id),
-                                                                        null
-                                                                    )
+                                                mandaDoneState[bigBox.id - 1] = null
+                                                MandaEmptyBox(
+                                                    modifier = Modifier.fillMaxSize()
+                                                ) {
+                                                    if (isMandaInit) {
+                                                        changeBottomSheet(
+                                                            true,
+                                                            MandaBottomSheetContentState.Insert(
+                                                                MandaBottomSheetContentType.MandaKey(
+                                                                    MandaUI(id = bigBox.id),
+                                                                    null
                                                                 )
                                                             )
-                                                        } else {
-                                                            mandaDialogState = true
-                                                        }
-
+                                                        )
+                                                    } else {
+                                                        mandaDialogState = true
                                                     }
+
+                                                }
                                             }
 
                                             is MandaState.Exist -> {
@@ -795,47 +798,50 @@ fun Mandalart(
                                                             repeat(3) { detailColumn ->
                                                                 when (val smallBox = bigBox.mandaUIList[detailColumn + detailRow * 3]) {
                                                                     is MandaType.None -> {
-                                                                            MandaEmptyBox(
-                                                                                modifier = Modifier.weight(1f)
-                                                                            ) {
-                                                                                if (isMandaInit) {
-                                                                                    changeBottomSheet(
-                                                                                        true,
-                                                                                        MandaBottomSheetContentState.Insert(
-                                                                                            if (bigBox.id == 5) {
-                                                                                                if (smallBox.mandaUI.id == 5) {
-                                                                                                    MandaBottomSheetContentType.MandaFinal(
-                                                                                                        smallBox.mandaUI
-                                                                                                    )
-                                                                                                } else {
-                                                                                                    MandaBottomSheetContentType.MandaKey(
-                                                                                                        smallBox.mandaUI,
-                                                                                                    )
-                                                                                                }
-
-                                                                                            } else {
-                                                                                                MandaBottomSheetContentType.MandaDetail(
-                                                                                                    smallBox.mandaUI,
-                                                                                                )
-                                                                                            }
-                                                                                        )
-                                                                                    )
-                                                                                } else {
-                                                                                    if (bigBox.id == 5 && smallBox.mandaUI.id == 5) {
-                                                                                        changeBottomSheet(
-                                                                                            true,
-                                                                                            MandaBottomSheetContentState.Insert(
+                                                                        MandaEmptyBox(
+                                                                            modifier = Modifier.weight(
+                                                                                1f
+                                                                            )
+                                                                        ) {
+                                                                            if (isMandaInit) {
+                                                                                changeBottomSheet(
+                                                                                    true,
+                                                                                    MandaBottomSheetContentState.Insert(
+                                                                                        if (bigBox.id == 5) {
+                                                                                            if (smallBox.mandaUI.id == 5) {
                                                                                                 MandaBottomSheetContentType.MandaFinal(
                                                                                                     smallBox.mandaUI
                                                                                                 )
+                                                                                            } else {
+                                                                                                MandaBottomSheetContentType.MandaKey(
+                                                                                                    smallBox.mandaUI,
+                                                                                                )
+                                                                                            }
+
+                                                                                        } else {
+                                                                                            MandaBottomSheetContentType.MandaDetail(
+                                                                                                smallBox.mandaUI,
+                                                                                            )
+                                                                                        }
+                                                                                    )
+                                                                                )
+                                                                            } else {
+                                                                                if (bigBox.id == 5 && smallBox.mandaUI.id == 5) {
+                                                                                    changeBottomSheet(
+                                                                                        true,
+                                                                                        MandaBottomSheetContentState.Insert(
+                                                                                            MandaBottomSheetContentType.MandaFinal(
+                                                                                                smallBox.mandaUI
                                                                                             )
                                                                                         )
+                                                                                    )
 
-                                                                                    } else {
-                                                                                        mandaDialogState = true
-                                                                                    }
+                                                                                } else {
+                                                                                    mandaDialogState =
+                                                                                        true
                                                                                 }
                                                                             }
+                                                                        }
                                                                     }
 
                                                                     is MandaType.Key -> {
