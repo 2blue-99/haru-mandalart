@@ -16,6 +16,7 @@ object HMColor {
     val Background = Color(0xFFFFFFFF)
     val SurveyGreen = Color(0xFF167263)
     val SurveyYellow = Color(0xFFA7741B)
+    val SurveyBlue = Color(0xFF162872)
     val Box = Color(0xFFF2F4F8)
     val Dim = Color(0x40555555)
 

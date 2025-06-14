@@ -11,6 +11,7 @@ interface SurveyDataSource {
     suspend fun getSurvey(id: Int): NetworkSurvey
     suspend fun upsertSurvey(survey: NetworkSurvey)
     suspend fun isSurveyLiked(id: Int): Boolean
+    suspend fun getSurveyLiked(id: Int): List<NetworkSurveyLike>
 
     suspend fun getAllSurveyCommentList(): List<NetworkSurveyComment>
     suspend fun getSurveyCommentList(surveyId: Int): List<NetworkSurveyComment>
@@ -19,6 +20,8 @@ interface SurveyDataSource {
 
     suspend fun likeSurvey(id: Int, likeCount: Int)
     suspend fun likeCancelSurvey(id: Int, likeCount: Int)
+
+    suspend fun getUserId():String
 
 
 }

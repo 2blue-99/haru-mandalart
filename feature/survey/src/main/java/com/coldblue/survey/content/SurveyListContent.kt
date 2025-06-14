@@ -137,6 +137,7 @@ fun SurveyStateChip(state: String) {
         "완료" -> HMColor.SubLightText
         "진행중" -> HMColor.SurveyGreen
         "개발예정" -> HMColor.SurveyYellow
+        "심사중" -> HMColor.SurveyBlue
         else -> {
             HMColor.Text
         }

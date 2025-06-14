@@ -3,23 +3,31 @@ package com.coldblue.data.repository.survey
 import com.coldblue.data.mapper.SurveyMapper.asDomain
 import com.coldblue.data.mapper.SurveyMapper.asNetwork
 import com.coldblue.data.repository.user.UserRepository
+import com.coldblue.datastore.UserDataSource
 import com.coldblue.model.Survey
 import com.coldblue.model.SurveyComment
 import com.coldblue.network.datasource.SurveyDataSource
 import javax.inject.Inject
 
+
 class SurveyRepositoryImpl @Inject constructor(
     private val surveyDataSource: SurveyDataSource,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 
-) : SurveyRepository {
+    ) : SurveyRepository {
     override suspend fun getSurveyList(): List<Survey> {
-//        userRepository.refresh()
+        userRepository.refresh()
         val surveyLikedList = surveyDataSource.getSurveyLikedList()
         val surveyCommentList = surveyDataSource.getAllSurveyCommentList()
 
+        val userId = surveyDataSource.getUserId()
+
         return surveyDataSource.getSurveyList()
-            .asDomain(surveyLikedList.map { it.survey_id }, commentCount = surveyCommentList)
+            .asDomain(
+                userId,
+                surveyLikedList,
+                commentCount = surveyCommentList
+            )
     }
 
     override suspend fun getSurveyCommentList(id: Int): List<SurveyComment> {
@@ -45,8 +53,13 @@ class SurveyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSurvey(id: Int): Survey {
-        val surveyLiked = surveyDataSource.isSurveyLiked(id)
-        return surveyDataSource.getSurvey(id).asDomain(surveyLiked, getSurveyCommentList(id).size)
+        val surveyLiked = surveyDataSource.getSurveyLiked(id)
+        val userId = surveyDataSource.getUserId()
+        val isLiked = surveyLiked.filter { it.user_id == userId }.size == 1
+        val likeCnt = surveyLiked.count { it.survey_id == id }
+
+        return surveyDataSource.getSurvey(id)
+            .asDomain(isLiked, getSurveyCommentList(id).size, likeCnt)
 
     }
 

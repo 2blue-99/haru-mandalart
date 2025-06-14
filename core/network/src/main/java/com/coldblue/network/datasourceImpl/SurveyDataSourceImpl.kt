@@ -7,6 +7,7 @@ import com.coldblue.network.model.NetworkSurveyComment
 import com.coldblue.network.model.NetworkSurveyLike
 import com.orhanobut.logger.Logger
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import javax.inject.Inject
 
@@ -15,7 +16,7 @@ class SurveyDataSourceImpl @Inject constructor(
 ) : SurveyDataSource {
     override suspend fun getSurveyList(): List<NetworkSurvey> {
         return try {
-            client.postgrest["survey"].select {}.decodeList<NetworkSurvey>()
+            client.postgrest["survey"].select().decodeList<NetworkSurvey>()
         } catch (e: Exception) {
             Logger.d(e.message)
             emptyList()
@@ -26,6 +27,7 @@ class SurveyDataSourceImpl @Inject constructor(
         return try {
             client.postgrest["surveyLike"].select().decodeList<NetworkSurveyLike>()
         } catch (e: Exception) {
+            Logger.d("오류 $e")
             emptyList()
         }
     }
@@ -58,6 +60,18 @@ class SurveyDataSourceImpl @Inject constructor(
             }.decodeList<NetworkSurveyLike>().isNotEmpty()
         } catch (e: Exception) {
             false
+        }
+    }
+
+    override suspend fun getSurveyLiked(id: Int): List<NetworkSurveyLike> {
+        return try {
+            client.postgrest["surveyLike"].select {
+                filter {
+                    NetworkSurveyLike::survey_id eq id
+                }
+            }.decodeList<NetworkSurveyLike>()
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 
@@ -125,5 +139,9 @@ class SurveyDataSourceImpl @Inject constructor(
             }
         } catch (e: Exception) {
         }
+    }
+
+    override suspend fun getUserId(): String {
+        return client.auth.currentUserOrNull()?.id?:""
     }
 }

@@ -4,16 +4,20 @@ import com.coldblue.model.Survey
 import com.coldblue.model.SurveyComment
 import com.coldblue.network.model.NetworkSurvey
 import com.coldblue.network.model.NetworkSurveyComment
+import com.coldblue.network.model.NetworkSurveyLike
+import com.orhanobut.logger.Logger
 
 object SurveyMapper {
     fun List<NetworkSurvey>.asDomain(
-        liked: List<Int>,
+        userId: String,
+        liked: List<NetworkSurveyLike>,
         commentCount: List<NetworkSurveyComment>
     ): List<Survey> {
         return this.map { survey ->
             survey.asDomain(
-                liked.contains(survey.id),
-                commentCount.count { it.survey_id == survey.id })
+                liked.filter { it.user_id == userId }.size == 1,
+                commentCount.count { it.survey_id == survey.id },
+                liked.count { it.survey_id == survey.id })
         }
     }
 
@@ -23,13 +27,13 @@ object SurveyMapper {
         }
     }
 
-    fun NetworkSurvey.asDomain(isLiked: Boolean, commentCount: Int): Survey {
+    fun NetworkSurvey.asDomain(isLiked: Boolean, commentCount: Int, likeCnt: Int): Survey {
         return Survey(
             id,
             title,
             state,
             date,
-            like_count,
+            likeCnt,
             content,
             if (is_admin) "관리자" else "사용자",
             isLiked,
