@@ -3,6 +3,7 @@ package com.coldblue.network.datasourceImpl
 import com.coldblue.network.datasource.NoticeDataSource
 import com.coldblue.network.model.NetworkNotice
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.Order

@@ -48,6 +48,8 @@ object SupabaseModule {
     @Provides
     fun provideComposeAuth(client: SupabaseClient): ComposeAuth = client.composeAuth
 
+
+
     @Singleton
     @Provides
     fun provideSupaRepository(client: SupabaseClient): SupabaseDataSource =
@@ -90,5 +92,6 @@ object SupabaseModule {
     @Provides
     fun provideSurveyDataSource(client: SupabaseClient): SurveyDataSource =
         SurveyDataSourceImpl(client)
+
 
 }

@@ -56,6 +56,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun refresh() {
         userDataSource.token.flatMapLatest {
             supabaseDataSource.refresh(it)
+
         }
     }
 
