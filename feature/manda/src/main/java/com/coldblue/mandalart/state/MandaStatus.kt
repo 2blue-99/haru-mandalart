@@ -11,5 +11,6 @@ data class MandaStatus(
 
 data class CurrentManda(
     val currentMandaIndex:Int,
+    // 0 ~ 8 (-1 : 축소)
     val currentIndex:Int
 )

@@ -184,7 +184,6 @@ class MandaViewModel @Inject constructor(
         viewModelScope.launch {
             updateCurrentMandaIndexUseCase(index)
         }
-//        _currentManda.value = CurrentManda(index, 4)
     }
 
     fun changeBottomSheet(isShow: Boolean, uiState: MandaBottomSheetContentState?) {
