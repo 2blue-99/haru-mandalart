@@ -38,7 +38,6 @@ fun UpdateDialog(
     onDismiss: () -> Unit,
     onUpdate: () -> Unit
 ) {
-
     Dialog(
         onDismissRequest = { onDismiss() }
     ) {
@@ -125,13 +124,12 @@ fun UpdateDialog(
                         .clickable { onDismiss() }
                         .size(30.dp),
                     tint = HMColor.Primary,
-                    contentDescription = ""
+                    contentDescription = " "
                 )
             }
         }
     }
 }
-
 
 @Preview
 @Composable
