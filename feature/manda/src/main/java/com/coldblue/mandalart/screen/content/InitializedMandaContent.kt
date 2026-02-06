@@ -139,14 +139,6 @@ fun InitializedMandaContent(
         targetValue = percentage,
         animationSpec = tween(600, 0, LinearEasing), label = ""
     )
-    val doneComposition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.manda_done)
-    )
-    val createComposition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.manda_create)
-    )
-    val doneAni = rememberLottieAnimatable()
-    val createAni = rememberLottieAnimatable()
 
     var showDoneAni by remember { mutableStateOf(false) }
     var showCreateAni by remember { mutableStateOf(false) }
@@ -155,31 +147,8 @@ fun InitializedMandaContent(
 
     var mandaChangeState by remember { mutableStateOf(false) }
 
-    LaunchedEffect(showCreateAni) {
-        if (showCreateAni) {
-            createAni.animate(
-                speed = 0.7f,
-                composition = createComposition,
-                clipSpec = LottieClipSpec.Frame(0, 1200),
-                initialProgress = 0f
-            ).also {
-                createAni.resetToBeginning()
-                showCreateAni = false
-            }
-        }
-    }
-    LaunchedEffect(showDoneAni) {
-        if (showDoneAni) {
-            doneAni.animate(
-                speed = 0.7f,
-                composition = doneComposition,
-                clipSpec = LottieClipSpec.Frame(0, 1200),
-                initialProgress = 0f
-            ).also {
-                showDoneAni = false
-            }
-        }
-    }
+
+
     val context = LocalContext.current
 
     if (mandaBottomSheetUIState is MandaBottomSheetUIState.Up) {
@@ -329,19 +298,6 @@ fun InitializedMandaContent(
                 )
             }
         }
-
-        LottieAnimation(
-            composition = doneComposition,
-            progress = { doneAni.progress },
-            contentScale = ContentScale.FillHeight
-        )
-
-        LottieAnimation(
-            composition = createComposition,
-            modifier = Modifier.scale(3.0f),
-            progress = { createAni.progress },
-            contentScale = ContentScale.FillHeight
-        )
         if (isExplain) {
             TutorialScreen(
                 titleOffset = titleOffset,
@@ -353,6 +309,12 @@ fun InitializedMandaContent(
                 }
             )
         }
+        MandaAnimation(
+            showDone = showDoneAni,
+            showCreate = showCreateAni,
+            onDoneFinished = { showDoneAni = false },
+            onCreateFinished = { showCreateAni = false }
+        )
     }
 }
 
