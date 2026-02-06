@@ -117,7 +117,6 @@ fun InitializedMandaContent(
     deleteMandaDetail: (Int) -> Unit,
     changeBottomSheet: (Boolean, MandaBottomSheetContentState?) -> Unit,
     navigateToSetting: () -> Unit,
-    navigateToHistory: () -> Unit,
     changeCurrentIndex: (Int) -> Unit,
     changeTodoRange: (DateRange) -> Unit,
     upsertMandaTodo: (MandaTodo) -> Unit,
@@ -142,11 +141,9 @@ fun InitializedMandaContent(
 
     var showDoneAni by remember { mutableStateOf(false) }
     var showCreateAni by remember { mutableStateOf(false) }
-
     var currentIndex by remember { mutableIntStateOf(uiState.currentIndex) }
 
     var mandaChangeState by remember { mutableStateOf(false) }
-
 
 
     val context = LocalContext.current
@@ -235,7 +232,6 @@ fun InitializedMandaContent(
             MandaTopBar(
                 navigateToTutorial = { isExplain = true },
                 navigateToSetting = navigateToSetting,
-                navigateToHistory = navigateToHistory,
                 onClickDetail = { mandaChangeState = true }
             )
 
@@ -318,79 +314,6 @@ fun InitializedMandaContent(
     }
 }
 
-@Composable
-fun MandaTopBar(
-    navigateToTutorial: () -> Unit,
-    navigateToSetting: () -> Unit,
-    onClickDetail: () -> Unit,
-    navigateToHistory: () -> Unit
-) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = IconPack.Mandalart,
-                tint = HMColor.Primary,
-                contentDescription = "main_icon"
-            )
-            Text(
-                text = "하루 만다라트",
-                style = HmStyle.text18,
-                modifier = Modifier.padding(horizontal = 15.dp),
-                color = HMColor.Primary,
-            )
-        }
-        Row {
-            IconButton(
-                onClick = { onClickDetail() }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Default.MoreVert,
-                    tint = HMColor.Primary,
-                    contentDescription = "detail"
-                )
-            }
-            IconButton(
-                onClick = { navigateToTutorial() }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = IconPack.Question,
-                    tint = HMColor.Primary,
-                    contentDescription = "question"
-                )
-            }
-//            IconButton(
-//                onClick = { navigateToHistory() }) {
-//                Icon(
-//                    modifier = Modifier.size(24.dp),
-//                    imageVector = IconPack.History,
-//                    tint = HMColor.Primary,
-//                    contentDescription = "history"
-//                )
-//            }
-            IconButton(
-                onClick = { navigateToSetting() }) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Default.Settings,
-                    tint = HMColor.Primary,
-                    contentDescription = "setting"
-                )
-            }
-        }
-    }
-}
-
-
 @Preview
 @Composable
 fun MandaTopBarPreview() {
@@ -398,83 +321,7 @@ fun MandaTopBarPreview() {
         navigateToTutorial = {},
         navigateToSetting = { /*TODO*/ },
         onClickDetail = {}
-    ) {
-
-    }
-}
-
-@Composable
-fun MandaStatus(
-    titleName: String,
-    statusColor: Color,
-    donePercentage: Float,
-    animateDonePercentage: Float,
-    onClickTitle: () -> Unit
-) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-//        Text(text = "현재 만다 $currentManda")
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "\"",
-                style = HmStyle.text24,
-                color = statusColor
-            )
-            ClickableText(
-                modifier = Modifier.widthIn(max = (screenWidth - 60).dp),
-                text = AnnotatedString(titleName.ifEmpty {
-                    stringResource(id = R.string.initialized_empty_title)
-                }),
-                onClick = { onClickTitle() },
-                style = HmStyle.text24.copy(color = statusColor),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = "\"",
-                style = HmStyle.text24,
-                color = statusColor
-            )
-        }
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(
-                        id = R.string.initialized_done_percentage,
-                        "${((donePercentage * 100).roundToInt())}%"
-                    ),
-                    style = HmStyle.text12,
-                    color = statusColor,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.End
-                )
-                LinearProgressIndicator(
-                    progress = { animateDonePercentage },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(10.dp)
-                        .clip(RoundedCornerShape(7.dp)),
-                    color = statusColor,
-                    trackColor = HMColor.Gray
-                )
-            }
-        }
-    }
+    )
 }
 
 @Composable
@@ -487,8 +334,6 @@ fun Mandalart(
 ) {
     var currentIndex by remember { mutableIntStateOf(curIndex) }
     var mandaDialogState by remember { mutableStateOf(false) }
-
-
     LaunchedEffect(curIndex) { currentIndex = curIndex }
 
     var currentMandaList = remember {

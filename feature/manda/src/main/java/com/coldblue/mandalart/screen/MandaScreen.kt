@@ -168,7 +168,6 @@ fun MandaContentWithState(
                 deleteMandaDetail = deleteMandaDetail,
                 changeBottomSheet = changeBottomSheet,
                 navigateToSetting = navigateToSetting,
-                navigateToHistory = navigateToHistory,
                 changeCurrentIndex = changeCurrentIndex,
                 changeTodoRange = changeTodoRange,
                 upsertMandaTodo = upsertMandaTodo,
