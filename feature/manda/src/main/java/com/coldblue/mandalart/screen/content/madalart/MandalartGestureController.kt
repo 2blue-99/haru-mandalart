@@ -4,6 +4,7 @@ package com.coldblue.mandalart.screen.content.madalart
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.toSize
 import com.coldblue.mandalart.state.MandaGestureState
 import com.orhanobut.logger.Logger
 import kotlin.math.abs
@@ -27,10 +28,16 @@ class MandalartGestureController() {
 
     var mandaSize: Size = Size.Zero
 
-    val widthList = listOf(mandaSize.width, 0f, -mandaSize.width)
-    val heightList = listOf(mandaSize.height, 0f, -mandaSize.height)
+    var widthList = listOf(0f, 0f, 0f)
+    var heightList = listOf(0f, 0f, 0f)
 
     private val gestureAccuracy = 100f
+
+    fun initMandaSize(size: Size, width: Float, height: Float) {
+        mandaSize = size
+        widthList = listOf(width, 0f, -width)
+        heightList = listOf(height, 0f, -height)
+    }
 
     fun dragStartDetector(dragAmount: Offset) {
         val (x, y) = dragAmount
@@ -86,8 +93,6 @@ class MandalartGestureController() {
     }
 
     fun zoom(index: Int) {
-        Logger.d("호출중 $index")
-
         if (index == -1) {
             reset()
             return

@@ -24,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -51,11 +49,9 @@ import com.coldblue.mandalart.screen.MandaEmptyBox
 import com.coldblue.mandalart.screen.MandaKeyBox
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaBottomSheetContentType
-import com.coldblue.mandalart.state.MandaGestureState
 import com.coldblue.mandalart.state.MandaState
 import com.coldblue.mandalart.state.MandaType
 import com.orhanobut.logger.Logger
-import kotlin.math.abs
 
 @Composable
 fun Mandalart(
@@ -182,7 +178,10 @@ fun Mandalart(
                                 translationY = animatedTranslateY,
                             )
                             .onGloballyPositioned {
-                                controller.mandaSize = it.size.toSize()
+                                if (controller.mandaSize == Size.Zero){
+                                    val mandaSize = it.size.toSize()
+                                    controller.initMandaSize(mandaSize,mandaSize.width,mandaSize.height)
+                                }
                             }
                     ) {
                         // 3 X 9 만다라트
@@ -352,9 +351,8 @@ fun Mandalart(
                                                 .clickable {
                                                     if (!controller.isZoom) {
                                                         Logger.d("호출전 $currentIndex")
-                                                        controller.zoom(keyColumn + keyRow * 3)
                                                         changeCurrentIndex(keyColumn + keyRow * 3)
-                                                        Logger.d("호출후 $currentIndex")
+                                                        controller.zoom(keyColumn + keyRow * 3)
 
 
                                                     }
