@@ -1,8 +1,6 @@
 package com.coldblue.mandalart.screen.content.madalart
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,6 +40,7 @@ import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.theme.HMColor
+import com.coldblue.mandalart.screen.content.rememberMandalartTransform
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
 import com.coldblue.mandalart.state.MandaState
 
@@ -54,6 +53,8 @@ fun Mandalart(
     isMandaInit: Boolean
 ) {
     val controller = remember { MandalartGestureController() }
+    val transform = rememberMandalartTransform(controller)
+
     var currentIndex by remember { mutableIntStateOf(curIndex) }
     var mandaDialogState by remember { mutableStateOf(false) }
     LaunchedEffect(curIndex) { currentIndex = curIndex }
@@ -71,37 +72,6 @@ fun Mandalart(
     // manda key box 생성 시 색상 세팅
     // Empty 3 X 3 Box 시 null 처리
     val mandaDoneState = remember { mutableStateListOf<Color?>(null,null,null,null,null,null,null,null,null) }
-    val dampingRatio = 0.8f // 클수록 스프링 효과 감소
-    val stiffness = 1600f // 클수록 빨리 확대, 축소
-
-    val animatedScaleX by animateFloatAsState(
-        targetValue = controller.scaleX,
-        animationSpec = spring(
-            dampingRatio = dampingRatio,
-            stiffness = stiffness
-        ), label = ""
-    )
-    val animatedScaleY by animateFloatAsState(
-        targetValue = controller.scaleY,
-        animationSpec = spring(
-            dampingRatio = dampingRatio,
-            stiffness = stiffness
-        ), label = ""
-    )
-    val animatedTranslateX by animateFloatAsState(
-        targetValue = controller.translateX,
-        label = "",
-        finishedListener = {
-            controller.isGesture = false
-        }
-    )
-    val animatedTranslateY by animateFloatAsState(
-        targetValue = controller.translateY,
-        label = "",
-        finishedListener = {
-            controller.isGesture = false
-        }
-    )
 
     /**
      * 줌 상태 Back 리스너
@@ -160,10 +130,10 @@ fun Mandalart(
                                 }
                             }
                             .graphicsLayer(
-                                scaleX = animatedScaleX,
-                                scaleY = animatedScaleY,
-                                translationX = animatedTranslateX,
-                                translationY = animatedTranslateY,
+                                scaleX = transform.scaleX,
+                                scaleY = transform.scaleY,
+                                translationX = transform.translateX,
+                                translationY = transform.translateY,
                             )
                             .onGloballyPositioned {
                                 if (controller.mandaSize == Size.Zero){
