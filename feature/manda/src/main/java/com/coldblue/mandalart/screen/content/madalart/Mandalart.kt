@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,15 +42,8 @@ import com.coldblue.designsystem.IconPack
 import com.coldblue.designsystem.component.HMTextDialog
 import com.coldblue.designsystem.iconpack.Back
 import com.coldblue.designsystem.theme.HMColor
-import com.coldblue.mandalart.model.MandaUI
-import com.coldblue.mandalart.screen.MandaDetailBox
-import com.coldblue.mandalart.screen.MandaEmptyBox
-import com.coldblue.mandalart.screen.MandaKeyBox
 import com.coldblue.mandalart.state.MandaBottomSheetContentState
-import com.coldblue.mandalart.state.MandaBottomSheetContentType
 import com.coldblue.mandalart.state.MandaState
-import com.coldblue.mandalart.state.MandaType
-import com.orhanobut.logger.Logger
 
 @Composable
 fun Mandalart(
@@ -62,12 +54,9 @@ fun Mandalart(
     isMandaInit: Boolean
 ) {
     val controller = remember { MandalartGestureController() }
-
     var currentIndex by remember { mutableIntStateOf(curIndex) }
     var mandaDialogState by remember { mutableStateOf(false) }
     LaunchedEffect(curIndex) { currentIndex = curIndex }
-
-
     var currentMandaList = remember {
         mutableStateListOf<MandaState>().apply {
             addAll(mandaList)
@@ -82,7 +71,6 @@ fun Mandalart(
     // manda key box 생성 시 색상 세팅
     // Empty 3 X 3 Box 시 null 처리
     val mandaDoneState = remember { mutableStateListOf<Color?>(null,null,null,null,null,null,null,null,null) }
-
     val dampingRatio = 0.8f // 클수록 스프링 효과 감소
     val stiffness = 1600f // 클수록 빨리 확대, 축소
 
@@ -193,173 +181,27 @@ fun Mandalart(
                                 // 3 X 3 만다라트
                                 repeat(3) { keyColumn ->
                                     val bigBox = currentMandaList[keyColumn + keyRow * 3]
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(horizontal = 5.dp)
-                                            .clip(RoundedCornerShape(8))
-                                            .background(mandaDoneState[bigBox.id-1] ?: HMColor.Background)
-                                    ) {
-                                        when (bigBox) {
-                                            is MandaState.Empty -> {
-                                                mandaDoneState[bigBox.id - 1] = null
-                                                MandaEmptyBox(
-                                                    modifier = Modifier.fillMaxSize()
-                                                ) {
-                                                    if (isMandaInit) {
-                                                        changeBottomSheet(
-                                                            true,
-                                                            MandaBottomSheetContentState.Insert(
-                                                                MandaBottomSheetContentType.MandaKey(
-                                                                    MandaUI(id = bigBox.id),
-                                                                    null
-                                                                )
-                                                            )
-                                                        )
-                                                    } else {
-                                                        mandaDialogState = true
-                                                    }
 
-                                                }
-                                            }
-
-                                            is MandaState.Exist -> {
-                                                Column(
-                                                    horizontalAlignment = Alignment.Start,
-                                                    verticalArrangement = Arrangement.Top,
-                                                    modifier = Modifier.fillMaxSize()
-                                                ) {
-                                                    // 1 X 3 만다라트
-                                                    repeat(3) { detailRow ->
-                                                        Row {
-                                                            // 1 X 1 만다라트
-                                                            repeat(3) { detailColumn ->
-                                                                when (val smallBox = bigBox.mandaUIList[detailColumn + detailRow * 3]) {
-                                                                    is MandaType.None -> {
-                                                                        MandaEmptyBox(
-                                                                            modifier = Modifier.weight(
-                                                                                1f
-                                                                            )
-                                                                        ) {
-                                                                            if (isMandaInit) {
-                                                                                changeBottomSheet(
-                                                                                    true,
-                                                                                    MandaBottomSheetContentState.Insert(
-                                                                                        if (bigBox.id == 5) {
-                                                                                            if (smallBox.mandaUI.id == 5) {
-                                                                                                MandaBottomSheetContentType.MandaFinal(
-                                                                                                    smallBox.mandaUI
-                                                                                                )
-                                                                                            } else {
-                                                                                                MandaBottomSheetContentType.MandaKey(
-                                                                                                    smallBox.mandaUI,
-                                                                                                )
-                                                                                            }
-
-                                                                                        } else {
-                                                                                            MandaBottomSheetContentType.MandaDetail(
-                                                                                                smallBox.mandaUI,
-                                                                                            )
-                                                                                        }
-                                                                                    )
-                                                                                )
-                                                                            } else {
-                                                                                if (bigBox.id == 5 && smallBox.mandaUI.id == 5) {
-                                                                                    changeBottomSheet(
-                                                                                        true,
-                                                                                        MandaBottomSheetContentState.Insert(
-                                                                                            MandaBottomSheetContentType.MandaFinal(
-                                                                                                smallBox.mandaUI
-                                                                                            )
-                                                                                        )
-                                                                                    )
-
-                                                                                } else {
-                                                                                    mandaDialogState =
-                                                                                        true
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                    is MandaType.Key -> {
-                                                                        val smallBoxData = smallBox.mandaUI
-                                                                        mandaDoneState[smallBoxData.id-1] = if(smallBoxData.isDone) smallBoxData.color else null
-                                                                        MandaKeyBox(
-                                                                            modifier = Modifier.weight(1f),
-                                                                            name = smallBoxData.name,
-                                                                            backgroundColor = smallBoxData.color,
-                                                                            borderColor = smallBoxData.color,
-                                                                            isDone = if(smallBoxData.id == 5 ) true else smallBoxData.isDone,
-                                                                            isCenter = keyColumn == 1 && keyRow == 1
-                                                                        ) {
-                                                                            changeBottomSheet(
-                                                                                true,
-                                                                                if (bigBox.id == 5 && smallBoxData.id == 5) {
-                                                                                    MandaBottomSheetContentState.Insert(
-                                                                                        MandaBottomSheetContentType.MandaFinal(
-                                                                                            smallBoxData
-                                                                                        )
-                                                                                    )
-                                                                                } else {
-                                                                                    MandaBottomSheetContentState.Update(
-                                                                                        MandaBottomSheetContentType.MandaKey(
-                                                                                            mandaUI = smallBoxData,
-                                                                                            groupIdList = smallBox.groupIdList
-                                                                                        )
-                                                                                    )
-                                                                                }
-                                                                            )
-                                                                        }
-                                                                    }
-
-                                                                    is MandaType.Detail -> {
-                                                                        val data = smallBox.mandaUI
-                                                                        // 전체 달성여부 체크하여 BorderColor 변경
-                                                                        var isAllDone = false
-                                                                        if(bigBox.mandaUIList.size == 9) isAllDone = bigBox.mandaUIList[4].mandaUI.isDone
-                                                                        MandaDetailBox(
-                                                                            modifier = Modifier.weight(1f),
-                                                                            name = data.name,
-                                                                            backgroundColor = data.color,
-                                                                            borderColor = if(isAllDone) HMColor.Background else data.color,
-                                                                            isDone = data.isDone
-                                                                        ) {
-                                                                            changeBottomSheet(
-                                                                                true,
-                                                                                MandaBottomSheetContentState.Update(
-                                                                                    MandaBottomSheetContentType.MandaDetail(
-                                                                                        mandaUI = data
-                                                                                    )
-                                                                                )
-                                                                            )
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                    MandalartBigBox( modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 5.dp)
+                                        .clip(RoundedCornerShape(8))
+                                        .background(mandaDoneState[bigBox.id-1] ?: HMColor.Background),
+                                        mandaState = bigBox,
+                                        isZoom = controller.isZoom,
+                                        isMandaInit = isMandaInit,
+                                        onZoom = {
+                                            changeCurrentIndex(keyColumn + keyRow * 3)
+                                            controller.zoom(keyColumn + keyRow * 3)
+                                        },
+                                        onInsert = changeBottomSheet,
+                                        onDialog = {mandaDialogState = true},
+                                        onInit = {mandaDoneState[bigBox.id - 1] = null},
+                                        isMandaCenter = keyColumn == 1 && keyRow == 1,
+                                        setMandaDoneState = {id,isDonne,color->
+                                            mandaDoneState[id] = if(isDonne) color else null
                                         }
-                                        if (!controller.isZoom) {
-                                            Spacer(modifier = Modifier
-                                                .background(Color.Transparent)
-                                                .fillMaxWidth()
-                                                .aspectRatio(1F)
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .clickable {
-                                                    if (!controller.isZoom) {
-                                                        Logger.d("호출전 $currentIndex")
-                                                        changeCurrentIndex(keyColumn + keyRow * 3)
-                                                        controller.zoom(keyColumn + keyRow * 3)
-
-
-                                                    }
-                                                }
-                                            )
-                                        }
-                                    }
+                                        )
                                 }
                             }
                         }

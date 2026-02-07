@@ -4,9 +4,7 @@ package com.coldblue.mandalart.screen.content.madalart
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.unit.toSize
 import com.coldblue.mandalart.state.MandaGestureState
-import com.orhanobut.logger.Logger
 import kotlin.math.abs
 
 class MandalartGestureController() {
